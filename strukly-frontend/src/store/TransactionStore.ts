@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { TransactionType } from "../type/TransactionType";
-import type { WalletType } from "../type/WalletType";
 
 type State = {
   items: TransactionType[];
@@ -12,7 +11,7 @@ type Actions = {
   deleteTransaction: (id: string) => void;
   updateTransaction: (
     id: string,
-    updateditem: Partial<Omit<WalletType, "id">>
+    updateditem: Partial<Omit<TransactionType, "id">>
   ) => void;
 };
 
@@ -20,64 +19,84 @@ const useTransaction = create<State & Actions>()(
   immer((set) => ({
     items: [
       {
-        id: "uuid-123",
-        categoryId: "electronics",
+        id: "tx-abc-1",
+        categoryId: "groceries", // Synchronized with a category ID
+        walletId: "wallet-main",
+        date: new Date("2025-09-14T11:20:00Z"),
         items: [
           {
-            itemName: "Laptop",
+            itemName: "Milk",
             quantity: 1,
-            singleItemPrice: 850.0,
-            totalPrice: 850.0,
+            singleItemPrice: 2.5,
+            totalPrice: 2.5,
           },
           {
-            itemName: "Mouse",
+            itemName: "Bread",
             quantity: 1,
-            singleItemPrice: 25.0,
-            totalPrice: 25.0,
+            singleItemPrice: 3.0,
+            totalPrice: 3.0,
+          },
+          {
+            itemName: "Eggs",
+            quantity: 1,
+            singleItemPrice: 4.5,
+            totalPrice: 4.5,
           },
         ],
-        tax: 61.25,
-        serviceCharge: 0.0, // Now defaults to 0
-        total: 936.25, // Updated total: 850 + 25 + 61.25 + 0
-        date: new Date("2024-05-15T10:00:00Z"),
+        tax: 0.6,
+        serviceCharge: 0.0,
+        total: 10.6, // (2.50+3.00+4.50) + 0.60 + 0.00
       },
       {
-        id: "uuid-456",
-        categoryId: "apparel",
+        id: "tx-def-2",
+        categoryId: "salary", // Synchronized with a category ID
+        walletId: "wallet-main",
+        date: new Date("2025-09-13T09:00:00Z"),
         items: [
           {
-            itemName: "Coffee Mug",
-            quantity: 2,
-            singleItemPrice: 12.5,
-            totalPrice: 25.0,
-          },
-          {
-            itemName: "T-Shirt (Large)",
+            itemName: "Paycheck",
             quantity: 1,
-            singleItemPrice: 20.0,
-            totalPrice: 20.0,
+            singleItemPrice: 2500.0,
+            totalPrice: 2500.0,
           },
         ],
-        tax: 3.94,
-        serviceCharge: 0.0, // Now defaults to 0
-        total: 48.94, // Updated total: 25 + 20 + 3.94 + 0
-        date: new Date("2024-05-14T15:30:00Z"),
+        tax: 0.0,
+        serviceCharge: 0.0,
+        total: 2500.0,
       },
       {
-        id: "uuid-789",
-        categoryId: "books",
+        id: "tx-ghi-3",
+        categoryId: "restaurants", // Synchronized with a category ID
+        walletId: "wallet-credit-card",
+        date: new Date("2025-09-12T19:30:00Z"),
         items: [
           {
-            itemName: "The Catcher in the Rye",
+            itemName: "Dinner",
             quantity: 1,
-            singleItemPrice: 15.0,
-            totalPrice: 15.0,
+            singleItemPrice: 42.0,
+            totalPrice: 42.0,
           },
         ],
-        tax: 1.05,
-        serviceCharge: 0.0, // Now defaults to 0
-        total: 16.05, // Updated total: 15 + 1.05 + 0
-        date: new Date("2024-05-13T09:15:00Z"),
+        tax: 2.52,
+        serviceCharge: 0.45,
+        total: 44.97, // 42.00 + 2.52 + 0.45
+      },
+      {
+        id: "tx-jkl-4",
+        categoryId: "freelance", // Synchronized with a category ID
+        walletId: "wallet-freelance",
+        date: new Date("2025-09-11T14:00:00Z"),
+        items: [
+          {
+            itemName: "Client Payment",
+            quantity: 1,
+            singleItemPrice: 500.0,
+            totalPrice: 500.0,
+          },
+        ],
+        tax: 0.0,
+        serviceCharge: 0.0,
+        total: 500.0,
       },
     ],
     addTransaction: (item: TransactionType) => {
@@ -95,7 +114,7 @@ const useTransaction = create<State & Actions>()(
     },
     updateTransaction: (
       id: string,
-      updateditem: Partial<Omit<WalletType, "id">>
+      updateditem: Partial<Omit<TransactionType, "id">>
     ) => {
       set((prev) => {
         const index = prev.items.findIndex((item) => item.id === id);
