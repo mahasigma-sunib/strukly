@@ -22,6 +22,7 @@ const useTransaction = create<State & Actions>()(
         id: "tx-abc-1",
         categoryId: "groceries", // Synchronized with a category ID
         walletId: "wallet-main",
+        name: "Sigma Supermarket",
         date: new Date("2025-09-14T11:20:00Z"),
         items: [
           {
@@ -51,6 +52,7 @@ const useTransaction = create<State & Actions>()(
         id: "tx-def-2",
         categoryId: "salary", // Synchronized with a category ID
         walletId: "wallet-main",
+        name: "Salary",
         date: new Date("2025-09-13T09:00:00Z"),
         items: [
           {
@@ -68,6 +70,7 @@ const useTransaction = create<State & Actions>()(
         id: "tx-ghi-3",
         categoryId: "restaurants", // Synchronized with a category ID
         walletId: "wallet-credit-card",
+        name: "Sigma Restaurant",
         date: new Date("2025-09-12T19:30:00Z"),
         items: [
           {
@@ -85,6 +88,7 @@ const useTransaction = create<State & Actions>()(
         id: "tx-jkl-4",
         categoryId: "freelance", // Synchronized with a category ID
         walletId: "wallet-freelance",
+        name: "Sigma Freelance",
         date: new Date("2025-09-11T14:00:00Z"),
         items: [
           {
