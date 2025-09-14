@@ -23,6 +23,9 @@ function TransactionDetail() {
         <strong>ID:</strong> {transaction.id}
       </p>
       <p>
+        <strong>{transaction.name}</strong> 
+      </p>
+      <p>
         <strong>Date:</strong> {transaction.date.toLocaleString()}
       </p>
       <p>
