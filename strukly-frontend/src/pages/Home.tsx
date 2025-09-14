@@ -5,7 +5,7 @@ import type { TransactionCategoryType } from "../type/TransactionCategoryType";
 import useWallet from "../store/WalletStore";
 import useTransactionCategory from "../store/TransactionCategoryStore";
 import useTransaction from "../store/TransactionStore";
-import TransactionCard from "../components/transactionCard";
+import TransactionCard from "../components/TransactionCard";
 
 function Home() {
   const [newWalletName, setNewWalletName] = useState("");
