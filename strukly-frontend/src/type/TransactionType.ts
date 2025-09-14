@@ -3,7 +3,9 @@ import type { TransactionItemType } from "./TransactionItemType";
 export interface TransactionType {
   id: string;
   categoryId: string;
-  items: TransactionItemType[]
+  date: Date;
+  items: TransactionItemType[];
   tax: number;
+  serviceCharge: number;
   total: number;
 }
