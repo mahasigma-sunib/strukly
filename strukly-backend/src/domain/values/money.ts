@@ -1,0 +1,3 @@
+export default class Money {
+  constructor(public readonly amount: number, public readonly currency: string) { }
+}
