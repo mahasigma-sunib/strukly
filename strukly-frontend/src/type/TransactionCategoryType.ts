@@ -1,5 +1,6 @@
 export interface TransactionCategoryType {
   id: string;
   categoryName: string;
-  balance: number;
+  amount: number;
+  type: 'expense' | 'income'
 }

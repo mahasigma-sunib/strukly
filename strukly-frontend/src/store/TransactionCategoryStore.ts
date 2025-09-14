@@ -10,36 +10,35 @@ type Actions = {
   addTransactionCategory: (item: TransactionCategoryType) => void;
   deleteTransactionCategory: (id: string) => void;
   updateName: (id: string, newName: string) => void;
-  updateBalance: (id: string, newBalance: number) => void;
+  updateAmount: (id: string, newAmount: number) => void;
 };
 
 const useTransactionCategory = create<State & Actions>()(
   immer((set) => ({
     items: [
       {
-        id: "exp_cat_1a2b3c4d",
+        id: "groceries",
         categoryName: "Groceries",
-        balance: 350.5,
+        amount: 85.5,
+        type: "expense",
       },
       {
-        id: "exp_cat_5e6f7g8h",
-        categoryName: "Utilities",
-        balance: 150.0,
+        id: "salary",
+        categoryName: "Salary",
+        amount: 2500.0,
+        type: "income",
       },
       {
-        id: "exp_cat_9i0j1k2l",
+        id: "restaurants",
         categoryName: "Restaurants",
-        balance: 75.25,
+        amount: 45.0,
+        type: "expense",
       },
       {
-        id: "exp_cat_3m4n5o6p",
-        categoryName: "Transportation",
-        balance: 50.0,
-      },
-      {
-        id: "exp_cat_7q8r9s0t",
-        categoryName: "Entertainment",
-        balance: 120.0,
+        id: "freelance",
+        categoryName: "Freelance Work",
+        amount: 500.0,
+        type: "income",
       },
     ],
 
@@ -67,11 +66,11 @@ const useTransactionCategory = create<State & Actions>()(
       });
     },
 
-    updateBalance: (id: string, newBalance: number) => {
+    updateAmount: (id: string, newAmount: number) => {
       set((prev) => {
         const index = prev.items.findIndex((item) => item.id === id);
         if (index > -1) {
-          prev.items[index].balance = newBalance;
+          prev.items[index].amount = newAmount;
         }
       });
     },
