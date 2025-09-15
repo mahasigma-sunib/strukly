@@ -1,5 +1,5 @@
 export default class User {
-  readonly id: number;
+  readonly id: string;
   readonly email: string;
   readonly name: string;
   readonly hashedPassword: string;
@@ -8,7 +8,7 @@ export default class User {
 
   //construct user
   constructor(props: {
-    id: number;
+    id: string;
     email: string;
     name: string;
     hashedPassword: string;

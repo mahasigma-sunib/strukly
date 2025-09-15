@@ -1,5 +1,3 @@
-// src/infrastructure/repositories/prisma_user_repository.ts
-
 import { PrismaClient } from '@prisma/client';
 import User from '../../domain/aggregates/user';
 import { UserRepository } from './user_repository';
