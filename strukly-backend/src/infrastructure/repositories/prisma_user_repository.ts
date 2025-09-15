@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import User from '../../domain/aggregates/user';
-import { UserRepository } from './user_repository';
+import { UserRepository } from '../../domain/repositories/user_repository';
 
 export class PrismaUserRepository implements UserRepository {
   private prisma = new PrismaClient();

@@ -1,4 +1,4 @@
-import { UserRepository } from "../../infrastructure/repositories/user_repository";
+import { UserRepository } from "../../domain/repositories/user_repository";
 import User from "../../domain/aggregates/user";
 import { v4 as uuidv4 } from 'uuid';
 import { HashingService } from "../../domain/ports/hashing_service_port";
