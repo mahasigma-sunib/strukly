@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { RegisterUserUseCase } from '../../application/use_cases/register_user';
-
+import RegisterUserUseCase from '../../application/use_cases/register_user';
 export class AuthController {
   constructor(
     private readonly registerUserUseCase: RegisterUserUseCase
