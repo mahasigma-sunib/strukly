@@ -5,7 +5,7 @@ import type { TransactionCategoryType } from "../type/TransactionCategoryType";
 import useWallet from "../store/WalletStore";
 import useTransactionCategory from "../store/TransactionCategoryStore";
 import useTransaction from "../store/TransactionStore";
-import TransactionCard from "../components/transactionCard";
+import TransactionCard from "../components/TransactionCard";
 
 function Home() {
   const [newWalletName, setNewWalletName] = useState("");
@@ -69,8 +69,6 @@ function Home() {
           {Wallets.map((item) => (
             <li key={item.id}>
               {item.name}: {item.balance}
-              {/* <button>Update</button>
-              <button>Delete</button> */}
             </li>
           ))}
         </ul>
@@ -79,7 +77,6 @@ function Home() {
       <div>
         <h2>Dashboard</h2>
         <br />
-        {/* <input type="text" placeholder="CategoryName" /> */}
         <>Total Balance: {totalBalance.toFixed(2)}</> <br />
         <>Total Expense: {totalExpense.toFixed(2)}</>
         <ul>

@@ -1,8 +1,8 @@
 import {Routes, Route, Link} from 'react-router-dom';
 import Home from "./pages/Home"
+// import UserLogin from './pages/UserLogin';
 import TransactionHistory from "./pages/TransactionHistory"
 import TransactionDetail from './pages/TransactionDetail';
-
 // import "./App.css";
 
 
@@ -11,8 +11,8 @@ const App = () => {
   return (
     <div>
       <nav style={{marginBottom: '1rem'}}>
-        <Link to="/">Beranda</Link> |{' '}
-        <Link to="/History">Riwayat</Link> |{' '}
+        <Link to="/">Home</Link> |{' '}
+        <Link to="/History">History</Link> |{' '}
       </nav>
 
       <Routes>
