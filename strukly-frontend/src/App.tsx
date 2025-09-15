@@ -2,7 +2,6 @@ import {Routes, Route, Link} from 'react-router-dom';
 import Home from "./pages/Home"
 import TransactionHistory from "./pages/TransactionHistory"
 import TransactionDetail from './pages/TransactionDetail';
-
 // import "./App.css";
 
 

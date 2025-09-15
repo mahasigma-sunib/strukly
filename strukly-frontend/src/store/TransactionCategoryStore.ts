@@ -18,24 +18,48 @@ const useTransactionCategory = create<State & Actions>()(
     items: [
       {
         id: "groceries",
+        budget: {
+          id: "budget1",
+          amount: 900,
+          period: "monthly",
+          startDate: new Date("2025-09-14T00:00:00Z"),
+        },
         categoryName: "Groceries",
         amount: 85.5,
         type: "expense",
       },
       {
         id: "salary",
+        budget: {
+          id: "budget1",
+          amount: 900,
+          period: "monthly",
+          startDate: new Date("2025-09-14T00:00:00Z"),
+        },
         categoryName: "Salary",
         amount: 2500.0,
         type: "income",
       },
       {
         id: "restaurants",
+        budget: {
+          id: "budget1",
+          amount: 900,
+          period: "monthly",
+          startDate: new Date("2025-09-14T00:00:00Z"),
+        },
         categoryName: "Restaurants",
         amount: 45.0,
         type: "expense",
       },
       {
         id: "freelance",
+        budget: {
+          id: "budget1",
+          amount: 900,
+          period: "monthly",
+          startDate: new Date("2025-09-14T00:00:00Z"),
+        },
         categoryName: "Freelance Work",
         amount: 500.0,
         type: "income",
