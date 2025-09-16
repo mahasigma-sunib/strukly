@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import axios from "axios";
 import type { WalletType } from "../type/WalletType";
 
 type State = {
@@ -7,6 +8,7 @@ type State = {
 };
 
 type Actions = {
+  fetchWallets: () => Promise<void>;
   addWallet: (item: WalletType) => void;
   deleteWallet: (id: string) => void;
   updateWallet: (
@@ -44,7 +46,16 @@ const useWallet = create<State & Actions>()(
         balance: 45.3,
       },
     ],
-    
+
+    fetchWallets: async () => {
+      try {
+        const res = await axios.get("");
+        set((prev) => {
+          prev.items = res.data;
+        });
+      } catch (e) {}
+    },
+
     addWallet: (item: WalletType) => {
       set((prev) => {
         prev.items.push(item);
