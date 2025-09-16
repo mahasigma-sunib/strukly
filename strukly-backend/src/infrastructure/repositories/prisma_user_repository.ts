@@ -24,29 +24,28 @@ export default class PrismaUserRepository implements UserRepository {
     })
   }
 
-  async save(user: User): Promise<void> {
-    if (user.id) {
-      // existing user
-      await this.prisma.user.update({
-        where: { id: user.id },
-        data: {
-          email: user.email,
-          name: user.name,
-          hashedPassword: user.hashedPassword,
-          updatedAt: new Date(),
-        },
-      });
-    } else {
-      // new user
-      await this.prisma.user.create({
-        data: {
-          email: user.email,
-          name: user.name,
-          hashedPassword: user.hashedPassword,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      });
-    }
+  async create(user: User): Promise<void> {
+    await this.prisma.user.create({
+      data: {
+        id: user.id, 
+        email: user.email,
+        name: user.name,
+        hashedPassword: user.hashedPassword,
+      },
+    });
+  }
+
+   async update(user: User): Promise<void> {
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        email: user.email,
+        name: user.name,
+        hashedPassword: user.hashedPassword,
+        updatedAt: new Date(), 
+      },
+    });
   }
 }

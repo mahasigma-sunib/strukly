@@ -26,6 +26,6 @@ export default class RegisterUserUseCase {
       updatedAt: new Date(),
     });
 
-    await this.userRepository.save(user);
+    await this.userRepository.create(user);
   }
 }
