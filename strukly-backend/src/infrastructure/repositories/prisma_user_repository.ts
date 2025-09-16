@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import User from '../../domain/aggregates/user';
 import UserRepository from '../../domain/repositories/user_repository';
 
-export class PrismaUserRepository implements UserRepository {
+export default class PrismaUserRepository implements UserRepository {
   private prisma = new PrismaClient();
 
   async findByEmail(email: string): Promise<User | null> {
