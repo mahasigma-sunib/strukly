@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import TokenService from "../../domain/ports/token_service_port";
+import TokenService from "../../domain/services/token_service";
 
 export class JwtService implements TokenService {
   private readonly jwtSecret = process.env.JWT_SECRET || 'nefjnwnfjpwnf32872189047214dididkfhuufiheu832hthisisgoodenough';

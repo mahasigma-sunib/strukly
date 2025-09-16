@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import RegisterUserUseCase from '../../application/use_cases/register_user';
 import LoginUserUseCase from '../../application/use_cases/user_login';
-import TokenService from '../../domain/ports/token_service_port';
+import TokenService from '../../domain/services/token_service';
 
 export class AuthController {
   constructor(

@@ -1,4 +1,4 @@
-import HashingService from "../../domain/ports/hashing_service_port";
+import HashingService from "../../domain/services/hashing_service";
 import * as bcrypt from 'bcrypt';
 
 export class BcryptService implements HashingService {

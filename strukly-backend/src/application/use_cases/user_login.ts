@@ -1,5 +1,5 @@
 import UserRepository from "../../domain/repositories/user_repository";
-import HashingService from "../../domain/ports/hashing_service_port";
+import HashingService from "../../domain/services/hashing_service";
 import User from "../../domain/aggregates/user";
 
 export default class LoginUserUseCase{
