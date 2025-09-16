@@ -12,7 +12,7 @@ export async function createWallet(
             data: {
                 user_id: userId,          
                 balance: initialBalance,  
-                walletCategory: walletCategory, 
+                wallet_category: walletCategory, 
             },
         });
         return wallet;
