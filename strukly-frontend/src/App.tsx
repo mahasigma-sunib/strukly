@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import TransactionHistory from "./pages/TransactionHistory";
 import TransactionDetail from "./pages/TransactionDetail";
 import UserLogin from "./pages/UserLogin";
+import UserRegister from "./pages/UserRegister";
 // import "./App.css";
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<UserLogin />} />
+        <Route path="/register" element={<UserRegister />} />
         <Route path="/History" element={<TransactionHistory />} />
         <Route path="/History/:id" element={<TransactionDetail />} />
       </Routes>
