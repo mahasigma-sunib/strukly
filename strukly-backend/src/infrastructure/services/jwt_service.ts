@@ -7,4 +7,18 @@ export class JwtService implements TokenService {
       const jwtToken = jwt.sign(payload, this.jwtSecret, { expiresIn: '1h' })
       return jwtToken
   }
+  
+  async verify(token: string): Promise<{ id: string; email: string; }> {
+    try {
+      const payload = jwt.verify(token, this.jwtSecret);
+
+      if (typeof payload === 'object' && 'id' in payload && 'email' in payload) {
+          return payload as { id: string, email: string };
+      }
+      throw new Error('Invalid token payload');
+
+    } catch (error) {
+      throw new Error('Invalid or expired token.');
+    }
+  }
 }
