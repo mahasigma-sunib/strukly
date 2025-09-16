@@ -1,19 +1,20 @@
 import { useState } from "react";
+// import axios from "axios";
 import * as z from "zod";
-// import { loginSchema } from "../schemas/UserAuth";
+import { useNavigate } from "react-router-dom";
+import useUserInfo from "../store/UserInfoStore";
 
 const emailSchema = z.email();
 const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
-  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-  .regex(/\d/, "Password must contain at least one number");
+  .regex(/[A-Z]/, "Password must contain at least one upperercase letter")
+  .regex(/\d/, "Password must contain at least one numbcase letter")
+  .regex(/[a-z]/, "Password must contain at least one lower");
 
 function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [errors, setErrors] = useState<z.ZodIssue[]>([]);
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<string[]>([]);
@@ -35,6 +36,27 @@ function UserLogin() {
       const errors = error.issues.map((issue) => issue.message);
       setPasswordError(errors);
     }
+  };
+
+  const navigate = useNavigate();
+  const setUserInfo = useUserInfo((state) => state.setUserInfo)
+  const handleLogin = async () => {
+    // try {
+    //   const res = await axios.post("", { email, password });
+    //   if(res.data && res.data.token) {
+    //     localStorage.setItem("jwt_token", res.data.token);
+    //     setUserInfo(res.data.userInfo);
+    //     navigate("/");
+    //   }
+    // } catch (err) {}
+
+    // Simulate backend response
+    const fakeToken = "fake-jwt-token";
+    const fakeUserInfo = { userId: "123", username: email };
+
+    localStorage.setItem("jwt_token", fakeToken);
+    setUserInfo(fakeUserInfo);
+    navigate("/");
   };
 
   return (
@@ -73,7 +95,7 @@ function UserLogin() {
           </div>
         )}
       </div>
-      <button type="submit">Log in</button>
+      <button onClick={handleLogin}>Log in</button>
     </div>
   );
 }
