@@ -1,16 +1,16 @@
 import { useState } from "react";
 // import axios from "axios";
-import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import useUserInfo from "../store/UserInfoStore";
+import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
 
-const emailSchema = z.email();
-const passwordSchema = z
-  .string()
-  .min(8, "Password must be at least 8 characters")
-  .regex(/[A-Z]/, "Password must contain at least one upperercase letter")
-  .regex(/\d/, "Password must contain at least one numbcase letter")
-  .regex(/[a-z]/, "Password must contain at least one lower");
+// const emailSchema = z.email();
+// const passwordSchema = z
+//   .string()
+//   .min(8, "Password must be at least 8 characters")
+//   .regex(/[A-Z]/, "Password must contain at least one upperercase letter")
+//   .regex(/\d/, "Password must contain at least one numbcase letter")
+//   .regex(/[a-z]/, "Password must contain at least one lower");
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -39,8 +39,14 @@ function UserLogin() {
   };
 
   const navigate = useNavigate();
-  const setUserInfo = useUserInfo((state) => state.setUserInfo)
+  const setUserInfo = useUserInfo((state) => state.setUserInfo);
   const handleLogin = async () => {
+    handleEmailValidation();
+    handlePasswordValidation();
+    if (!email || !password || emailError !== "" || passwordError.length > 0) {
+      return; // Stop if there are errors
+    }
+
     // try {
     //   const res = await axios.post("", { email, password });
     //   if(res.data && res.data.token) {
@@ -96,6 +102,22 @@ function UserLogin() {
         )}
       </div>
       <button onClick={handleLogin}>Log in</button>
+      <div style={{ marginTop: "1rem" }}>
+        <span>Don&apos;t have an account? </span>
+        <button
+          type="button"
+          style={{
+            color: "aqua",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            textDecoration: "underline",
+          }}
+          onClick={() => navigate("/register")}
+        >
+          Register here
+        </button>
+      </div>
     </div>
   );
 }
