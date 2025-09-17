@@ -6,6 +6,7 @@ import useWallet from "../store/WalletStore";
 import useTransactionCategory from "../store/TransactionCategoryStore";
 import useTransaction from "../store/TransactionStore";
 import TransactionCard from "../components/TransactionCard";
+import "../css/WalletSection.css";
 
 function Home() {
   const [newWalletName, setNewWalletName] = useState("");
@@ -65,13 +66,16 @@ function Home() {
         >
           Add New Wallet
         </button>
-        <ul>
-          {Wallets.map((item) => (
-            <li key={item.id}>
-              {item.name}: {item.balance}
-            </li>
-          ))}
-        </ul>
+        <div style={{ width: "100%", maxWidth: "100vw", overflowX: "auto" }}>
+          <div className="wallet-list">
+            {Wallets.map((item) => (
+              <li key={item.id}>
+                <div className="item-name">{item.name}</div>
+                <div className="item-balance">{item.balance}</div>
+              </li>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div>
