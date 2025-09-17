@@ -19,7 +19,7 @@ function TransactionCard() {
 
   return (
     <div>
-      <ul>
+      <div>
         {sortedTransactions.map((transaction: TransactionType) => {
           const transactionType = categoryMap.get(transaction.categoryId);
           const sign = transactionType === "income" ? "+" : "-";
@@ -50,7 +50,7 @@ function TransactionCard() {
             </li>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
