@@ -36,34 +36,53 @@ function Home() {
   }
   const totalExpense = calcTotalExpense(Transactions, TransactionCategories);
 
+  const [showWalletInputs, setShowWalletInputs] = useState(false);
+
   return (
     <>
       <h1>Beranda</h1>
 
       <div>
-        <h2>Wallet</h2>
-        <input
-          type="text"
-          placeholder="Wallet Name"
-          value={newWalletName}
-          onChange={(event) => setNewWalletName(event?.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Initial Balance"
-          value={newWalletBalance}
-          onChange={(event) => setNewWalletBalance(event?.target.value)}
-        />
+        {showWalletInputs && (
+          <div className="wallet-popup">
+            <div className="wallet-inputs">
+              <button
+                className="close-popup-button"
+                onClick={() => setShowWalletInputs(false)}
+                aria-label="Close"
+              >
+                x
+              </button>
+              <input
+                type="text"
+                placeholder="Wallet Name"
+                value={newWalletName}
+                onChange={(event) => setNewWalletName(event?.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Initial Balance"
+                value={newWalletBalance}
+                onChange={(event) => setNewWalletBalance(event?.target.value)}
+              />
+              <button
+                onClick={() => {
+                  const wallet: WalletType = {
+                    id: crypto.randomUUID(),
+                    name: newWalletName,
+                    balance: parseInt(newWalletBalance),
+                  };
+                  addWallet(wallet);
+                  setShowWalletInputs(false); // Close popup after adding
+                }}
+              >
+                Add New Wallet
+              </button>
+            </div>
+          </div>
+        )}
         <button
-          onClick={() => {
-            const wallet: WalletType = {
-              id: crypto.randomUUID(),
-              name: newWalletName,
-              balance: parseInt(newWalletBalance),
-            };
-            addWallet(wallet);
-          }}
-        >
+          onClick={() => setShowWalletInputs(true)}>
           Add New Wallet
         </button>
         <div style={{ width: "100%", maxWidth: "100vw", overflowX: "auto" }}>
