@@ -58,9 +58,9 @@ function UserLogin() {
 
     // Simulate backend response
     const fakeToken = "fake-jwt-token";
-    const fakeUserInfo = { userId: "123", username: email };
+    const fakeUserInfo = { userId: "123", username: email, token: fakeToken};
 
-    localStorage.setItem("jwt_token", fakeToken);
+    // localStorage.setItem("jwt_token", fakeToken);
     setUserInfo(fakeUserInfo);
     navigate("/");
   };
