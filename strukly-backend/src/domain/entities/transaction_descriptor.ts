@@ -1,38 +1,47 @@
-import TransactionID from "../values/transaction_id"
+// src/domain/entities/wallet.ts
+import { randomUUID } from "crypto";
 
-export type TransactionDescriptorProps = {
-  id: TransactionID;
-  vendor: string;
-  categoryID: string;
-  date: Date;
-  subtotal: number;
-  tax: number;
-  total: number;
-}
+export type WalletProps = {
+  walletId: string;
+  userId: string;
+  walletName: string;
+  walletBalance: number;
+};
 
-export default class TransactionDescriptor {
-  public readonly id: TransactionID;
-  public readonly vendor: string;
-  public readonly categoryID: string;
-  public readonly date: Date;
-  public readonly subtotal: number;
-  public readonly tax: number;
-  public readonly total: number;
+export default class Wallet {
+  public readonly walletId: string;
+  public readonly userId: string;
+  public walletName: string;
+  private _walletBalance: number;
 
-  constructor(props: TransactionDescriptorProps) {
-    this.id = props.id;
-    this.vendor = props.vendor;
-    this.categoryID = props.categoryID;
-    this.date = props.date;
-    this.subtotal = props.subtotal;
-    this.tax = props.tax;
-    this.total = props.total;
+  constructor(props: WalletProps) {
+    this.walletId = props.walletId;
+    this.userId = props.userId;
+    this.walletName = props.walletName;
+    this._walletBalance = props.walletBalance;
   }
 
-  static new(props: Omit<TransactionDescriptorProps, 'id'>): TransactionDescriptor {
-    return new TransactionDescriptor({
+  static create(props: Omit<WalletProps, "walletId">): Wallet {
+    return new Wallet({
       ...props,
-      id: TransactionID.fromRandom(),
+      walletId: randomUUID(),
     });
   }
+
+  get walletBalance(): number {
+    return this._walletBalance;
+  }
+
+  deposit(amount: number): void {
+    if (amount <= 0) throw new Error("Jumlah deposit harus lebih dari 0");
+    this._walletBalance += amount;
+  }
+
+  
+  withdraw(amount: number): void {
+    if (amount <= 0) throw new Error("Jumlah withdraw harus lebih dari 0");
+    if (amount > this._walletBalance) throw new Error("Saldo tidak mencukupi");
+    this._walletBalance -= amount;
+  }
+
 }
