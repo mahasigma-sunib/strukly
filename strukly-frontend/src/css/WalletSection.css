@@ -1,0 +1,35 @@
+.wallet-list {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 8px;
+  list-style: none;
+  margin: 10px 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  text-align: left;
+}
+
+.wallet-list::-webkit-scrollbar {
+  display: none;
+}
+
+.wallet-list li {
+  min-width: 125px;
+  height: 70px;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 8px;
+  flex: 0 0 auto;
+}
+
+.wallet-list li .item-name {
+  font-size: 1em;
+  margin-bottom: 5px;
+}
+
+.wallet-list > li .item-balance {
+  font-size: 1.2em;
+  font-weight: bold;
+}
