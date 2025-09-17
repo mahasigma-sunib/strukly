@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // // import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useUserInfo from "../store/UserInfoStore";
@@ -13,6 +13,14 @@ function UserRegister() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<String[]>([]);
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  useEffect(() => {
+    if (confirmPassword != password) {
+      setConfirmPasswordError("Password do not match");
+    } else {
+      setConfirmPasswordError("");
+    }
+  }, [password, confirmPassword]);
 
   const handleEmailValidation = () => {
     const { error, success } = emailSchema.safeParse(email);
@@ -31,13 +39,6 @@ function UserRegister() {
       setPasswordError(errors);
     }
   };
-  const handleConfirmPasswordValidation = () => {
-    if (confirmPassword !== password) {
-      setConfirmPasswordError("Password do not match");
-    } else {
-      setConfirmPasswordError("");
-    }
-  };
 
   const navigate = useNavigate();
 
@@ -48,6 +49,34 @@ function UserRegister() {
     if (!email || !password || emailError !== "" || passwordError.length > 0) {
       return; // Stop if there are errors
     }
+
+    // const as = async () => {
+    //   const req = await fetch("/niga/niga", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       password,
+    //       username,
+    //     }),
+    //   });
+    //   const dataa = await req.json();
+    // };
+    
+    // if (!req.ok) {
+    //   // nigga
+    //   return;
+    // }
+    // const res = await req.json();
+
+    // const niggaData = await fetch('/data', {
+    //   method: 'GET',
+    //   header: {
+    //     'Authorization': 'Bearer asdhuqweibed'
+    //   }
+    // })
+
     // try {
     //   const res = await axios.post("", { email, password });
     //   if(res.data && res.data.token) {
@@ -103,7 +132,6 @@ function UserRegister() {
           onChange={(event) => {
             setPassword(event?.target.value);
             handlePasswordValidation();
-            handleConfirmPasswordValidation();
           }}
           required
         />
@@ -123,7 +151,6 @@ function UserRegister() {
           value={confirmPassword}
           onChange={(event) => {
             setConfirmPassword(event?.target.value);
-            handleConfirmPasswordValidation();
           }}
           required
         />
