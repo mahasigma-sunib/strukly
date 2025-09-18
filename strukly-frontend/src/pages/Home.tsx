@@ -1,11 +1,6 @@
 import { useState } from "react";
 import type { WalletType } from "../type/WalletType";
-import type { TransactionType } from "../type/TransactionType";
-import type { TransactionCategoryType } from "../type/TransactionCategoryType";
-// import type { LoginType } from "../type/UserLoginType";
 import useWallet from "../store/WalletStore";
-import useTransactionCategory from "../store/TransactionCategoryStore";
-import useTransaction from "../store/TransactionStore";
 import TransactionCard from "../components/TransactionCard";
 import "../css/WalletSection.css";
 
@@ -14,28 +9,8 @@ function Home() {
   const [newWalletBalance, setNewWalletBalance] = useState("");
   const { addWallet, items: Wallets } = useWallet();
 
-  const { items: TransactionCategories } = useTransactionCategory();
-  const { items: Transactions } = useTransaction();
-
-  function calcTotalBalance(items: WalletType[]) {
-    return items.reduce((sum, wallet) => sum + wallet.balance, 0);
-  }
-  const totalBalance = calcTotalBalance(Wallets);
-
-  function calcTotalExpense(
-    transactions: TransactionType[],
-    categories: TransactionCategoryType[]
-  ) {
-    const categoryMap = new Map();
-    categories.forEach((cat) => {
-      categoryMap.set(cat.id, cat.type);
-    });
-
-    return transactions
-      .filter((tx) => categoryMap.get(tx.categoryId) === "expense")
-      .reduce((sum, tx) => sum + tx.total, 0);
-  }
-  const totalExpense = calcTotalExpense(Transactions, TransactionCategories);
+  // const { items: TransactionCategories } = useTransactionCategory();
+  // const { items: Transactions } = useTransaction();
 
   const [showWalletInputs, setShowWalletInputs] = useState(false);
 
@@ -84,7 +59,17 @@ function Home() {
           </div>
         )}
         <button
-          onClick={() => setShowWalletInputs(true)}>
+          onClick={() => {
+            const wallet: WalletType = {
+              setShowWalletInputs(true)
+              // userId: ;
+              id: crypto.randomUUID(),
+              name: newWalletName,
+              balance: parseInt(newWalletBalance),
+            };
+            addWallet(wallet);
+          }}
+        >
           Add New Wallet
         </button>
         <div style={{ width: "100%", maxWidth: "100vw", overflowX: "auto" }}>
