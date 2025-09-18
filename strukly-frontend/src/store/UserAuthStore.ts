@@ -2,13 +2,13 @@ import { create } from "zustand";
 import type { UserAuthType } from "../type/UserAuthType";
 import axios from "axios";
 
-const useUserAuth = create<UserAuthType>((set) => ({
+const useUserAuth = create<UserAuthType>((set, get) => ({
   token: null,
   userId: "",
   userName: "",
   email: "",
-  isAuth: false,
-  login: async (email/*, password */) => {
+
+  login: async (email /*, password */) => {
     //Fetching and storing token
     // const res = await axios.post("", { email, password });
     // const token = res.data.token;
@@ -29,18 +29,21 @@ const useUserAuth = create<UserAuthType>((set) => ({
     await new Promise((resolve) => setTimeout(resolve, 500));
     const fakeToken = "fake-jwt-token";
     const fakeUserId = "123";
-    const fakeUserName =  "nig"
+    const fakeUserName = "nig";
     const fakeEmail = email;
     set({
       token: fakeToken,
       userId: fakeUserId,
       userName: fakeUserName,
       email: fakeEmail,
-      isAuth: true,
     });
   },
+
+  //use for protectedRoute
+  isAuth: () => !!get().token, // double negation return the boolean value
+
   logout: () => {
-    set({ token: null, userId: null, email: null, isAuth: false });
+    set({ token: null, userId: null, email: null });
     delete axios.defaults.headers.common["Authorization"];
   },
 }));
