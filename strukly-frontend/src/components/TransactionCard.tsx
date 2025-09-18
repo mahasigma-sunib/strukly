@@ -26,7 +26,7 @@ function TransactionCard() {
           const color = transactionType === "income" ? "green" : "red";
 
           return (
-            <li key={transaction.id}>
+            <div key={transaction.id}>
               <Link
                 to={`/history/${transaction.id}`}
                 style={{
@@ -47,7 +47,7 @@ function TransactionCard() {
                   </span>
                 </div>
               </Link>
-            </li>
+            </div>
           );
         })}
       </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { WalletType } from "../type/WalletType";
 import type { TransactionType } from "../type/TransactionType";
 import type { TransactionCategoryType } from "../type/TransactionCategoryType";
+// import type { LoginType } from "../type/UserLoginType";
 import useWallet from "../store/WalletStore";
 import useTransactionCategory from "../store/TransactionCategoryStore";
 import useTransaction from "../store/TransactionStore";
@@ -40,7 +41,8 @@ function Home() {
 
   return (
     <>
-      <h1>Beranda</h1>
+      <h1>Strukly</h1>
+      <h2>Halo, NAMA</h2>
 
       <div>
         {showWalletInputs && (
@@ -97,11 +99,10 @@ function Home() {
         </div>
       </div>
 
-      <div>
+      <div style={{ margin: '1rem 0' }}>
         <h2>Dashboard</h2>
-        <br />
-        <>Total Balance: {totalBalance.toFixed(2)}</> <br />
-        <>Total Expense: {totalExpense.toFixed(2)}</>
+        <div>Total Balance: {totalBalance.toFixed(2)}</div>
+        <div>Total Expense: {totalExpense.toFixed(2)}</div>
         <ul>
           {TransactionCategories.map((item) => (
             <li key={item.id}>
@@ -109,9 +110,11 @@ function Home() {
             </li>
           ))}
         </ul>
+        <br /> 
+        {/* to be fixed later when proper styling for transaction details is added */}
       </div>
 
-      <div>
+      <div style={{ margin: '1rem 0' }}>
         <h2>Recent Transaction</h2>
         <TransactionCard />
       </div>
