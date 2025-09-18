@@ -5,6 +5,7 @@ import axios from "axios";
 const useUserAuth = create<UserAuthType>((set) => ({
   token: null,
   userId: "",
+  userName: "",
   email: "",
   isAuth: false,
   login: async (email/*, password */) => {
@@ -15,10 +16,11 @@ const useUserAuth = create<UserAuthType>((set) => ({
 
     //Fetch user info
     // const userRes = await axios.get("");
-    // const { id, email: userEmail } = userRes.data;
+    // const { id,username: userName, email: userEmail } = userRes.data;
     // set({
     //   token: token,
     //   userId: id,
+    //   userName: username
     //   email: userEmail,
     //   isAuth: true,
     // });
@@ -27,10 +29,12 @@ const useUserAuth = create<UserAuthType>((set) => ({
     await new Promise((resolve) => setTimeout(resolve, 500));
     const fakeToken = "fake-jwt-token";
     const fakeUserId = "123";
+    const fakeUserName =  "nig"
     const fakeEmail = email;
     set({
       token: fakeToken,
       userId: fakeUserId,
+      userName: fakeUserName,
       email: fakeEmail,
       isAuth: true,
     });
