@@ -1,8 +1,8 @@
 export interface UserAuthType {
     login: (email: string, password: string) => Promise<void>
     logout: () => void;
-    // userId: string;
-    // username: string;
-    token: string |  null;
+    userId: string | null;
+    email: string | null;
+    token: string | null;
     isAuth: boolean;
 }

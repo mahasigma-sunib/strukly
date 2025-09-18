@@ -29,7 +29,7 @@ function TransactionDetail() {
         <strong>Date:</strong> {transaction.date.toLocaleString()}
       </p>
       <p>
-        <strong>Category ID:</strong> {transaction.categoryId}
+        <strong>Category:</strong> {transaction.category}
       </p>
       <p>
         <strong>Total:</strong> ${transaction.total.toFixed(2)}
