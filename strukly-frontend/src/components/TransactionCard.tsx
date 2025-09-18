@@ -19,7 +19,7 @@ function TransactionCard() {
 
   return (
     <div>
-      <ul>
+      <div>
         {sortedTransactions.map((transaction: TransactionType) => {
           // const transactionType = categoryMap.get(transaction.categoryId);
           const transactionCategory = transaction.category;
@@ -27,7 +27,7 @@ function TransactionCard() {
           const color = transactionCategory === "income" ? "green" : "red";
 
           return (
-            <li key={transaction.id}>
+            <div key={transaction.id}>
               <Link
                 to={`/history/${transaction.id}`}
                 style={{
@@ -48,10 +48,10 @@ function TransactionCard() {
                   </span>
                 </div>
               </Link>
-            </li>
+            </div>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
