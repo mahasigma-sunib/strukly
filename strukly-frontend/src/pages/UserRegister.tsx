@@ -6,15 +6,17 @@ import useUserAuth from "../store/UserAuthStore";
 // import useUserInfo from "../store/UserAuthStore";
 
 function UserRegister() {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<String[]>([]);
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [loginError, setLoginError] = useState("");
 
+  const navigate = useNavigate();
   const login = useUserAuth((s) => s.login);
 
   useEffect(() => {
@@ -43,11 +45,10 @@ function UserRegister() {
     }
   };
 
-  const navigate = useNavigate();
-
   const handleLogin = async () => {
     handleEmailValidation();
     handlePasswordValidation();
+    setLoginError("");
     if (!email || !password || emailError !== "" || passwordError.length > 0) {
       return; // Stop if there are errors
     }
@@ -56,22 +57,8 @@ function UserRegister() {
       await login(email, password);
       navigate("/");
     } catch {
-      return (
-        <div>Invalid email or password</div>
-      )
+      setLoginError("Invalid email or password");
     }
-
-    // Simulate backend response
-    // const fakeToken = "fake-jwt-token";
-    // const fakeUserAuth = {
-    //   userId: "123",
-    //   username: email,
-    //   token: fakeToken,
-    //   isAuth: true,
-    // };
-    // setUserAuth(fakeUserAuth);
-
-    // navigate("/");
   };
 
   return (
@@ -153,6 +140,9 @@ function UserRegister() {
         >
           Log in
         </button>
+      </div>
+      <div>
+        {loginError != "" && <p style={{ color: "red" }}>{loginError}</p>}
       </div>
     </div>
   );
