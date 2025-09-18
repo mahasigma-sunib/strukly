@@ -79,6 +79,13 @@ function Home() {
                 <div className="item-balance">{item.balance}</div>
               </div>
             ))}
+            <div
+              className="wallet-list-card add-wallet-card"
+              onClick={() => setShowWalletInputs(true)}
+            >
+              <span style={{ fontSize: "2em" }}>+</span>
+              <span>Add Wallet</span>
+            </div>
           </div>
         </div>
       </div>
