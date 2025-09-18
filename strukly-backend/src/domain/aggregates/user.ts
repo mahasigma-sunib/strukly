@@ -1,10 +1,10 @@
 export default class User {
   readonly id: string;
-  readonly email: string;
-  readonly name: string;
-  readonly hashedPassword: string;
+  email: string;
+  name: string;
+  hashedPassword: string;
   readonly createdAt: Date;
-  readonly updatedAt: Date;
+  updatedAt: Date;
 
   //construct user
   constructor(props: {
@@ -22,4 +22,15 @@ export default class User {
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
   }
+
+  public updateProfile(data: { name?: string; email?: string; password?: string}) {
+    if (data.name !== undefined) {
+      this.name = data.name;
+    }
+    if (data.email !== undefined) {
+      this.email = data.email;
+    }
+    this.updatedAt = new Date();
+  }
 }
+
