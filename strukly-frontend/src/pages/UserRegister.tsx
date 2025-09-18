@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-// // import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useUserInfo from "../store/UserInfoStore";
 import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
+import useUserAuth from "../store/UserAuthStore";
+// // import axios from "axios";
+// import useUserInfo from "../store/UserAuthStore";
 
 function UserRegister() {
   const [username, setUsername] = useState("");
@@ -13,6 +14,8 @@ function UserRegister() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<String[]>([]);
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const login = useUserAuth((s) => s.login);
 
   useEffect(() => {
     if (confirmPassword != password) {
@@ -42,7 +45,6 @@ function UserRegister() {
 
   const navigate = useNavigate();
 
-  const setUserInfo = useUserInfo((state) => state.setUserInfo);
   const handleLogin = async () => {
     handleEmailValidation();
     handlePasswordValidation();
@@ -50,49 +52,26 @@ function UserRegister() {
       return; // Stop if there are errors
     }
 
-    // const as = async () => {
-    //   const req = await fetch("/niga/niga", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       password,
-    //       username,
-    //     }),
-    //   });
-    //   const dataa = await req.json();
-    // };
-    
-    // if (!req.ok) {
-    //   // nigga
-    //   return;
-    // }
-    // const res = await req.json();
-
-    // const niggaData = await fetch('/data', {
-    //   method: 'GET',
-    //   header: {
-    //     'Authorization': 'Bearer asdhuqweibed'
-    //   }
-    // })
-
-    // try {
-    //   const res = await axios.post("", { email, password });
-    //   if(res.data && res.data.token) {
-    //     localStorage.setItem("jwt_token", res.data.token);
-    //     setUserInfo(res.data.userInfo);
-    //     navigate("/");
-    //   }
-    // } catch (err) {}
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch {
+      return (
+        <div>Invalid email or password</div>
+      )
+    }
 
     // Simulate backend response
-    const fakeToken = "fake-jwt-token";
-    const fakeUserInfo = { userId: "123", username: email, token: fakeToken};
+    // const fakeToken = "fake-jwt-token";
+    // const fakeUserAuth = {
+    //   userId: "123",
+    //   username: email,
+    //   token: fakeToken,
+    //   isAuth: true,
+    // };
+    // setUserAuth(fakeUserAuth);
 
-    // localStorage.setItem("jwt_token", fakeToken);
-    setUserInfo(fakeUserInfo);
-    navigate("/");
+    // navigate("/");
   };
 
   return (

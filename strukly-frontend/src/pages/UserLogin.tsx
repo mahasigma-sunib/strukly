@@ -1,16 +1,8 @@
 import { useState } from "react";
 // import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useUserInfo from "../store/UserInfoStore";
 import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
-
-// const emailSchema = z.email();
-// const passwordSchema = z
-//   .string()
-//   .min(8, "Password must be at least 8 characters")
-//   .regex(/[A-Z]/, "Password must contain at least one upperercase letter")
-//   .regex(/\d/, "Password must contain at least one numbcase letter")
-//   .regex(/[a-z]/, "Password must contain at least one lower");
+import useUserAuth from "../store/UserAuthStore";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -18,6 +10,9 @@ function UserLogin() {
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<string[]>([]);
+
+  const navigate = useNavigate();
+  const login = useUserAuth((s) => s.login);
 
   const handleEmailValidation = () => {
     const { error, success } = emailSchema.safeParse(email);
@@ -38,8 +33,6 @@ function UserLogin() {
     }
   };
 
-  const navigate = useNavigate();
-  const setUserInfo = useUserInfo((state) => state.setUserInfo);
   const handleLogin = async () => {
     handleEmailValidation();
     handlePasswordValidation();
@@ -47,22 +40,26 @@ function UserLogin() {
       return; // Stop if there are errors
     }
 
-    // try {
-    //   const res = await axios.post("", { email, password });
-    //   if(res.data && res.data.token) {
-    //     localStorage.setItem("jwt_token", res.data.token);
-    //     setUserInfo(res.data.userInfo);
-    //     navigate("/");
-    //   }
-    // } catch (err) {}
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch {
+      return (
+        <div>Invalid email or password</div>
+      )
+    }
 
     // Simulate backend response
-    const fakeToken = "fake-jwt-token";
-    const fakeUserInfo = { userId: "123", username: email, token: fakeToken};
+    // const fakeToken = "fake-jwt-token";
+    // const fakeUserAuth = {
+    //   userId: "123",
+    //   username: email,
+    //   token: fakeToken,
+    //   isAuth: true,
+    // };
+    // setUserAuth(fakeUserAuth);
 
-    // localStorage.setItem("jwt_token", fakeToken);
-    setUserInfo(fakeUserInfo);
-    navigate("/");
+    // navigate("/");
   };
 
   return (
