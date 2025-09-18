@@ -13,14 +13,16 @@ const App = () => {
         <Link to="/">Home</Link> |{' '}
         <Link to="/History">History</Link> |{' '}
       </nav>
-        
-      <Routes className='route-container'>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<UserLogin />} />
-        <Route path="/register" element={<UserRegister />} />
-        <Route path="/History" element={<TransactionHistory />} />
-        <Route path="/History/:id" element={<TransactionDetail />} />
-      </Routes>
+      
+      <div className="route-container">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<UserLogin />} />
+          <Route path="/register" element={<UserRegister />} />
+          <Route path="/History" element={<TransactionHistory />} />
+          <Route path="/History/:id" element={<TransactionDetail />} />
+        </Routes>
+      </div>
     </div>
   );
 };
