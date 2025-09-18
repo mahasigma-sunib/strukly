@@ -12,6 +12,7 @@ import "./App.css";
 
 const App = () => {
   const token = useUserAuth((s) => s.token);
+  const logout = useUserAuth((s) => s.logout);
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -37,6 +38,7 @@ const App = () => {
           </Route>
         </Routes>
       </div>
+      <button onClick={logout}>Log Out</button>
     </div>
   );
 };

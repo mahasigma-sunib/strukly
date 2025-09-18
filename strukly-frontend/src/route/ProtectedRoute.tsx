@@ -3,7 +3,7 @@ import useUserAuth from "../store/UserAuthStore";
 
 export function ProtectedRoute(){
     const isAuth = useUserAuth((s) => s.isAuth);
-    if (!isAuth) {
+    if (!isAuth()) {
         return <Navigate to='/login' replace/>
     }
     return <Outlet/> //child route
