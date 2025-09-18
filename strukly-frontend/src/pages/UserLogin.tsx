@@ -7,9 +7,9 @@ import useUserAuth from "../store/UserAuthStore";
 function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<string[]>([]);
+  const [loginError, setLoginError] = useState("");
 
   const navigate = useNavigate();
   const login = useUserAuth((s) => s.login);
@@ -36,6 +36,8 @@ function UserLogin() {
   const handleLogin = async () => {
     handleEmailValidation();
     handlePasswordValidation();
+    setLoginError("");
+
     if (!email || !password || emailError !== "" || passwordError.length > 0) {
       return; // Stop if there are errors
     }
@@ -44,22 +46,8 @@ function UserLogin() {
       await login(email, password);
       navigate("/");
     } catch {
-      return (
-        <div>Invalid email or password</div>
-      )
+      setLoginError("Invalid email or password");
     }
-
-    // Simulate backend response
-    // const fakeToken = "fake-jwt-token";
-    // const fakeUserAuth = {
-    //   userId: "123",
-    //   username: email,
-    //   token: fakeToken,
-    //   isAuth: true,
-    // };
-    // setUserAuth(fakeUserAuth);
-
-    // navigate("/");
   };
 
   return (
@@ -114,6 +102,9 @@ function UserLogin() {
         >
           Register here
         </button>
+      </div>
+      <div>
+        {loginError != "" && <p style={{ color: "red" }}>{loginError}</p>}
       </div>
     </div>
   );
