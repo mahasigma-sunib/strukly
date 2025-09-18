@@ -4,6 +4,7 @@ import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
 import useUserAuth from "../store/UserAuthStore";
 // // import axios from "axios";
 // import useUserInfo from "../store/UserAuthStore";
+import "../css/UserLoginOrRegister.css";
 
 function UserRegister() {
   const [email, setEmail] = useState("");
@@ -62,12 +63,15 @@ function UserRegister() {
   };
 
   return (
-    <div>
+    <div className="register-container">
+      <h1>Strukly</h1>
+
       <div>
-        <label htmlFor="username">Username:</label>
+        {/* <label htmlFor="username">Username:</label> */}
         <input
           type="username"
           id="username"
+          placeholder="Username"
           value={username}
           onChange={(event) => {
             setUsername(event?.target.value);
@@ -76,10 +80,11 @@ function UserRegister() {
         />
       </div>
       <div>
-        <label htmlFor="email">Email:</label>
+        {/* <label htmlFor="email">Email:</label> */}
         <input
           type="email"
           id="email"
+          placeholder="Email"
           value={email}
           onChange={(event) => {
             setEmail(event?.target.value);
@@ -90,10 +95,11 @@ function UserRegister() {
         {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
       </div>
       <div>
-        <label htmlFor="password">Password:</label>
+        {/* <label htmlFor="password">Password:</label> */}
         <input
           type="text"
           id="password"
+          placeholder="Password"
           value={password}
           onChange={(event) => {
             setPassword(event?.target.value);
@@ -110,10 +116,11 @@ function UserRegister() {
         )}
       </div>
       <div>
-        <label htmlFor="confirmPassword">Confirm Password:</label>
+        {/* <label htmlFor="confirmPassword">Confirm Password:</label> */}
         <input
           type="text"
           id="confirmPassword"
+          placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(event) => {
             setConfirmPassword(event?.target.value);
@@ -125,8 +132,8 @@ function UserRegister() {
         )}
       </div>
       <button onClick={handleLogin}>Register</button>
-      <div style={{ marginTop: "1rem" }}>
-        <span>Already have an account? </span>
+      <div>
+        <span>Already have an account?</span>
         <button
           type="button"
           style={{
