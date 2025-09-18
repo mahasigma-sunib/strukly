@@ -4,6 +4,7 @@ import JwtService from '../services/jwt_service';
 import PrismaUserRepository from '../repositories/prisma_user_repository';
 import RegisterUserUseCase from '../../application/use_cases/register_user';
 import LoginUserUseCase from '../../application/use_cases/user_login';
+import UpdateUserProfileUseCase from '../../application/use_cases/update_user';
 import AuthController from '../controllers/auth_controller';
 import ProfileController from '../controllers/profile_controller';
 import { authMiddleware } from '../middleware/auth_middleware';
@@ -14,6 +15,7 @@ const tokenService = new JwtService();
 const userRepository = new PrismaUserRepository();
 const registerUserUseCase = new RegisterUserUseCase(userRepository, hashingService);
 const loginUserUseCase = new LoginUserUseCase(userRepository, hashingService);
+const updateUserProfileUseCase = new UpdateUserProfileUseCase(userRepository)
 
 // inject dependency
 const authController = new AuthController(
@@ -21,7 +23,7 @@ const authController = new AuthController(
   loginUserUseCase,
   tokenService
 );
-const profileController = new ProfileController();
+const profileController = new ProfileController(updateUserProfileUseCase);
 
 //setup router
 const router = Router();
