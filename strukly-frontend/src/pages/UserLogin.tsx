@@ -1,0 +1,113 @@
+import { useState } from "react";
+// import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
+import useUserAuth from "../store/UserAuthStore";
+
+function UserLogin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState<string[]>([]);
+  const [loginError, setLoginError] = useState("");
+
+  const navigate = useNavigate();
+  const login = useUserAuth((s) => s.login);
+
+  const handleEmailValidation = () => {
+    const { error, success } = emailSchema.safeParse(email);
+    if (success) {
+      setEmailError("");
+    } else {
+      setEmailError(error.issues[0].message);
+    }
+  };
+
+  const handlePasswordValidation = () => {
+    const { error, success } = passwordSchema.safeParse(password);
+    if (success) {
+      setPasswordError([]);
+    } else {
+      const errors = error.issues.map((issue) => issue.message);
+      setPasswordError(errors);
+    }
+  };
+
+  const handleLogin = async () => {
+    handleEmailValidation();
+    handlePasswordValidation();
+    setLoginError("");
+
+    if (!email || !password || emailError !== "" || passwordError.length > 0) {
+      return; // Stop if there are errors
+    }
+
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch {
+      setLoginError("Invalid email or password");
+    }
+  };
+
+  return (
+    <div>
+      <div>
+        <label htmlFor="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(event) => {
+            setEmail(event?.target.value);
+            handleEmailValidation();
+          }}
+          required
+        />
+        {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
+      </div>
+      <div>
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(event) => {
+            setPassword(event?.target.value);
+            handlePasswordValidation();
+          }}
+          required
+        />
+        {passwordError.length > 0 && (
+          <div style={{ color: "red" }}>
+            {passwordError.map((error, index) => (
+              <p key={index}>{error}</p>
+            ))}
+          </div>
+        )}
+      </div>
+      <button onClick={handleLogin}>Log in</button>
+      <div style={{ marginTop: "1rem" }}>
+        <span>Don&apos;t have an account? </span>
+        <button
+          type="button"
+          style={{
+            color: "aqua",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            textDecoration: "underline",
+          }}
+          onClick={() => navigate("/register")}
+        >
+          Register here
+        </button>
+      </div>
+      <div>
+        {loginError != "" && <p style={{ color: "red" }}>{loginError}</p>}
+      </div>
+    </div>
+  );
+}
+
+export default UserLogin;

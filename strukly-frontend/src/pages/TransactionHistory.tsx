@@ -1,4 +1,4 @@
-import TransactionCard from "../components/transactionCard";
+import TransactionCard from "../components/TransactionCard";
 
 function TransactionHistory() {
   return (
