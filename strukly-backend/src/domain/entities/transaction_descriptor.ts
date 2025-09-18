@@ -1,38 +1,74 @@
+import Money from "../values/money";
+import TransactionCategory from "../values/transaction_category";
 import TransactionID from "../values/transaction_id"
+import UserID from "../values/user_id";
 
-export type TransactionDescriptorProps = {
+export interface ITransactionDescriptorEditable {
+  dateTime: Date;
+
+  vendorName: string;
+  category: TransactionCategory;
+  subtotalAmount: Money;
+  taxAmount: Money;
+  discountAmount: Money;
+  serviceAmount: Money;
+
+  walletID: string; // WalletID not implemented
+}
+
+export interface ITransactionDescriptorBuider extends ITransactionDescriptorEditable {
+  userID: UserID;
+
+}
+
+export interface ITransactionDescriptorProps extends ITransactionDescriptorBuider {
   id: TransactionID;
-  vendor: string;
-  categoryID: string;
-  date: Date;
-  subtotal: number;
-  tax: number;
-  total: number;
+
+  totalAmount: Money;
 }
 
 export default class TransactionDescriptor {
   public readonly id: TransactionID;
-  public readonly vendor: string;
-  public readonly categoryID: string;
-  public readonly date: Date;
-  public readonly subtotal: number;
-  public readonly tax: number;
-  public readonly total: number;
 
-  constructor(props: TransactionDescriptorProps) {
+  public readonly dateTime: Date;
+  public readonly vendorName: string;
+  public readonly category: TransactionCategory;
+  public readonly subtotalAmount: Money;
+  public readonly taxAmount: Money;
+  public readonly discountAmount: Money;
+  public readonly serviceAmount: Money;
+
+  public readonly totalAmount: Money;
+
+  public readonly userID: UserID;
+  public readonly walletID: string;
+
+  constructor(props: ITransactionDescriptorProps) {
     this.id = props.id;
-    this.vendor = props.vendor;
-    this.categoryID = props.categoryID;
-    this.date = props.date;
-    this.subtotal = props.subtotal;
-    this.tax = props.tax;
-    this.total = props.total;
+    this.dateTime = props.dateTime;
+    this.vendorName = props.vendorName;
+    this.category = props.category;
+    this.subtotalAmount = props.subtotalAmount;
+    this.taxAmount = props.taxAmount;
+    this.discountAmount = props.discountAmount;
+    this.serviceAmount = props.serviceAmount;
+
+    this.totalAmount = props.totalAmount;
+
+    this.userID = props.userID;
+    this.walletID = props.walletID;
   }
 
-  static new(props: Omit<TransactionDescriptorProps, 'id'>): TransactionDescriptor {
+  static new(props: ITransactionDescriptorBuider): TransactionDescriptor {
     return new TransactionDescriptor({
       ...props,
       id: TransactionID.fromRandom(),
+      totalAmount: Money.sum([
+        props.subtotalAmount,
+        props.taxAmount,
+        props.serviceAmount,
+        Money.negate(props.discountAmount)
+      ])
     });
   }
 }
