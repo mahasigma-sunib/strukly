@@ -23,7 +23,7 @@ const authController = new AuthController(
   loginUserUseCase,
   tokenService
 );
-const profileController = new ProfileController(updateUserProfileUseCase);
+const profileController = new ProfileController(updateUserProfileUseCase, userRepository);
 
 //setup router
 const router = Router();
