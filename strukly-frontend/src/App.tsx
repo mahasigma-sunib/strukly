@@ -10,7 +10,7 @@ const App = () => {
 
   return (
     <div>
-      <nav style={{ margin: '1rem 1rem 0 1rem' }}>
+      <nav className='nav-bar'>
         <Link to="/">Home</Link> |{' '}
         <Link to="/History">History</Link> |{' '}
       </nav>

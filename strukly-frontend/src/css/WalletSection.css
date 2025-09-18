@@ -63,6 +63,20 @@
   box-shadow: 0 0 16px rgba(0,0,0,0.2);
 }
 
+.wallet-inputs input {
+  width: 60%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.wallet-inputs input:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
 .wallet-inputs button {
   margin-top: 16px;
   padding: 10px 20px;
