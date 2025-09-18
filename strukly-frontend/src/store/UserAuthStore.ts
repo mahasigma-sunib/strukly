@@ -26,7 +26,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
     // });
 
     // Simulate backend response
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     const fakeToken = "fake-jwt-token";
     const fakeUserId = "123";
     const fakeUserName = "nig";
