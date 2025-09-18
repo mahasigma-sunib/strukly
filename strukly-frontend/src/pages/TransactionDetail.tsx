@@ -17,7 +17,7 @@ function TransactionDetail() {
   }
 
   return (
-    <div>
+    <div style={{paddingLeft: '1rem', paddingRight: '1rem', width: '100%', margin: '0 auto', boxSizing: 'border-box'}}>
       <h1>Transaction Details</h1>
       <p>
         <strong>ID:</strong> {transaction.id}
@@ -36,14 +36,14 @@ function TransactionDetail() {
       </p>
 
       <h3>Items:</h3>
-      <ul>
+      <div>
         {transaction.items.map((item, index) => (
-          <li key={index}>
+          <div key={index}>
             {item.quantity} x {item.itemName} ($
             {item.singleItemPrice.toFixed(2)})
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
 
       <Link to="/history">Go back to history</Link>
     </div>
