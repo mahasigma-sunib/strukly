@@ -7,7 +7,7 @@ const useUserAuth = create<UserAuthType>((set) => ({
   userId: "",
   email: "",
   isAuth: false,
-  login: async ({/*email, password */}) => {
+  login: async (email/*, password */) => {
     //Fetching and storing token
     // const res = await axios.post("", { email, password });
     // const token = res.data.token;
