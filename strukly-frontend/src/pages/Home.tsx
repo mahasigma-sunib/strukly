@@ -2,11 +2,6 @@ import { useState } from "react";
 import type { WalletType } from "../type/WalletType";
 import useWallet from "../store/WalletStore";
 import TransactionCard from "../components/TransactionCard";
-// import useTransaction from "../store/TransactionStore";
-// import type { TransactionType } from "../type/TransactionType";
-// import type { TransactionCategoryType } from "../type/TransactionCategoryType";
-// import useTransactionCategory from "../store/TransactionCategoryStore";
-// import useUserAuth from "../store/UserAuthStore";
 
 function Home() {
   const [newWalletName, setNewWalletName] = useState("");
