@@ -1,5 +1,5 @@
 import React from "react";
-import "../css/WalletPopup.css";
+import "../../css/WalletPopUp.css";
 
 type WalletPopupProps = {
   visible: boolean;
