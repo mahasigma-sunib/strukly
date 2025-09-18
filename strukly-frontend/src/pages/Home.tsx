@@ -74,10 +74,10 @@ function Home() {
         <div style={{ width: "100%", maxWidth: "100vw", overflowX: "auto" }}>
           <div className="wallet-list">
             {Wallets.map((item) => (
-              <li key={item.id}>
+              <div className="wallet-list-card" key={item.id}>
                 <div className="item-name">{item.name}</div>
                 <div className="item-balance">{item.balance}</div>
-              </li>
+              </div>
             ))}
           </div>
         </div>

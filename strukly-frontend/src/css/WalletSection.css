@@ -15,7 +15,7 @@
   display: none;
 }
 
-.wallet-list li {
+.wallet-list-card{
   min-width: 125px;
   height: 70px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
@@ -24,12 +24,12 @@
   flex: 0 0 auto;
 }
 
-.wallet-list li .item-name {
+.wallet-list-card .item-name {
   font-size: 1em;
   margin-bottom: 5px;
 }
 
-.wallet-list li .item-balance {
+.wallet-list-card .item-balance {
   font-size: 1.2em;
   font-weight: bold;
 }
