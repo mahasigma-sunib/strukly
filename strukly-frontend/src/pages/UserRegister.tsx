@@ -88,6 +88,7 @@ function UserRegister() {
             setEmail(event?.target.value);
             handleEmailValidation();
           }}
+          onBlur={handleEmailValidation}
           required
         />
         {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
@@ -102,6 +103,7 @@ function UserRegister() {
             setPassword(event?.target.value);
             handlePasswordValidation();
           }}
+          onBlur={handlePasswordValidation}
           required
         />
         {passwordError.length > 0 && (

@@ -13,7 +13,28 @@ export default class PrismaUserRepository implements UserRepository {
     if (!dbUser) {
       return null;
     }
+  
 
+    return new User({
+      id: dbUser.id,
+      email: dbUser.email,
+      name: dbUser.name,
+      hashedPassword: dbUser.hashedPassword,
+      createdAt: dbUser.createdAt,
+      updatedAt: dbUser.updatedAt
+    })
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const dbUser= await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!dbUser) {
+      return null;
+    }
+  
+    
     return new User({
       id: dbUser.id,
       email: dbUser.email,
