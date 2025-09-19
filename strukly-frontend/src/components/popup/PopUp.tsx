@@ -37,6 +37,7 @@ const WalletPopup: React.FC<WalletPopupProps> = ({
           placeholder="Wallet Name"
           value={walletName}
           onChange={(e) => onNameChange(e.target.value)}
+
         />
         <input
           type="number"
@@ -44,6 +45,9 @@ const WalletPopup: React.FC<WalletPopupProps> = ({
           value={walletBalance}
           onChange={(e) => onBalanceChange(e.target.value)}
         />
+        {/* <div>
+          {addWalletError != "" && <p style={{ color: "red" }}>{addWalletError}</p>}
+        </div> */}
         <button onClick={onAddWallet}>Add New Wallet</button>
       </div>
     </div>

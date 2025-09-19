@@ -67,7 +67,6 @@ function UserRegister() {
       <h1>Strukly</h1>
 
       <div>
-        {/* <label htmlFor="username">Username:</label> */}
         <input
           type="username"
           id="username"
@@ -80,7 +79,6 @@ function UserRegister() {
         />
       </div>
       <div>
-        {/* <label htmlFor="email">Email:</label> */}
         <input
           type="email"
           id="email"
@@ -95,7 +93,6 @@ function UserRegister() {
         {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
       </div>
       <div>
-        {/* <label htmlFor="password">Password:</label> */}
         <input
           type="text"
           id="password"
@@ -116,7 +113,6 @@ function UserRegister() {
         )}
       </div>
       <div>
-        {/* <label htmlFor="confirmPassword">Confirm Password:</label> */}
         <input
           type="text"
           id="confirmPassword"

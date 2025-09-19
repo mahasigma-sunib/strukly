@@ -56,7 +56,6 @@ function UserLogin() {
       <h1>Strukly</h1>
 
       <div>
-        {/* <label htmlFor="email">Email:</label> */}
         <input
           type="email"
           id="email"
@@ -71,7 +70,6 @@ function UserLogin() {
         {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
       </div>
       <div>
-        {/* <label htmlFor="password">Password:</label> */}
         <input
           type="password"
           id="password"
