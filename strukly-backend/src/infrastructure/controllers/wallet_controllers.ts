@@ -1,6 +1,6 @@
 // src/infrastructure/controllers/wallet.controller.ts (Contoh)
 import { CreateWallet } from "../../application/use_cases/create_wallet";
-import  WalletRepositoryPrisma   from "../repositories/wallet_repository_prisma";
+import  WalletRepositoryPrisma   from "../repositories/prisma_wallet_repository";
 import { PrismaClient } from "@prisma/client";
 
 // Injeksi dependensi
@@ -19,7 +19,6 @@ async function createWalletHandler(req: Request, res: Response) {
       walletName,
       balance,
       transactionMethod,
-      walletCategory,
     });
     res.status(201).json(newWallet);
   } catch (error) {

@@ -1,52 +1,41 @@
 // src/domain/entities/wallet.ts
 
+import Money from "../values/money";
+import TransactionMethod from "../values/transaction_method";
+import WalletID from "../values/wallet_id";
+
 export type WalletProps = {
   // Gunakan nama yang konsisten dengan Prisma
-  id: number;
-  userId: string;
+  id: WalletID;
+  userID: string;
   walletName: string;
-  balance: number;
-  transactionMethod: string;
-  walletCategory: string;
+  balance: Money;
+  transactionMethod: TransactionMethod;
 };
 
 export default class Wallet {
-  public readonly id: number;
-  public readonly userId: string;
+  public readonly id: WalletID;
+  public readonly userID: string;
   public walletName: string;
-  public transactionMethod: string;
-  public walletCategory: string;
-  private _balance: number;
+  public transactionMethod: TransactionMethod;
+  private _balance: Money;
 
   constructor(props: WalletProps) {
     this.id = props.id;
-    this.userId = props.userId;
+    this.userID = props.userID;
     this.walletName = props.walletName;
     this._balance = props.balance;
     this.transactionMethod = props.transactionMethod;
-    this.walletCategory = props.walletCategory;
   }
 
    static create(props: Omit<WalletProps, "id">): Wallet {
     return new Wallet({
       ...props,
-      id: 0,
+      id: WalletID.fromRandom(),
     });
   }
 
-  // Tambahkan metode fromPrisma untuk konversi dari objek Prisma
-  static fromPrisma(data: any): Wallet {
-    return new Wallet({
-      id: data.id,
-      userId: data.user_id,
-      walletName: data.wallet_name,
-      balance: data.balance,
-      transactionMethod: data.transaction_method,
-      walletCategory: data.wallet_category,
-    });
-  }
-
-  get balance(): number {
+  get balance(): Money {
     return this._balance;
   }
 }
