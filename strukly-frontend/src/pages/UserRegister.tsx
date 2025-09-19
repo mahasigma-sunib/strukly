@@ -53,7 +53,7 @@ function UserRegister() {
     if (!username || !email || !password || emailError !== "" || passwordError.length > 0) {
       return; // Stop if there are errors
     }
-    
+
     try {
       await register(username, email, password);
       navigate("/login");
@@ -94,7 +94,7 @@ function UserRegister() {
       <div>
         <label htmlFor="password">Password:</label>
         <input
-          type="text"
+          type="password"
           id="password"
           value={password}
           onChange={(event) => {
@@ -115,7 +115,7 @@ function UserRegister() {
       <div>
         <label htmlFor="confirmPassword">Confirm Password:</label>
         <input
-          type="text"
+          type="password"
           id="confirmPassword"
           value={confirmPassword}
           onChange={(event) => {

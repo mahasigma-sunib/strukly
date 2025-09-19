@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./route/ProtectedRoute";
 import axios from "axios";
 import Home from "./pages/Home";
@@ -11,6 +11,10 @@ import useUserAuth from "./store/UserAuthStore";
 import "./App.css";
 
 const App = () => {
+  const location = useLocation();
+  const isProtectedPath =
+    location.pathname !== "/login" && location.pathname !== "/register";
+
   const token = useUserAuth((s) => s.token);
   const logout = useUserAuth((s) => s.logout);
   useEffect(() => {
@@ -23,9 +27,14 @@ const App = () => {
 
   return (
     <div>
-      <nav className="nav-bar">
-        <Link to="/">Home</Link> | <Link to="/History">History</Link> |{" "}
-      </nav>
+      {isProtectedPath && (
+        <nav className="nav-bar">
+          <Link to="/">Home</Link> | <Link to="/History">History</Link> |{" "}
+          <Link to="" onClick={logout}>
+            Log out
+          </Link>
+        </nav>
+      )}
 
       <div className="route-container">
         <Routes>
@@ -38,7 +47,6 @@ const App = () => {
           </Route>
         </Routes>
       </div>
-      <button onClick={logout}>Log Out</button>
     </div>
   );
 };

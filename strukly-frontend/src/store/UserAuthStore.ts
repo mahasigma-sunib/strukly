@@ -9,17 +9,17 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   email: "",
 
   register: async (username, email, password) => {
-     await axios.post("/auth/register", {username, email, password});
+     await axios.post("http://localhost:3000/api/auth/register", {username, email, password});
   },
 
   login: async (email, password) => {
     // Fetching and storing token
-    const res = await axios.post("/auth/login", { email, password });
+    const res = await axios.post("/api/auth/login", { email, password });
     const token = res.data.token;
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     // Fetch user info
-    const userRes = await axios.get("/auth/profile");
+    const userRes = await axios.get("/api/auth/profile");
     const { id, username: userName, email: userEmail } = userRes.data;
     set({
       token: token,
