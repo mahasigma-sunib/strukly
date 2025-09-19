@@ -8,35 +8,39 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   userName: "",
   email: "",
 
-  login: async (email /*, password */) => {
-    //Fetching and storing token
-    // const res = await axios.post("", { email, password });
-    // const token = res.data.token;
-    // axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  register: async (username, email, password) => {
+     await axios.post("/auth/register", {username, email, password});
+  },
 
-    //Fetch user info
-    // const userRes = await axios.get("");
-    // const { id,username: userName, email: userEmail } = userRes.data;
-    // set({
-    //   token: token,
-    //   userId: id,
-    //   userName: username
-    //   email: userEmail,
-    //   isAuth: true,
-    // });
+  login: async (email, password) => {
+    // Fetching and storing token
+    const res = await axios.post("/auth/login", { email, password });
+    const token = res.data.token;
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+    // Fetch user info
+    const userRes = await axios.get("/auth/profile");
+    const { id, username: userName, email: userEmail } = userRes.data;
+    set({
+      token: token,
+      userId: id,
+      userName: userName,
+      email: userEmail,
+      // isAuth: true,
+    });
 
     // Simulate backend response
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const fakeToken = "fake-jwt-token";
-    const fakeUserId = "123";
-    const fakeUserName = "nig";
-    const fakeEmail = email;
-    set({
-      token: fakeToken,
-      userId: fakeUserId,
-      userName: fakeUserName,
-      email: fakeEmail,
-    });
+    // await new Promise((resolve) => setTimeout(resolve, 300));
+    // const fakeToken = "fake-jwt-token";
+    // const fakeUserId = "123";
+    // const fakeUserName = "nig";
+    // const fakeEmail = email;
+    // set({
+    //   token: fakeToken,
+    //   userId: fakeUserId,
+    //   userName: fakeUserName,
+    //   email: fakeEmail,
+    // });
   },
 
   //use for protectedRoute
