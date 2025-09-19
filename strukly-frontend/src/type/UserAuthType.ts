@@ -5,5 +5,5 @@ export interface UserAuthType {
     userName: string | null;
     email: string | null;
     token: string | null;
-    isAuth: boolean;
+    isAuth: () => boolean;
 }
