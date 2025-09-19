@@ -10,10 +10,19 @@ const WalletList: React.FC = () => {
   const [showWalletInputs, setShowWalletInputs] = useState(false);
   const [newWalletName, setNewWalletName] = useState("");
   const [newWalletBalance, setNewWalletBalance] = useState("");
+  const [walletError, setWalletError] = useState<string | null>(null);
 
   const handleAddWallet = () => {
     if (newWalletName.trim() === "" || newWalletBalance.trim() === "") {
-      alert("Please fill in both wallet name and balance.");
+      setWalletError("Please fill in all fields");
+      return;
+    }
+    if (isNaN(Number(newWalletBalance)) || Number(newWalletBalance) < 0) {
+      setWalletError("Balance must be a non-negative number");
+      return;
+    }
+    if (Wallets.some((wallet) => wallet.name === newWalletName)) {
+      setWalletError("Wallet name must be unique");
       return;
     }
 
@@ -34,6 +43,7 @@ const WalletList: React.FC = () => {
         visible={showWalletInputs}
         walletName={newWalletName}
         walletBalance={newWalletBalance}
+        walletError={walletError || undefined}
         onNameChange={setNewWalletName}
         onBalanceChange={setNewWalletBalance}
         onAddWallet={handleAddWallet}
@@ -46,7 +56,10 @@ const WalletList: React.FC = () => {
           ))}
           <div
             className="wallet-list-card add-wallet-card"
-            onClick={() => setShowWalletInputs(true)}
+            onClick={() => {
+              setWalletError(null);
+              setShowWalletInputs(true);
+            }}
           >
             <span style={{ fontSize: "2em" }}>+</span>
             <span>Add Wallet</span>

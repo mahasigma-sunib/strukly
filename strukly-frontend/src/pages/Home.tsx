@@ -9,14 +9,29 @@ import "../css/WalletPopUp.css";
 
 
 function Home() {
+  const { items: Wallets } = useWallet();
   const [newWalletName, setNewWalletName] = useState("");
   const [newWalletBalance, setNewWalletBalance] = useState("");
   const { addWallet } = useWallet();
 
   const [showWalletInputs, setShowWalletInputs] = useState(false);
+  const [walletError, setWalletError] = useState<string | null>(null);
   const username = useUserAuth((s) => s.userName)
 
   const handleAddWallet = () => {
+    if (newWalletName.trim() === "" || newWalletBalance.trim() === "") {
+      setWalletError("Please fill in all fields");
+      return;
+    }
+    if (isNaN(Number(newWalletBalance)) || Number(newWalletBalance) < 0) {
+      setWalletError("Balance must be a non-negative number");
+      return;
+    }
+    if (Wallets.some((wallet) => wallet.name === newWalletName)) {
+      setWalletError("Wallet name must be unique");
+      return;
+    }
+
     const wallet: WalletType = {
       id: crypto.randomUUID(),
       name: newWalletName,
@@ -38,6 +53,7 @@ function Home() {
           visible={showWalletInputs}
           walletName={newWalletName}
           walletBalance={newWalletBalance}
+          walletError={walletError || undefined}
           onNameChange={setNewWalletName}
           onBalanceChange={setNewWalletBalance}
           onAddWallet={handleAddWallet}
@@ -45,14 +61,8 @@ function Home() {
         />
         <button
           onClick={() => {
+            setWalletError(null);
             setShowWalletInputs(true);
-            const wallet: WalletType = {
-              // userId: ;
-              id: crypto.randomUUID(),
-              name: newWalletName,
-              balance: parseInt(newWalletBalance),
-            };
-            addWallet(wallet);
           }}
         >
           Add New Wallet

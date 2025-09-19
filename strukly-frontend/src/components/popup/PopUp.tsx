@@ -5,6 +5,7 @@ type WalletPopupProps = {
   visible: boolean;
   walletName: string;
   walletBalance: string;
+  walletError?: string;
   onNameChange: (value: string) => void;
   onBalanceChange: (value: string) => void;
   onAddWallet: () => void;
@@ -15,6 +16,7 @@ const WalletPopup: React.FC<WalletPopupProps> = ({
   visible,
   walletName,
   walletBalance,
+  walletError,
   onNameChange,
   onBalanceChange,
   onAddWallet,
@@ -36,18 +38,23 @@ const WalletPopup: React.FC<WalletPopupProps> = ({
           type="text"
           placeholder="Wallet Name"
           value={walletName}
-          onChange={(e) => onNameChange(e.target.value)}
-
+          onChange={(e) => {
+            onNameChange(e.target.value);
+            if (walletError) onNameChange(e.target.value);
+          }}
         />
         <input
           type="number"
           placeholder="Initial Balance"
           value={walletBalance}
-          onChange={(e) => onBalanceChange(e.target.value)}
+          onChange={(e) => {
+            onBalanceChange(e.target.value);
+            if (walletError) onBalanceChange(e.target.value);
+          }}
         />
-        {/* <div>
-          {addWalletError != "" && <p style={{ color: "red" }}>{addWalletError}</p>}
-        </div> */}
+        <div>
+          {walletError && <p style={{ color: "red" }}>{walletError}</p>}
+        </div>
         <button onClick={onAddWallet}>Add New Wallet</button>
       </div>
     </div>

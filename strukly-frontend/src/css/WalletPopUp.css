@@ -21,8 +21,8 @@
   gap: 10px;
   background: #242323;
   width: auto;
-  height: 30%;
-  padding: 20px;
+  height: auto;
+  padding: 40px 20px;
   border-radius: 20px;
   box-shadow: 0 0 16px rgba(0,0,0,0.2);
 }
