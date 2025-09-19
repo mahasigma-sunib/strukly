@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import useSWR from "swr";
+import { Fetcher } from "../fetching/Fetcher";
 import type { TransactionType } from "../type/TransactionType";
 
 type State = {
@@ -75,5 +77,17 @@ const useTransaction = create<State & Actions>()(
 
   }))
 );
+
+export function loadTransaction() {
+  const { data, error, isLoading } = useSWR<TransactionType[]>(
+    "api here",
+    Fetcher<TransactionType[]>
+  );
+  const { setItems, setError, setLoading } = useTransaction();
+
+  setLoading(isLoading);
+  if (error) setError("Failed to fetch transaction");
+  if (data) setItems(data);
+}
 
 export default useTransaction;
