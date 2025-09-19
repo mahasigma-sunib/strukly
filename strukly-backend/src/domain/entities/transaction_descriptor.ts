@@ -18,7 +18,6 @@ export interface ITransactionDescriptorEditable {
 
 export interface ITransactionDescriptorBuider extends ITransactionDescriptorEditable {
   userID: UserID;
-
 }
 
 export interface ITransactionDescriptorProps extends ITransactionDescriptorBuider {

@@ -13,4 +13,12 @@ export default class Transaction {
   getTransactionID(): TransactionID {
     return this.descriptor.id;
   }
+
+  addItem(item: TransactionItem) {
+    this.items.push(item);
+  }
+
+  removeItem(itemID: TransactionID) {
+    this.items = this.items.filter(item => item.id !== itemID);
+  }
 }
