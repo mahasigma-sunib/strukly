@@ -11,7 +11,7 @@ import "../css/WalletPopUp.css";
 function Home() {
   const [newWalletName, setNewWalletName] = useState("");
   const [newWalletBalance, setNewWalletBalance] = useState("");
-  const { addWallet, items: Wallets } = useWallet();
+  const { addWallet } = useWallet();
 
   const [showWalletInputs, setShowWalletInputs] = useState(false);
   const username = useUserAuth((s) => s.userName)

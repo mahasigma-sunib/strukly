@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { WalletType } from "../type/WalletType";
 import useWallet from "../store/WalletStore";
 import WalletPopup from "./popup/PopUp";
+import WalletCard from "./WalletCard";
 import "../css/WalletList.css";
 
 const WalletList: React.FC = () => {
@@ -11,6 +12,11 @@ const WalletList: React.FC = () => {
   const [newWalletBalance, setNewWalletBalance] = useState("");
 
   const handleAddWallet = () => {
+    if (newWalletName.trim() === "" || newWalletBalance.trim() === "") {
+      alert("Please fill in both wallet name and balance.");
+      return;
+    }
+
     const wallet: WalletType = {
       id: crypto.randomUUID(),
       name: newWalletName,
@@ -36,10 +42,7 @@ const WalletList: React.FC = () => {
       <div style={{ width: "100%", maxWidth: "100vw", overflowX: "auto" }}>
         <div className="wallet-list">
           {Wallets.map((item) => (
-            <div className="wallet-list-card" key={item.id}>
-              <div className="item-name">{item.name}</div>
-              <div className="item-balance">{item.balance}</div>
-            </div>
+            <WalletCard item={item} key={item.id} />
           ))}
           <div
             className="wallet-list-card add-wallet-card"
