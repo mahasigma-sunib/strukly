@@ -57,8 +57,8 @@ function UserRegister() {
     try {
       await register(username, email, password);
       navigate("/login");
-    } catch {
-      setRegisterError("Invalid email or password");
+    } catch (error: any) {
+      setRegisterError(error.message);
     }
   };
 

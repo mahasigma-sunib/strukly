@@ -8,25 +8,38 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   userName: "",
   email: "",
 
-  register: async (username, email, password) => {
-     await axios.post("http://localhost:3000/api/auth/register", {username, email, password});
+  register: async (name, email, password) => {
+    try {
+      await axios.post("http://localhost:3000/api/auth/register", {
+        name,
+        email,
+        password,
+      });
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          throw new Error("Email or username already exist");
+        }
+        throw new Error(error.response?.data?.message || "registration failed");
+      }
+      throw error;
+    }
   },
 
   login: async (email, password) => {
     // Fetching and storing token
-    const res = await axios.post("/api/auth/login", { email, password });
+    const res = await axios.post("http://localhost:3000/api/auth/login", { email, password });
     const token = res.data.token;
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     // Fetch user info
-    const userRes = await axios.get("/api/auth/profile");
-    const { id, username: userName, email: userEmail } = userRes.data;
+    const userRes = await axios.get("http://localhost:3000/api/auth/profile");
+    const { id, name, email: userEmail } = userRes.data.user;
     set({
       token: token,
       userId: id,
-      userName: userName,
+      userName: name,
       email: userEmail,
-      // isAuth: true,
     });
 
     // Simulate backend response

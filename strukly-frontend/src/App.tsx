@@ -1,7 +1,7 @@
+import axios from "axios";
 import { useEffect } from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./route/ProtectedRoute";
-import axios from "axios";
 import Home from "./pages/Home";
 import TransactionHistory from "./pages/TransactionHistory";
 import TransactionDetail from "./pages/TransactionDetail";
@@ -15,8 +15,8 @@ const App = () => {
   const isProtectedPath =
     location.pathname !== "/login" && location.pathname !== "/register";
 
-  const token = useUserAuth((s) => s.token);
   const logout = useUserAuth((s) => s.logout);
+  const token = useUserAuth((s) => s.token);
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
