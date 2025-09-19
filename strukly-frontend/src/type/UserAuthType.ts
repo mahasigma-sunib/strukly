@@ -4,7 +4,7 @@ export interface UserAuthType {
     logout: () => void;
     userId: string | null;
     userName: string | null;
-    email: string | null;
+    userEmail: string | null;
     token: string | null;
     isAuth: () => boolean;
 }

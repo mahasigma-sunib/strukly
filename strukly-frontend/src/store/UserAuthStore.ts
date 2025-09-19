@@ -6,7 +6,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   token: null,
   userId: "",
   userName: "",
-  email: "",
+  userEmail: "",
 
   register: async (name, email, password) => {
     try {
@@ -26,20 +26,20 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
     }
   },
 
-  login: async (email, password) => {
+  login: async (userEmail, password) => {
     // Fetching and storing token
-    const res = await axios.post("http://localhost:3000/api/auth/login", { email, password });
+    const res = await axios.post("http://localhost:3000/api/auth/login", { email: userEmail, password });
     const token = res.data.token;
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     // Fetch user info
     const userRes = await axios.get("http://localhost:3000/api/auth/profile");
-    const { id, name, email: userEmail } = userRes.data.user;
+    const { id, name, email } = userRes.data.user;
     set({
       token: token,
       userId: id,
       userName: name,
-      email: userEmail,
+      userEmail: email,
     });
 
     // Simulate backend response
@@ -60,7 +60,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   isAuth: () => !!get().token, // double negation return the boolean value
 
   logout: () => {
-    set({ token: null, userId: null, email: null });
+    set({ token: null, userId: null, userEmail: null });
     delete axios.defaults.headers.common["Authorization"];
   },
 }));

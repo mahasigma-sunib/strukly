@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import useSWR from "swr";
-import { Fetcher } from "../fetching/Fetcher";
+import { Fetcher } from "../fetcher/Fetcher";
 import type { TransactionType } from "../type/TransactionType";
 
 type State = {
@@ -11,9 +11,9 @@ type State = {
 };
 
 type Actions = {
-  setItems: (items: TransactionType[]) => void
+  setItems: (items: TransactionType[]) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void
+  setError: (error: string | null) => void;
   addTransaction: (item: TransactionType) => void;
   deleteTransaction: (id: string) => void;
   updateTransaction: (
@@ -31,20 +31,20 @@ const useTransaction = create<State & Actions>()(
     setItems: (items: TransactionType[]) => {
       set((prev) => {
         prev.items = items;
-      })
+      });
     },
 
     setLoading: (loading: boolean) => {
       set((prev) => {
         prev.isLoading = loading;
-      })
+      });
     },
 
     setError: (error: string | null) => {
       set((prev) => {
         prev.error = error;
         prev.isLoading = false;
-      })
+      });
     },
 
     addTransaction: (item: TransactionType) => {
@@ -72,9 +72,6 @@ const useTransaction = create<State & Actions>()(
         }
       });
     },
-
-    
-
   }))
 );
 
