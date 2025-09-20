@@ -13,17 +13,13 @@ const jwtService = new JwtService();
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'authorization token required' });
+    const token = req.cookies.access_token;
+    if (!token) {
+      return res.status(401).json({ error: 'Authorization token is required.' });
     }
 
-    const token = authHeader.split(' ')[1];
     const payload = await jwtService.verify(token);
-
     req.user = payload;
-
     next();
 
   } catch (error) {
