@@ -1,18 +1,31 @@
-import { useState } from "react";
-// import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
 import useUserAuth from "../store/UserAuthStore";
+// // import axios from "axios";
+// import useUserInfo from "../store/UserAuthStore";
 
-function UserLogin() {
+function UserRegister() {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState<string[]>([]);
+  const [passwordError, setPasswordError] = useState<String[]>([]);
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [loginError, setLoginError] = useState("");
 
   const navigate = useNavigate();
   const login = useUserAuth((s) => s.login);
+
+  useEffect(() => {
+    if (confirmPassword != password) {
+      setConfirmPasswordError("Password do not match");
+    } else {
+      setConfirmPasswordError("");
+    }
+  }, [password, confirmPassword]);
 
   const handleEmailValidation = () => {
     const { error, success } = emailSchema.safeParse(email);
@@ -22,7 +35,6 @@ function UserLogin() {
       setEmailError(error.issues[0].message);
     }
   };
-
   const handlePasswordValidation = () => {
     const { error, success } = passwordSchema.safeParse(password);
     if (success) {
@@ -37,7 +49,6 @@ function UserLogin() {
     handleEmailValidation();
     handlePasswordValidation();
     setLoginError("");
-
     if (!email || !password || emailError !== "" || passwordError.length > 0) {
       return; // Stop if there are errors
     }
@@ -52,6 +63,18 @@ function UserLogin() {
 
   return (
     <div>
+      <div>
+        <label htmlFor="username">Username:</label>
+        <input
+          type="username"
+          id="username"
+          value={username}
+          onChange={(event) => {
+            setUsername(event?.target.value);
+          }}
+          required
+        />
+      </div>
       <div>
         <label htmlFor="email">Email:</label>
         <input
@@ -70,7 +93,7 @@ function UserLogin() {
       <div>
         <label htmlFor="password">Password:</label>
         <input
-          type="password"
+          type="text"
           id="password"
           value={password}
           onChange={(event) => {
@@ -88,9 +111,24 @@ function UserLogin() {
           </div>
         )}
       </div>
-      <button onClick={handleLogin}>Log in</button>
+      <div>
+        <label htmlFor="confirmPassword">Confirm Password:</label>
+        <input
+          type="text"
+          id="confirmPassword"
+          value={confirmPassword}
+          onChange={(event) => {
+            setConfirmPassword(event?.target.value);
+          }}
+          required
+        />
+        {confirmPasswordError && (
+          <div style={{ color: "red" }}>{confirmPasswordError}</div>
+        )}
+      </div>
+      <button onClick={handleLogin}>Register</button>
       <div style={{ marginTop: "1rem" }}>
-        <span>Don&apos;t have an account? </span>
+        <span>Already have an account? </span>
         <button
           type="button"
           style={{
@@ -100,9 +138,9 @@ function UserLogin() {
             cursor: "pointer",
             textDecoration: "underline",
           }}
-          onClick={() => navigate("/register")}
+          onClick={() => navigate("/login")}
         >
-          Register here
+          Log in
         </button>
       </div>
       <div>
@@ -111,5 +149,4 @@ function UserLogin() {
     </div>
   );
 }
-
-export default UserLogin;
+export default UserRegister;

@@ -36,9 +36,16 @@ export default class AuthController {
       }
 
       const user = await this.loginUserUseCase.execute(email, password)
-
       const token = await this.tokenService.generate({id: user.id, email: user.email})
-      return res.status(200).json({ token });
+
+      res.cookie('access_token', token, {
+        httpOnly: true,
+        // secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 1000 * 60 * 60 * 24
+      });
+
+      return res.status(200).json({ message: 'login successful' });
 
     }catch(error: unknown){
       if (error instanceof Error) {
