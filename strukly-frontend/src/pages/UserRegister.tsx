@@ -14,10 +14,10 @@ function UserRegister() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<String[]>([]);
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const [loginError, setLoginError] = useState("");
+  const [registerError, setRegisterError] = useState("");
 
   const navigate = useNavigate();
-  const login = useUserAuth((s) => s.login);
+  const register = useUserAuth((s) => s.register);
 
   useEffect(() => {
     if (confirmPassword != password) {
@@ -35,6 +35,7 @@ function UserRegister() {
       setEmailError(error.issues[0].message);
     }
   };
+
   const handlePasswordValidation = () => {
     const { error, success } = passwordSchema.safeParse(password);
     if (success) {
@@ -45,19 +46,19 @@ function UserRegister() {
     }
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     handleEmailValidation();
     handlePasswordValidation();
-    setLoginError("");
-    if (!email || !password || emailError !== "" || passwordError.length > 0) {
+    setRegisterError("");
+    if (!username || !email || !password || emailError !== "" || passwordError.length > 0) {
       return; // Stop if there are errors
     }
 
     try {
-      await login(email, password);
-      navigate("/");
-    } catch {
-      setLoginError("Invalid email or password");
+      await register(username, email, password);
+      navigate("/login");
+    } catch (error: any) {
+      setRegisterError(error.message);
     }
   };
 
@@ -93,7 +94,7 @@ function UserRegister() {
       <div>
         <label htmlFor="password">Password:</label>
         <input
-          type="text"
+          type="password"
           id="password"
           value={password}
           onChange={(event) => {
@@ -114,7 +115,7 @@ function UserRegister() {
       <div>
         <label htmlFor="confirmPassword">Confirm Password:</label>
         <input
-          type="text"
+          type="password"
           id="confirmPassword"
           value={confirmPassword}
           onChange={(event) => {
@@ -126,7 +127,7 @@ function UserRegister() {
           <div style={{ color: "red" }}>{confirmPasswordError}</div>
         )}
       </div>
-      <button onClick={handleLogin}>Register</button>
+      <button onClick={handleRegister}>Register</button>
       <div style={{ marginTop: "1rem" }}>
         <span>Already have an account? </span>
         <button
@@ -144,7 +145,7 @@ function UserRegister() {
         </button>
       </div>
       <div>
-        {loginError != "" && <p style={{ color: "red" }}>{loginError}</p>}
+        {registerError != "" && <p style={{ color: "red" }}>{registerError}</p>}
       </div>
     </div>
   );
