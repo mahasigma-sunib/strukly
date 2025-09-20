@@ -1,21 +1,22 @@
+import axios from "axios";
 import { create } from "zustand";
 import type { UserAuthType } from "../type/UserAuthType";
-import axios from "axios";
 
 const useUserAuth = create<UserAuthType>((set, get) => ({
+  //initial value of the user
   token: null,
   userId: "",
   userName: "",
   userEmail: "",
 
   register: async (name, email, password) => {
-    try {
+    try {   //create user infomation in db
       await axios.post("http://localhost:3000/api/auth/register", {
         name,
         email,
         password,
       });
-    } catch (error: any) {
+    } catch (error: any) {  //error handling
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
           throw new Error("Email or username already exist");
@@ -41,24 +42,12 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
       userName: name,
       userEmail: email,
     });
-
-    // Simulate backend response
-    // await new Promise((resolve) => setTimeout(resolve, 300));
-    // const fakeToken = "fake-jwt-token";
-    // const fakeUserId = "123";
-    // const fakeUserName = "nig";
-    // const fakeEmail = email;
-    // set({
-    //   token: fakeToken,
-    //   userId: fakeUserId,
-    //   userName: fakeUserName,
-    //   email: fakeEmail,
-    // });
   },
 
   //use for protectedRoute
   isAuth: () => !!get().token, // double negation return the boolean value
 
+  //remove all the user data information
   logout: () => {
     set({ token: null, userId: null, userEmail: null });
     delete axios.defaults.headers.common["Authorization"];
