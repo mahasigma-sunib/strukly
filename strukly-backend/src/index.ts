@@ -1,9 +1,15 @@
-import express from 'express'
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { authRouter } from './infrastructure/routes/auth_route';
 
 const app = express()
 const port = 3000
 app.use(express.json());
+app.use(cookieParser())
+app.use(cors({
+  origin: 'http://localhost:5173'
+}))
 app.use('/api', authRouter);
 
 app.get('/', (req, res) => {

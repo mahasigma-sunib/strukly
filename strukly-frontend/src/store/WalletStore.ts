@@ -1,14 +1,19 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import axios from "axios";
 import type { WalletType } from "../type/WalletType";
+import useSWR from "swr";
+import { Fetcher } from "../fetcher/Fetcher";
 
 type State = {
   items: WalletType[];
+  isLoading: boolean;
+  error: string | null;
 };
 
 type Actions = {
-  fetchWallets: () => Promise<void>;
+  setItems: (items: WalletType[]) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
   addWallet: (item: WalletType) => void;
   deleteWallet: (id: string) => void;
   updateWallet: (
@@ -20,14 +25,25 @@ type Actions = {
 const useWallet = create<State & Actions>()(
   immer((set) => ({
     items: [],
+    isLoading: false,
+    error: null,
 
-    fetchWallets: async () => {
-      try {
-        const res = await axios.get("");
-        set((prev) => {
-          prev.items = res.data;
-        });
-      } catch (e) {}
+    setItems: (items: WalletType[]) => {
+      set((prev) => {
+        prev.items = items;
+      });
+    },
+
+    setLoading: (loading: boolean) => {
+      set((prev) => {
+        prev.isLoading = loading;
+      });
+    },
+
+    setError: (error: string | null) => {
+      set((prev) => {
+        prev.error = error;
+      });
     },
 
     addWallet: (item: WalletType) => {
@@ -57,4 +73,17 @@ const useWallet = create<State & Actions>()(
     },
   }))
 );
+
+export function loadWallet() {
+  const { data, error, isLoading } = useSWR<WalletType[]>(
+    "api here",
+    Fetcher<WalletType[]>
+  );
+  const { setItems, setError, setLoading } = useWallet();
+
+  setLoading(isLoading);
+  if (error) setError("Failed to fetch transaction");
+  if (data) setItems(data);
+}
+
 export default useWallet;

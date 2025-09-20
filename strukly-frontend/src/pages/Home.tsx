@@ -11,7 +11,7 @@ function Home() {
   const { addWallet, items: Wallets } = useWallet();
 
   const [showWalletInputs, setShowWalletInputs] = useState(false);
-  const username = useUserAuth((s) => s.userName)
+  const username = useUserAuth((s) => s.userName);
 
   return (
     <>
