@@ -29,7 +29,7 @@ export default class TransactionDescriptor {
     this.total = props.total;
   }
 
-  static new(props: Omit<TransactionDescriptorProps, 'id'>): TransactionDescriptor {
+    static new(props: Omit<TransactionDescriptorProps, 'id'>): TransactionDescriptor {
     return new TransactionDescriptor({
       ...props,
       id: TransactionID.fromRandom(),
