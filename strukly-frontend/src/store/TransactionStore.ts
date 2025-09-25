@@ -109,7 +109,7 @@ export async function postTransaction(transaction: TransactionType) {
   }
 }
 
-export async function putWallet(
+export async function putTransaction(
   id: string,
   transaction: Partial<Omit<TransactionType, "id">>
 ) {
