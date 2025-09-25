@@ -18,6 +18,7 @@ function Home() {
   const [walletError, setWalletError] = useState<string | null>(null);
   const username = useUserAuth((s) => s.userName)
 
+
   const handleAddWallet = () => {
     if (newWalletName.trim() === "" || newWalletBalance.trim() === "") {
       setWalletError("Please fill in all fields");
