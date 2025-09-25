@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
 import useUserAuth from "../store/UserAuthStore";
+import "../css/UserLoginOrRegister.css";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -51,12 +52,14 @@ function UserLogin() {
   };
 
   return (
-    <div>
+    <div className="login-container">
+      <h1>Strukly</h1>
+
       <div>
-        <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
+          placeholder="Email"
           value={email}
           onChange={(event) => {
             setEmail(event?.target.value);
@@ -68,10 +71,10 @@ function UserLogin() {
         {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
       </div>
       <div>
-        <label htmlFor="password">Password:</label>
         <input
           type="password"
           id="password"
+          placeholder="Password"
           value={password}
           onChange={(event) => {
             setPassword(event?.target.value);
@@ -89,8 +92,8 @@ function UserLogin() {
         )}
       </div>
       <button onClick={handleLogin}>Log in</button>
-      <div style={{ marginTop: "1rem" }}>
-        <span>Don&apos;t have an account? </span>
+      <div>
+        <span>Don&apos;t have an account?</span>
         <button
           type="button"
           style={{
