@@ -130,7 +130,7 @@ function UserRegister() {
           <div style={{ color: "red" }}>{confirmPasswordError}</div>
         )}
       </div>
-      <button onClick={handleLogin}>Register</button>
+      <button onClick={handleRegister}>Register</button>
       <div>
         <span>Already have an account?</span>
         <button

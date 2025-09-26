@@ -1,12 +1,11 @@
 import { useState } from "react";
 import type { WalletType } from "../type/WalletType";
 import useWallet from "../store/WalletStore";
-import WalletPopup from "../components/popup/PopUp";
+import WalletPopup from "../components/popup/WalletPopUp";
 import TransactionCard from "../components/TransactionCard";
 import WalletList from "../components/WalletList";
 import useUserAuth from "../store/UserAuthStore";
 import "../css/WalletPopUp.css";
-
 
 function Home() {
   const { items: Wallets } = useWallet();
@@ -16,8 +15,7 @@ function Home() {
 
   const [showWalletInputs, setShowWalletInputs] = useState(false);
   const [walletError, setWalletError] = useState<string | null>(null);
-  const username = useUserAuth((s) => s.userName)
-
+  const username = useUserAuth((s) => s.userName);
 
   const handleAddWallet = () => {
     if (newWalletName.trim() === "" || newWalletBalance.trim() === "") {
