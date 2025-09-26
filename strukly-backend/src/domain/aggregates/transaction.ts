@@ -8,9 +8,17 @@ export type TransactionProps = {
 };
 
 export default class Transaction {
-  constructor(private descriptor: TransactionDescriptor, private items: TransactionItem[]) { }
+  constructor(public descriptor: TransactionDescriptor, public items: TransactionItem[]) { }
 
   getTransactionID(): TransactionID {
     return this.descriptor.id;
+  }
+
+  addItem(item: TransactionItem) {
+    this.items.push(item);
+  }
+
+  removeItem(itemID: TransactionID) {
+    this.items = this.items.filter(item => item.id !== itemID);
   }
 }
