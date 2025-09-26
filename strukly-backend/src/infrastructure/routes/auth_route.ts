@@ -30,9 +30,10 @@ const router = Router();
 
 router.post('/auth/register', authController.register);
 router.post('/auth/login', authController.login);
+router.post('/auth/logout', authMiddleware, authController.logout);
 
 // protected
 router.get('/auth/profile', authMiddleware, profileController.getProfile);
-
+router.patch('/auth/profile', authMiddleware, profileController.updateProfile);
 
 export { router as authRouter };
