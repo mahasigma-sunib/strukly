@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import type { TransactionType } from "../type/TransactionType";
 import useTransaction from "../store/TransactionStore";
-import useTransactionLoader from "../loader/TransactionLoader";
+// import useTransactionLoader from "../loader/TransactionLoader";
 
 function TransactionCard() {
-  useTransactionLoader(); //fetch data
+  // useTransactionLoader(); //fetch data
   const { items: transactions, isLoading, error } = useTransaction();
   if (isLoading) return <p>Loading transaction</p>;
   if (error) return <p>{error}</p>

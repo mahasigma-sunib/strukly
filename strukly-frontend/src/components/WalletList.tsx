@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { WalletType } from "../type/WalletType";
 import useWallet from "../store/WalletStore";
-import WalletPopup from "./popup/PopUp";
+import WalletPopup from "./popup/WalletPopUp";
 import WalletCard from "./WalletCard";
 import "../css/WalletList.css";
 
