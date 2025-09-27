@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../../generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
 import ITransactionRepository from "../../domain/repositories/transaction_repository";
 
 export default class transactionRepository implements ITransactionRepository {
