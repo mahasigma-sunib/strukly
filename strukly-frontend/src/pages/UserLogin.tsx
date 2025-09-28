@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
 import useUserAuth from "../store/UserAuthStore";
-import "../css/UserLoginOrRegister.css";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -53,7 +52,7 @@ function UserLogin() {
   };
 
   return (
-    <div className="login-container">
+    <div className="flex flex-col gap-4 items-center justify-center min-h-[90vh]">
       <h1>Strukly</h1>
 
       <div>
@@ -68,8 +67,10 @@ function UserLogin() {
           }}
           onBlur={handleEmailValidation}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
-        {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
+        {emailError != "" && <p className="text-red-600">{emailError}</p>}
       </div>
       <div>
         <input
@@ -83,16 +84,18 @@ function UserLogin() {
           }}
           onBlur={handlePasswordValidation}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
         {passwordError.length > 0 && (
-          <div style={{ color: "red" }}>
+          <div className="text-red-600">
             {passwordError.map((error, index) => (
               <p key={index}>{error}</p>
             ))}
           </div>
         )}
       </div>
-      <button onClick={handleLogin}>Log in</button>
+      <button onClick={handleLogin} className="rounded cursor-pointer my-4">Log in</button>
       <div>
         <span>Don&apos;t have an account?</span>
         <button
