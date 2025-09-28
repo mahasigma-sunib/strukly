@@ -4,7 +4,6 @@ import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
 import useUserAuth from "../store/UserAuthStore";
 // // import axios from "axios";
 // import useUserInfo from "../store/UserAuthStore";
-import "../css/UserLoginOrRegister.css";
 
 function UserRegister() {
   const [email, setEmail] = useState("");
@@ -64,8 +63,8 @@ function UserRegister() {
   };
 
   return (
-    <div className="register-container">
-      <h1>Strukly</h1>
+    <div className="flex flex-col gap-3 items-center justify-center min-h-[90vh]">
+      <h1 className="my-8">Strukly</h1>
 
       <div>
         <input
@@ -77,6 +76,8 @@ function UserRegister() {
             setUsername(event?.target.value);
           }}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
       </div>
       <div>
@@ -91,8 +92,10 @@ function UserRegister() {
           }}
           onBlur={handleEmailValidation}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
-        {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
+        {emailError != "" && <p className="text-red-600">{emailError}</p>}
       </div>
       <div>
         <input
@@ -106,9 +109,11 @@ function UserRegister() {
           }}
           onBlur={handlePasswordValidation}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
         {passwordError.length > 0 && (
-          <div style={{ color: "red" }}>
+          <div className="text-red-600">
             {passwordError.map((error, index) => (
               <p key={index}>{error}</p>
             ))}
@@ -125,12 +130,14 @@ function UserRegister() {
             setConfirmPassword(event?.target.value);
           }}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
         {confirmPasswordError && (
           <div style={{ color: "red" }}>{confirmPasswordError}</div>
         )}
       </div>
-      <button onClick={handleRegister}>Register</button>
+      <button onClick={handleRegister} className="rounded cursor-pointer my-2">Register</button>
       <div>
         <span>Already have an account?</span>
         <button
@@ -148,7 +155,7 @@ function UserRegister() {
         </button>
       </div>
       <div>
-        {registerError != "" && <p style={{ color: "red" }}>{registerError}</p>}
+        {registerError != "" && <p className="text-red-600">{registerError}</p>}
       </div>
     </div>
   );

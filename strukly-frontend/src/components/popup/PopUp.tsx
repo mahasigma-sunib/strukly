@@ -1,64 +1,28 @@
 import React from "react";
-import "../../css/WalletPopUp.css";
 
-type WalletPopupProps = {
+type PopupProps = {
   visible: boolean;
-  walletName: string;
-  walletBalance: string;
-  walletError?: string;
-  onNameChange: (value: string) => void;
-  onBalanceChange: (value: string) => void;
-  onAddWallet: () => void;
   onClose: () => void;
+  children: React.ReactNode;
 };
 
-const WalletPopup: React.FC<WalletPopupProps> = ({
-  visible,
-  walletName,
-  walletBalance,
-  walletError,
-  onNameChange,
-  onBalanceChange,
-  onAddWallet,
-  onClose,
-}) => {
+const Popup: React.FC<PopupProps> = ({ visible, onClose, children }) => {
   if (!visible) return null;
 
   return (
-    <div className="wallet-popup">
-      <div className="wallet-inputs">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-[9999]">
+      <div className="relative bg-[#242323] px-8 pt-[60px] pb-10 rounded-2xl shadow-lg flex flex-col items-center text-center gap-4">
         <button
-          className="close-popup-button"
+          className="absolute top-0 -right-2 text-gray-300 !bg-transparent !text-2xl cursor-pointer z-[1001] hover:text-white"
           onClick={onClose}
           aria-label="Close"
         >
-          x
+          ×
         </button>
-        <input
-          type="text"
-          placeholder="Wallet Name"
-          value={walletName}
-          onChange={(e) => {
-            onNameChange(e.target.value);
-            if (walletError) onNameChange(e.target.value);
-          }}
-        />
-        <input
-          type="number"
-          placeholder="Initial Balance"
-          value={walletBalance}
-          onChange={(e) => {
-            onBalanceChange(e.target.value);
-            if (walletError) onBalanceChange(e.target.value);
-          }}
-        />
-        <div>
-          {walletError && <p style={{ color: "red" }}>{walletError}</p>}
-        </div>
-        <button onClick={onAddWallet}>Add New Wallet</button>
+        {children}
       </div>
     </div>
   );
 };
 
-export default WalletPopup;
+export default Popup;

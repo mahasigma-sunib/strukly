@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import type { WalletType } from "../type/WalletType";
 import useWallet from "../store/WalletStore";
-import WalletPopup from "./popup/PopUp";
+import WalletPopup from "./popup/WalletPopUp";
 import WalletCard from "./WalletCard";
-import "../css/WalletList.css";
 
 const WalletList: React.FC = () => {
   const { items: Wallets, addWallet } = useWallet();
@@ -50,12 +49,12 @@ const WalletList: React.FC = () => {
         onClose={() => setShowWalletInputs(false)}
       />
       <div style={{ width: "100%", maxWidth: "100vw", overflowX: "auto" }}>
-        <div className="wallet-list">
+        <div className="flex gap-4 overflow-x-auto p-2 list-none my-2 box-border scroll-smooth text-left [&::-webkit-scrollbar]:hidden">
           {Wallets.map((item) => (
             <WalletCard item={item} key={item.id} />
           ))}
           <div
-            className="wallet-list-card add-wallet-card"
+            className="min-w-[125px] h-[70px] shadow-[0_0_5px_rgba(0,0,0,0.3)] rounded-lg p-10 flex-none cursor-pointer flex flex-col items-center justify-center text-[#646cff] font-bold text-[0.8em] bg-[#242424] hover:bg-[#2a2a3d] select-none"
             onClick={() => {
               setWalletError(null);
               setShowWalletInputs(true);
