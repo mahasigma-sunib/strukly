@@ -29,7 +29,7 @@ const WalletPopup: React.FC<WalletPopupProps> = ({
       <input
         type="text"
         placeholder="Wallet Name"
-        className="w-3/5 p-2 border border-black rounded text-base focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
+        className="w-4/5 p-2 border border-black rounded text-base focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         value={walletName}
         onChange={(e) => {
           onNameChange(e.target.value);
@@ -38,7 +38,7 @@ const WalletPopup: React.FC<WalletPopupProps> = ({
       <input
         type="number"
         placeholder="Initial Balance"
-        className="w-3/5 p-2 border border-black rounded text-base focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
+        className="w-4/5 p-2 border border-black rounded text-base focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         value={walletBalance}
         onChange={(e) => {
           onBalanceChange(e.target.value);
