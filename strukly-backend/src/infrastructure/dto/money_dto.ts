@@ -1,9 +1,13 @@
+import { z } from "zod";
 import Money from "../../domain/values/money";
 
-export interface MoneyDTO {
-  amount: number;
-  currency: string;
-}
+// Zod schema for MoneyDTO validation
+export const MoneyDTOSchema = z.object({
+  amount: z.number("Amount must be a number"),
+  currency: z.string().min(1, "Currency is required").max(3, "Currency code should be 3 characters or less"),
+});
+
+export type MoneyDTO = z.infer<typeof MoneyDTOSchema>;
 
 export function moneyToDTO(money: Money): MoneyDTO {
   return {
