@@ -52,6 +52,8 @@ you can start the backend server using docker:
 docker compose up -d
 ```
 
+If there were changes to the backend code, please run with `--build` flag.
+
 If you're done you can just run:
 
 ```sh
