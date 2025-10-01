@@ -1,35 +1,41 @@
+import Transaction from "../../domain/aggregates/transaction";
+import { MoneyDTO, moneyToDTO } from "./money_dto";
+import { TransactionItemDTO, transactionItemToDTO } from "./transaction_item_dto";
+
 export interface TransactionDTO {
   id: string;
-  vendor: string;
-  categoryID: string;
-  date: string; // ISO string
-  subtotal: number;
-  tax: number;
-  total: number;
-  items: {
-    id: string;
-    name: string;
-    quantity: number;
-    singlePrice: number;
-    transactionID: string;
-  }[];
+  vendorName: string;
+  category: string;
+  dateTime: string; // ISO string
+  
+  subtotalAmount: MoneyDTO;
+  taxAmount: MoneyDTO;
+  discountAmount: MoneyDTO;
+  serviceAmount: MoneyDTO;
+  totalAmount: MoneyDTO;
+  
+  userID: string;
+  walletID: string;
+
+  items: TransactionItemDTO[];
 }
 
-export function transactionToDTO(transaction: any): TransactionDTO {
+export function transactionToDTO(transaction: Transaction): TransactionDTO {
   return {
-    id: transaction.descriptor.id.id,
-    vendor: transaction.descriptor.vendor,
-    categoryID: transaction.descriptor.categoryID,
-    date: transaction.descriptor.date.toISOString(),
-    subtotal: transaction.descriptor.subtotal,
-    tax: transaction.descriptor.tax,
-    total: transaction.descriptor.total,
-    items: transaction.items.map((item: any) => ({
-      id: item.id.id,
-      name: item.name,
-      quantity: item.quantity,
-      singlePrice: item.singlePrice.amount,
-      transactionID: item.transactionID.id,
-    })),
+    id: transaction.header.id.value,
+    vendorName: transaction.header.vendorName,
+    category: transaction.header.category.value,
+    dateTime: transaction.header.dateTime.toISOString(),
+
+    subtotalAmount: moneyToDTO(transaction.header.subtotalAmount),
+    taxAmount: moneyToDTO(transaction.header.taxAmount),
+    discountAmount: moneyToDTO(transaction.header.discountAmount),
+    serviceAmount: moneyToDTO(transaction.header.serviceAmount),
+    totalAmount: moneyToDTO(transaction.header.totalAmount),
+
+    userID: transaction.header.userID.value,
+    walletID: transaction.header.walletID,
+
+    items: transaction.items.map((item) => transactionItemToDTO(item)),
   };
 }
