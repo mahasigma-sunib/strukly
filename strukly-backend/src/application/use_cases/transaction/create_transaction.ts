@@ -1,7 +1,7 @@
 import Transaction from "../../../domain/aggregates/transaction";
-import TransactionDescriptor, {
-  ITransactionDescriptorBuider,
-} from "../../../domain/entities/transaction_descriptor";
+import TransactionHeader, {
+  ITransactionHeaderBuider,
+} from "../../../domain/entities/transaction_header";
 import TransactionItem, {
   ITransactionItemEditable,
 } from "../../../domain/entities/transaction_item";
@@ -10,11 +10,11 @@ import TransactionService from "../../../domain/services/transaction_service";
 export default class CreateTransactionUseCase {
   constructor(private readonly transactionService: TransactionService) {}
   async execute(
-    transactionDescriptor: ITransactionDescriptorBuider,
+    transactionHeader: ITransactionHeaderBuider,
     transactionItems: ITransactionItemEditable[]
   ) {
     const newTransaction = new Transaction(
-      TransactionDescriptor.new(transactionDescriptor),
+      TransactionHeader.new(transactionHeader),
       []
     );
     for (const item of transactionItems) {

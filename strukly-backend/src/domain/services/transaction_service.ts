@@ -1,5 +1,5 @@
 import Transaction from "../aggregates/transaction";
-import TransactionDescriptor from "../entities/transaction_descriptor";
+import TransactionHeader from "../entities/transaction_header";
 import ITransactionRepository from "../repositories/transaction_repository";
 
 export default class TransactionService {

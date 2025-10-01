@@ -1,17 +1,17 @@
-import TransactionDescriptor from "../entities/transaction_descriptor";
+import TransactionHeader from "../entities/transaction_header";
 import TransactionItem from "../entities/transaction_item";
 import TransactionID from "../values/transaction_id";
 
 export type TransactionProps = {
-  descriptor: TransactionDescriptor;
+  header: TransactionHeader;
   items: TransactionItem[];
 };
 
 export default class Transaction {
-  constructor(public descriptor: TransactionDescriptor, public items: TransactionItem[]) { }
+  constructor(public header: TransactionHeader, public items: TransactionItem[]) { }
 
   getTransactionID(): TransactionID {
-    return this.descriptor.id;
+    return this.header.id;
   }
 
   addItem(item: TransactionItem) {

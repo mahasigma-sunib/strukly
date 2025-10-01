@@ -62,7 +62,7 @@ src/
 		use_cases/                 # Application services (orchestrate domain for a specific user flow)
 	domain/
 		aggregates/                # Aggregates (consistency boundaries) e.g. Transaction
-		entities/                  # Entities with identity e.g. TransactionDescriptor, TransactionItem
+		entities/                  # Entities with identity e.g. TransactionHeader, TransactionItem
 		values/                    # Value Objects e.g. Money, TransactionID, TransactionItemID
 		ports/                     # Domain ports (interfaces) to external services e.g. ImageToTransaction
 		repositories/              # Domain repository interfaces (persistence contracts)

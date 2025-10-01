@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import ITransactionRepository from "../../domain/repositories/transaction_repository";
 import Transaction from "../../domain/aggregates/transaction";
-import TransactionDescriptor from "../../domain/entities/transaction_descriptor";
+import TransactionHeader from "../../domain/entities/transaction_header";
 import TransactionItem from "../../domain/entities/transaction_item";
 import TransactionCategory from "../../domain/values/transaction_category";
 import Money from "../../domain/values/money";
@@ -15,19 +15,19 @@ export default class PrismaTranactionRepository
   private prisma = new PrismaClient();
   constructor() {}
   async create(transaction: Transaction): Promise<Transaction> {
-    const createdTransaction = await this.prisma.transactionDescriptor.create({
+    const createdTransaction = await this.prisma.transactionHeader.create({
       data: {
-        id: transaction.descriptor.id.value,
-        dateTime: transaction.descriptor.dateTime,
-        vendorName: transaction.descriptor.vendorName,
-        category: transaction.descriptor.category.value,
-        subtotalAmount: transaction.descriptor.subtotalAmount.value,
-        taxAmount: transaction.descriptor.taxAmount.value,
-        discountAmount: transaction.descriptor.discountAmount.value,
-        serviceAmount: transaction.descriptor.serviceAmount.value,
-        totalAmount: transaction.descriptor.totalAmount.value,
+        id: transaction.header.id.value,
+        dateTime: transaction.header.dateTime,
+        vendorName: transaction.header.vendorName,
+        category: transaction.header.category.value,
+        subtotalAmount: transaction.header.subtotalAmount.value,
+        taxAmount: transaction.header.taxAmount.value,
+        discountAmount: transaction.header.discountAmount.value,
+        serviceAmount: transaction.header.serviceAmount.value,
+        totalAmount: transaction.header.totalAmount.value,
 
-        userID: transaction.descriptor.userID.value,
+        userID: transaction.header.userID.value,
 
         walletID: "", // TODO: WalletID not implemented
 
@@ -47,7 +47,7 @@ export default class PrismaTranactionRepository
     });
 
     return new Transaction(
-       new TransactionDescriptor({
+       new TransactionHeader({
         id: { value: createdTransaction.id },
         dateTime: createdTransaction.dateTime,
         vendorName: createdTransaction.vendorName,
@@ -78,12 +78,12 @@ export default class PrismaTranactionRepository
   }
 
   async delete(transactionID: TransactionID): Promise<void> {
-    await this.prisma.transactionDescriptor.delete({
+    await this.prisma.transactionHeader.delete({
       where: { id: transactionID.value },
     });
   }
   async findByID(transactionID: TransactionID): Promise<Transaction | null> {
-    const foundTransaction = await this.prisma.transactionDescriptor.findUnique({
+    const foundTransaction = await this.prisma.transactionHeader.findUnique({
       where: { id: transactionID.value },
       include: { items: true },
     });
@@ -91,7 +91,7 @@ export default class PrismaTranactionRepository
     if (!foundTransaction) return null;
 
     return new Transaction(
-      new TransactionDescriptor({
+      new TransactionHeader({
         id: { value: foundTransaction.id },
         dateTime: foundTransaction.dateTime,
         vendorName: foundTransaction.vendorName,
@@ -121,7 +121,7 @@ export default class PrismaTranactionRepository
     );
   }
   async findByUserID(userID: UserID): Promise<Transaction[]> {
-    const foundTransactions = await this.prisma.transactionDescriptor.findMany({
+    const foundTransactions = await this.prisma.transactionHeader.findMany({
       where: { userID: userID.value },
       include: { items: true },
     });
@@ -129,7 +129,7 @@ export default class PrismaTranactionRepository
     return foundTransactions.map(
       (transaction) =>
         new Transaction(
-          new TransactionDescriptor({
+          new TransactionHeader({
             id: { value: transaction.id },
             dateTime: transaction.dateTime,
             vendorName: transaction.vendorName,
@@ -161,25 +161,25 @@ export default class PrismaTranactionRepository
   }
 
   async update(transaction: Transaction): Promise<Transaction> {
-    const updatedTransaction = await this.prisma.transactionDescriptor.update({
-      where: { id: transaction.descriptor.id.value },
+    const updatedTransaction = await this.prisma.transactionHeader.update({
+      where: { id: transaction.header.id.value },
       data: {
-        dateTime: transaction.descriptor.dateTime,
-        vendorName: transaction.descriptor.vendorName,
-        category: transaction.descriptor.category.value,
-        subtotalAmount: transaction.descriptor.subtotalAmount.value,
-        taxAmount: transaction.descriptor.taxAmount.value,
-        discountAmount: transaction.descriptor.discountAmount.value,
-        serviceAmount: transaction.descriptor.serviceAmount.value,
-        totalAmount: transaction.descriptor.totalAmount.value,
+        dateTime: transaction.header.dateTime,
+        vendorName: transaction.header.vendorName,
+        category: transaction.header.category.value,
+        subtotalAmount: transaction.header.subtotalAmount.value,
+        taxAmount: transaction.header.taxAmount.value,
+        discountAmount: transaction.header.discountAmount.value,
+        serviceAmount: transaction.header.serviceAmount.value,
+        totalAmount: transaction.header.totalAmount.value,
 
-        userID: transaction.descriptor.userID.value,
+        userID: transaction.header.userID.value,
 
         walletID: "", // TODO: WalletID not implemented
 
         items: {
           deleteMany: {
-            transactionID: transaction.descriptor.id.value,
+            transactionID: transaction.header.id.value,
           },
           create: transaction.items.map((item) => ({
             id: item.id.value,
@@ -196,7 +196,7 @@ export default class PrismaTranactionRepository
     });
 
     return new Transaction(
-      new TransactionDescriptor({
+      new TransactionHeader({
         id: { value: updatedTransaction.id },
         dateTime: updatedTransaction.dateTime,
         vendorName: updatedTransaction.vendorName,

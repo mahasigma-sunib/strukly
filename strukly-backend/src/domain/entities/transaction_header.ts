@@ -3,7 +3,7 @@ import TransactionCategory from "../values/transaction_category";
 import TransactionID from "../values/transaction_id"
 import UserID from "../values/user_id";
 
-export interface ITransactionDescriptorEditable {
+export interface ITransactionHeaderEditable {
   dateTime: Date;
 
   vendorName: string;
@@ -16,17 +16,17 @@ export interface ITransactionDescriptorEditable {
   walletID: string; // WalletID not implemented
 }
 
-export interface ITransactionDescriptorBuider extends ITransactionDescriptorEditable {
+export interface ITransactionHeaderBuider extends ITransactionHeaderEditable {
   userID: UserID;
 }
 
-export interface ITransactionDescriptorProps extends ITransactionDescriptorBuider {
+export interface ITransactionHeaderProps extends ITransactionHeaderBuider {
   id: TransactionID;
 
   totalAmount: Money;
 }
 
-export default class TransactionDescriptor {
+export default class TransactionHeader {
   public readonly id: TransactionID;
 
   public readonly dateTime: Date;
@@ -42,7 +42,7 @@ export default class TransactionDescriptor {
   public readonly userID: UserID;
   public readonly walletID: string;
 
-  constructor(props: ITransactionDescriptorProps) {
+  constructor(props: ITransactionHeaderProps) {
     this.id = props.id;
     this.dateTime = props.dateTime;
     this.vendorName = props.vendorName;
@@ -58,8 +58,8 @@ export default class TransactionDescriptor {
     this.walletID = props.walletID;
   }
 
-  static new(props: ITransactionDescriptorBuider): TransactionDescriptor {
-    return new TransactionDescriptor({
+  static new(props: ITransactionHeaderBuider): TransactionHeader {
+    return new TransactionHeader({
       ...props,
       id: TransactionID.fromRandom(),
       totalAmount: Money.sum([
