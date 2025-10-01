@@ -63,24 +63,28 @@ function UserRegister() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-3 items-center justify-center min-h-[90vh]">
+      <h1 className="my-8">Strukly</h1>
+
       <div>
-        <label htmlFor="username">Username:</label>
         <input
           type="username"
           id="username"
+          placeholder="Username"
           value={username}
           onChange={(event) => {
             setUsername(event?.target.value);
           }}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
       </div>
       <div>
-        <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
+          placeholder="Email"
           value={email}
           onChange={(event) => {
             setEmail(event?.target.value);
@@ -88,14 +92,16 @@ function UserRegister() {
           }}
           onBlur={handleEmailValidation}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
-        {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
+        {emailError != "" && <p className="text-red-600">{emailError}</p>}
       </div>
       <div>
-        <label htmlFor="password">Password:</label>
         <input
           type="password"
           id="password"
+          placeholder="Password"
           value={password}
           onChange={(event) => {
             setPassword(event?.target.value);
@@ -103,9 +109,11 @@ function UserRegister() {
           }}
           onBlur={handlePasswordValidation}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
         {passwordError.length > 0 && (
-          <div style={{ color: "red" }}>
+          <div className="text-red-600">
             {passwordError.map((error, index) => (
               <p key={index}>{error}</p>
             ))}
@@ -113,23 +121,25 @@ function UserRegister() {
         )}
       </div>
       <div>
-        <label htmlFor="confirmPassword">Confirm Password:</label>
         <input
           type="password"
           id="confirmPassword"
+          placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(event) => {
             setConfirmPassword(event?.target.value);
           }}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
         {confirmPasswordError && (
           <div style={{ color: "red" }}>{confirmPasswordError}</div>
         )}
       </div>
-      <button onClick={handleRegister}>Register</button>
-      <div style={{ marginTop: "1rem" }}>
-        <span>Already have an account? </span>
+      <button onClick={handleRegister} className="rounded cursor-pointer my-2">Register</button>
+      <div>
+        <span>Already have an account?</span>
         <button
           type="button"
           style={{
@@ -145,7 +155,7 @@ function UserRegister() {
         </button>
       </div>
       <div>
-        {registerError != "" && <p style={{ color: "red" }}>{registerError}</p>}
+        {registerError != "" && <p className="text-red-600">{registerError}</p>}
       </div>
     </div>
   );

@@ -44,19 +44,22 @@ function UserLogin() {
 
     try {
       await login(email, password);
-      navigate("/");
+      // navigate("/");
+      document.location.href = "/cookie"
     } catch {
       setLoginError("Invalid email or password");
     }
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-4 items-center justify-center min-h-[90vh]">
+      <h1>Strukly</h1>
+
       <div>
-        <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
+          placeholder="Email"
           value={email}
           onChange={(event) => {
             setEmail(event?.target.value);
@@ -64,14 +67,16 @@ function UserLogin() {
           }}
           onBlur={handleEmailValidation}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
-        {emailError != "" && <p style={{ color: "red" }}>{emailError}</p>}
+        {emailError != "" && <p className="text-red-600">{emailError}</p>}
       </div>
       <div>
-        <label htmlFor="password">Password:</label>
         <input
           type="password"
           id="password"
+          placeholder="Password"
           value={password}
           onChange={(event) => {
             setPassword(event?.target.value);
@@ -79,18 +84,20 @@ function UserLogin() {
           }}
           onBlur={handlePasswordValidation}
           required
+          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
+                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
         />
         {passwordError.length > 0 && (
-          <div style={{ color: "red" }}>
+          <div className="text-red-600">
             {passwordError.map((error, index) => (
               <p key={index}>{error}</p>
             ))}
           </div>
         )}
       </div>
-      <button onClick={handleLogin}>Log in</button>
-      <div style={{ marginTop: "1rem" }}>
-        <span>Don&apos;t have an account? </span>
+      <button onClick={handleLogin} className="rounded cursor-pointer my-4">Log in</button>
+      <div>
+        <span>Don&apos;t have an account?</span>
         <button
           type="button"
           style={{

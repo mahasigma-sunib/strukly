@@ -1,7 +1,8 @@
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
+import axios from "axios";
 import useSWR from "swr";
 import { Fetcher } from "../fetcher/Fetcher";
+import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import type { TransactionType } from "../type/TransactionType";
 
 type State = {
@@ -18,28 +19,32 @@ type Actions = {
   deleteTransaction: (id: string) => void;
   updateTransaction: (
     id: string,
-    updateditem: Partial<Omit<TransactionType, "id">>
+    updateditem: Partial<Omit<TransactionType, "id">> //avoiding id to being changed
   ) => void;
 };
 
 const useTransaction = create<State & Actions>()(
   immer((set) => ({
+    //initial state
     items: [],
     isLoading: false,
     error: null,
 
+    //load all the fetched data into state
     setItems: (items: TransactionType[]) => {
       set((prev) => {
         prev.items = items;
       });
     },
 
+    //request status
     setLoading: (loading: boolean) => {
       set((prev) => {
         prev.isLoading = loading;
       });
     },
 
+    //error message
     setError: (error: string | null) => {
       set((prev) => {
         prev.error = error;
@@ -47,12 +52,14 @@ const useTransaction = create<State & Actions>()(
       });
     },
 
+    //adding new transaction
     addTransaction: (item: TransactionType) => {
       set((prev) => {
         prev.items.push(item);
       });
     },
 
+    //delete existing transaction
     deleteTransaction: (id: string) => {
       set((prev) => {
         const index = prev.items.findIndex((item) => item.id === id);
@@ -61,9 +68,11 @@ const useTransaction = create<State & Actions>()(
         }
       });
     },
+
+    //uodate existing transaction
     updateTransaction: (
       id: string,
-      updateditem: Partial<Omit<TransactionType, "id">>
+      updateditem: Partial<Omit<TransactionType, "id">> //id cant be modified
     ) => {
       set((prev) => {
         const index = prev.items.findIndex((item) => item.id === id);
@@ -75,6 +84,7 @@ const useTransaction = create<State & Actions>()(
   }))
 );
 
+//to fetch & load the transaction datas
 export function loadTransaction() {
   const { data, error, isLoading } = useSWR<TransactionType[]>(
     "api here",
@@ -85,6 +95,42 @@ export function loadTransaction() {
   setLoading(isLoading);
   if (error) setError("Failed to fetch transaction");
   if (data) setItems(data);
+}
+
+// post a new transaction
+export async function postTransaction(transaction: TransactionType) {
+  const { addTransaction } = useTransaction();
+  try {
+    await axios.post("http://localhost:3000/api/transaction/add", transaction);
+    addTransaction(transaction);
+  } catch (error) {
+    console.error("Failed to post transaction:", error);
+    throw error; // rethrow so caller can handle it
+  }
+}
+
+export async function putTransaction(
+  id: string,
+  transaction: Partial<Omit<TransactionType, "id">>
+) {
+  const { updateTransaction } = useTransaction();
+  try {
+    await axios.put(`http://localhost:3000/api/transaction/${id}`, transaction);
+    updateTransaction(id, transaction);
+  } catch (error) {
+    console.error("Failed to put transaction:", error);
+    throw error; // rethrow so caller can handle it
+  }
+}
+
+export async function deleteTransaction(id: string) {
+  try {
+    const {} = useTransaction();
+    await axios.delete(`http://localhost:3000/api/transaction/${id}`);
+  } catch (error) {
+    console.error("Failed to put transaction:", error);
+    throw error; // rethrow so caller can handle it
+  }
 }
 
 export default useTransaction;
