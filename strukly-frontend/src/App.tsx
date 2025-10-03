@@ -6,7 +6,6 @@ import TransactionDetail from "./pages/TransactionDetail";
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegister";
 import useUserAuth from "./store/UserAuthStore";
-import "./App.css";
 import RegisterCookie from "./pages/RegisterCookie";
 
 const App = () => {
