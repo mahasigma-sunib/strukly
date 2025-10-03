@@ -1,7 +1,7 @@
 import { z } from "zod";
 import Transaction from "../../domain/aggregates/transaction";
 import { moneyToDTO, MoneyDTOSchema } from "./money_dto";
-import { transactionItemToDTO, TransactionItemDTOSchema } from "./transaction_item_dto";
+import { transactionItemToDTO, TransactionItemDTOSchema, CreateTransactionItemDTOSchema } from "./transaction_item_dto";
 
 export const CreateTransactionDTOSchema = z.object({
   vendorName: z.string(),
@@ -15,13 +15,14 @@ export const CreateTransactionDTOSchema = z.object({
   
   walletID: z.uuid("Invalid wallet ID format"),
   
-  items: z.array(TransactionItemDTOSchema),
+  items: z.array(CreateTransactionItemDTOSchema),
 });
 
 export const TransactionDTOSchema = CreateTransactionDTOSchema.extend({
   id: z.uuid("Invalid transaction ID format"),
   totalAmount: MoneyDTOSchema,
   userID: z.uuid("Invalid user ID format"),
+  items: z.array(TransactionItemDTOSchema),
 });
 
 export type CreateTransactionDTO = z.infer<typeof CreateTransactionDTOSchema>;
