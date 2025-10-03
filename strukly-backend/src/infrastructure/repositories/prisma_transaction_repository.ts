@@ -9,7 +9,7 @@ import UserID from "../../domain/values/user_id";
 import TransactionItemID from "../../domain/values/transaction_item_id";
 import TransactionID from "../../domain/values/transaction_id";
 
-export default class PrismaTranactionRepository
+export default class PrismaTransactionRepository
   implements ITransactionRepository
 {
   private prisma = new PrismaClient();

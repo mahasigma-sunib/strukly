@@ -10,7 +10,7 @@ import {
 } from "../dto/transaction_dto";
 import { authMiddleware } from "../middleware/auth_middleware";
 import TransactionService from "src/domain/services/transaction_service";
-import PrismaTranactionRepository from "../repositories/prisma_transaction_repository";
+import PrismaTransactionRepository from "../repositories/prisma_transaction_repository";
 import CreateTransactionUseCase from "src/application/use_cases/transaction/create_transaction";
 import GetTransactionListUseCase from "src/application/use_cases/transaction/get_transaction_list";
 import GetTransactionDetailUseCase from "src/application/use_cases/transaction/get_transaction_detail";
@@ -19,7 +19,7 @@ import UpdateTransactionUseCase from "src/application/use_cases/transaction/upda
 import DeleteTransactionUseCase from "src/application/use_cases/transaction/delete_transaction";
 
 const router = Router();
-const transactionRepository = new PrismaTranactionRepository();
+const transactionRepository = new PrismaTransactionRepository();
 const transactionService = new TransactionService(transactionRepository);
 const createTransactionUseCase = new CreateTransactionUseCase(
   transactionService
