@@ -48,7 +48,7 @@ export default class PrismaTransactionRepository
 
     return new Transaction(
        new TransactionHeader({
-        id: { value: createdTransaction.id },
+        id: new TransactionID(createdTransaction.id),
         dateTime: createdTransaction.dateTime,
         vendorName: createdTransaction.vendorName,
         category: TransactionCategory.fromString(createdTransaction.category),
@@ -92,7 +92,7 @@ export default class PrismaTransactionRepository
 
     return new Transaction(
       new TransactionHeader({
-        id: { value: foundTransaction.id },
+        id: new TransactionID(foundTransaction.id),
         dateTime: foundTransaction.dateTime,
         vendorName: foundTransaction.vendorName,
         category: TransactionCategory.fromString(foundTransaction.category),
@@ -130,7 +130,7 @@ export default class PrismaTransactionRepository
       (transaction) =>
         new Transaction(
           new TransactionHeader({
-            id: { value: transaction.id },
+            id: new TransactionID(transaction.id),
             dateTime: transaction.dateTime,
             vendorName: transaction.vendorName,
             category: TransactionCategory.fromString(transaction.category),
@@ -197,7 +197,7 @@ export default class PrismaTransactionRepository
 
     return new Transaction(
       new TransactionHeader({
-        id: { value: updatedTransaction.id },
+        id: new TransactionID(updatedTransaction.id),
         dateTime: updatedTransaction.dateTime,
         vendorName: updatedTransaction.vendorName,
         category: TransactionCategory.fromString(updatedTransaction.category),
