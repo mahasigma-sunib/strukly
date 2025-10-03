@@ -1,68 +1,55 @@
-import { Routes, Route, Link, useLocation } from "react-router-dom";
-import { ProtectedRoute } from "./route/ProtectedRoute";
-import Home from "./pages/Home";
-import TransactionHistory from "./pages/TransactionHistory";
-import TransactionDetail from "./pages/TransactionDetail";
-import UserLogin from "./pages/UserLogin";
-import UserRegister from "./pages/UserRegister";
-import useUserAuth from "./store/UserAuthStore";
-import "./App.css";
-import RegisterCookie from "./pages/RegisterCookie";
+import React from "react";
+import Button from "./components/Button";
 
-const App = () => {
-  const location = useLocation();
-  const isProtectedPath =
-    location.pathname !== "/login" && location.pathname !== "/register";
-
-  const logout = useUserAuth((s) => s.logout);
-
+/* Tes doang, hapus aja */
+export default function App() {
   return (
-    <div>
-      {isProtectedPath && (
-        <nav className="nav-bar">
-          <Link to="/">Home</Link> | <Link to="/History">History</Link> |{" "}
-          <Link to="" onClick={logout}>
-            Log out
-          </Link>
-        </nav>
-      )}
+    <div className="flex flex-col items-center justify-center h-screen gap-6 bg-surface p-6">
+      <Button />
 
-      <div className="route-container">
-        <Routes>
-          <Route path="/login" element={<UserLogin />} />
-          <Route path="/register" element={<UserRegister />} />
-          <Route path="/cookie" element={<RegisterCookie />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/History" element={<TransactionHistory />} />
-            <Route path="/History/:id" element={<TransactionDetail />} />
-          </Route>
-        </Routes>
+      {/* Typography test */}
+      <div className="typography-regular text-primary">Typography Regular</div>
+      <div className="typography-medium text-primary">Typography Medium</div>
+      <div className="typography-large text-primary">Typography Large</div>
+
+      {/* Color palette test */}
+      <div className="flex gap-2 mt-4">
+        <div
+          style={{
+            backgroundColor: "var(--color-primary)",
+            width: 50,
+            height: 50,
+          }}
+        />
+        <div
+          style={{
+            backgroundColor: "var(--color-primary-hover)",
+            width: 50,
+            height: 50,
+          }}
+        />
+        <div
+          style={{
+            backgroundColor: "var(--color-orange)",
+            width: 50,
+            height: 50,
+          }}
+        />
+        <div
+          style={{
+            backgroundColor: "var(--color-status-success)",
+            width: 50,
+            height: 50,
+          }}
+        />
+        <div
+          style={{
+            backgroundColor: "var(--color-status-error)",
+            width: 50,
+            height: 50,
+          }}
+        />
       </div>
     </div>
   );
-};
-
-export default App;
-
-/*
-<Routes>
-  <Route path="/" element={
-    <ProtectedRoute>
-      <Home />
-    </ProtectedRoute>
-  } />
-  <Route path="/login" element={<UserLogin />} />
-  <Route path="/register" element={<UserRegister />} />
-  <Route path="/History" element={
-    <ProtectedRoute>
-      <TransactionHistory />
-    </ProtectedRoute>
-  } />
-  <Route path="/History/:id" element={
-    <ProtectedRoute>
-      <TransactionDetail />
-    </ProtectedRoute>
-  } />
-</Routes>
-*/
+}
