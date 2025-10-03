@@ -44,7 +44,6 @@ function UserLogin() {
 
     try {
       await login(email, password);
-      // navigate("/");
       document.location.href = "/cookie"
     } catch {
       setLoginError("Invalid email or password");
