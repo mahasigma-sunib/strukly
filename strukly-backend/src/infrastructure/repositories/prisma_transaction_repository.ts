@@ -175,7 +175,7 @@ export default class PrismaTranactionRepository
 
         userID: transaction.header.userID.value,
 
-        walletID: "", // TODO: WalletID not implemented
+        walletID: transaction.header.walletID,
 
         items: {
           deleteMany: {
