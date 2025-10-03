@@ -1,30 +1,24 @@
-import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./route/ProtectedRoute";
 import Home from "./pages/Home";
 import TransactionHistory from "./pages/TransactionHistory";
 import TransactionDetail from "./pages/TransactionDetail";
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegister";
-import useUserAuth from "./store/UserAuthStore";
+// import useUserAuth from "./store/UserAuthStore";
 import RegisterCookie from "./pages/RegisterCookie";
 import Test from "./pages/Test"
+import MobileNavBar from "./components/MobileNavBar";
 
 const App = () => {
   const location = useLocation();
   const isProtectedPath =
     location.pathname !== "/login" && location.pathname !== "/register";
 
-  const logout = useUserAuth((s) => s.logout);
-
   return (
     <div>
       {isProtectedPath && (
-        <nav className="nav-bar">
-          <Link to="/home">Home</Link> | <Link to="/History">History</Link> |{" "}
-          <Link to="" onClick={logout}>
-            Log out
-          </Link>
-        </nav>
+        <MobileNavBar/>
       )}
 
       <div className="route-container">
