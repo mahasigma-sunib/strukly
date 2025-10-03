@@ -4,7 +4,10 @@ import {
   validateBody,
   validateParams,
 } from "../middleware/validation_middleware";
-import { CreateTransactionDTOSchema, TransactionDTOSchema } from "../dto/transaction_dto";
+import {
+  CreateTransactionDTOSchema,
+  TransactionDTOSchema,
+} from "../dto/transaction_dto";
 import { authMiddleware } from "../middleware/auth_middleware";
 import TransactionService from "src/domain/services/transaction_service";
 import PrismaTranactionRepository from "../repositories/prisma_transaction_repository";
@@ -13,6 +16,7 @@ import GetTransactionListUseCase from "src/application/use_cases/transaction/get
 import GetTransactionDetailUseCase from "src/application/use_cases/transaction/get_transaction_detail";
 import z from "zod";
 import UpdateTransactionUseCase from "src/application/use_cases/transaction/update_transaction";
+import DeleteTransactionUseCase from "src/application/use_cases/transaction/delete_transaction";
 
 const router = Router();
 const transactionRepository = new PrismaTranactionRepository();
@@ -29,11 +33,15 @@ const getTransactionDetailUseCase = new GetTransactionDetailUseCase(
 const updateTransactionUseCase = new UpdateTransactionUseCase(
   transactionService
 );
+const deleteTransactionUseCase = new DeleteTransactionUseCase(
+  transactionService
+);
 const transactionController = new TransactionController(
   createTransactionUseCase,
   getTransactionListUseCase,
   getTransactionDetailUseCase,
-  updateTransactionUseCase
+  updateTransactionUseCase,
+  deleteTransactionUseCase
 );
 
 router.post(
@@ -62,6 +70,13 @@ router.put(
   validateParams(z.object({ transactionID: z.string().uuid() })),
   validateBody(TransactionDTOSchema),
   transactionController.updateTransaction
+);
+
+router.delete(
+  "/transactions/:transactionID",
+  authMiddleware,
+  validateParams(z.object({ transactionID: z.string().uuid() })),
+  transactionController.deleteTransaction
 );
 
 export { router as transactionRouter };

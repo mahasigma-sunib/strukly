@@ -4,6 +4,7 @@ import CreateTransactionUseCase from "src/application/use_cases/transaction/crea
 import GetTransactionListUseCase from "src/application/use_cases/transaction/get_transaction_list";
 import GetTransactionDetailUseCase from "src/application/use_cases/transaction/get_transaction_detail";
 import UpdateTransactionUseCase from "src/application/use_cases/transaction/update_transaction";
+import DeleteTransactionUseCase from "src/application/use_cases/transaction/delete_transaction";
 
 export default class TransactionController {
   constructor(
@@ -11,6 +12,7 @@ export default class TransactionController {
     private readonly getTransactionListUseCase: GetTransactionListUseCase,
     private readonly getTransactionDetailUseCase: GetTransactionDetailUseCase,
     private readonly updateTransactionUseCase: UpdateTransactionUseCase,
+    private readonly deleteTransactionUseCase: DeleteTransactionUseCase,
   ) { }
 
   public createTransaction = async (req: Request<{}, {}, CreateTransactionDTO>, res: Response): Promise<Response> => {
@@ -91,4 +93,20 @@ export default class TransactionController {
       return res.status(500).json({ error: 'Internal server error' });
     }
   };
+
+  public deleteTransaction = async (req: Request<{ transactionID: string }>, res: Response): Promise<Response> => {
+    try {
+      const userID = req.user!.id;
+      const { transactionID } = req.params;
+
+      await this.deleteTransactionUseCase.execute(userID, transactionID);
+
+      return res.status(200).json({ message: 'Transaction deleted successfully' });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return res.status(400).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 }

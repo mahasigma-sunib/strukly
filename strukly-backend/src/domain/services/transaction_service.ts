@@ -43,4 +43,15 @@ export default class TransactionService {
     }
     return null;
   }
+
+  async deleteTransactionByID(userID: UserID, transactionID: TransactionID): Promise<void> {
+    const transaction = await this.transactionRepository.findByID(transactionID);
+    if (!transaction) {
+      throw new Error("Transaction not found.");
+    }
+    if (!transaction.header.userID.equals(userID)) {
+      throw new Error("Unauthorized: Transaction does not belong to the user.");
+    }
+    await this.transactionRepository.delete(transactionID);
+  }
 }
