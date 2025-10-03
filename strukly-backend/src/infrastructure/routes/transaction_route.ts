@@ -60,14 +60,14 @@ router.get(
 router.get(
   "/transactions/:transactionID",
   authMiddleware,
-  validateParams(z.object({ transactionID: z.string().uuid() })),
+  validateParams(z.object({ transactionID: z.uuid() })),
   transactionController.getTransactionDetail
 );
 
 router.put(
   "/transactions/:transactionID",
   authMiddleware,
-  validateParams(z.object({ transactionID: z.string().uuid() })),
+  validateParams(z.object({ transactionID: z.uuid() })),
   validateBody(TransactionDTOSchema),
   transactionController.updateTransaction
 );
@@ -75,7 +75,7 @@ router.put(
 router.delete(
   "/transactions/:transactionID",
   authMiddleware,
-  validateParams(z.object({ transactionID: z.string().uuid() })),
+  validateParams(z.object({ transactionID: z.uuid() })),
   transactionController.deleteTransaction
 );
 
