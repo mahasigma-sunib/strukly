@@ -3,4 +3,8 @@ export default class UserID {
   static fromRandom(): UserID {
     return new UserID(crypto.randomUUID());
   }
+
+  equals(other: UserID): boolean {
+    return this.value === other.value;
+  }
 }
