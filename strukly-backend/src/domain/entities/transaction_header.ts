@@ -16,11 +16,11 @@ export interface ITransactionHeaderEditable {
   walletID: string; // WalletID not implemented
 }
 
-export interface ITransactionHeaderBuider extends ITransactionHeaderEditable {
+export interface ITransactionHeaderBuilder extends ITransactionHeaderEditable {
   userID: UserID;
 }
 
-export interface ITransactionHeaderProps extends ITransactionHeaderBuider {
+export interface ITransactionHeaderProps extends ITransactionHeaderBuilder {
   id: TransactionID;
 
   totalAmount: Money;
@@ -58,7 +58,7 @@ export default class TransactionHeader {
     this.walletID = props.walletID;
   }
 
-  static new(props: ITransactionHeaderBuider): TransactionHeader {
+  static new(props: ITransactionHeaderBuilder): TransactionHeader {
     return new TransactionHeader({
       ...props,
       id: TransactionID.fromRandom(),
