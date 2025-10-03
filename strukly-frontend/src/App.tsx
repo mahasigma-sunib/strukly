@@ -7,6 +7,7 @@ import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegister";
 import useUserAuth from "./store/UserAuthStore";
 import RegisterCookie from "./pages/RegisterCookie";
+import Test from "./pages/Test"
 
 const App = () => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const App = () => {
     <div>
       {isProtectedPath && (
         <nav className="nav-bar">
-          <Link to="/">Home</Link> | <Link to="/History">History</Link> |{" "}
+          <Link to="/home">Home</Link> | <Link to="/History">History</Link> |{" "}
           <Link to="" onClick={logout}>
             Log out
           </Link>
@@ -29,10 +30,11 @@ const App = () => {
       <div className="route-container">
         <Routes>
           <Route path="/login" element={<UserLogin />} />
+          <Route path="/test" element={<Test />} />
           <Route path="/register" element={<UserRegister />} />
           <Route path="/cookie" element={<RegisterCookie />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/History" element={<TransactionHistory />} />
             <Route path="/History/:id" element={<TransactionDetail />} />
           </Route>
