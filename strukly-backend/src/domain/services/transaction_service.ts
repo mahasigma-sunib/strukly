@@ -8,9 +8,24 @@ export default class TransactionService {
   async createTransaction(transaction: Transaction): Promise<Transaction> {
     return await this.transactionRepository.create(transaction);
   }
-  async updateTransaction(transaction: Transaction): Promise<Transaction> {
+
+  /**
+   * Update a transaction, ensuring it belongs to the specified user.
+   * @param userID 
+   * @param transaction 
+   * @returns 
+   */
+  async updateTransaction(userID: UserID, transaction: Transaction): Promise<Transaction> {
+    // Ensure the transaction belongs to the user before updating
+    if (!transaction.header.userID.equals(userID)) {
+      throw new Error("Unauthorized: Transaction does not belong to the user.");
+    }
+
+    // TODO: ensure walletID belongs to user
+
     return await this.transactionRepository.update(transaction);
   }
+
   async getTransactionListByUserID(userID: UserID): Promise<Transaction[]> {
     return await this.transactionRepository.findByUserID(userID);
   }

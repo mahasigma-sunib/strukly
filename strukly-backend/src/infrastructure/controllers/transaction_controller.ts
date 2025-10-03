@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
-import { CreateTransactionDTO, transactionToDTO } from "../dto/transaction_dto";
+import { CreateTransactionDTO, TransactionDTO, transactionToDTO } from "../dto/transaction_dto";
 import CreateTransactionUseCase from "src/application/use_cases/transaction/create_transaction";
 import GetTransactionListUseCase from "src/application/use_cases/transaction/get_transaction_list";
 import GetTransactionDetailUseCase from "src/application/use_cases/transaction/get_transaction_detail";
+import UpdateTransactionUseCase from "src/application/use_cases/transaction/update_transaction";
 
 export default class TransactionController {
   constructor(
     private readonly createTransactionUseCase: CreateTransactionUseCase,
     private readonly getTransactionListUseCase: GetTransactionListUseCase,
     private readonly getTransactionDetailUseCase: GetTransactionDetailUseCase,
+    private readonly updateTransactionUseCase: UpdateTransactionUseCase,
   ) { }
 
   public createTransaction = async (req: Request<{}, {}, CreateTransactionDTO>, res: Response): Promise<Response> => {
@@ -68,4 +70,25 @@ export default class TransactionController {
     }
   };
 
+  public updateTransaction = async (req: Request<{ transactionID: string }, {}, TransactionDTO>, res: Response): Promise<Response> => {
+    try {
+      const userID = req.user!.id;
+      const { transactionID } = req.params;
+      const transactionData = req.body;
+
+      if (transactionID !== transactionData.id) {
+        return res.status(400).json({ error: 'Transaction ID in URL does not match ID in body' });
+      }
+
+      const updatedTransaction = await this.updateTransactionUseCase.execute(userID, transactionData);
+
+      return res.status(200).json({
+        message: 'Transaction updated successfully',
+        transaction: transactionToDTO(updatedTransaction),
+      });
+    } catch (error: unknown) {
+      console.error(error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 }

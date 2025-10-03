@@ -1,7 +1,10 @@
 import { Router } from "express";
 import TransactionController from "../controllers/transaction_controller";
-import { validateBody, validateParams } from "../middleware/validation_middleware";
-import { CreateTransactionDTOSchema } from "../dto/transaction_dto";
+import {
+  validateBody,
+  validateParams,
+} from "../middleware/validation_middleware";
+import { CreateTransactionDTOSchema, TransactionDTOSchema } from "../dto/transaction_dto";
 import { authMiddleware } from "../middleware/auth_middleware";
 import TransactionService from "src/domain/services/transaction_service";
 import PrismaTranactionRepository from "../repositories/prisma_transaction_repository";
@@ -9,6 +12,7 @@ import CreateTransactionUseCase from "src/application/use_cases/transaction/crea
 import GetTransactionListUseCase from "src/application/use_cases/transaction/get_transaction_list";
 import GetTransactionDetailUseCase from "src/application/use_cases/transaction/get_transaction_detail";
 import z from "zod";
+import UpdateTransactionUseCase from "src/application/use_cases/transaction/update_transaction";
 
 const router = Router();
 const transactionRepository = new PrismaTranactionRepository();
@@ -22,10 +26,14 @@ const getTransactionListUseCase = new GetTransactionListUseCase(
 const getTransactionDetailUseCase = new GetTransactionDetailUseCase(
   transactionService
 );
+const updateTransactionUseCase = new UpdateTransactionUseCase(
+  transactionService
+);
 const transactionController = new TransactionController(
   createTransactionUseCase,
   getTransactionListUseCase,
-  getTransactionDetailUseCase
+  getTransactionDetailUseCase,
+  updateTransactionUseCase
 );
 
 router.post(
@@ -42,10 +50,18 @@ router.get(
 );
 
 router.get(
-  '/transactions/:transactionID',
+  "/transactions/:transactionID",
   authMiddleware,
   validateParams(z.object({ transactionID: z.string().uuid() })),
   transactionController.getTransactionDetail
+);
+
+router.put(
+  "/transactions/:transactionID",
+  authMiddleware,
+  validateParams(z.object({ transactionID: z.string().uuid() })),
+  validateBody(TransactionDTOSchema),
+  transactionController.updateTransaction
 );
 
 export { router as transactionRouter };
