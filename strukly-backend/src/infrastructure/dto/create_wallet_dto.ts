@@ -21,6 +21,6 @@ export function WalletToDTO(wallet: Wallet): WalletDTO {
     userId: wallet.userID,
     walletName: wallet.walletName,
     transactionMethod: wallet.transactionMethod.value,
-    balance: wallet.balance.amount,
+    balance: wallet.balance.value,
   }
 }

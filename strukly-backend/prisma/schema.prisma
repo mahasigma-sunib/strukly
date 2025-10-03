@@ -14,12 +14,50 @@ datasource db {
 }
 
 model User {
-  id        String      @id @default(uuid())
-  email     String   @unique
-  name      String
-  hashedPassword  String   // hashed password
+  id             String   @id @default(uuid())
+  email          String   @unique
+  name           String
+  hashedPassword String // hashed password
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  transactions TransactionHeader[]
+}
+
+model TransactionHeader {
+  id             String   @id @default(uuid())
+  dateTime       DateTime
+  vendorName     String
+  category       String
+  subtotalAmount Float
+  taxAmount      Float
+  discountAmount Float
+  serviceAmount  Float
+  totalAmount    Float
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  userID String
+  user   User   @relation(fields: [userID], references: [id])
+
+  walletID String
+
+  items TransactionItem[]
+}
+
+model TransactionItem {
+  id          String @id @default(uuid())
+  name        String
+  quantity    Int
+  singlePrice Float
+  totalPrice  Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactionID String
+  transaction   TransactionHeader @relation(fields: [transactionID], references: [id])
 }
 
 model Wallet {

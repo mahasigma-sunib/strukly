@@ -1,19 +1,57 @@
 import Transaction from "../aggregates/transaction";
-import IImageToTransactionPort from "../ports/image_to_transaction_port";
 import ITransactionRepository from "../repositories/transaction_repository";
+import TransactionID from "../values/transaction_id";
+import UserID from "../values/user_id";
 
 export default class TransactionService {
-  constructor(
-    private readonly transactionRepository: ITransactionRepository,
-    private readonly imageToTransactionPort: IImageToTransactionPort,
-  ) { }
-
-  async createTransactionFromImage(base64Image: string) {
-    const transaction = await this.imageToTransactionPort.imageToTransaction(base64Image);
-    return
+  constructor(private readonly transactionRepository: ITransactionRepository) { }
+  async createTransaction(transaction: Transaction): Promise<Transaction> {
+    return await this.transactionRepository.create(transaction);
   }
 
-  async createTransaction(transaction: Transaction): Promise<Transaction> {
-    return {} as Transaction;
+  /**
+   * Update a transaction, ensuring it belongs to the specified user.
+   * @param userID 
+   * @param transaction 
+   * @returns 
+   */
+  async updateTransaction(userID: UserID, transaction: Transaction): Promise<Transaction> {
+    // Ensure the transaction belongs to the user before updating
+    if (!transaction.header.userID.equals(userID)) {
+      throw new Error("Unauthorized: Transaction does not belong to the user.");
+    }
+
+    // TODO: ensure walletID belongs to user
+
+    return await this.transactionRepository.update(transaction);
+  }
+
+  async getTransactionListByUserID(userID: UserID): Promise<Transaction[]> {
+    return await this.transactionRepository.findByUserID(userID);
+  }
+
+  /**
+   * Get transaction by ID, ensuring it belongs to the specified user.
+   * @param userID 
+   * @param transactionID 
+   * @returns Transaction
+   */
+  async getTransactionByID(userID: UserID, transactionID: TransactionID): Promise<Transaction | null> {
+    const transaction = await this.transactionRepository.findByID(transactionID);
+    if (transaction && transaction.header.userID.equals(userID)) {
+      return transaction;
+    }
+    return null;
+  }
+
+  async deleteTransactionByID(userID: UserID, transactionID: TransactionID): Promise<void> {
+    const transaction = await this.transactionRepository.findByID(transactionID);
+    if (!transaction) {
+      throw new Error("Transaction not found.");
+    }
+    if (!transaction.header.userID.equals(userID)) {
+      throw new Error("Unauthorized: Transaction does not belong to the user.");
+    }
+    await this.transactionRepository.delete(transactionID);
   }
 }
