@@ -8,6 +8,7 @@ import PrismaTranactionRepository from "../repositories/prisma_transaction_repos
 import CreateTransactionUseCase from "src/application/use_cases/transaction/create_transaction";
 import GetTransactionListUseCase from "src/application/use_cases/transaction/get_transaction_list";
 import GetTransactionDetailUseCase from "src/application/use_cases/transaction/get_transaction_detail";
+import z from "zod";
 
 const router = Router();
 const transactionRepository = new PrismaTranactionRepository();
@@ -38,6 +39,13 @@ router.get(
   "/transactions",
   authMiddleware,
   transactionController.getTransactionList
+);
+
+router.get(
+  '/transactions/:transactionID',
+  authMiddleware,
+  validateParams(z.object({ transactionID: z.string().uuid() })),
+  transactionController.getTransactionDetail
 );
 
 export { router as transactionRouter };
