@@ -19,6 +19,6 @@ export default class Transaction {
   }
 
   removeItem(itemID: TransactionID) {
-    this.items = this.items.filter(item => item.id !== itemID);
+    this.items = this.items.filter(item => item.id.value !== itemID.value);
   }
 }
