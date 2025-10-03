@@ -1,7 +1,7 @@
 import { CreateTransactionDTO } from "src/infrastructure/dto/transaction_dto";
 import Transaction from "../../../domain/aggregates/transaction";
 import TransactionService from "../../../domain/services/transaction_service";
-
+import TransactionMapper from "src/application/services/transaction_mapper";
 
 export default class CreateTransactionUseCase {
   constructor(private readonly transactionService: TransactionService) {}
@@ -9,12 +9,6 @@ export default class CreateTransactionUseCase {
     userID: string,
     transaction: CreateTransactionDTO,
   ) {
-
-    // Delegate DTO -> Domain mapping to the application-layer mapper
-    const { default: TransactionMapper } = await import(
-      "src/application/services/transaction_mapper"
-    );
-
     const newTransaction: Transaction = TransactionMapper.fromCreateDTO(
       userID,
       transaction
