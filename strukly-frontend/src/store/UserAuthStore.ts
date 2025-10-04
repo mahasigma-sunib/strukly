@@ -5,6 +5,7 @@ import type { UserAuthType } from "../type/UserAuthType";
 const useUserAuth = create<UserAuthType>((set, get) => ({
   //initial value of the user
   user: null,
+  authChecked: false,
 
   register: async (name, email, password) => {
     try {
@@ -39,14 +40,21 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   },
 
   fetchProfile: async () => {
-    // Fetch user info
-    const userRes = await axios.get("http://localhost:3000/api/auth/profile", {
-      withCredentials: true,
-    });
-    const { user } = userRes.data;
-    set({
-      user,
-    });
+    try {
+      const userRes = await axios.get(
+        "http://localhost:3000/api/auth/profile",
+        {
+          withCredentials: true,
+        }
+      );
+      const { user } = userRes.data;
+      console.log(user);
+      set({ user });
+    } catch (error) {
+      set({ user: null }); // Not authenticated
+    } finally {
+      set({ authChecked: true });
+    }
   },
 
   //use for protectedRoute
@@ -55,7 +63,11 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   //remove all the user data information
   logout: async () => {
     set({ user: null });
-    await axios.post("http://localhost:3000/api/auth/logout");
+    await axios.post(
+      "http://localhost:3000/api/auth/logout",
+      {},
+      { withCredentials: true }
+    );
   },
 }));
 

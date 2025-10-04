@@ -2,6 +2,7 @@ import type UserType from "./UserType";
 
 export interface UserAuthType {
   user: UserType | null;
+  authChecked: boolean;
 
   register: (
     username: string,
