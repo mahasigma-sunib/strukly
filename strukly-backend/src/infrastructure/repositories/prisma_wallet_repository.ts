@@ -6,6 +6,7 @@ import { IWalletRepository } from "../../domain/repositories/wallet_repository";
 import Money from "../../domain/values/money";
 import TransactionMethod from "../../domain/values/transaction_method";
 import WalletID from "../../domain/values/wallet_id";
+import UserID from "src/domain/values/user_id";
 
 export default class WalletRepositoryPrisma implements IWalletRepository {
   private prisma: PrismaClient;
@@ -20,7 +21,7 @@ export default class WalletRepositoryPrisma implements IWalletRepository {
         id: wallet.id.value,
         userID: wallet.userID,
         name: wallet.walletName,
-        balance: wallet.balance.amount,
+        balance: wallet.balance.value,
         transaction_method: wallet.transactionMethod.value,
       },
     });
@@ -48,9 +49,9 @@ export default class WalletRepositoryPrisma implements IWalletRepository {
     });
   }
 
-  async findByUser(userId: string): Promise<Wallet[]> {
+  async findByUser(userId: UserID): Promise<Wallet[]> {
     const wallets = await this.prisma.wallet.findMany({
-      where: { userID: userId },
+      where: { userID: userId.value },
     });
     
     const result = wallets.map((w) => new Wallet({
@@ -67,7 +68,7 @@ export default class WalletRepositoryPrisma implements IWalletRepository {
     const updated = await this.prisma.wallet.update({
       where: { id: wallet.id.value },
       data: {
-        balance: wallet.balance.amount,
+        balance: wallet.balance.value,
       },
     });
     return new Wallet({
