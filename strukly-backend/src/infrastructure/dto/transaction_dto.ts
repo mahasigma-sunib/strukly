@@ -18,6 +18,8 @@ export const CreateTransactionDTOSchema = z.object({
   items: z.array(CreateTransactionItemDTOSchema),
 });
 
+export const CreateFromVLLMTransactionDTOSchema = CreateTransactionDTOSchema.omit({ walletID: true });
+
 export const TransactionDTOSchema = CreateTransactionDTOSchema.extend({
   id: z.uuid("Invalid transaction ID format"),
   totalAmount: MoneyDTOSchema,
@@ -26,6 +28,7 @@ export const TransactionDTOSchema = CreateTransactionDTOSchema.extend({
 });
 
 export type CreateTransactionDTO = z.infer<typeof CreateTransactionDTOSchema>;
+export type CreateFromVLLMTransactionDTO = z.infer<typeof CreateFromVLLMTransactionDTOSchema>;
 export type TransactionDTO = z.infer<typeof TransactionDTOSchema>;
 
 export function transactionToDTO(transaction: Transaction): TransactionDTO {
