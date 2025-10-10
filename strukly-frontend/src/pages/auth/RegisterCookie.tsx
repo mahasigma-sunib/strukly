@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useUserAuth from "../store/UserAuthStore";
+import useUserAuth from "../../store/UserAuthStore";
 
 export default function RegisterCookie() {
   const navigate = useNavigate();

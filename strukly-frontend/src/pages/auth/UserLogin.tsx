@@ -1,8 +1,8 @@
 import { useState } from "react";
 // import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
-import useUserAuth from "../store/UserAuthStore";
+import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
+import useUserAuth from "../../store/UserAuthStore";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -44,7 +44,7 @@ function UserLogin() {
 
     try {
       await login(email, password);
-      document.location.href = "/cookie"
+      document.location.href = "/cookie";
     } catch {
       setLoginError("Invalid email or password");
     }
@@ -94,7 +94,9 @@ function UserLogin() {
           </div>
         )}
       </div>
-      <button onClick={handleLogin} className="rounded cursor-pointer my-4">Log in</button>
+      <button onClick={handleLogin} className="rounded cursor-pointer my-4">
+        Log in
+      </button>
       <div>
         <span>Don&apos;t have an account?</span>
         <button

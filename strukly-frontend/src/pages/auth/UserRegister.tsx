@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { emailSchema, passwordSchema } from "../schema/UserAuthSchemas";
-import useUserAuth from "../store/UserAuthStore";
-// // import axios from "axios";
-// import useUserInfo from "../store/UserAuthStore";
+import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
+import useUserAuth from "../../store/UserAuthStore";
 
 function UserRegister() {
   const [email, setEmail] = useState("");
@@ -50,7 +48,13 @@ function UserRegister() {
     handleEmailValidation();
     handlePasswordValidation();
     setRegisterError("");
-    if (!username || !email || !password || emailError !== "" || passwordError.length > 0) {
+    if (
+      !username ||
+      !email ||
+      !password ||
+      emailError !== "" ||
+      passwordError.length > 0
+    ) {
       return; // Stop if there are errors
     }
 
@@ -137,7 +141,9 @@ function UserRegister() {
           <div style={{ color: "red" }}>{confirmPasswordError}</div>
         )}
       </div>
-      <button onClick={handleRegister} className="rounded cursor-pointer my-2">Register</button>
+      <button onClick={handleRegister} className="rounded cursor-pointer my-2">
+        Register
+      </button>
       <div>
         <span>Already have an account?</span>
         <button
