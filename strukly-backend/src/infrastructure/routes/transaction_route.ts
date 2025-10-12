@@ -17,10 +17,13 @@ import GetTransactionDetailUseCase from "src/application/use_cases/transaction/g
 import z from "zod";
 import UpdateTransactionUseCase from "src/application/use_cases/transaction/update_transaction";
 import DeleteTransactionUseCase from "src/application/use_cases/transaction/delete_transaction";
+import ImageToTransactionUseCase from "src/application/use_cases/transaction/image_to_transaction";
+import GeminiLanguageModel from "../language_model/gemini_language_model";
 
 const router = Router();
 const transactionRepository = new PrismaTransactionRepository();
 const transactionService = new TransactionService(transactionRepository);
+const languageModelService = new GeminiLanguageModel();
 const createTransactionUseCase = new CreateTransactionUseCase(
   transactionService
 );
@@ -36,12 +39,14 @@ const updateTransactionUseCase = new UpdateTransactionUseCase(
 const deleteTransactionUseCase = new DeleteTransactionUseCase(
   transactionService
 );
+const imageToTransactionUseCase = new ImageToTransactionUseCase(languageModelService);
 const transactionController = new TransactionController(
   createTransactionUseCase,
   getTransactionListUseCase,
   getTransactionDetailUseCase,
   updateTransactionUseCase,
-  deleteTransactionUseCase
+  deleteTransactionUseCase,
+  imageToTransactionUseCase,
 );
 
 router.post(
@@ -77,6 +82,13 @@ router.delete(
   authMiddleware,
   validateParams(z.object({ transactionID: z.uuid() })),
   transactionController.deleteTransaction
+);
+
+router.post(
+  "/transactions/image-to-transaction",
+  authMiddleware,
+  validateBody(z.object({ image: z.string() })),
+  transactionController.imageToTransaction
 );
 
 export { router as transactionRouter };
