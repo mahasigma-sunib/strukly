@@ -22,6 +22,7 @@ model User {
   updatedAt      DateTime @updatedAt
 
   transactions TransactionHeader[]
+  wishlists    Wishlist[]
 }
 
 model TransactionHeader {
@@ -69,4 +70,17 @@ model Wallet {
   balanceCurrency    String   @default("idr")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @default(now()) @db.Timestamp(6)
+}
+
+model Wishlist {
+  id        String @id @default(uuid())
+  itemName  String
+  itemPrice Int
+  progress  Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userID String
+  user   User   @relation(fields: [userID], references: [id])
 }
