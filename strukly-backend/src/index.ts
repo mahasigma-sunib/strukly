@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { authRouter } from "./infrastructure/routes/auth_route";
 import { transactionRouter } from "./infrastructure/routes/transaction_route";
+import { goalRouter } from "./infrastructure/routes/goal_route";
 
 const app = express();
 const port = 3000;
@@ -16,6 +17,7 @@ app.use(
 );
 app.use("/api", authRouter);
 app.use("/api", transactionRouter);
+app.use("/api", goalRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

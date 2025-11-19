@@ -22,6 +22,7 @@ model User {
   updatedAt      DateTime @updatedAt
 
   transactions TransactionHeader[]
+  goalItems    GoalItem[]
 }
 
 model TransactionHeader {
@@ -69,4 +70,18 @@ model Wallet {
   balanceCurrency    String   @default("idr")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @default(now()) @db.Timestamp(6)
+}
+
+model GoalItem {
+  id          String   @id @default(uuid())
+  userID      String
+  name        String
+  price       Float
+  deposited   Float
+  completed   Boolean
+  completedAt DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userID], references: [id])
 }
