@@ -6,6 +6,6 @@ export default interface IWishlistRepository {
     create: (wishlist: Wishlist) => Promise<Wishlist>;
     delete: (wishlistID: WishlistID) => Promise<void>;
     findByID: (wishlistID: WishlistID) => Promise<Wishlist | null>;
-    findByUserID: (userID: UserID) => Promise<Wishlist[]>;
     update: (wishlist: Wishlist) => Promise<Wishlist>;
+    getAll: (userID: UserID) => Promise<Wishlist[]>;
 }
