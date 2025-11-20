@@ -72,15 +72,17 @@ model Wallet {
   updatedAt          DateTime @default(now()) @db.Timestamp(6)
 }
 
-model Wishlist {
-  id        String @id @default(uuid())
-  itemName  String
-  itemPrice Int
-  progress  Int
+model GoalItem {
+  id          String @id @default(uuid())
+  name        String
+  price       Int
+  deposited   Int
+  completed   Boolean @default(false)
+  completedAt DateTime
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  userID String
+  userID      String
   user   User   @relation(fields: [userID], references: [id])
 }
