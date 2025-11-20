@@ -1,37 +1,35 @@
 import Money from "../values/money";
-import TransactionCategory from "../values/transaction_category";
-import TransactionID from "../values/transaction_id"
 import UserID from "../values/user_id";
+import ExpenseCategory from "../values/expense_category";
+import ExpenseID from "../values/expense_id";
 
-export interface ITransactionHeaderEditable {
+export interface IExpenseHeaderEditable {
   dateTime: Date;
 
   vendorName: string;
-  category: TransactionCategory;
+  category: ExpenseCategory;
   subtotalAmount: Money;
   taxAmount: Money;
   discountAmount: Money;
   serviceAmount: Money;
-
-  walletID: string; // WalletID not implemented
 }
 
-export interface ITransactionHeaderBuilder extends ITransactionHeaderEditable {
+export interface IExpenseHeaderBuilder extends IExpenseHeaderEditable {
   userID: UserID;
 }
 
-export interface ITransactionHeaderProps extends ITransactionHeaderBuilder {
-  id: TransactionID;
+export interface IExpenseHeaderProps extends IExpenseHeaderBuilder {
+  id: ExpenseID;
 
   totalAmount: Money;
 }
 
-export default class TransactionHeader {
-  public readonly id: TransactionID;
+export default class ExpenseHeader {
+  public readonly id: ExpenseID;
 
   public readonly dateTime: Date;
   public readonly vendorName: string;
-  public readonly category: TransactionCategory;
+  public readonly category: ExpenseCategory;
   public readonly subtotalAmount: Money;
   public readonly taxAmount: Money;
   public readonly discountAmount: Money;
@@ -40,9 +38,8 @@ export default class TransactionHeader {
   public readonly totalAmount: Money;
 
   public readonly userID: UserID;
-  public readonly walletID: string;
 
-  constructor(props: ITransactionHeaderProps) {
+  constructor(props: IExpenseHeaderProps) {
     this.id = props.id;
     this.dateTime = props.dateTime;
     this.vendorName = props.vendorName;
@@ -55,19 +52,18 @@ export default class TransactionHeader {
     this.totalAmount = props.totalAmount;
 
     this.userID = props.userID;
-    this.walletID = props.walletID;
   }
 
-  static new(props: ITransactionHeaderBuilder): TransactionHeader {
-    return new TransactionHeader({
+  static new(props: IExpenseHeaderBuilder): ExpenseHeader {
+    return new ExpenseHeader({
       ...props,
-      id: TransactionID.fromRandom(),
+      id: ExpenseID.fromRandom(),
       totalAmount: Money.sum([
         props.subtotalAmount,
         props.taxAmount,
         props.serviceAmount,
-        Money.negate(props.discountAmount)
-      ])
+        Money.negate(props.discountAmount),
+      ]),
     });
   }
 }
