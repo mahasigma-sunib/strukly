@@ -22,7 +22,7 @@ model User {
   updatedAt      DateTime @updatedAt
 
   transactions TransactionHeader[]
-  wishlists    Wishlist[]
+  goalItems    GoalItem[]
 }
 
 model TransactionHeader {
