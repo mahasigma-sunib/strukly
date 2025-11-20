@@ -5,6 +5,7 @@ import GetTransactionListUseCase from "src/application/use_cases/transaction/get
 import GetTransactionDetailUseCase from "src/application/use_cases/transaction/get_transaction_detail";
 import UpdateTransactionUseCase from "src/application/use_cases/transaction/update_transaction";
 import DeleteTransactionUseCase from "src/application/use_cases/transaction/delete_transaction";
+import ScanTransactionImageUseCase from "src/application/use_cases/transaction/scan_transaction_image";
 
 export default class TransactionController {
   constructor(
@@ -13,6 +14,7 @@ export default class TransactionController {
     private readonly getTransactionDetailUseCase: GetTransactionDetailUseCase,
     private readonly updateTransactionUseCase: UpdateTransactionUseCase,
     private readonly deleteTransactionUseCase: DeleteTransactionUseCase,
+    private readonly imageToTransactionUseCase: ScanTransactionImageUseCase,
   ) { }
 
   public createTransaction = async (req: Request<{}, {}, CreateTransactionDTO>, res: Response): Promise<Response> => {
@@ -109,4 +111,20 @@ export default class TransactionController {
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+  public scanTransactionImage = async (req: Request<{}, {}, { image: string }>, res: Response): Promise<Response> => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Image is required' });
+      }
+
+      const image = req.file.buffer.toString('base64');
+
+      const partialTransactionData = await this.imageToTransactionUseCase.execute(image);
+
+      return res.status(200).json({ transaction: partialTransactionData });
+    } catch (error: unknown) {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 }
