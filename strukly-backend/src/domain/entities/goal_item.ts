@@ -1,44 +1,83 @@
 // src/domain/entities/goal_item.ts
 
-import WishlistID from "../values/wishlist_id";
+import GoalItemID from "../values/goal_item_id";
 import UserID from "../values/user_id";
-import Money from "../values/money";
 
-export interface IWishlistEditable {
-  itemName: string;
-  itemPrice: Money;
-  progress: number;
-}
+export interface IGoalItemBuilder {
+  userID: string;
+  name: string;
+  price: number;
+};
 
-export interface IWishlistBuilder extends IWishlistEditable {
-  userID: UserID;
-}
+export default class GoalItem {
+  constructor(
+    public id: GoalItemID,
+    
+    public name: string,
+    public price: number,
+    public deposited: number,
+    public completed: boolean,
+    public completedAt: Date,
 
-export interface IWishlistProps extends IWishlistBuilder {
-  id: WishlistID;
-}
+    public createdAt: Date,
+    public updatedAt: Date,
 
-export default class Wishlist {
-  public readonly id: WishlistID;
+    public userID: UserID,
+  ) { }
 
-  public readonly itemName: string;
-  public readonly itemPrice: Money;
-  public readonly progress: number;
-
-  public readonly userID: UserID;
-
-  constructor(props: IWishlistProps) {
-    this.id = props.id;
-    this.itemName = props.itemName;
-    this.itemPrice = props.itemPrice;
-    this.progress = props.progress;
-    this.userID = props.userID;
+  static new(builder: IGoalItemBuilder) {
+    return new GoalItem(
+      GoalItemID.fromRandom(),
+      builder.name,
+      builder.price,
+      0,
+      false,
+      new Date(),
+      new Date(),
+      new Date(),
+      new UserID(builder.userID),
+    );
   }
 
-  static new(props: IWishlistBuilder): Wishlist {
-    return new Wishlist({
-      ...props,
-      id: WishlistID.fromRandom(),
-    });
+  deposit(amount: number) {
+    if (amount <= 0) throw new Error('Amount must be positive');
+    this.deposited += amount;
+    this.updatedAt = new Date();
+    if (this.deposited >= this.price && !this.completed) {
+      this.completed = true;
+      this.completedAt = new Date();
+    }
+  }
+
+  remaining(): number {
+    return Math.max(0, this.price - this.deposited);
+  }
+
+  toDTO() {
+    return {
+      id: this.id.value,
+      name: this.name,
+      price: this.price,
+      deposited: this.deposited,
+      completed: this.completed,
+      completedAt: this.completedAt?.toISOString() ?? null,
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
+      userID: this.userID.value,
+    };
+  }
+
+  static fromPersistence(data: any): GoalItem {
+    return new GoalItem(
+      new GoalItemID(data.id),
+      data.name,
+      Number(data.price),
+      Number(data.deposited),
+      Boolean(data.completed),
+      data.completedAt ? new Date(data.completedAt) : new Date(0),
+      data.createdAt ? new Date(data.createdAt) : new Date(0),
+      data.updatedAt ? new Date(data.updatedAt) : new Date(0),
+      new UserID(data.userID),
+    );
   }
 }
