@@ -17,8 +17,9 @@ import GetTransactionDetailUseCase from "src/application/use_cases/transaction/g
 import z from "zod";
 import UpdateTransactionUseCase from "src/application/use_cases/transaction/update_transaction";
 import DeleteTransactionUseCase from "src/application/use_cases/transaction/delete_transaction";
-import ImageToTransactionUseCase from "src/application/use_cases/transaction/image_to_transaction";
+import ScanTransactionImageUseCase from "src/application/use_cases/transaction/scan_transaction_image";
 import GeminiLanguageModel from "../language_model/gemini_language_model";
+import multer from "multer";
 
 const router = Router();
 const transactionRepository = new PrismaTransactionRepository();
@@ -39,7 +40,7 @@ const updateTransactionUseCase = new UpdateTransactionUseCase(
 const deleteTransactionUseCase = new DeleteTransactionUseCase(
   transactionService
 );
-const imageToTransactionUseCase = new ImageToTransactionUseCase(languageModelService);
+const imageToTransactionUseCase = new ScanTransactionImageUseCase(languageModelService);
 const transactionController = new TransactionController(
   createTransactionUseCase,
   getTransactionListUseCase,
@@ -47,6 +48,14 @@ const transactionController = new TransactionController(
   updateTransactionUseCase,
   deleteTransactionUseCase,
   imageToTransactionUseCase,
+);
+
+const transactionImageUpload = multer(); // store in memory
+router.post(
+  "/transactions/scan-image",
+  authMiddleware,
+  transactionImageUpload.single("image"),
+  transactionController.scanTransactionImage
 );
 
 router.post(
@@ -82,13 +91,6 @@ router.delete(
   authMiddleware,
   validateParams(z.object({ transactionID: z.uuid() })),
   transactionController.deleteTransaction
-);
-
-router.post(
-  "/transactions/image-to-transaction",
-  authMiddleware,
-  validateBody(z.object({ image: z.string() })),
-  transactionController.imageToTransaction
 );
 
 export { router as transactionRouter };
