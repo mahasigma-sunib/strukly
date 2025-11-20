@@ -34,12 +34,14 @@ model ExpenseHeader {
   discountAmount Float
   serviceAmount  Float
   totalAmount    Float
+  myAmount       Float
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userID String
   user   User   @relation(fields: [userID], references: [id])
+  members Json
 
   items ExpenseItem[]
 }
@@ -53,18 +55,19 @@ model ExpenseItem {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  assignedMember String?
 
   expenseID String
-  expense   ExpenseHeader @relation(fields: [expenseID], references: [id])
+  expense   ExpenseHeader @relation(fields: [expenseID], references: [id], onDelete: Cascade)
 }
 
 model Wallet {
-  id                 String   @id @default(uuid())
-  userID             String   @db.Uuid
-  name               String
-  expense_method String   @default("cash")
-  balance            Decimal  @default(0) @db.Decimal(15, 2)
-  balanceCurrency    String   @default("idr")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now()) @db.Timestamp(6)
+  id              String   @id @default(uuid())
+  userID          String   @db.Uuid
+  name            String
+  expense_method  String   @default("cash")
+  balance         Decimal  @default(0) @db.Decimal(15, 2)
+  balanceCurrency String   @default("idr")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @db.Timestamp(6)
 }
