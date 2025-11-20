@@ -15,7 +15,6 @@ export default class DeleteGoalItemUseCase {
     }
 
     if (existing.userID.value !== userID) {
-      // Jika beda, lempar error Unauthorized/Forbidden
       throw new Error("You are not authorized to delete this goal item");
     }
 
