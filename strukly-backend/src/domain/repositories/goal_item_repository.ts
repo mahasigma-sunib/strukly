@@ -8,6 +8,6 @@ export interface IGoalItemRepository {
     create: (GoalItem: GoalItem) => Promise<GoalItem>;
     delete: (GoalItemID: GoalItemID) => Promise<void>;
     findByID: (GoalItemID: GoalItemID) => Promise<GoalItem | null>;
-    update: (GoalItem: GoalItem) => Promise<GoalItem>;
-    getAll: (userID: UserID) => Promise<GoalItem[]>;
+    findByUserID: (userID: UserID) => Promise<GoalItem[]>;
+    update: (GoalItem: GoalItem) => Promise<GoalItem>;   
 }
