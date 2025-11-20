@@ -1,3 +1,5 @@
+// src/domain/entities/goal_item.ts
+
 import WishlistID from "../values/wishlist_id";
 import UserID from "../values/user_id";
 import Money from "../values/money";
@@ -31,5 +33,12 @@ export default class Wishlist {
     this.itemPrice = props.itemPrice;
     this.progress = props.progress;
     this.userID = props.userID;
+  }
+
+  static new(props: IWishlistBuilder): Wishlist {
+    return new Wishlist({
+      ...props,
+      id: WishlistID.fromRandom(),
+    });
   }
 }
