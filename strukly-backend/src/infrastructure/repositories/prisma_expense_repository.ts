@@ -114,41 +114,51 @@ export default class PrismaExpenseRepository
       )
     );
   }
-  async findByUserID(userID: UserID): Promise<Expense[]> {
-    const foundExpenses = await this.prisma.expenseHeader.findMany({
-      where: { userID: userID.value },
-      include: { items: true },
-    });
+async findByUserID(userID: UserID, month: number, year: number): Promise<Expense[]> {
+  const startDate = new Date(year, month - 1, 1);
+  const endDate = new Date(year, month, 0);
+  endDate.setHours(23, 59, 59, 999);
 
-    return foundExpenses.map(
-      (expense) =>
-        new Expense(
-          new ExpenseHeader({
-            id: new ExpenseID(expense.id),
-            dateTime: expense.dateTime,
-            vendorName: expense.vendorName,
-            category: ExpenseCategory.fromString(expense.category),
-            subtotalAmount: Money.newWithDefault(expense.subtotalAmount),
-            taxAmount: Money.newWithDefault(expense.taxAmount),
-            discountAmount: Money.newWithDefault(expense.discountAmount),
-            serviceAmount: Money.newWithDefault(expense.serviceAmount),
-            totalAmount: Money.newWithDefault(expense.totalAmount),
+  const foundExpenses = await this.prisma.expenseHeader.findMany({
+    where: {
+      userID: userID.value,
+      dateTime: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    include: { items: true },
+  });
 
-            userID: new UserID(expense.userID),
-          }),
-          expense.items.map(
-            (item) =>
-              new ExpenseItem({
-                id: new ExpenseItemID(item.id),
-                name: item.name,
-                quantity: item.quantity,
-                singlePrice: Money.newWithDefault(item.singlePrice),
-                totalPrice: Money.newWithDefault(item.totalPrice),
+  return foundExpenses.map(
+    (expense) =>
+      new Expense(
+        new ExpenseHeader({
+          id: new ExpenseID(expense.id),
+          dateTime: expense.dateTime,
+          vendorName: expense.vendorName,
+          category: ExpenseCategory.fromString(expense.category),
+          subtotalAmount: Money.newWithDefault(expense.subtotalAmount),
+          taxAmount: Money.newWithDefault(expense.taxAmount),
+          discountAmount: Money.newWithDefault(expense.discountAmount),
+          serviceAmount: Money.newWithDefault(expense.serviceAmount),
+          totalAmount: Money.newWithDefault(expense.totalAmount),
 
-                expenseID: new ExpenseID(item.expenseID),
-              })
-          )
+          userID: new UserID(expense.userID),
+        }),
+        expense.items.map(
+          (item) =>
+            new ExpenseItem({
+              id: new ExpenseItemID(item.id),
+              name: item.name,
+              quantity: item.quantity,
+              singlePrice: Money.newWithDefault(item.singlePrice),
+              totalPrice: Money.newWithDefault(item.totalPrice),
+
+              expenseID: new ExpenseID(item.expenseID),
+            })
         )
+      )
     );
   }
 

@@ -34,14 +34,14 @@ model ExpenseHeader {
   discountAmount Float
   serviceAmount  Float
   totalAmount    Float
-  myAmount       Float
+  myAmount       Float?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userID String
   user   User   @relation(fields: [userID], references: [id])
-  members Json
+  members Json?
 
   items ExpenseItem[]
 }
