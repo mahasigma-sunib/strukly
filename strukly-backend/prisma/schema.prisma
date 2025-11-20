@@ -78,7 +78,7 @@ model GoalItem {
   price       Int
   deposited   Int
   completed   Boolean @default(false)
-  completedAt DateTime
+  completedAt DateTime?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
