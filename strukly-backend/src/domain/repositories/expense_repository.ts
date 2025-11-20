@@ -6,6 +6,6 @@ export default interface IExpenseRepository {
   create: (expense: Expense) => Promise<Expense>;
   delete: (expenseID: ExpenseID) => Promise<void>;
   findByID: (expenseID: ExpenseID) => Promise<Expense | null>;
-  findByUserID: (userID: UserID) => Promise<Expense[]>;
+  findByUserID: (userID: UserID, month: number, year: number) => Promise<Expense[]>;
   update: (expense: Expense) => Promise<Expense>;
 }

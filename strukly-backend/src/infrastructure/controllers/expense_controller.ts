@@ -50,12 +50,9 @@ export default class ExpenseController {
   ): Promise<Response> => {
     try {
       const userID = req.user!.id;
-
-      const expenses = await this.getExpenseListUseCase.execute(userID);
-
-      const expenseDTOs = expenses.map(expenseToDTO);
-
-      return res.status(200).json({ expenses: expenseDTOs });
+      const { month, year } = req.body; 
+      const reportData = await this.getExpenseListUseCase.execute(userID, month, year);
+      return res.status(200).json(reportData);
     } catch (error: unknown) {
       if (error instanceof Error) {
         return res.status(400).json({ error: error.message });

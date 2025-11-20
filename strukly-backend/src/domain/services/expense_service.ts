@@ -24,8 +24,12 @@ export default class ExpenseService {
     return await this.expenseRepository.update(expense);
   }
 
-  async getExpenseListByUserID(userID: UserID): Promise<Expense[]> {
-    return await this.expenseRepository.findByUserID(userID);
+  async getExpenseListByUserID(
+    userID: UserID,
+    month: number,
+    year: number
+  ): Promise<Expense[]> {
+    return this.expenseRepository.findByUserID(userID, month, year);
   }
 
   /**

@@ -48,3 +48,4 @@ export function expenseToDTO(expense: Expense): ExpenseDTO {
     items: expense.items.map((item) => expenseItemToDTO(item)),
   };
 }
+
