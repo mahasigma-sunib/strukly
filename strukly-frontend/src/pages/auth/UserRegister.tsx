@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
+import Button from "../../components/Button";
 
 function UserRegister() {
   const [email, setEmail] = useState("");
@@ -10,7 +11,7 @@ function UserRegister() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState<String[]>([]);
+  const [passwordError, setPasswordError] = useState<string[]>([]);
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [registerError, setRegisterError] = useState("");
 
@@ -61,16 +62,16 @@ function UserRegister() {
     try {
       await register(username, email, password);
       navigate("/login");
-    } catch (error: any) {
-      setRegisterError(error.message);
+    } catch (error) {
+      setRegisterError((error as Error).message);
     }
   };
 
   return (
-    <div className="flex flex-col gap-3 items-center justify-center min-h-[90vh]">
-      <h1 className="my-8">Strukly</h1>
+    <div className="flex flex-col gap-4 items-center justify-center min-h-[100vh] px-10">
+      <div className="font-extrabold text-4xl text-primary">Koinku</div>
 
-      <div>
+      <div className="flex flex-col gap-2 w-full">
         <input
           type="username"
           id="username"
@@ -80,11 +81,9 @@ function UserRegister() {
             setUsername(event?.target.value);
           }}
           required
-          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
-                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
+          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
+                    focus:outline-none focus:border-primary"
         />
-      </div>
-      <div>
         <input
           type="email"
           id="email"
@@ -96,12 +95,10 @@ function UserRegister() {
           }}
           onBlur={handleEmailValidation}
           required
-          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
-                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
+          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
+                    focus:outline-none focus:border-primary"
         />
-        {emailError != "" && <p className="text-red-600">{emailError}</p>}
-      </div>
-      <div>
+        {emailError != "" && <p className="text-status-error">{emailError}</p>}
         <input
           type="password"
           id="password"
@@ -113,18 +110,16 @@ function UserRegister() {
           }}
           onBlur={handlePasswordValidation}
           required
-          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
-                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
+          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
+                    focus:outline-none focus:border-primary"
         />
         {passwordError.length > 0 && (
-          <div className="text-red-600">
+          <div className="text-status-error">
             {passwordError.map((error, index) => (
               <p key={index}>{error}</p>
             ))}
           </div>
         )}
-      </div>
-      <div>
         <input
           type="password"
           id="confirmPassword"
@@ -134,34 +129,26 @@ function UserRegister() {
             setConfirmPassword(event?.target.value);
           }}
           required
-          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
-                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
+          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
+                    focus:outline-none focus:border-primary"
         />
         {confirmPasswordError && (
-          <div style={{ color: "red" }}>{confirmPasswordError}</div>
+          <div className="text-status-error">{confirmPasswordError}</div>
         )}
       </div>
-      <button onClick={handleRegister} className="rounded cursor-pointer my-2">
+
+      <Button onClick={handleRegister} className="rounded cursor-pointer my-4 w-full">
         Register
-      </button>
+      </Button>
+
       <div>
-        <span>Already have an account?</span>
-        <button
-          type="button"
-          style={{
-            color: "aqua",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            textDecoration: "underline",
-          }}
-          onClick={() => navigate("/login")}
-        >
+        <span className="font-bold">Already have an account?</span>
+        <Button variant="text" onClick={() => navigate("/login")}>
           Log in
-        </button>
+        </Button>
       </div>
       <div>
-        {registerError != "" && <p className="text-red-600">{registerError}</p>}
+        {registerError != "" && <p className="text-status-error">{registerError}</p>}
       </div>
     </div>
   );
