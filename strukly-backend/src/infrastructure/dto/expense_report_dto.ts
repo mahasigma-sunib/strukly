@@ -43,7 +43,7 @@ export function createExpenseReportResponseDTO(
       discount: expense.header.discountAmount.value,
       total_expense: expense.header.totalAmount.value,
       total_my_expense: expense.header.totalAmount.value,
-      category: expense.header.category.toString(),
+      category: expense.header.category.value,
       datetime: expense.header.dateTime,
       members: [],
       vendor: expense.header.vendorName,
