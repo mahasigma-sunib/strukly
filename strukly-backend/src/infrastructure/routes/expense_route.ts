@@ -55,7 +55,7 @@ router.post(
 router.get(
   "/expenses",
   authMiddleware,
-  validateQuery(z.object({ month: z.coerce.number().min(1).max(12), year: z.coerce.number().min(2000) })),
+  validateQuery(z.object({ month: z.coerce.number().int().min(1).max(12), year: z.coerce.number().int().min(2000) })),
   expenseController.getExpenseList
 );
 
