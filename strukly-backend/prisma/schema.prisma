@@ -21,10 +21,10 @@ model User {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  transactions TransactionHeader[]
+  expenses ExpenseHeader[]
 }
 
-model TransactionHeader {
+model ExpenseHeader {
   id             String   @id @default(uuid())
   dateTime       DateTime
   vendorName     String
@@ -34,19 +34,19 @@ model TransactionHeader {
   discountAmount Float
   serviceAmount  Float
   totalAmount    Float
+  myAmount       Float?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userID String
   user   User   @relation(fields: [userID], references: [id])
+  members Json?
 
-  walletID String
-
-  items TransactionItem[]
+  items ExpenseItem[]
 }
 
-model TransactionItem {
+model ExpenseItem {
   id          String @id @default(uuid())
   name        String
   quantity    Int
@@ -55,18 +55,19 @@ model TransactionItem {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  assignedMember String?
 
-  transactionID String
-  transaction   TransactionHeader @relation(fields: [transactionID], references: [id])
+  expenseID String
+  expense   ExpenseHeader @relation(fields: [expenseID], references: [id], onDelete: Cascade)
 }
 
 model Wallet {
-  id                 String   @id @default(uuid())
-  userID             String   @db.Uuid
-  name               String
-  transaction_method String   @default("cash")
-  balance            Decimal  @default(0) @db.Decimal(15, 2)
-  balanceCurrency    String   @default("idr")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now()) @db.Timestamp(6)
+  id              String   @id @default(uuid())
+  userID          String   @db.Uuid
+  name            String
+  expense_method  String   @default("cash")
+  balance         Decimal  @default(0) @db.Decimal(15, 2)
+  balanceCurrency String   @default("idr")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @db.Timestamp(6)
 }
