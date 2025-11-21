@@ -15,7 +15,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   // Variants style
   const baseStyles =
-    "rounded-lg font-inter font-medium shadow transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer";
+    "rounded-xl font-inter font-medium shadow transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer";
 
   const variantStyles: Record<string, string> = {
     primary: "bg-primary text-white hover:bg-primary-hover",
