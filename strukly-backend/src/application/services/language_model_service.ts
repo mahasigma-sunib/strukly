@@ -1,5 +1,5 @@
-import { CreateTransactionDTO } from "src/infrastructure/dto/transaction_dto";
+import { CreateExpenseDTO } from "src/infrastructure/dto/expense_dto";
 
 export default interface LanguageModelService {
-  imageToTransaction: (base64Image: string) => Promise<Omit<CreateTransactionDTO, 'walletID'>>;
+  imageToExpense: (base64Image: string) => Promise<CreateExpenseDTO>;
 }
