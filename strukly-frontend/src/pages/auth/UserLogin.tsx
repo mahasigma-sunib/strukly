@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
+import Button from "../../components/Button";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -51,10 +52,9 @@ function UserLogin() {
   };
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-[90vh]">
-      <h1>Strukly</h1>
-
-      <div>
+    <div className="flex flex-col gap-4 items-center justify-center min-h-[100vh] px-10">
+      <div className="font-extrabold text-4xl text-primary">Koinku</div>
+      <div className="flex flex-col gap-2 w-full">
         <input
           type="email"
           id="email"
@@ -66,12 +66,10 @@ function UserLogin() {
           }}
           onBlur={handleEmailValidation}
           required
-          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
-                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
+          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
+                    focus:outline-none focus:border-primary"
         />
         {emailError != "" && <p className="text-red-600">{emailError}</p>}
-      </div>
-      <div>
         <input
           type="password"
           id="password"
@@ -83,38 +81,30 @@ function UserLogin() {
           }}
           onBlur={handlePasswordValidation}
           required
-          className="w-[200px] p-2.5 border border-black rounded text-base mx-auto block
-                    focus:outline-none focus:border-black focus:shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]"
+          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
+                    focus:outline-none focus:border-primary"
         />
         {passwordError.length > 0 && (
-          <div className="text-red-600">
+          <div className="text-status-error">
             {passwordError.map((error, index) => (
               <p key={index}>{error}</p>
             ))}
           </div>
         )}
       </div>
-      <button onClick={handleLogin} className="rounded cursor-pointer my-4">
+
+      <Button onClick={handleLogin} className="rounded cursor-pointer my-4 w-full">
         Log in
-      </button>
+      </Button>
+
       <div>
-        <span>Don&apos;t have an account?</span>
-        <button
-          type="button"
-          style={{
-            color: "aqua",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            textDecoration: "underline",
-          }}
-          onClick={() => navigate("/register")}
-        >
+        <span className="font-bold">Don&apos;t have an account?</span>
+        <Button variant="text" onClick={() => navigate("/register")}>
           Register here
-        </button>
+        </Button>
       </div>
       <div>
-        {loginError != "" && <p style={{ color: "red" }}>{loginError}</p>}
+        {loginError != "" && <p className="text-status-error">{loginError}</p>}
       </div>
     </div>
   );
