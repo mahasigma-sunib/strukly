@@ -23,7 +23,7 @@ const Button: React.FC<ButtonProps> = ({
     outline:
       "border border-primary text-primary hover:bg-primary hover:text-white",
     danger: "bg-red text-white hover:bg-red-hover",
-    text: "bg-transparent text-primary font-bold hover:underline shadow-none!",
+    text: "bg-transparent text-primary font-bold! hover:underline shadow-none!",
   };
 
   const sizeStyles: Record<string, string> = {
