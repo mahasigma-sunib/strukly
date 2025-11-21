@@ -1,14 +1,13 @@
 import { Link } from "react-router-dom";
-import type { TransactionType } from "../type/TransactionType";
-import useTransaction from "../store/TransactionStore";
+import type { TransactionType } from "../type/ExpenseType";
+import useTransaction from "../store/ExpenseStore";
 // import useTransactionLoader from "../loader/TransactionLoader";
 
 function TransactionCard() {
   // useTransactionLoader(); //fetch data
   const { items: transactions, isLoading, error } = useTransaction();
   if (isLoading) return <p>Loading transaction</p>;
-  if (error) return <p>{error}</p>
-
+  if (error) return <p>{error}</p>;
 
   const sortedTransactions = [...transactions].sort(
     (a, b) => b.date.getTime() - a.date.getTime()
@@ -34,7 +33,8 @@ function TransactionCard() {
                 }}
               >
                 <div>
-                  <strong>{transaction.name}</strong><br />
+                  <strong>{transaction.name}</strong>
+                  <br />
                   <strong>Date:</strong> {transaction.date.toLocaleString()}
                 </div>
                 <div>
