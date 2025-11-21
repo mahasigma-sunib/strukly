@@ -9,6 +9,7 @@ import GetExpenseListUseCase from "src/application/use_cases/expense/get_expense
 import GetExpenseDetailUseCase from "src/application/use_cases/expense/get_expense_detail";
 import UpdateExpenseUseCase from "src/application/use_cases/expense/update_expense";
 import DeleteExpenseUseCase from "src/application/use_cases/expense/delete_expense";
+import { createExpenseReportResponseDTO } from "../dto/expense_report_dto";
 
 export default class ExpenseController {
   constructor(
@@ -17,7 +18,7 @@ export default class ExpenseController {
     private readonly getExpenseDetailUseCase: GetExpenseDetailUseCase,
     private readonly updateExpenseUseCase: UpdateExpenseUseCase,
     private readonly deleteExpenseUseCase: DeleteExpenseUseCase
-  ) {}
+  ) { }
 
   public createExpense = async (
     req: Request<{}, {}, CreateExpenseDTO>,
@@ -70,8 +71,8 @@ export default class ExpenseController {
       console.log(month, year);
 
       const reportData = await this.getExpenseListUseCase.execute(userID, month, year);
-      
-      return res.status(200).json(reportData);
+
+      return res.status(200).json(createExpenseReportResponseDTO(reportData.weekly, reportData.history));
     } catch (error: unknown) {
       console.error(error);
       return res.status(500).json({ error: "Internal server error" });

@@ -18,6 +18,7 @@ import GetExpenseDetailUseCase from "src/application/use_cases/expense/get_expen
 import z from "zod";
 import UpdateExpenseUseCase from "src/application/use_cases/expense/update_expense";
 import DeleteExpenseUseCase from "src/application/use_cases/expense/delete_expense";
+import { ExpenseReportRequestQuerySchema } from "../dto/expense_report_dto";
 
 const router = Router();
 const expenseRepository = new PrismaExpenseRepository();
@@ -55,7 +56,7 @@ router.post(
 router.get(
   "/expenses",
   authMiddleware,
-  validateQuery(z.object({ month: z.coerce.number().int().min(1).max(12), year: z.coerce.number().int().min(2000) })),
+  validateQuery(ExpenseReportRequestQuerySchema),
   expenseController.getExpenseList
 );
 
