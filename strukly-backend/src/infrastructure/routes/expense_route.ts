@@ -3,6 +3,7 @@ import ExpenseController from "../controllers/expense_controller";
 import {
   validateBody,
   validateParams,
+  validateQuery,
 } from "../middleware/validation_middleware";
 import {
   CreateExpenseDTOSchema,
@@ -54,6 +55,7 @@ router.post(
 router.get(
   "/expenses",
   authMiddleware,
+  validateQuery(z.object({ month: z.coerce.number().min(1).max(12), year: z.coerce.number().min(2000) })),
   expenseController.getExpenseList
 );
 

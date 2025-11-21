@@ -44,19 +44,36 @@ export default class ExpenseController {
     }
   };
 
+  /*
+  GET /api/expenses?month=1&year=2025
+  Response:
+  {
+    "weekly": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "history": []
+  }
+  */
   public getExpenseList = async (
     req: Request,
     res: Response
   ): Promise<Response> => {
     try {
       const userID = req.user!.id;
-      const { month, year } = req.body; 
+      const month = parseInt(req.query.month as string, 10);
+      const year = parseInt(req.query.year as string, 10);
+
+      console.log(month, year);
+
       const reportData = await this.getExpenseListUseCase.execute(userID, month, year);
+      
       return res.status(200).json(reportData);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
-      }
+      console.error(error);
       return res.status(500).json({ error: "Internal server error" });
     }
   };
