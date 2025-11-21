@@ -54,6 +54,7 @@ function UserLogin() {
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-h-[100vh] px-10">
       <div className="font-extrabold text-4xl text-primary">Koinku</div>
+      
       <div className="flex flex-col gap-2 w-full">
         <input
           type="email"
@@ -69,7 +70,7 @@ function UserLogin() {
           className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
                     focus:outline-none focus:border-primary"
         />
-        {emailError != "" && <p className="text-red-600">{emailError}</p>}
+        {emailError != "" && <p className="text-status-error">{emailError}</p>}
         <input
           type="password"
           id="password"
