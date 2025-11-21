@@ -68,8 +68,6 @@ export default class ExpenseController {
       const month = parseInt(req.query.month as string, 10);
       const year = parseInt(req.query.year as string, 10);
 
-      console.log(month, year);
-
       const reportData = await this.getExpenseListUseCase.execute(userID, month, year);
 
       return res.status(200).json(createExpenseReportResponseDTO(reportData.weekly, reportData.history));
