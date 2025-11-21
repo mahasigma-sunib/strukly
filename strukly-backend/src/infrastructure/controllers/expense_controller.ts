@@ -9,6 +9,8 @@ import GetExpenseListUseCase from "src/application/use_cases/expense/get_expense
 import GetExpenseDetailUseCase from "src/application/use_cases/expense/get_expense_detail";
 import UpdateExpenseUseCase from "src/application/use_cases/expense/update_expense";
 import DeleteExpenseUseCase from "src/application/use_cases/expense/delete_expense";
+import { createExpenseReportResponseDTO } from "../dto/expense_report_dto";
+import ScanExpenseImageUseCase from "src/application/use_cases/expense/scan_expense_image";
 
 export default class ExpenseController {
   constructor(
@@ -16,8 +18,9 @@ export default class ExpenseController {
     private readonly getExpenseListUseCase: GetExpenseListUseCase,
     private readonly getExpenseDetailUseCase: GetExpenseDetailUseCase,
     private readonly updateExpenseUseCase: UpdateExpenseUseCase,
-    private readonly deleteExpenseUseCase: DeleteExpenseUseCase
-  ) {}
+    private readonly deleteExpenseUseCase: DeleteExpenseUseCase,
+    private readonly imageToExpenseUseCase: ScanExpenseImageUseCase,
+  ) { }
 
   public createExpense = async (
     req: Request<{}, {}, CreateExpenseDTO>,
@@ -44,19 +47,34 @@ export default class ExpenseController {
     }
   };
 
+  /*
+  GET /api/expenses?month=1&year=2025
+  Response:
+  {
+    "weekly": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "history": []
+  }
+  */
   public getExpenseList = async (
     req: Request,
     res: Response
   ): Promise<Response> => {
     try {
       const userID = req.user!.id;
-      const { month, year } = req.body; 
+      const month = parseInt(req.query.month as string, 10);
+      const year = parseInt(req.query.year as string, 10);
+
       const reportData = await this.getExpenseListUseCase.execute(userID, month, year);
-      return res.status(200).json(reportData);
+
+      return res.status(200).json(createExpenseReportResponseDTO(reportData.weekly, reportData.history));
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
-      }
+      console.error(error);
       return res.status(500).json({ error: "Internal server error" });
     }
   };
@@ -139,4 +157,22 @@ export default class ExpenseController {
       return res.status(500).json({ error: "Internal server error" });
     }
   };
+
+
+  public scanExpenseImage = async (req: Request<{}, {}, { image: string }>, res: Response): Promise<Response> => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Image is required' });
+      }
+
+      const image = req.file.buffer.toString('base64');
+
+      const expenseData = await this.imageToExpenseUseCase.execute(image);
+
+      return res.status(200).json({ transaction: expenseData });
+    } catch (error: unknown) {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
 }

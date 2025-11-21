@@ -3,6 +3,7 @@ import ExpenseController from "../controllers/expense_controller";
 import {
   validateBody,
   validateParams,
+  validateQuery,
 } from "../middleware/validation_middleware";
 import {
   CreateExpenseDTOSchema,
@@ -17,10 +18,15 @@ import GetExpenseDetailUseCase from "src/application/use_cases/expense/get_expen
 import z from "zod";
 import UpdateExpenseUseCase from "src/application/use_cases/expense/update_expense";
 import DeleteExpenseUseCase from "src/application/use_cases/expense/delete_expense";
+import { ExpenseReportRequestQuerySchema } from "../dto/expense_report_dto";
+import ScanExpenseImageUseCase from "src/application/use_cases/expense/scan_expense_image";
+import GeminiLanguageModel from "../language_model/gemini_language_model";
+import multer from "multer";
 
 const router = Router();
 const expenseRepository = new PrismaExpenseRepository();
 const expenseService = new ExpenseService(expenseRepository);
+const languageModelService = new GeminiLanguageModel();
 const createExpenseUseCase = new CreateExpenseUseCase(
   expenseService
 );
@@ -36,12 +42,17 @@ const updateExpenseUseCase = new UpdateExpenseUseCase(
 const deleteExpenseUseCase = new DeleteExpenseUseCase(
   expenseService
 );
+const imageToExpenseUseCase = new ScanExpenseImageUseCase(
+  languageModelService
+);
+
 const expenseController = new ExpenseController(
   createExpenseUseCase,
   getExpenseListUseCase,
   getExpenseDetailUseCase,
   updateExpenseUseCase,
-  deleteExpenseUseCase
+  deleteExpenseUseCase,
+  imageToExpenseUseCase
 );
 
 router.post(
@@ -51,9 +62,18 @@ router.post(
   expenseController.createExpense
 );
 
+const expenseImageUpload = multer(); // store in memory
+router.post(
+  "/expenses/scan-image",
+  authMiddleware,
+  expenseImageUpload.single("image"),
+  expenseController.scanExpenseImage
+);
+
 router.get(
   "/expenses",
   authMiddleware,
+  validateQuery(ExpenseReportRequestQuerySchema),
   expenseController.getExpenseList
 );
 
