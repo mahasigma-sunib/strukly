@@ -1,5 +1,5 @@
 import LanguageModelService from "src/application/services/language_model_service";
-import { CreateFromVLLMTransactionDTO, CreateFromVLLMTransactionDTOSchema } from "../dto/transaction_dto";
+import { CreateExpenseDTO, CreateExpenseDTOSchema } from "../dto/expense_dto";
 import { ContentListUnion, GoogleGenAI, Type } from "@google/genai";
 
 export default class GeminiLanguageModel implements LanguageModelService {
@@ -10,13 +10,13 @@ export default class GeminiLanguageModel implements LanguageModelService {
   });
 
   /**
-   * Extracts transaction data from a base64-encoded image of a receipt using Google Gemini 2.5 Flash.
+   * Extracts expense data from a base64-encoded image of a receipt using Google Gemini 2.5 Flash.
    * 
    * Field dateTime requires postprocessing: we assumed the user's timezone to be UTC (Z).
    * @param base64Image 
    * @returns 
    */
-  async imageToTransaction(base64Image: string): Promise<CreateFromVLLMTransactionDTO> {
+  async imageToExpense(base64Image: string): Promise<CreateExpenseDTO> {
     const moneySchema = {
       type: Type.OBJECT,
       required: ["amount", "currency"],
@@ -96,6 +96,6 @@ export default class GeminiLanguageModel implements LanguageModelService {
       buffer += chunk.text;
     }
     console.log(JSON.parse(buffer))
-    return CreateFromVLLMTransactionDTOSchema.parse(JSON.parse(buffer));
+    return CreateExpenseDTOSchema.parse(JSON.parse(buffer));
   }
 }
