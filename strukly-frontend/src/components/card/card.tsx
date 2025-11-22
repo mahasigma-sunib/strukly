@@ -25,6 +25,7 @@ export default function Card({
       className={`
         bg-white shadow-md border border-gray-200
         transition-all duration-200
+        m-4
         ${sizeClasses[size]}  ${className}
       `}
     >
