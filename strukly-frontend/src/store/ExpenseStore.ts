@@ -93,7 +93,7 @@ function mapExpense(raw: any): ExpenseType {
     vendorName: raw.vendor,
     category: raw.category,
 
-    currency: "IDR",
+    currency: "Rp ",
     subtotalAmount: raw.subtotal,
     taxAmount: raw.tax,
     discountAmount: raw.discount,
