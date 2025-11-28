@@ -8,7 +8,6 @@ export default function ExpenseTracker() {
 
       <Card size="md">
         <ExpenseList
-          icon={<span>🍕</span>}
           vendorName="Pizza Hut"
           date={new Date()}
           currency="-Rp"
@@ -16,6 +15,17 @@ export default function ExpenseTracker() {
           category="food"
         />
       </Card>
+
+      <Card>
+        <ExpenseList
+          vendorName="McDonald's"
+          date={new Date()}
+          currency="-Rp"
+          amount="132.000"
+          category="food"
+        />
+      </Card>
+      
     </div>
   );
 }

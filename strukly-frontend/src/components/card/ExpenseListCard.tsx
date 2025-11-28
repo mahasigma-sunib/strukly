@@ -1,10 +1,18 @@
+import FoodIcon from "../categoryIcons/FoodIcon";
+import GroceriesIcon from "../categoryIcons/GroceriesIcon";
+import VehicleIcon from "../categoryIcons/VehicleIcon";
+import ShoppingIcon from "../categoryIcons/ShoppingIcon";
+import EntertainmentIcon from "../categoryIcons/EntertainmentIcon";
+import OthersIcon from "../categoryIcons/OthersIcon";
+import UtilityIcon from "../categoryIcons/UtilityIcons";
+import type React from "react";
+
 interface ExpenseListProps {
-  icon: React.ReactNode;
   vendorName: string;
   date: Date;
   currency: string;
   amount: string;
-  category: keyof typeof categoryColors; // <-- keep this
+  category: keyof typeof categoryColors;
 }
 
 const categoryColors: Record<string, string> = {
@@ -17,50 +25,55 @@ const categoryColors: Record<string, string> = {
   others: "var(--fun-color-category-others)",
 };
 
+const categoryIconMap: Record<keyof typeof categoryColors, React.ReactNode> = {
+  food: <FoodIcon />,
+  groceries: <GroceriesIcon />,
+  transportation: <VehicleIcon />,
+  shopping: <ShoppingIcon />,
+  entertainment: <EntertainmentIcon />,
+  housebills: <UtilityIcon />,
+  others: <OthersIcon />,
+};
+
 export default function ExpenseList({
-  icon,
   vendorName,
   date,
   currency,
   amount,
-  category,   // <-- add category here
+  category,
 }: ExpenseListProps) {
   return (
-    <div className="w-full flex items-center justify-between">
-      {/* LEFT SIDE */}
-      <div className="flex items-center gap-4">
+    <div>
+      <div className="flex items-center justify-between">
+        {/* left */}
+        <div className="flex gap-4 items-center">
+          {/* icon */}
+          <div className="">{categoryIconMap[category]}</div>
 
-        {/* Category icon with dynamic background */}
-        <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl"
-          style={{ backgroundColor: categoryColors[category] }}
-        >
-          {icon}
+          {/* vendor, date */}
+          <div>
+            <p className="font-bold text-neutral-900">{vendorName}</p>
+            <p className="text-neutral-500 text-sm">
+              {date.toLocaleDateString("en-US", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}{" "}
+              {date.toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
         </div>
 
-        {/* Vendor + Date */}
-        <div>
-          <p className="font-semibold text-neutral-900">{vendorName}</p>
-          <p className="text-neutral-500 text-sm">
-            {date.toLocaleDateString("en-US", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}{" "}
-            {date.toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+        {/* right */}
+        <div className="text-right">
+          <p>
+            {currency}
+            {amount}
           </p>
         </div>
-      </div>
-
-      {/* RIGHT SIDE */}
-      <div className="text-right">
-        <p className="font-semibold text-neutral-600">
-          {currency}
-          {amount}
-        </p>
       </div>
     </div>
   );
