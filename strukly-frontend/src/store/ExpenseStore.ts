@@ -1,5 +1,6 @@
 import axios from "axios";
 import useSWR from "swr";
+import { useEffect } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { ExpenseType } from "../type/ExpenseType";
@@ -88,7 +89,7 @@ function mapExpense(raw: any): ExpenseType {
     userID: raw.user_id,
 
     id: raw.id,
-    dateTime: raw.datetime,
+    dateTime: new Date(raw.datetime),
     vendorName: raw.vendor,
     category: raw.category,
 
@@ -104,21 +105,35 @@ function mapExpense(raw: any): ExpenseType {
 }
 
 //to fetch & load the expense datas
-export function loadExpense(month: number, year: number) {
+export function useLoadExpense(month: number, year: number) {
+  console.log("running");
   const { setItems, setError, setLoading } = useExpense();
 
   const { data, error, isLoading } = useSWR(
     `http://localhost:3000/api/expenses?month=${month}&year=${year}`,
-    (url) => fetch(url).then((res) => res.json())
+    (url) =>
+      fetch(url, {
+        credentials: "include",
+      }).then((res) => res.json())
   );
 
-  if (isLoading) setLoading(true);
-  if (error) setError("Failed to fetch expense");
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
-  if (data?.history) {
-    const mapped = data.history.map(mapExpense);
-    setItems(mapped);
-  }
+  useEffect(() => {
+    if (error) {
+      setError("Failed to fetch expenses");
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (data?.history) {
+      const mapped = data.history.map(mapExpense);
+      setItems(mapped);
+      console.log("mapped:", mapped);
+    }
+  }, [data]);
 
   return { data, error, isLoading };
 }
