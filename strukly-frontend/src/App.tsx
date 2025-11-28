@@ -8,7 +8,6 @@ import TransactionDetail from "./pages/TransactionDetail";
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegister";
 import RegisterCookie from "./pages/RegisterCookie";
-import Test from "./pages/Test";
 import MobileNavBar from "./components/MobileNavBar";
 import { Navigate } from "react-router-dom";
 import { PublicRoute } from "./route/PublicRoute";
@@ -31,7 +30,6 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
 
-          <Route path="/test" element={<Test />} />
           <Route path="/cookie" element={<RegisterCookie />} />
 
           <Route element={<PublicRoute />}>
