@@ -3,6 +3,8 @@
 import { IGoalItemRepository } from "../../../domain/repositories/goal_item_repository";
 import GoalItem from "../../../domain/entities/goal_item";
 import GoalItemID from "../../../domain/values/goal_item_id";
+import NotFoundError from "src/domain/errors/NotFoundError";
+import UnauthorizedError from "src/domain/errors/UnauthorizedError";
 
 export default class UpdateGoalItemUseCase {
   constructor(private readonly goalItemRepository: IGoalItemRepository) {}
@@ -10,9 +12,8 @@ export default class UpdateGoalItemUseCase {
   async execute(
     userId: string,
     goalItemID: string,
-    data: { name?: string; price?: number; progress?: number }
+    data: { name?: string; price?: number; progress?: number },
   ): Promise<GoalItem> {
-    if (!goalItemID) throw new Error("goalItemID is required");
     if (data.name === undefined && data.price === undefined) {
       throw new Error("Nothing to update");
     }
@@ -25,10 +26,10 @@ export default class UpdateGoalItemUseCase {
 
     const id = new GoalItemID(goalItemID);
     const existing = await this.goalItemRepository.findByID(id);
-    if (!existing) throw new Error("GoalItem not found");
+    if (!existing) throw new NotFoundError("Goal Item not found");
 
     if (existing.userID.value !== userId) {
-      throw new Error("Not allowed to update this GoalItem");
+      throw new UnauthorizedError("Not allowed to update this Goal Item");
     }
 
     if (data.price !== undefined && data.price < existing.deposited) {

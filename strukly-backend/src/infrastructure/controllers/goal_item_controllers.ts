@@ -6,6 +6,9 @@ import GetGoalItemUseCase from "src/application/use_cases/goal_item/get_goal_ite
 import UpdateGoalItemUseCase from "src/application/use_cases/goal_item/update_goal_item";
 import DeleteGoalItemUseCase from "src/application/use_cases/goal_item/delete_goal_item";
 import GoalItemID from "src/domain/values/goal_item_id";
+import NotFoundError from "src/domain/errors/NotFoundError";
+import AlreadyExistError from "src/domain/errors/AlreadyExistError";
+import UnauthorizedError from "src/domain/errors/UnauthorizedError";
 
 export default class GoalItemController {
   constructor(
@@ -15,62 +18,102 @@ export default class GoalItemController {
     private readonly deleteGoalItemUseCase: DeleteGoalItemUseCase,
   ) {}
 
-  public createGoalItem = async (req: Request<{}, {}, { name: string; price: number }>, res: Response): Promise<Response> => {
+  public createGoalItem = async (
+    req: Request<{}, {}, { name: string; price: number }>,
+    res: Response,
+  ): Promise<Response> => {
     try {
       const userID = req.user!.id;
       const { name, price } = req.body;
 
-      const created = await this.createGoalItemUseCase.execute(userID, name, price);
+      const created = await this.createGoalItemUseCase.execute(
+        userID,
+        name,
+        price,
+      );
 
-      return res.status(201).json({ message: 'GoalItem created', goal: created.toDTO() });
+      return res
+        .status(201)
+        .json({ message: "GoalItem created", goal: created.toDTO() });
     } catch (error: unknown) {
-      if (error instanceof Error) return res.status(400).json({ error: error.message });
-      return res.status(500).json({ error: 'Internal server error' });
+      if (error instanceof Error)
+        return res.status(400).json({ error: error.message });
+      return res.status(500).json({ error: "Internal server error" });
     }
   };
 
-  public getGoalItem = async (req: Request<{ goalItemID: string }>, res: Response): Promise<Response> => {
+  public getGoalItem = async (
+    req: Request<{ goalItemID: string }>,
+    res: Response,
+  ): Promise<Response> => {
     try {
       const userID = req.user!.id;
       const { goalItemID } = req.params;
 
-      const goal = await this.getGoalItemUseCase.execute(new GoalItemID(goalItemID));
+      const goal = await this.getGoalItemUseCase.execute(
+        new GoalItemID(goalItemID),
+      );
 
-      if (!goal) return res.status(404).json({ error: 'GoalItem not found' });
+      if (!goal) return res.status(404).json({ error: "Goal Item not found" });
 
       return res.status(200).json({ goal: goal.toDTO() });
     } catch (error: unknown) {
-      if (error instanceof Error) return res.status(400).json({ error: error.message });
-      return res.status(500).json({ error: 'Internal server error' });
+      if (error instanceof Error)
+        return res.status(400).json({ error: error.message });
+      return res.status(500).json({ error: "Internal server error" });
     }
   };
 
-  public updateGoalItem = async (req: Request<{ goalItemID: string }, {}, { name?: string; price?: number }>, res: Response): Promise<Response> => {
+  public updateGoalItem = async (
+    req: Request<{ goalItemID: string }, {}, { name?: string; price?: number }>,
+    res: Response,
+  ): Promise<Response> => {
     try {
       const userID = req.user!.id;
       const { goalItemID } = req.params;
       const data = req.body;
 
-      const updated = await this.updateGoalItemUseCase.execute(userID, goalItemID, data);
+      const updated = await this.updateGoalItemUseCase.execute(
+        userID,
+        goalItemID,
+        data,
+      );
 
-      return res.status(200).json({ message: 'GoalItem updated', goal: updated.toDTO() });
+      return res
+        .status(200)
+        .json({ message: "GoalItem updated", goal: updated.toDTO() });
     } catch (error: unknown) {
-      if (error instanceof Error) return res.status(400).json({ error: error.message });
-      return res.status(500).json({ error: 'Internal server error' });
+      if (error instanceof Error)
+        return res.status(400).json({ error: error.message });
+      return res.status(500).json({ error: "Internal server error" });
     }
   };
 
-  public deleteGoalItem = async (req: Request<{ goalItemID: string }>, res: Response): Promise<Response> => {
+  public deleteGoalItem = async (
+    req: Request<{ goalItemID: string }>,
+    res: Response,
+  ): Promise<Response> => {
     try {
       const userID = req.user!.id;
       const { goalItemID } = req.params;
 
       await this.deleteGoalItemUseCase.execute(goalItemID, userID);
 
-      return res.status(200).json({ message: 'GoalItem deleted' });
+      return res.status(200).json({ message: "GoalItem deleted" });
     } catch (error: unknown) {
-      if (error instanceof Error) return res.status(400).json({ error: error.message });
-      return res.status(500).json({ error: 'Internal server error' });
+      if (error instanceof Error) {
+        console.error(error);
+      }
+
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: error.message });
+      } else if (error instanceof AlreadyExistError) {
+        return res.status(409).json({ error: error.message });
+      } else if (error instanceof UnauthorizedError) {
+        return res.status(401).json({ error: error.message });
+      }
+
+      return res.status(500).json({ error: "Internal server error" });
     }
   };
 }

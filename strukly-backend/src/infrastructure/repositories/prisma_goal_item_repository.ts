@@ -5,6 +5,8 @@ import GoalItem from "../../domain/entities/goal_item";
 import { IGoalItemRepository } from "../../domain/repositories/goal_item_repository";
 import GoalItemID from "../../domain/values/goal_item_id";
 import UserID from "../../domain/values/user_id";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import AlreadyExistError from "src/domain/errors/AlreadyExistError";
 
 export default class PrismaGoalItemRepository implements IGoalItemRepository {
   private prisma = new PrismaClient();
@@ -12,28 +14,41 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
   constructor() {}
 
   async create(goalItem: GoalItem): Promise<GoalItem> {
-    const created = await this.prisma.goalItem.create({
-      data: {
-        id: goalItem.id.value,
-        userID: goalItem.userID.value,
-        name: goalItem.name,
-        price: Math.floor(goalItem.price),
-        deposited: Math.floor(goalItem.deposited ?? 0),
-      },
-    });
-    const completed = (created.deposited ?? 0) >= (created.price ?? 0);
+    try {
+      const created = await this.prisma.goalItem.create({
+        data: {
+          id: goalItem.id.value,
+          userID: goalItem.userID.value,
+          name: goalItem.name,
+          price: Math.floor(goalItem.price),
+          deposited: Math.floor(goalItem.deposited ?? 0),
+        },
+      });
+      const completed = (created.deposited ?? 0) >= (created.price ?? 0);
 
-    return GoalItem.fromPersistence({
-      id: created.id,
-      name: created.name,
-      price: created.price,
-      deposited: created.deposited ?? 0,
-      completed: completed,
-      completedAt: completed ? created.updatedAt : null,
-      createdAt: created.createdAt,
-      updatedAt: created.updatedAt,
-      userID: created.userID,
-    });
+      return GoalItem.fromPersistence({
+        id: created.id,
+        name: created.name,
+        price: created.price,
+        deposited: created.deposited ?? 0,
+        completed: completed,
+        completedAt: completed ? created.updatedAt : null,
+        createdAt: created.createdAt,
+        updatedAt: created.updatedAt,
+        userID: created.userID,
+      });
+    } catch (error) {
+      console.error(error);
+
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new AlreadyExistError("Goal Item already exists");
+      }
+
+      throw error;
+    }
   }
 
   async findByID(goalItemID: GoalItemID): Promise<GoalItem | null> {
@@ -59,7 +74,9 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
   }
 
   async findByUserID(userID: UserID): Promise<GoalItem[]> {
-    const rows = await this.prisma.goalItem.findMany({ where: { userID: userID.value } });
+    const rows = await this.prisma.goalItem.findMany({
+      where: { userID: userID.value },
+    });
     return rows.map((r) => {
       const completed = (r.deposited ?? 0) >= (r.price ?? 0);
       return GoalItem.fromPersistence({

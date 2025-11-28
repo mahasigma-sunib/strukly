@@ -5,13 +5,9 @@ import GoalItem from "../../../domain/entities/goal_item";
 import GoalItemID from "../../../domain/values/goal_item_id";
 
 export default class GetGoalItemUseCase {
-  constructor(private readonly goalItemRepository: IGoalItemRepository) { }
+  constructor(private readonly goalItemRepository: IGoalItemRepository) {}
 
   async execute(goalItemID: GoalItemID): Promise<GoalItem | null> {
-    if (!goalItemID) {
-      throw new Error("goalItemID is required");
-    }
-
     return this.goalItemRepository.findByID(goalItemID);
   }
 }
