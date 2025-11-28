@@ -1,16 +1,23 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import { ProtectedRoute } from "./route/ProtectedRoute";
 import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { PublicRoute } from "./route/PublicRoute";
+import { ProtectedRoute } from "./route/ProtectedRoute";
+
 import useUserAuth from "./store/UserAuthStore";
+
+import UserLogin from "./pages/auth/UserLogin";
+import UserRegister from "./pages/auth/UserRegister";
+import RegisterCookie from "./pages/auth/RegisterCookie";
+
 import Home from "./pages/Home";
 import TransactionHistory from "./pages/TransactionHistory";
 import TransactionDetail from "./pages/TransactionDetail";
-import UserLogin from "./pages/UserLogin";
-import UserRegister from "./pages/UserRegister";
-import RegisterCookie from "./pages/RegisterCookie";
+import AddTransaction from "./pages/AddTransaction";
+import UserProfile from "./pages/UserProfile";
+import ExpenseTracker from "./pages/ExpenseTracker";
+
 import MobileNavBar from "./components/MobileNavBar";
-import { Navigate } from "react-router-dom";
-import { PublicRoute } from "./route/PublicRoute";
 
 const App = () => {
   const location = useLocation();
@@ -39,8 +46,11 @@ const App = () => {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<Home />} />
-            <Route path="/History" element={<TransactionHistory />} />
+            <Route path="/history" element={<TransactionHistory />} />
             <Route path="/History/:id" element={<TransactionDetail />} />
+            <Route path="/addTransaction" element={<AddTransaction />} />
+            <Route path="/tracker" element={<ExpenseTracker />} />
+            <Route path="/profile" element={<UserProfile />} />
           </Route>
         </Routes>
       </div>

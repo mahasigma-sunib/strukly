@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
 
 :root {
   font-synthesis: none;
@@ -9,36 +9,37 @@
   /* Base Colors */
   --fun-color-background: #f7fafc;
   --fun-color-surface: #ffffff;
-  --fun-color-text-primary: #111827;
-  --fun-color-text-secondary: #666e78;
+  --fun-color-text-primary: #252525;
+  --fun-color-text-secondary: #7e7e80;
   --fun-color-text-disabled: #818197;
   --fun-color-border: #ebebec;
 
   /* Primary Colors */
-  --fun-color-primary: #05b5f1;
-  /* --fun-color-primary: #1567ff; */
-  --fun-color-primary-hover: #0491c1;
-  --fun-color-primary-light: #6ee0ff;
-  --fun-color-orange: #fda210; /* might be useful later */
+  --fun-color-primary: #ff6600;
+  --fun-color-secondary: #ffcc3e;
+  --fun-color-orange: #ff6600;
+  --fun-color-yellow: #ffcc3e; /* might be useful later */
+  --fun-color-inactive: #bbbbbb;
+  --fun-color-active: #ff6600;
 
   /* Category Colors + Income Colors */
-  --fun-color-category-food: #f99a16;
-  --fun-color-category-groceries: #29d067;
-  --fun-color-category-transportation: #188ae8;
-  --fun-color-category-housebills: #6780f3;
-  --fun-color-category-shopping: #f958a7;
-  --fun-color-category-entertainment: #a855f7;
-  --fun-color-category-others: #94a3b8;
-  --fun-color-income-icon: #3acfac;
-  --fun-color-income-quantity: #1ca283; /* ini buat angka nominal pemasukannya */
+  --fun-color-category-food: #ffc300;
+  --fun-color-category-groceries: #88e119;
+  --fun-color-category-transportation: #26baff;
+  --fun-color-category-housebills: #ff2226;
+  --fun-color-category-shopping: #ff87d1;
+  --fun-color-category-entertainment: #ce82ff;
+  --fun-color-category-others: #bfbfbf;
+  /* --fun-color-income-icon: #3acfac;
+  --fun-color-income-quantity: #1ca283; ini buat angka nominal pemasukannya */
 
   /* Status Colors */
-  --fun-color-status-success: #06c00d;
+  --fun-color-status-success: #12cf19;
   --fun-color-status-error: #e81717;
 
   color: var(--fun-color-text-primary);
   background-color: var(--fun-color-background);
-  font-family: "Inter", sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 
 /* Tailwind colors */
@@ -51,9 +52,11 @@
   --color-border: var(--fun-color-border);
 
   --color-primary: var(--fun-color-primary);
-  --color-primary-hover: var(--fun-color-primary-hover);
-  --color-primary-light: var(--fun-color-primary-light);
+  --color-secondary: var(--fun-color-secondary);
   --color-orange: var(--fun-color-orange);
+  --color-yellow: var(--fun-color-yellow);
+  --color-inactive: var(--fun-color-inactive);
+  --color-active: var(--fun-color-active);
 
   --color-category-food: var(--fun-color-category-food);
   --color-category-groceries: var(--fun-color-category-groceries);
@@ -63,8 +66,8 @@
   --color-category-entertainment: var(--fun-color-category-entertainment);
   --color-category-others: var(--fun-color-category-others);
 
-  --color-income-icon: var(--fun-color-income-icon);
-  --color-income-quantity: var(--fun-color-income-quantity);
+  /* --color-income-icon: var(--fun-color-income-icon);
+  --color-income-quantity: var(--fun-color-income-quantity); */
 
   --color-status-success: var(--fun-color-status-success);
   --color-status-error: var(--fun-color-status-error);

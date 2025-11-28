@@ -2,7 +2,7 @@ import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "outline" | "danger"; // button variant
+  variant?: "primary" | "secondary" | "outline" | "danger" | "text"; // button variant
   size?: "sm" | "md" | "lg"; // ukuran button
 }
 
@@ -15,7 +15,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   // Variants style
   const baseStyles =
-    "rounded-lg font-inter font-medium shadow transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
+    "rounded-xl font-inter font-medium shadow transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer";
 
   const variantStyles: Record<string, string> = {
     primary: "bg-primary text-white hover:bg-primary-hover",
@@ -23,6 +23,7 @@ const Button: React.FC<ButtonProps> = ({
     outline:
       "border border-primary text-primary hover:bg-primary hover:text-white",
     danger: "bg-red text-white hover:bg-red-hover",
+    text: "bg-transparent text-primary font-bold! hover:underline shadow-none!",
   };
 
   const sizeStyles: Record<string, string> = {
