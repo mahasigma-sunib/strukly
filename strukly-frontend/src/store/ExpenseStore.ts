@@ -4,14 +4,17 @@ import { useEffect } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { ExpenseType } from "../type/ExpenseType";
+import type { ExpenseStatisticType } from "../type/expenseStatisticType";
 
 type State = {
+  statistic: ExpenseStatisticType | null;
   items: ExpenseType[];
   isLoading: boolean;
   error: string | null;
 };
 
 type Actions = {
+  setStats: (stat: ExpenseStatisticType) => void;
   setItems: (items: ExpenseType[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -26,11 +29,18 @@ type Actions = {
 const useExpense = create<State & Actions>()(
   immer((set) => ({
     //initial state
+    statistic: null,
     items: [],
     isLoading: false,
     error: null,
 
     //load all the fetched data into state
+    setStats: (stat: ExpenseStatisticType) => {
+      set((prev) => {
+        prev.statistic = stat;
+      });
+    },
+
     setItems: (items: ExpenseType[]) => {
       set((prev) => {
         prev.items = items;
@@ -105,9 +115,9 @@ function mapExpense(raw: any): ExpenseType {
 }
 
 //to fetch & load the expense datas
-export function useLoadExpense(month: number, year: number) {
-  console.log("running");
-  const { setItems, setError, setLoading } = useExpense();
+export function useLoadExpense(month: number, year: number, getStat: boolean) {
+  // console.log("running");
+  const { setStats, setItems, setError, setLoading } = useExpense();
 
   const { data, error, isLoading } = useSWR(
     `http://localhost:3000/api/expenses?month=${month}&year=${year}`,
@@ -119,21 +129,28 @@ export function useLoadExpense(month: number, year: number) {
 
   useEffect(() => {
     setLoading(isLoading);
-  }, [isLoading]);
 
-  useEffect(() => {
     if (error) {
       setError("Failed to fetch expenses");
     }
-  }, [error]);
 
-  useEffect(() => {
     if (data?.history) {
       const mapped = data.history.map(mapExpense);
       setItems(mapped);
-      console.log("mapped:", mapped);
+      // console.log("mapped:", mapped);
     }
-  }, [data]);
+
+    if (getStat && data?.weekly) {
+      const stat = {
+        month,
+        year,
+        weekly: data.weekly,
+        total: data.weekly.reduce((s: number, n: number) => s + n, 0),
+      };
+      console.log(stat);
+      setStats(stat);
+    }
+  }, [isLoading, error, data]);
 
   return { data, error, isLoading };
 }
