@@ -52,8 +52,8 @@ export default function ExpenseList({
 
           {/* vendor, date */}
           <div>
-            <p className="font-bold text-neutral-900">{vendorName}</p>
-            <p className="text-neutral-500 text-sm">
+            <p className="font-bold text-[fun-color-text-primary]">{vendorName}</p>
+            <p className="text-[fun-color-text-secondary] text-sm">
               {date.toLocaleDateString("en-US", {
                 day: "2-digit",
                 month: "short",
