@@ -10,6 +10,7 @@ import NotFoundError from "src/domain/errors/NotFoundError";
 import AlreadyExistError from "src/domain/errors/AlreadyExistError";
 import UnauthorizedError from "src/domain/errors/UnauthorizedError";
 import GetGoalItemListUseCase from "src/application/use_cases/goal_item/get_goal_item_list";
+import { goalItemToDTO } from "../dto/goal_item_dto";
 
 export default class GoalItemController {
   constructor(
@@ -36,7 +37,7 @@ export default class GoalItemController {
 
       return res
         .status(201)
-        .json({ message: "GoalItem created", goal: created.toDTO() });
+        .json({ message: "Goal Item created", goal: goalItemToDTO(created) });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);
@@ -64,9 +65,9 @@ export default class GoalItemController {
 
       const goalItems = await this.getGoalItemListUseCase.execute(userID);
 
-      return res
-        .status(200)
-        .json({ goalItems: goalItems.map((goalItem) => goalItem.toDTO()) });
+      return res.status(200).json({
+        goalItems: goalItems.map((goalItem) => goalItemToDTO(goalItem)),
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);
@@ -98,7 +99,7 @@ export default class GoalItemController {
 
       if (!goal) return res.status(404).json({ error: "Goal Item not found" });
 
-      return res.status(200).json({ goal: goal.toDTO() });
+      return res.status(200).json({ goal: goalItemToDTO(goal) });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);
@@ -133,7 +134,7 @@ export default class GoalItemController {
 
       return res
         .status(200)
-        .json({ message: "GoalItem updated", goal: updated.toDTO() });
+        .json({ message: "GoalItem updated", goal: goalItemToDTO(updated) });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);
@@ -161,7 +162,7 @@ export default class GoalItemController {
 
       await this.deleteGoalItemUseCase.execute(goalItemID, userID);
 
-      return res.status(200).json({ message: "GoalItem deleted" });
+      return res.status(200).json({ message: "Goal Item deleted" });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);

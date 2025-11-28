@@ -13,6 +13,10 @@ import GetGoalItemUseCase from "src/application/use_cases/goal_item/get_goal_ite
 import UpdateGoalItemUseCase from "src/application/use_cases/goal_item/update_goal_item";
 import DeleteGoalItemUseCase from "src/application/use_cases/goal_item/delete_goal_item";
 import GetGoalItemListUseCase from "src/application/use_cases/goal_item/get_goal_item_list";
+import {
+  CreateGoalItemDTOSchema,
+  UpdateGoalItemDTOSchema,
+} from "../dto/goal_item_dto";
 
 const router = Router();
 
@@ -31,22 +35,10 @@ const controller = new GoalItemController(
   deleteUseCase,
 );
 
-const CreateGoalItemSchema = z.object({
-  name: z.string(),
-  price: z.number().int().positive(),
-});
-
-const UpdateGoalItemSchema = z.object({
-  name: z.string().optional(),
-  price: z.number().int().positive().optional(),
-});
-
-const ParamsSchema = z.object({ goalItemID: z.string().uuid() });
-
 router.post(
   "/goals",
   authMiddleware,
-  validateBody(CreateGoalItemSchema),
+  validateBody(CreateGoalItemDTOSchema),
   controller.createGoalItem,
 );
 
@@ -55,22 +47,22 @@ router.get("/goals", authMiddleware, controller.getGoalItemList);
 router.get(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(ParamsSchema),
+  validateParams(z.object({ goalItemID: z.uuid() })),
   controller.getGoalItem,
 );
 
 router.patch(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(ParamsSchema),
-  validateBody(UpdateGoalItemSchema),
+  validateParams(z.object({ goalItemID: z.uuid() })),
+  validateBody(UpdateGoalItemDTOSchema),
   controller.updateGoalItem,
 );
 
 router.delete(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(ParamsSchema),
+  validateParams(z.object({ goalItemID: z.uuid() })),
   controller.deleteGoalItem,
 );
 

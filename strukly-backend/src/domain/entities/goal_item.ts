@@ -7,12 +7,12 @@ export interface IGoalItemBuilder {
   userID: string;
   name: string;
   price: number;
-};
+}
 
 export default class GoalItem {
   constructor(
     public id: GoalItemID,
-    
+
     public name: string,
     public price: number,
     public deposited: number,
@@ -23,7 +23,7 @@ export default class GoalItem {
     public updatedAt: Date,
 
     public userID: UserID,
-  ) { }
+  ) {}
 
   static new(builder: IGoalItemBuilder) {
     return new GoalItem(
@@ -40,7 +40,7 @@ export default class GoalItem {
   }
 
   deposit(amount: number) {
-    if (amount <= 0) throw new Error('Amount must be positive');
+    if (amount <= 0) throw new Error("Amount must be positive");
     this.deposited += amount;
     this.updatedAt = new Date();
     if (this.deposited >= this.price && !this.completed) {
@@ -51,20 +51,6 @@ export default class GoalItem {
 
   remaining(): number {
     return Math.max(0, this.price - this.deposited);
-  }
-
-  toDTO() {
-    return {
-      id: this.id.value,
-      name: this.name,
-      price: this.price,
-      deposited: this.deposited,
-      completed: this.completed,
-      completedAt: this.completedAt?.toISOString() ?? null,
-      createdAt: this.createdAt.toISOString(),
-      updatedAt: this.updatedAt.toISOString(),
-      userID: this.userID.value,
-    };
   }
 
   static fromPersistence(data: any): GoalItem {
