@@ -1,7 +1,7 @@
 import ExpenseService from "src/domain/services/expense_service";
 import UserID from "src/domain/values/user_id";
 
-export default class GetExpenseListUseCase {
+export default class GetMonthlyExpenseListUseCase {
 constructor(private readonly expenseService: ExpenseService) {}
  async execute(
     userID: string,

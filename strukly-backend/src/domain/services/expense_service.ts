@@ -24,12 +24,16 @@ export default class ExpenseService {
     return await this.expenseRepository.update(expense);
   }
 
-  async getExpenseListByUserID(
-    userID: UserID,
-    month: number,
-    year: number
-  ): Promise<Expense[]> {
-    return this.expenseRepository.findByUserID(userID, month, year);
+  //crossmonth function for weekly reports
+  async getExpensesByDateRange(userID: UserID, start: Date, end: Date) {
+    return this.expenseRepository.findByDateRange(userID, start, end);
+  }
+
+  //actual per week report in the month separated per 7 days
+  async getExpenseListByUserID(userID: UserID, month: number, year: number) {
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 0);
+    return this.expenseRepository.findByDateRange(userID, start, end);
   }
 
   /**
