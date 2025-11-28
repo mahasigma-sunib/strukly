@@ -7,7 +7,7 @@ import type { ExpenseType } from "../type/ExpenseType";
 import type { ExpenseStatisticType } from "../type/expenseStatisticType";
 
 type State = {
-  statistic: ExpenseStatisticType | null;
+  statistic: ExpenseStatisticType;
   items: ExpenseType[];
   isLoading: boolean;
   error: string | null;
@@ -29,7 +29,7 @@ type Actions = {
 const useExpense = create<State & Actions>()(
   immer((set) => ({
     //initial state
-    statistic: null,
+    statistic: { month: -1, year: -1, weekly: [], total: 0 },
     items: [],
     isLoading: false,
     error: null,
@@ -87,7 +87,7 @@ const useExpense = create<State & Actions>()(
       set((prev) => {
         const index = prev.items.findIndex((item) => item.id === id);
         if (index > -1) {
-          Object.assign(index, updateditem);
+          Object.assign(prev.items[index], updateditem);
         }
       });
     },
@@ -141,11 +141,17 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
     }
 
     if (getStat && data?.weekly) {
+      const weeklyArr: number[] = data.weekly;
+      const transformedWeekly = weeklyArr.map((index, amount) => ({
+        name: `Week ${index + 1}`,
+        amount: amount,
+      }));
+
       const stat = {
         month,
         year,
-        weekly: data.weekly,
-        total: data.weekly.reduce((s: number, n: number) => s + n, 0),
+        weekly: transformedWeekly,
+        total: weeklyArr.reduce((s: number, n: number) => s + n, 0),
       };
       console.log(stat);
       setStats(stat);
