@@ -1,6 +1,5 @@
 import axios from "axios";
 import useSWR from "swr";
-import { Fetcher } from "../fetcher/Fetcher";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { ExpenseType } from "../type/ExpenseType";
@@ -84,17 +83,44 @@ const useExpense = create<State & Actions>()(
   }))
 );
 
+function mapExpense(raw: any): ExpenseType {
+  return {
+    userID: raw.user_id,
+
+    id: raw.id,
+    dateTime: raw.datetime,
+    vendorName: raw.vendor,
+    category: raw.category,
+
+    currency: "IDR",
+    subtotalAmount: raw.subtotal,
+    taxAmount: raw.tax,
+    discountAmount: raw.discount,
+    serviceAmount: raw.service,
+    totalAmount: raw.total_my_expense,
+
+    items: null,
+  };
+}
+
 //to fetch & load the expense datas
 export function loadExpense(month: number, year: number) {
-  const { data, error, isLoading } = useSWR<ExpenseType[]>(
-    `http://localhost:3000/api/expenses?month=${month}&week=${year}`,
-    Fetcher<ExpenseType[]>
-  );
   const { setItems, setError, setLoading } = useExpense();
 
-  setLoading(isLoading);
+  const { data, error, isLoading } = useSWR(
+    `http://localhost:3000/api/expenses?month=${month}&year=${year}`,
+    (url) => fetch(url).then((res) => res.json())
+  );
+
+  if (isLoading) setLoading(true);
   if (error) setError("Failed to fetch expense");
-  if (data) setItems(data);
+
+  if (data?.history) {
+    const mapped = data.history.map(mapExpense);
+    setItems(mapped);
+  }
+
+  return { data, error, isLoading };
 }
 
 // post a new expense

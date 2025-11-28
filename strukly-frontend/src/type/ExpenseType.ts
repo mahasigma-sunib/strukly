@@ -15,5 +15,5 @@ export interface ExpenseType {
   serviceAmount: number;
   totalAmount: number;
 
-  items: ExpenseItemType[];
+  items: ExpenseItemType[] | null;
 }
