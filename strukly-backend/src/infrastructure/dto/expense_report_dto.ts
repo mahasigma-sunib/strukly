@@ -8,6 +8,7 @@ export const ExpenseReportRequestQuerySchema = z.object({
 
 export const HistoryItemDTOSchema = z.object({
   user_id: z.string(),
+  id: z.string(),
   subtotal: z.number(),
   tax: z.number(),
   service: z.number(),
@@ -37,6 +38,7 @@ export function createExpenseReportResponseDTO(
     weekly,
     history: history.map((expense) => ({
       user_id: expense.header.userID.value,
+      id: expense.header.id.value,
       subtotal: expense.header.subtotalAmount.value,
       tax: expense.header.taxAmount.value,
       service: expense.header.serviceAmount.value,
