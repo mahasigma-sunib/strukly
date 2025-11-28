@@ -17,12 +17,30 @@ model User {
   id             String   @id @default(uuid())
   email          String   @unique
   name           String
-  hashedPassword String // hashed password
+  hashedPassword String
+  budget         Decimal  @default(0)
+  unusedBudget   Decimal  @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  goalItems    GoalItem[]
-  expenses ExpenseHeader[]
+  goalItems       GoalItem[]
+  expenses        ExpenseHeader[]
+  budgetHistories BudgetHistory[]
+}
+
+model BudgetHistory {
+  userID       String
+  month        Int
+  year         Int
+  budget       Decimal
+  unusedBudget Decimal
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userID], references: [id])
+
+  @@id([userID, month, year])
 }
 
 model ExpenseHeader {
@@ -40,8 +58,8 @@ model ExpenseHeader {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userID String
-  user   User   @relation(fields: [userID], references: [id])
+  userID  String
+  user    User   @relation(fields: [userID], references: [id])
   members Json?
 
   items ExpenseItem[]
@@ -54,8 +72,8 @@ model ExpenseItem {
   singlePrice Float
   totalPrice  Float
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   assignedMember String?
 
   expenseID String
@@ -74,16 +92,16 @@ model Wallet {
 }
 
 model GoalItem {
-  id          String @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
   price       Int
   deposited   Int
-  completed   Boolean @default(false)
+  completed   Boolean   @default(false)
   completedAt DateTime?
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  userID      String
+  userID String
   user   User   @relation(fields: [userID], references: [id])
 }
