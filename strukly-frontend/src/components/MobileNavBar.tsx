@@ -60,7 +60,7 @@ export default function MobileNavBar() {
         inactiveIcon={<RiHome5Line size={24} />}
       />
       <NavLink
-        to="/transactions"
+        to="/history"
         label="Riwayat"
         activeIcon={<RiReceiptFill size={24} />}
         inactiveIcon={<RiReceiptLine size={24} />}
@@ -69,7 +69,7 @@ export default function MobileNavBar() {
       {/* CTA di tengah (kolom ke-3) */}
       <div className="flex justify-center">
         <Link
-          to="/add"
+          to="/addTransaction"
           className="relative -translate-y-5 flex items-center justify-center w-14 h-14 rounded-full bg-primary text-white shadow-lg hover:scale-105 transition-transform duration-200"
         >
           <RiQrScan2Line size={28} />
@@ -77,13 +77,13 @@ export default function MobileNavBar() {
       </div>
 
       <NavLink
-        to="/history"
+        to="/tracker"
         label="Tracker"
         activeIcon={<RiPieChart2Fill size={24} />}
         inactiveIcon={<RiPieChart2Line size={24} />}
       />
       <NavLink
-        to="/users"
+        to="/profile"
         label="Profil"
         activeIcon={<RiUser3Fill size={24} />}
         inactiveIcon={<RiUser3Line size={24} />}
