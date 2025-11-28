@@ -14,22 +14,31 @@ constructor(private readonly expenseService: ExpenseService) {}
       year
     );
     
-    const weeklyTotals: number[] = [0, 0, 0, 0, 0];
+const firstDayOfMonthDate = new Date(year, month - 1, 1);
+    
+    const dayOfWeek = firstDayOfMonthDate.getDay();
+    const startOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+    const weeklyTotals: number[] = [0, 0, 0, 0, 0, 0];
+    let monthlyTotal = 0;
 
     for (const expense of expenses) {
       const header = expense.header;
       const amount = header.totalAmount.value;
+      const dayOfMonth = header.dateTime.getDate(); 
+      const weekIndex = Math.floor((dayOfMonth + startOffset - 1) / 7);
 
-      const day = header.dateTime.getDate();
-      const weekIndex = Math.floor((day - 1) / 7);
       if (weeklyTotals[weekIndex] !== undefined) {
         weeklyTotals[weekIndex] += amount;
       } else {
-        weeklyTotals[4] += amount;
+        // timezone edge case
+        weeklyTotals[weeklyTotals.length - 1] += amount;
       }
+      monthlyTotal += amount;
     }
 
     return {
+      total: monthlyTotal,
       weekly: weeklyTotals,
       history: expenses,
     };
