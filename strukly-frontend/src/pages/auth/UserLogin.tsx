@@ -94,8 +94,8 @@ function UserLogin() {
         )}
       </div>
 
-      <Button onClick={handleLogin} className="rounded cursor-pointer my-4 w-full bg-black">
-        <p className="font-bold text-lg">Login</p>
+      <Button onClick={handleLogin} className="rounded cursor-pointer my-4 w-full">
+        Log in
       </Button>
 
       <div>
