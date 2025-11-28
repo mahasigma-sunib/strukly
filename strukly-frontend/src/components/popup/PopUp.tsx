@@ -1,25 +1,47 @@
 import React from "react";
+import { useEffect } from "react";
 
 type PopupProps = {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  className?: string;
 };
 
-const Popup: React.FC<PopupProps> = ({ visible, onClose, children }) => {
+const Popup: React.FC<PopupProps> = ({
+  visible,
+  onClose,
+  children,
+  className = "",
+}) => {
+  // prevent scrolling on the body when popup is open
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [visible]);
+
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-[9999]">
-      <div className="relative bg-[#242323] px-8 pt-[60px] pb-10 rounded-2xl shadow-lg flex flex-col items-center text-center gap-4">
-        <button
-          className="absolute top-0 -right-2 text-gray-300 !bg-transparent !text-2xl cursor-pointer z-[1001] hover:text-white"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          ×
-        </button>
-        {children}
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[fun-color-text-primary]/40 backdrop-blur-sm p-4 transition-opacity"
+      onClick={onClose}
+    >
+      <div
+        className={`
+          relative w-full max-w-md transform rounded-3xl bg-[var(--fun-color-background)] p-6 text-left shadow-2xl 
+          transition-all animate-in fade-in zoom-in-95 duration-200
+          ${className}
+        `}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div>{children}</div>
       </div>
     </div>
   );
