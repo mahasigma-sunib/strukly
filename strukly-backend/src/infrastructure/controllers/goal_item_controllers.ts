@@ -9,10 +9,12 @@ import GoalItemID from "src/domain/values/goal_item_id";
 import NotFoundError from "src/domain/errors/NotFoundError";
 import AlreadyExistError from "src/domain/errors/AlreadyExistError";
 import UnauthorizedError from "src/domain/errors/UnauthorizedError";
+import GetGoalItemListUseCase from "src/application/use_cases/goal_item/get_goal_item_list";
 
 export default class GoalItemController {
   constructor(
     private readonly createGoalItemUseCase: CreateGoalItemUseCase,
+    private readonly getGoalItemListUseCase: GetGoalItemListUseCase,
     private readonly getGoalItemUseCase: GetGoalItemUseCase,
     private readonly updateGoalItemUseCase: UpdateGoalItemUseCase,
     private readonly deleteGoalItemUseCase: DeleteGoalItemUseCase,
@@ -36,8 +38,48 @@ export default class GoalItemController {
         .status(201)
         .json({ message: "GoalItem created", goal: created.toDTO() });
     } catch (error: unknown) {
-      if (error instanceof Error)
-        return res.status(400).json({ error: error.message });
+      if (error instanceof Error) {
+        console.error(error);
+      }
+
+      // TODO: replace with middleware
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: error.message });
+      } else if (error instanceof AlreadyExistError) {
+        return res.status(409).json({ error: error.message });
+      } else if (error instanceof UnauthorizedError) {
+        return res.status(401).json({ error: error.message });
+      }
+
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
+  public getGoalItemList = async (
+    req: Request,
+    res: Response,
+  ): Promise<Response> => {
+    try {
+      const userID = req.user!.id;
+
+      const goalItems = await this.getGoalItemListUseCase.execute(userID);
+
+      return res
+        .status(200)
+        .json({ goalItems: goalItems.map((goalItem) => goalItem.toDTO()) });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+      }
+
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: error.message });
+      } else if (error instanceof AlreadyExistError) {
+        return res.status(409).json({ error: error.message });
+      } else if (error instanceof UnauthorizedError) {
+        return res.status(401).json({ error: error.message });
+      }
+
       return res.status(500).json({ error: "Internal server error" });
     }
   };
@@ -58,8 +100,18 @@ export default class GoalItemController {
 
       return res.status(200).json({ goal: goal.toDTO() });
     } catch (error: unknown) {
-      if (error instanceof Error)
-        return res.status(400).json({ error: error.message });
+      if (error instanceof Error) {
+        console.error(error);
+      }
+
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: error.message });
+      } else if (error instanceof AlreadyExistError) {
+        return res.status(409).json({ error: error.message });
+      } else if (error instanceof UnauthorizedError) {
+        return res.status(401).json({ error: error.message });
+      }
+
       return res.status(500).json({ error: "Internal server error" });
     }
   };
@@ -83,8 +135,18 @@ export default class GoalItemController {
         .status(200)
         .json({ message: "GoalItem updated", goal: updated.toDTO() });
     } catch (error: unknown) {
-      if (error instanceof Error)
-        return res.status(400).json({ error: error.message });
+      if (error instanceof Error) {
+        console.error(error);
+      }
+
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: error.message });
+      } else if (error instanceof AlreadyExistError) {
+        return res.status(409).json({ error: error.message });
+      } else if (error instanceof UnauthorizedError) {
+        return res.status(401).json({ error: error.message });
+      }
+
       return res.status(500).json({ error: "Internal server error" });
     }
   };
