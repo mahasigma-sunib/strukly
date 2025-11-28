@@ -10,6 +10,7 @@ export default class BudgetService {
     private readonly budgetHistoryRepository: IBudgetHistoryRepository,
   ) {}
 
+  // TODO: use UserID type
   async getCurrentUserBudget(userID: string): Promise<BudgetHistory> {
     const userIDValue = new UserID(userID);
     const user = await this.userRepository.findById(userID);
@@ -71,5 +72,11 @@ export default class BudgetService {
     budgetHistory.updateBudget(newBudget);
 
     await this.budgetHistoryRepository.update(budgetHistory);
+  }
+
+  async useBudget(userID: UserID, amount: number) {
+    const budget = await this.getCurrentUserBudget(userID.value);
+    budget.use(amount);
+    await this.budgetHistoryRepository.update(budget);
   }
 }

@@ -11,12 +11,15 @@ import AlreadyExistError from "src/domain/errors/AlreadyExistError";
 import UnauthorizedError from "src/domain/errors/UnauthorizedError";
 import GetGoalItemListUseCase from "src/application/use_cases/goal_item/get_goal_item_list";
 import { goalItemToDTO } from "../dto/goal_item_dto";
+import DepositGoalItemUseCase from "src/application/use_cases/goal_item/deposit_goal_item";
+import InvalidDataError from "src/domain/errors/InvalidDataError";
 
 export default class GoalItemController {
   constructor(
     private readonly createGoalItemUseCase: CreateGoalItemUseCase,
     private readonly getGoalItemListUseCase: GetGoalItemListUseCase,
     private readonly getGoalItemUseCase: GetGoalItemUseCase,
+    private readonly depositGoalItemUseCase: DepositGoalItemUseCase,
     private readonly updateGoalItemUseCase: UpdateGoalItemUseCase,
     private readonly deleteGoalItemUseCase: DeleteGoalItemUseCase,
   ) {}
@@ -111,6 +114,37 @@ export default class GoalItemController {
         return res.status(409).json({ error: error.message });
       } else if (error instanceof UnauthorizedError) {
         return res.status(401).json({ error: error.message });
+      }
+
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
+  public depositGoalItem = async (
+    req: Request<{ goalItemID: string }, {}, { amount: number }>,
+    res: Response,
+  ) => {
+    try {
+      const userID = req.user!.id;
+      const { goalItemID } = req.params;
+      const { amount } = req.body;
+
+      await this.depositGoalItemUseCase.execute(userID, goalItemID, amount);
+
+      return res.status(200).json({ message: "Goal Item deposited" });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+      }
+
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: error.message });
+      } else if (error instanceof AlreadyExistError) {
+        return res.status(409).json({ error: error.message });
+      } else if (error instanceof UnauthorizedError) {
+        return res.status(401).json({ error: error.message });
+      } else if (error instanceof InvalidDataError) {
+        return res.status(400).json({ error: error.message });
       }
 
       return res.status(500).json({ error: "Internal server error" });

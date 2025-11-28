@@ -36,4 +36,8 @@ export default class BudgetHistory {
     this.unusedBudget += deltaBudget;
     this.updatedAt = new Date();
   }
+
+  use(amount: number) {
+    this.unusedBudget -= amount;
+  }
 }

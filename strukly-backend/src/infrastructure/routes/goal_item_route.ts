@@ -13,24 +13,36 @@ import GetGoalItemUseCase from "src/application/use_cases/goal_item/get_goal_ite
 import UpdateGoalItemUseCase from "src/application/use_cases/goal_item/update_goal_item";
 import DeleteGoalItemUseCase from "src/application/use_cases/goal_item/delete_goal_item";
 import GetGoalItemListUseCase from "src/application/use_cases/goal_item/get_goal_item_list";
+import DepositGoalItemUseCase from "src/application/use_cases/goal_item/deposit_goal_item";
 import {
   CreateGoalItemDTOSchema,
   UpdateGoalItemDTOSchema,
 } from "../dto/goal_item_dto";
+import BudgetService from "src/domain/services/budget_service";
+import PrismaUserRepository from "../repositories/prisma_user_repository";
+import PrismaBudgetHistoryRepository from "../repositories/prisma_budget_history_repository";
+import { PrismaClient } from "@prisma/client";
 
 const router = Router();
 
-const repo = new PrismaGoalItemRepository();
-const createUseCase = new CreateGoalItemUseCase(repo);
-const getListUseCase = new GetGoalItemListUseCase(repo);
-const getUseCase = new GetGoalItemUseCase(repo);
-const updateUseCase = new UpdateGoalItemUseCase(repo);
-const deleteUseCase = new DeleteGoalItemUseCase(repo);
+const goalItemRepo = new PrismaGoalItemRepository();
+const budgetHistoryRepo = new PrismaBudgetHistoryRepository(new PrismaClient());
+const userRepo = new PrismaUserRepository();
+
+const budgetService = new BudgetService(userRepo, budgetHistoryRepo);
+
+const createUseCase = new CreateGoalItemUseCase(goalItemRepo);
+const getListUseCase = new GetGoalItemListUseCase(goalItemRepo);
+const getUseCase = new GetGoalItemUseCase(goalItemRepo);
+const depositUseCase = new DepositGoalItemUseCase(budgetService, goalItemRepo);
+const updateUseCase = new UpdateGoalItemUseCase(goalItemRepo);
+const deleteUseCase = new DeleteGoalItemUseCase(goalItemRepo);
 
 const controller = new GoalItemController(
   createUseCase,
   getListUseCase,
   getUseCase,
+  depositUseCase,
   updateUseCase,
   deleteUseCase,
 );
@@ -49,6 +61,13 @@ router.get(
   authMiddleware,
   validateParams(z.object({ goalItemID: z.uuid() })),
   controller.getGoalItem,
+);
+
+router.patch(
+  "/goals/deposit/:goalItemID",
+  authMiddleware,
+  validateBody(z.object({ amount: z.number() })),
+  controller.depositGoalItem,
 );
 
 router.patch(
