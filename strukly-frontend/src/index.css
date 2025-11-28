@@ -15,8 +15,10 @@
   --fun-color-border: #ebebec;
 
   /* Primary Colors */
+  --fun-color-primary: #ff6600;
+  --fun-color-secondary: #ffcc3e;
   --fun-color-orange: #ff6600;
-  --fun-color-yellow: #ffb53e; /* might be useful later */
+  --fun-color-yellow: #ffcc3e; /* might be useful later */
   --fun-color-inactive: #bbbbbb;
   --fun-color-active: #ff6600;
 
@@ -24,7 +26,7 @@
   --fun-color-category-food: #ffc300;
   --fun-color-category-groceries: #88e119;
   --fun-color-category-transportation: #26baff;
-  --fun-color-category-housebills: #ff4a4a;
+  --fun-color-category-housebills: #ff2226;
   --fun-color-category-shopping: #ff87d1;
   --fun-color-category-entertainment: #ce82ff;
   --fun-color-category-others: #bfbfbf;
@@ -49,6 +51,8 @@
   --color-text-disabled: var(--fun-color-text-disabled);
   --color-border: var(--fun-color-border);
 
+  --color-primary: var(--fun-color-primary);
+  --color-secondary: var(--fun-color-secondary);
   --color-orange: var(--fun-color-orange);
   --color-yellow: var(--fun-color-yellow);
   --color-inactive: var(--fun-color-inactive);
