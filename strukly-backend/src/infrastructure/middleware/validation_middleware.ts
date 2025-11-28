@@ -16,7 +16,10 @@ export function validateSchema<T>(
       const validatedData = schema.parse(dataToValidate);
       
       // Replace the request data with validated data (removes extra fields, applies transforms)
-      req[target] = validatedData;
+      // Note: req.query is read-only in Express v5, so skip assignment for query
+      if (target !== 'query') {
+        req[target] = validatedData;
+      }
       
       next();
     } catch (error) {
@@ -31,6 +34,7 @@ export function validateSchema<T>(
           details: errorMessages,
         });
       }
+      console.log(error);
       
       // Handle unexpected errors
       return res.status(500).json({
