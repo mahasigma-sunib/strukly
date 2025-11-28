@@ -15,6 +15,8 @@
   --fun-color-border: #ebebec;
 
   /* Primary Colors */
+  --fun-color-primary: #ff6600;
+  --fun-color-secondary: #ffcc3e;
   --fun-color-orange: #ff6600;
   --fun-color-yellow: #ffcc3e; /* might be useful later */
   --fun-color-inactive: #bbbbbb;
@@ -49,6 +51,8 @@
   --color-text-disabled: var(--fun-color-text-disabled);
   --color-border: var(--fun-color-border);
 
+  --color-primary: var(--fun-color-primary);
+  --color-secondary: var(--fun-color-secondary);
   --color-orange: var(--fun-color-orange);
   --color-yellow: var(--fun-color-yellow);
   --color-inactive: var(--fun-color-inactive);
