@@ -19,8 +19,6 @@ constructor(private readonly expenseService: ExpenseService) {}
     const lastDayOfMonthDate = new Date(year, month, 0);
     const daysInMonth = lastDayOfMonthDate.getDate();
 
-    const weeklyMap = new Map<number, WeeklyData>();
-
     const dayOfWeek = firstDayOfMonthDate.getDay();
     const startOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     const totalWeeks = Math.ceil((daysInMonth + startOffset) / 7);

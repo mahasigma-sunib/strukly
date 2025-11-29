@@ -74,7 +74,7 @@ export default class ExpenseController {
 
       const reportData = await this.getExpenseListUseCase.execute(userID, month, year);
 
-      return res.status(200).json(createExpenseReportResponseDTO(reportData.weekly, reportData.history));
+      return res.status(200).json(createExpenseReportResponseDTO(reportData.total, reportData.weekly, reportData.history));
     } catch (error: unknown) {
       console.error(error);
       return res.status(500).json({ error: "Internal server error" });
