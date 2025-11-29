@@ -15,12 +15,17 @@
   --fun-color-border: #ebebec;
 
   /* Primary Colors */
-  --fun-color-primary: #ff6600;
-  --fun-color-secondary: #ffcc3e;
+  --fun-color-primary: #ff9900;
+  --fun-color-secondary: #ffc300;
   --fun-color-orange: #ff6600;
   --fun-color-yellow: #ffcc3e; /* might be useful later */
   --fun-color-inactive: #bbbbbb;
+  --fun-color-light-gray: #9ca3af;
   --fun-color-active: #ff6600;
+  --fun-color-primary-hover: #fea725;
+  --fun-color-secondary-hover: #ffd13c;
+  --fun-color-primary-shadow: #ec7e00;
+  --fun-color-secondary-shadow: #edb009;
 
   /* Category Colors + Income Colors */
   --fun-color-category-food: #ffc300;
@@ -31,7 +36,7 @@
   --fun-color-category-entertainment: #ce82ff;
   --fun-color-category-others: #bfbfbf;
   /* --fun-color-income-icon: #3acfac;
-  --fun-color-income-quantity: #1ca283; ini buat angka nominal pemasukannya */
+  --fun-color-income-quantity: #1ca283; */
 
   /* Status Colors */
   --fun-color-status-success: #12cf19;
@@ -57,6 +62,10 @@
   --color-yellow: var(--fun-color-yellow);
   --color-inactive: var(--fun-color-inactive);
   --color-active: var(--fun-color-active);
+  --color-primary-hover: var(--fun-color-primary-hover);
+  --color-secondary-hover: var(--fun-color-secondary-hover);
+  --color-primary-shadow: var(--fun-color-primary-shadow);
+  --color-secondary-shadow: var(--fun-color-secondary-shadow);
 
   --color-category-food: var(--fun-color-category-food);
   --color-category-groceries: var(--fun-color-category-groceries);
