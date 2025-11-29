@@ -110,7 +110,7 @@ function mapExpense(raw: any): ExpenseType {
     serviceAmount: raw.service,
     totalAmount: raw.total_my_expense,
 
-    items: null,
+    items: [],
   };
 }
 
