@@ -21,8 +21,16 @@ export const HistoryItemDTOSchema = z.object({
   vendor: z.string(),
 });
 
+const WeeklyDataSchema = z.object({
+  week: z.number(),
+  spending: z.number(),
+  startDate: z.number(),
+  endDate: z.number(),
+});
+
 export const ExpenseReportResponseSchema = z.object({
-  weekly: z.array(z.number()),
+  total: z.number(),
+  weekly: z.array(WeeklyDataSchema),
   history: z.array(HistoryItemDTOSchema),
 });
 
@@ -30,18 +38,15 @@ export type ExpenseReportRequestQuery = z.infer<typeof ExpenseReportRequestQuery
 export type HistoryItemDTO = z.infer<typeof HistoryItemDTOSchema>;
 export type ExpenseReportResponse = z.infer<typeof ExpenseReportResponseSchema>;
 
-export interface WeeklyData {
-  week: number;
-  spending: number;
-  startDate: string;
-  endDate: string;
-}
+export type WeeklyData = z.infer<typeof WeeklyDataSchema>;
 
 export function createExpenseReportResponseDTO(
-  weekly: number[],
+  total: number,
+  weekly: WeeklyData[],
   history: Expense[]
 ): ExpenseReportResponse {
   return {
+    total,
     weekly,
     history: history.map((expense) => ({
       user_id: expense.header.userID.value,
