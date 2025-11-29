@@ -30,6 +30,13 @@ export type ExpenseReportRequestQuery = z.infer<typeof ExpenseReportRequestQuery
 export type HistoryItemDTO = z.infer<typeof HistoryItemDTOSchema>;
 export type ExpenseReportResponse = z.infer<typeof ExpenseReportResponseSchema>;
 
+export interface WeeklyData {
+  week: number;
+  spending: number;
+  startDate: string;
+  endDate: string;
+}
+
 export function createExpenseReportResponseDTO(
   weekly: number[],
   history: Expense[]
