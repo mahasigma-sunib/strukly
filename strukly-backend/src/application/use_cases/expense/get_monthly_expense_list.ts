@@ -1,5 +1,6 @@
 import ExpenseService from "src/domain/services/expense_service";
 import UserID from "src/domain/values/user_id";
+import { WeeklyData } from "src/infrastructure/dto/expense_report_dto";
 
 export default class GetMonthlyExpenseListUseCase {
 constructor(private readonly expenseService: ExpenseService) {}
@@ -14,13 +15,34 @@ constructor(private readonly expenseService: ExpenseService) {}
       year
     );
     
-const firstDayOfMonthDate = new Date(year, month - 1, 1);
-    
+    const firstDayOfMonthDate = new Date(year, month - 1, 1);
+    const lastDayOfMonthDate = new Date(year, month, 0);
+    const daysInMonth = lastDayOfMonthDate.getDate();
+
+    const weeklyMap = new Map<number, WeeklyData>();
+
     const dayOfWeek = firstDayOfMonthDate.getDay();
     const startOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const totalWeeks = Math.ceil((daysInMonth + startOffset) / 7);
 
-    const weeklyTotals: number[] = [0, 0, 0, 0, 0, 0];
     let monthlyTotal = 0;
+
+    //setup start and end dates
+    const weeklyData = Array.from({ length: totalWeeks }, (_, i) => {
+      let endDay = (7 * (i + 1)) - startOffset;
+      let startDay = endDay - 6;
+
+      // ensure its in the month
+      if (startDay < 1) startDay = 1;
+      if (endDay > daysInMonth) endDay = daysInMonth;
+
+      return {
+        week: i + 1,
+        spending: 0,
+        startDate: startDay,
+        endDate: endDay,
+      };
+    });
 
     for (const expense of expenses) {
       const header = expense.header;
@@ -28,18 +50,15 @@ const firstDayOfMonthDate = new Date(year, month - 1, 1);
       const dayOfMonth = header.dateTime.getDate(); 
       const weekIndex = Math.floor((dayOfMonth + startOffset - 1) / 7);
 
-      if (weeklyTotals[weekIndex] !== undefined) {
-        weeklyTotals[weekIndex] += amount;
-      } else {
-        // timezone edge case
-        weeklyTotals[weeklyTotals.length - 1] += amount;
+      if (weeklyData[weekIndex] !== undefined) {
+        weeklyData[weekIndex].spending += amount;
       }
       monthlyTotal += amount;
     }
 
     return {
       total: monthlyTotal,
-      weekly: weeklyTotals,
+      weekly: weeklyData,
       history: expenses,
     };
   }
