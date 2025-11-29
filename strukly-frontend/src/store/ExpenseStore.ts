@@ -142,10 +142,12 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
 
     if (getStat && data?.weekly) {
       const weeklyArr: number[] = data.weekly;
-      const transformedWeekly = weeklyArr.map((index, amount) => ({
+      console.log(weeklyArr);
+      const transformedWeekly = weeklyArr.map((amount, index) => ({
         name: `Week ${index + 1}`,
         amount: amount,
       }));
+      console.log(transformedWeekly);
 
       const stat = {
         month,
