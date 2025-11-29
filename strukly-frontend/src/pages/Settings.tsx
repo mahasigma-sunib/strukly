@@ -1,7 +1,7 @@
 import useUserAuth from "../store/UserAuthStore";
 import Button from "../components/Button";
 
-export default function UserProfile() {
+export default function Settings() {
   const logout = useUserAuth((s) => s.logout);
   return (
     <div>
