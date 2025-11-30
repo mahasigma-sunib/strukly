@@ -36,9 +36,9 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({
   return (
     <div
       className={`w-full min-w-0 ${className}`}
-      style={{ height: `${height}px`, width: "100%" }}
+      style={{ height: `${height}px`, width: "100%", position: "relative" }}
     >
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="99%" height="100%">
         <BarChart
           data={data}
           margin={{
@@ -98,7 +98,7 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({
                 <Rectangle
                   fill={bar.color}
                   stroke={bar.color}
-                  strokeOpacity={0.8}
+                  strokeOpacity={0.1}
                 />
               }
             />
