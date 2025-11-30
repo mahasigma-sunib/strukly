@@ -5,4 +5,8 @@ export default class GoalItemID {
   static fromRandom(): GoalItemID {
     return new GoalItemID(crypto.randomUUID());
   }
+  public equals(other: GoalItemID): boolean {
+    if (!other) return false;
+    return this.value === other.value;
+  }
 }

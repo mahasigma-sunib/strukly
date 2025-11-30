@@ -4,7 +4,8 @@ export default class UserID {
     return new UserID(crypto.randomUUID());
   }
 
-  equals(other: UserID): boolean {
+  public equals(other: UserID): boolean {
+    if (!other) return false;
     return this.value === other.value;
   }
 }
