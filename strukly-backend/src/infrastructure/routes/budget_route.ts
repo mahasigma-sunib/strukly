@@ -37,6 +37,6 @@ budgetRouter.get("/", authMiddleware, budgetController.getCurrentBudget);
 budgetRouter.patch(
   "/",
   authMiddleware,
-  validateBody(z.object({ budget: z.number().int() })),
+  validateBody(z.object({ budget: z.number().int().positive() })),
   budgetController.updateCurrentBudget,
 );

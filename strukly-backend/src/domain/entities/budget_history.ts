@@ -1,3 +1,4 @@
+import InvalidDataError from "../errors/InvalidDataError";
 import UserID from "../values/user_id";
 
 type BudgetHistoryBuilder = {
@@ -19,6 +20,10 @@ export default class BudgetHistory {
   ) {}
 
   static new(builder: BudgetHistoryBuilder) {
+    if (builder.budget < 0) {
+      throw new InvalidDataError("Budget must be non-negative");
+    }
+    
     return new BudgetHistory(
       builder.userID,
       builder.month,
@@ -31,6 +36,10 @@ export default class BudgetHistory {
   }
 
   updateBudget(newBudget: number) {
+    if (newBudget < 0) {
+      throw new InvalidDataError("Budget must be non-negative");
+    }
+
     const deltaBudget = newBudget - this.budget;
     this.budget = newBudget;
     this.unusedBudget += deltaBudget;
