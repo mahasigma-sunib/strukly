@@ -24,15 +24,14 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
           deposited: Math.floor(goalItem.deposited ?? 0),
         },
       });
-      const completed = (created.deposited ?? 0) >= (created.price ?? 0);
 
       return new GoalItem(
         goalItem.id,
         goalItem.name,
         goalItem.price,
         goalItem.deposited,
-        completed,
-        completed ? created.updatedAt : null,
+        created.completed,
+        created.completedAt,
         created.createdAt,
         created.updatedAt,
         new UserID(created.userID),
@@ -58,15 +57,14 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
 
     if (!found) return null;
 
-    const completed = (found.deposited ?? 0) >= (found.price ?? 0);
 
     return new GoalItem(
       new GoalItemID(found.id),
       found.name,
       found.price,
       found.deposited ?? 0,
-      completed,
-      completed ? found.updatedAt : null,
+      found.completed,
+      found.completedAt,
       found.createdAt,
       found.updatedAt,
       new UserID(found.userID),
@@ -78,14 +76,13 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
       where: { userID: userID.value },
     });
     return rows.map((r) => {
-      const completed = (r.deposited ?? 0) >= (r.price ?? 0);
       return new GoalItem(
         new GoalItemID(r.id),
         r.name,
         r.price,
         r.deposited ?? 0,
-        completed,
-        completed ? r.updatedAt : null,
+        r.completed,
+        r.completedAt,
         r.createdAt,
         r.updatedAt,
         new UserID(r.userID),
@@ -100,18 +97,19 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
         name: goalItem.name,
         price: Math.floor(goalItem.price),
         deposited: Math.floor(goalItem.deposited ?? 0),
+        completed: goalItem.completed,
+        completedAt: goalItem.completedAt,
       },
     });
 
-    const completed = (updated.deposited ?? 0) >= (updated.price ?? 0);
 
     return new GoalItem(
       new GoalItemID(updated.id),
       updated.name,
       updated.price,
       updated.deposited ?? 0,
-      completed,
-      completed ? updated.updatedAt : null,
+      updated.completed,
+      updated.completedAt,
       updated.createdAt,
       updated.updatedAt,
       new UserID(updated.userID),
