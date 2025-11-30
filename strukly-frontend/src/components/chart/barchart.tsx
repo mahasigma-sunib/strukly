@@ -1,3 +1,4 @@
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -7,90 +8,105 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 
-// #region Sample data
-const data = [
-  {
-    name: "Page A",
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: "Page B",
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: "Page C",
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: "Page D",
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: "Page E",
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: "Page F",
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: "Page G",
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
+// Configuration for a single bar
+export interface BarConfig {
+  key: string;       // data key 
+  color: string;     
+  label?: string;    // legend label (e.g., "Expense")
+}
 
-// #endregion
-const SimpleBarChart = () => {
+interface CustomBarChartProps {
+  data: any[];       // Array of data objects
+  xAxisKey: string;  // Key for the X-axis labels (e.g., "name", "month")
+  bars: BarConfig[]; // Array of bars to render
+  height?: number;   // Chart height (default: 300)
+  className?: string;
+}
+
+const CustomBarChart: React.FC<CustomBarChartProps> = ({
+  data,
+  xAxisKey,
+  bars,
+  height = 300,
+  className = "",
+}) => {
   return (
-    <BarChart
-      style={{
-        width: "100%",
-        maxWidth: "700px",
-        maxHeight: "70vh",
-        aspectRatio: 1.618,
-      }}
-      responsive
-      data={data}
-      margin={{
-        top: 5,
-        right: 0,
-        left: 0,
-        bottom: 5,
-      }}
+    <div
+      className={`w-full min-w-0 ${className}`}
+      style={{ height: `${height}px`, width: "100%" }}
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis width="auto" />
-      <Tooltip />
-      <Legend />
-      <Bar
-        dataKey="pv"
-        fill="#8884d8"
-        activeBar={<Rectangle fill="pink" stroke="blue" />}
-      />
-      <Bar
-        dataKey="uv"
-        fill="#82ca9d"
-        activeBar={<Rectangle fill="gold" stroke="purple" />}
-      />
-    </BarChart>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          margin={{
+            top: 10,
+            right: 10,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          {/* Grid lines: Horizontal only, subtle gray */}
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--fun-color-inactive)" />
+
+          {/* X Axis: Clean, no axis line */}
+          <XAxis
+            dataKey={xAxisKey}
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "var(--fun-color-text-secondary)", fontSize: 12, fontWeight: 500 }}
+            dy={10}
+          />
+
+          {/* Y Axis: Clean, no axis line */}
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "var(--fun-color-text-secondary)", fontSize: 12 }}
+            tickFormatter={(value) => 
+              // Optional: Shorten large numbers (1000 -> 1k)
+              value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
+            }
+          />
+
+          {/* Tooltip: Modern, rounded shadow box */}
+          <Tooltip
+            cursor={{ fill: "transparent" }}
+            contentStyle={{
+              borderRadius: "12px",
+              border: "none",
+              boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+              padding: "12px",
+            }}
+          />
+
+          <Legend wrapperStyle={{ paddingTop: "20px" }} />
+
+          {/* Dynamic Bars */}
+          {bars.map((bar) => (
+            <Bar
+              key={bar.key}
+              dataKey={bar.key}
+              name={bar.label || bar.key}
+              fill={bar.color}
+              radius={[6, 6, 0, 0]} 
+              maxBarSize={35}      
+              // Hover Effect
+              activeBar={
+                <Rectangle
+                  fill={bar.color}
+                  stroke={bar.color}
+                  strokeOpacity={0.8}
+                />
+              }
+            />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
-export default SimpleBarChart;
+export default CustomBarChart;
