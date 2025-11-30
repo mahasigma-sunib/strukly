@@ -40,6 +40,23 @@ export type ExpenseReportResponse = z.infer<typeof ExpenseReportResponseSchema>;
 
 export type WeeklyData = z.infer<typeof WeeklyDataSchema>;
 
+export function toHistoryItemDTO(expense: Expense): HistoryItemDTO {
+  return {
+    user_id: expense.header.userID.value,
+    id: expense.header.id.value,
+    subtotal: expense.header.subtotalAmount.value,
+    tax: expense.header.taxAmount.value,
+    service: expense.header.serviceAmount.value,
+    discount: expense.header.discountAmount.value,
+    total_expense: expense.header.totalAmount.value,
+    total_my_expense: expense.header.totalAmount.value,
+    category: expense.header.category.value,
+    datetime: expense.header.dateTime,
+    members: [],
+    vendor: expense.header.vendorName,
+  };
+}
+
 export function createExpenseReportResponseDTO(
   total: number,
   weekly: WeeklyData[],
@@ -48,19 +65,6 @@ export function createExpenseReportResponseDTO(
   return {
     total,
     weekly,
-    history: history.map((expense) => ({
-      user_id: expense.header.userID.value,
-      id: expense.header.id.value,
-      subtotal: expense.header.subtotalAmount.value,
-      tax: expense.header.taxAmount.value,
-      service: expense.header.serviceAmount.value,
-      discount: expense.header.discountAmount.value,
-      total_expense: expense.header.totalAmount.value,
-      total_my_expense: expense.header.totalAmount.value,
-      category: expense.header.category.value,
-      datetime: expense.header.dateTime,
-      members: [],
-      vendor: expense.header.vendorName,
-    })),
+    history: history.map(toHistoryItemDTO),
   };
 }
