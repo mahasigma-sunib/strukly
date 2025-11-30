@@ -56,6 +56,31 @@ export default class PrismaBudgetHistoryRepository
     );
   }
 
+  public async findLastBudgetHistory(
+    userID: UserID,
+  ): Promise<BudgetHistory | null> {
+    const budgetHistory = await this.prisma.budgetHistory.findFirst({
+      where: {
+        userID: userID.value,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (!budgetHistory) return null;
+
+    return new BudgetHistory(
+      userID,
+      budgetHistory.month,
+      budgetHistory.year,
+      budgetHistory.budget.toNumber(),
+      budgetHistory.unusedBudget.toNumber(),
+      budgetHistory.createdAt,
+      budgetHistory.updatedAt,
+    );
+  }
+
   public async update(budgetHistory: BudgetHistory): Promise<void> {
     await this.prisma.budgetHistory.update({
       where: {

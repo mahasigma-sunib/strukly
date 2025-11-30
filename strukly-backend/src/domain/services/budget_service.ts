@@ -11,6 +11,19 @@ export default class BudgetService {
   ) {}
 
   // TODO: use UserID type
+  /**
+   * Selects the current month and year budget for user with userID.
+   * Checks if the user exists.
+   * If it doesn't exist it will create one.
+   *
+   * It works this way:
+   * 1. First it gets the last budget history.
+   * 2. If it doesn't exist it will create one.
+   * 3. If it exists but is from a different month or year, it will create a new one with unusedBudget carrying over.
+   * 4. If it exists but is from the same month and year, it will return the existing budget history.
+   * @param userID
+   * @returns userID's budget history for current month and year
+   */
   async getCurrentUserBudget(userID: string): Promise<BudgetHistory> {
     const userIDValue = new UserID(userID);
     const user = await this.userRepository.findById(userID);
@@ -20,61 +33,53 @@ export default class BudgetService {
     }
 
     const now = new Date();
+    const monthNow = now.getUTCMonth() + 1;
+    const yearNow = now.getUTCFullYear();
 
-    let budgetHistory = await this.budgetHistoryRepository.findByUserDate(
-      userIDValue,
-      now.getUTCMonth() + 1,
-      now.getUTCFullYear(),
-    );
+    let lastBudgetHistory =
+      await this.budgetHistoryRepository.findLastBudgetHistory(userIDValue);
 
-    if (!budgetHistory) {
-      budgetHistory = BudgetHistory.new({
+    if (
+      !lastBudgetHistory ||
+      lastBudgetHistory.month !== monthNow ||
+      lastBudgetHistory.year !== yearNow
+    ) {
+      const newBudgetHistory = BudgetHistory.new({
         userID: userIDValue,
-        month: now.getUTCMonth() + 1,
-        year: now.getUTCFullYear(),
+        month: monthNow,
+        year: yearNow,
         budget: 0,
       });
-      budgetHistory = await this.budgetHistoryRepository.create(budgetHistory);
+
+      if (lastBudgetHistory) {
+        newBudgetHistory.addUnusedBudget(lastBudgetHistory?.unusedBudget);
+      }
+
+      lastBudgetHistory = newBudgetHistory;
+
+      lastBudgetHistory =
+        await this.budgetHistoryRepository.create(lastBudgetHistory);
     }
 
-    return budgetHistory;
+    return lastBudgetHistory;
   }
 
   async updateCurrentUserBudget(
     userID: string,
     newBudget: number,
   ): Promise<void> {
-    const userIDValue = new UserID(userID);
-    const user = await this.userRepository.findById(userID);
+    // getCurrentUserBudget already checks if user exists
+    // no need to check again
+    const lastBudgetHistory = await this.getCurrentUserBudget(userID);
 
-    if (!user) {
-      throw new NotFoundError(`User with id ${userID} not found`);
-    }
+    lastBudgetHistory.updateBudget(newBudget);
 
-    const now = new Date();
-
-    let budgetHistory = await this.budgetHistoryRepository.findByUserDate(
-      userIDValue,
-      now.getUTCMonth() + 1,
-      now.getUTCFullYear(),
-    );
-
-    if (!budgetHistory) {
-      budgetHistory = BudgetHistory.new({
-        userID: userIDValue,
-        month: now.getUTCMonth() + 1,
-        year: now.getUTCFullYear(),
-        budget: newBudget,
-      });
-      budgetHistory = await this.budgetHistoryRepository.create(budgetHistory);
-    }
-
-    budgetHistory.updateBudget(newBudget);
-
-    await this.budgetHistoryRepository.update(budgetHistory);
+    await this.budgetHistoryRepository.update(lastBudgetHistory);
   }
 
   async useBudget(userID: UserID, amount: number) {
+    // getCurrentUserBudget already checks if user exists
+    // no need to check again
     const budget = await this.getCurrentUserBudget(userID.value);
     budget.use(amount);
     await this.budgetHistoryRepository.update(budget);

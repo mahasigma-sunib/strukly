@@ -8,5 +8,6 @@ export default interface IBudgetHistoryRepository {
     month: number,
     year: number,
   ): Promise<BudgetHistory | null>;
+  findLastBudgetHistory(userID: UserID): Promise<BudgetHistory | null>;
   update(budgetHistory: BudgetHistory): Promise<void>;
 }

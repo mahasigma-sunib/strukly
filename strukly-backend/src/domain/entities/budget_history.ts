@@ -40,4 +40,9 @@ export default class BudgetHistory {
   use(amount: number) {
     this.unusedBudget -= amount;
   }
+
+  public addUnusedBudget(amount: number) {
+    this.unusedBudget += amount;
+    this.updatedAt = new Date();
+  }
 }
