@@ -63,15 +63,28 @@ export default class GoalItem {
     this.updatedAt = new Date();
   }
 
+  public markCompleted() {
+    if (this.completed) {
+      throw new InvalidDataError("Goal Item is already completed");
+    }
+
+    if (this.deposited < this.price) {
+      throw new InvalidDataError(
+        "Cannot complete Goal Item before reaching the target price",
+      );
+    }
+
+    this.completed = true;
+    this.completedAt = new Date();
+    this.updatedAt = new Date();
+  }
+
   deposit(amount: number) {
     if (amount <= 0)
       throw new InvalidDataError("Goal Item Deposit Amount must be positive");
+
     this.deposited += amount;
     this.updatedAt = new Date();
-    if (this.deposited >= this.price && !this.completed) {
-      this.completed = true;
-      this.completedAt = new Date();
-    }
   }
 
   remaining(): number {

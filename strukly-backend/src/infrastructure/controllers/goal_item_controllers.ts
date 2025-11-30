@@ -8,6 +8,7 @@ import DeleteGoalItemUseCase from "src/application/use_cases/goal_item/delete_go
 import GetGoalItemListUseCase from "src/application/use_cases/goal_item/get_goal_item_list";
 import { goalItemToDTO } from "../dto/goal_item_dto";
 import DepositGoalItemUseCase from "src/application/use_cases/goal_item/deposit_goal_item";
+import MarkGoalItemCompletedUseCase from "src/application/use_cases/goal_item/mark_goal_item_completed";
 
 export default class GoalItemController {
   constructor(
@@ -15,6 +16,7 @@ export default class GoalItemController {
     private readonly getGoalItemListUseCase: GetGoalItemListUseCase,
     private readonly getGoalItemUseCase: GetGoalItemUseCase,
     private readonly depositGoalItemUseCase: DepositGoalItemUseCase,
+    private readonly markGoalItemCompletedUseCase: MarkGoalItemCompletedUseCase,
     private readonly updateGoalItemUseCase: UpdateGoalItemUseCase,
     private readonly deleteGoalItemUseCase: DeleteGoalItemUseCase,
   ) { }
@@ -96,6 +98,26 @@ export default class GoalItemController {
       next(error);
     }
   };
+
+  public markGoalItemCompleted = async (
+    req: Request<{ goalItemID: string }>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const userID = req.user!.id;
+      const { goalItemID } = req.params;
+
+      await this.markGoalItemCompletedUseCase.execute(
+        userID,
+        goalItemID,
+      );
+
+      return res.status(200).json({ message: "Goal Item completed" });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   public updateGoalItem = async (
     req: Request<{ goalItemID: string }, {}, { name?: string; price?: number }>,

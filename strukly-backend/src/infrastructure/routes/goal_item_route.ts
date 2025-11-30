@@ -22,6 +22,7 @@ import BudgetService from "src/domain/services/budget_service";
 import PrismaUserRepository from "../repositories/prisma_user_repository";
 import PrismaBudgetHistoryRepository from "../repositories/prisma_budget_history_repository";
 import { PrismaClient } from "@prisma/client";
+import MarkGoalItemCompletedUseCase from "src/application/use_cases/goal_item/mark_goal_item_completed";
 
 const router = Router();
 
@@ -35,6 +36,7 @@ const createUseCase = new CreateGoalItemUseCase(goalItemRepo);
 const getListUseCase = new GetGoalItemListUseCase(goalItemRepo);
 const getUseCase = new GetGoalItemUseCase(goalItemRepo);
 const depositUseCase = new DepositGoalItemUseCase(budgetService, goalItemRepo);
+const markGoalItemCompletedUseCase = new MarkGoalItemCompletedUseCase(goalItemRepo);
 const updateUseCase = new UpdateGoalItemUseCase(goalItemRepo);
 const deleteUseCase = new DeleteGoalItemUseCase(goalItemRepo);
 
@@ -43,6 +45,7 @@ const controller = new GoalItemController(
   getListUseCase,
   getUseCase,
   depositUseCase,
+  markGoalItemCompletedUseCase,
   updateUseCase,
   deleteUseCase,
 );
@@ -61,6 +64,13 @@ router.get(
   authMiddleware,
   validateParams(z.object({ goalItemID: z.uuid() })),
   controller.getGoalItem,
+);
+
+router.patch(
+  "/goals/complete/:goalItemID",
+  authMiddleware,
+  validateParams(z.object({ goalItemID: z.uuid() })),
+  controller.markGoalItemCompleted,
 );
 
 router.patch(
