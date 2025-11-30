@@ -114,9 +114,11 @@ export default class PrismaExpenseRepository
       )
     );
   }
-async findByUserID(userID: UserID, month: number, year: number): Promise<Expense[]> {
-  const startDate = new Date(year, month - 1, 1);
-  const endDate = new Date(year, month, 0);
+
+async findByDateRange(userID: UserID, from: Date, to: Date): Promise<Expense[]> {
+  const startDate = new Date(from);
+  startDate.setHours(0, 0, 0, 0)
+  const endDate = new Date(to);
   endDate.setHours(23, 59, 59, 999);
 
   const foundExpenses = await this.prisma.expenseHeader.findMany({

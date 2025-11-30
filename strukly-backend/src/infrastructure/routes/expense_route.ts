@@ -13,7 +13,8 @@ import { authMiddleware } from "../middleware/auth_middleware";
 import ExpenseService from "src/domain/services/expense_service";
 import PrismaExpenseRepository from "../repositories/prisma_expense_repository";
 import CreateExpenseUseCase from "src/application/use_cases/expense/create_expense";
-import GetExpenseListUseCase from "src/application/use_cases/expense/get_expense_list";
+import GetExpenseListUseCase from "src/application/use_cases/expense/get_monthly_expense_list";
+import GetWeeklyExpenseReportUseCase from "src/application/use_cases/expense/get_weekly_expense_list";
 import GetExpenseDetailUseCase from "src/application/use_cases/expense/get_expense_detail";
 import z from "zod";
 import UpdateExpenseUseCase from "src/application/use_cases/expense/update_expense";
@@ -23,6 +24,7 @@ import ScanExpenseImageUseCase from "src/application/use_cases/expense/scan_expe
 import GeminiLanguageModel from "../language_model/gemini_language_model";
 import multer from "multer";
 
+
 const router = Router();
 const expenseRepository = new PrismaExpenseRepository();
 const expenseService = new ExpenseService(expenseRepository);
@@ -31,6 +33,9 @@ const createExpenseUseCase = new CreateExpenseUseCase(
   expenseService
 );
 const getExpenseListUseCase = new GetExpenseListUseCase(
+  expenseService
+);
+const getWeeklyExpenseReportUseCase = new GetWeeklyExpenseReportUseCase(
   expenseService
 );
 const getExpenseDetailUseCase = new GetExpenseDetailUseCase(
@@ -49,6 +54,7 @@ const imageToExpenseUseCase = new ScanExpenseImageUseCase(
 const expenseController = new ExpenseController(
   createExpenseUseCase,
   getExpenseListUseCase,
+  getWeeklyExpenseReportUseCase,
   getExpenseDetailUseCase,
   updateExpenseUseCase,
   deleteExpenseUseCase,
@@ -75,6 +81,12 @@ router.get(
   authMiddleware,
   validateQuery(ExpenseReportRequestQuerySchema),
   expenseController.getExpenseList
+);
+
+router.get(
+  "/expenses/weekly",
+  authMiddleware,
+  expenseController.getWeeklyReport
 );
 
 router.get(

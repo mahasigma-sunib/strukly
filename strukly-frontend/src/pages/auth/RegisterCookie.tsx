@@ -15,10 +15,10 @@ export default function RegisterCookie() {
 
   useEffect(() => {
     if (userAuthStore.user) {
-      console.log("win");
+      // console.log("win");
       navigate("/home");
     }
-    console.log("huh");
+    // console.log("huh");
   }, [userAuthStore.user]);
 
   return <div>Loading...</div>;

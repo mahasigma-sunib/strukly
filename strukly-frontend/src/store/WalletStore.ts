@@ -1,6 +1,6 @@
 import axios from "axios";
-import useSWR from "swr";
-import { Fetcher } from "../fetcher/Fetcher";
+// import useSWR from "swr";
+// import { Fetcher } from "../fetcher/Fetcher";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { WalletType } from "../type/WalletType";
@@ -84,17 +84,17 @@ const useWallet = create<State & Actions>()(
 );
 
 //to fetch & load the wallet data
-export function loadWallet() {
-  const { data, error, isLoading } = useSWR<WalletType[]>(
-    "api here",
-    Fetcher<WalletType[]>
-  );
-  const { setItems, setError, setLoading } = useWallet();
+// export function loadWallet() {
+//   const { data, error, isLoading } = useSWR<WalletType[]>(
+//     "api here",
+//     Fetcher<WalletType[]>
+//   );
+//   const { setItems, setError, setLoading } = useWallet();
 
-  setLoading(isLoading);
-  if (error) setError("Failed to fetch transaction");
-  if (data) setItems(data);
-}
+//   setLoading(isLoading);
+//   if (error) setError("Failed to fetch transaction");
+//   if (data) setItems(data);
+// }
 
 //post a new wallet
 export async function postWallet(wallet: WalletType) {

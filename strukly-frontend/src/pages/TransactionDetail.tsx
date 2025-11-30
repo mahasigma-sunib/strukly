@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import useTransaction from "../store/TransactionStore";
+import useTransaction from "../store/ExpenseStore";
 
 function TransactionDetail() {
   const { id } = useParams();
@@ -17,13 +17,21 @@ function TransactionDetail() {
   }
 
   return (
-    <div style={{paddingLeft: '1rem', paddingRight: '1rem', width: '100%', margin: '0 auto', boxSizing: 'border-box'}}>
+    <div
+      style={{
+        paddingLeft: "1rem",
+        paddingRight: "1rem",
+        width: "100%",
+        margin: "0 auto",
+        boxSizing: "border-box",
+      }}
+    >
       <h1>Transaction Details</h1>
       <p>
         <strong>ID:</strong> {transaction.id}
       </p>
       <p>
-        <strong>{transaction.name}</strong> 
+        <strong>{transaction.name}</strong>
       </p>
       <p>
         <strong>Date:</strong> {transaction.date.toLocaleString()}

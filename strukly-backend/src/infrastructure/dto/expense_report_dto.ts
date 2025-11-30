@@ -8,6 +8,7 @@ export const ExpenseReportRequestQuerySchema = z.object({
 
 export const HistoryItemDTOSchema = z.object({
   user_id: z.string(),
+  id: z.string(),
   subtotal: z.number(),
   tax: z.number(),
   service: z.number(),
@@ -20,8 +21,16 @@ export const HistoryItemDTOSchema = z.object({
   vendor: z.string(),
 });
 
+const WeeklyDataSchema = z.object({
+  week: z.number(),
+  spending: z.number(),
+  startDate: z.number(),
+  endDate: z.number(),
+});
+
 export const ExpenseReportResponseSchema = z.object({
-  weekly: z.array(z.number()),
+  total: z.number(),
+  weekly: z.array(WeeklyDataSchema),
   history: z.array(HistoryItemDTOSchema),
 });
 
@@ -29,24 +38,33 @@ export type ExpenseReportRequestQuery = z.infer<typeof ExpenseReportRequestQuery
 export type HistoryItemDTO = z.infer<typeof HistoryItemDTOSchema>;
 export type ExpenseReportResponse = z.infer<typeof ExpenseReportResponseSchema>;
 
+export type WeeklyData = z.infer<typeof WeeklyDataSchema>;
+
+export function toHistoryItemDTO(expense: Expense): HistoryItemDTO {
+  return {
+    user_id: expense.header.userID.value,
+    id: expense.header.id.value,
+    subtotal: expense.header.subtotalAmount.value,
+    tax: expense.header.taxAmount.value,
+    service: expense.header.serviceAmount.value,
+    discount: expense.header.discountAmount.value,
+    total_expense: expense.header.totalAmount.value,
+    total_my_expense: expense.header.totalAmount.value,
+    category: expense.header.category.value,
+    datetime: expense.header.dateTime,
+    members: [],
+    vendor: expense.header.vendorName,
+  };
+}
+
 export function createExpenseReportResponseDTO(
-  weekly: number[],
+  total: number,
+  weekly: WeeklyData[],
   history: Expense[]
 ): ExpenseReportResponse {
   return {
+    total,
     weekly,
-    history: history.map((expense) => ({
-      user_id: expense.header.userID.value,
-      subtotal: expense.header.subtotalAmount.value,
-      tax: expense.header.taxAmount.value,
-      service: expense.header.serviceAmount.value,
-      discount: expense.header.discountAmount.value,
-      total_expense: expense.header.totalAmount.value,
-      total_my_expense: expense.header.totalAmount.value,
-      category: expense.header.category.value,
-      datetime: expense.header.dateTime,
-      members: [],
-      vendor: expense.header.vendorName,
-    })),
+    history: history.map(toHistoryItemDTO),
   };
 }
