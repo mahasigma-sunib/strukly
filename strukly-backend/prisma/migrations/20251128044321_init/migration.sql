@@ -59,6 +59,21 @@ CREATE TABLE "public"."Wallet" (
     CONSTRAINT "Wallet_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "public"."GoalItem" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "price" INTEGER NOT NULL,
+    "deposited" INTEGER NOT NULL,
+    "completed" BOOLEAN NOT NULL DEFAULT false,
+    "completedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "userID" TEXT NOT NULL,
+
+    CONSTRAINT "GoalItem_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
 
@@ -67,3 +82,6 @@ ALTER TABLE "public"."ExpenseHeader" ADD CONSTRAINT "ExpenseHeader_userID_fkey" 
 
 -- AddForeignKey
 ALTER TABLE "public"."ExpenseItem" ADD CONSTRAINT "ExpenseItem_expenseID_fkey" FOREIGN KEY ("expenseID") REFERENCES "public"."ExpenseHeader"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."GoalItem" ADD CONSTRAINT "GoalItem_userID_fkey" FOREIGN KEY ("userID") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
