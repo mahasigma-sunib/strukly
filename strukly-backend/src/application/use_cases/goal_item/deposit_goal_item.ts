@@ -29,7 +29,7 @@ export default class DepositGoalItemUseCase {
     if (currentBudget.unusedBudget < amount)
       throw new InvalidDataError("Insufficient budget");
 
-    // TOOD: db transaction/uow
+    // TODO: db transaction/uow
     goalItem.deposit(amount);
     await this.goalItemRepository.update(goalItem);
     await this.budgetService.useBudget(new UserID(userID), amount);
