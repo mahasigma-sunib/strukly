@@ -10,7 +10,7 @@ import GetWeeklyExpenseReportUseCase from "src/application/use_cases/expense/get
 import GetExpenseDetailUseCase from "src/application/use_cases/expense/get_expense_detail";
 import UpdateExpenseUseCase from "src/application/use_cases/expense/update_expense";
 import DeleteExpenseUseCase from "src/application/use_cases/expense/delete_expense";
-import { createExpenseReportResponseDTO } from "../dto/expense_report_dto";
+import { createExpenseReportResponseDTO, toHistoryItemDTO } from "../dto/expense_report_dto";
 import ScanExpenseImageUseCase from "src/application/use_cases/expense/scan_expense_image";
 
 export default class ExpenseController {
@@ -85,7 +85,7 @@ export default class ExpenseController {
     req: Request,
     res: Response
   ): Promise<Response> => {
-    try{
+    try {
       const userID = req.user!.id;
 
       // if date in query, use that. otherwise return this week
@@ -93,12 +93,15 @@ export default class ExpenseController {
       const referenceDate = dateString ? new Date(dateString) : new Date();
 
       if (isNaN(referenceDate.getTime())) {
-         return res.status(400).json({ error: "invalid date formate. YYYY-MM-DD" });
+        return res.status(400).json({ error: "invalid date formate. YYYY-MM-DD" });
       }
 
       const reportData = await this.getWeeklyExpenseReportUseCase.execute(userID, referenceDate);
 
-      return res.status(200).json(reportData);
+      return res.status(200).json({
+        ...reportData,
+        history: reportData.history.map(toHistoryItemDTO)
+      });
     } catch (error: unknown) {
       console.error(error);
       return res.status(500).json({ error: "Internal server error" });
