@@ -1,6 +1,9 @@
 export interface WeeklyStat {
-  name: string;   // "Week 1"
-  amount: number; // 50000
+  name: string;
+  week: number;
+  spending: number;
+  startDate: number;
+  endDate: number;
 }
 
 export interface ExpenseStatisticType {

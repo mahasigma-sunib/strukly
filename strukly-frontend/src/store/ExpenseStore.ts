@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { ExpenseType } from "../type/ExpenseType";
-import type { ExpenseStatisticType } from "../type/expenseStatisticType";
+import type { ExpenseStatisticType, WeeklyStat } from "../type/expenseStatisticType";
 
 type State = {
   statistic: ExpenseStatisticType;
@@ -114,6 +114,16 @@ function mapExpense(raw: any): ExpenseType {
   };
 }
 
+function mapWeeklyStats(raw: any[]): WeeklyStat[] {
+  return raw.map((item) => ({
+    name: `Week ${item.week}`,
+    week: item.week,
+    spending: item.spending,
+    startDate: item.startDate,
+    endDate: item.endDate,
+  }))
+}
+
 //to fetch & load the expense datas
 export function useLoadExpense(month: number, year: number, getStat: boolean) {
   // console.log("running");
@@ -141,19 +151,11 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
     }
 
     if (getStat && data?.weekly) {
-      const weeklyArr: number[] = data.weekly;
-      console.log(weeklyArr);
-      const transformedWeekly = weeklyArr.map((amount, index) => ({
-        name: `Week ${index + 1}`,
-        amount: amount,
-      }));
-      console.log(transformedWeekly);
-
       const stat = {
         month,
         year,
-        weekly: transformedWeekly,
-        total: weeklyArr.reduce((s: number, n: number) => s + n, 0),
+        weekly: mapWeeklyStats(data.weekly),
+        total: data.total
       };
       console.log(stat);
       setStats(stat);
