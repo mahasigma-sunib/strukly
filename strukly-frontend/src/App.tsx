@@ -16,6 +16,7 @@ import TransactionDetail from "./pages/TransactionDetail";
 import AddTransaction from "./pages/AddTransaction";
 import UserProfile from "./pages/UserProfile";
 import ExpenseTracker from "./pages/ExpenseTracker";
+import ExpenseBudget from "./pages/ExpenseBudget";
 
 import MobileNavBar from "./components/MobileNavBar";
 
@@ -50,6 +51,7 @@ const App = () => {
             <Route path="/History/:id" element={<TransactionDetail />} />
             <Route path="/addTransaction" element={<AddTransaction />} />
             <Route path="/tracker" element={<ExpenseTracker />} />
+            <Route path="/budget" element={<ExpenseBudget />} />
             <Route path="/profile" element={<UserProfile />} />
           </Route>
         </Routes>
