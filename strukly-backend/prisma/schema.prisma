@@ -78,17 +78,6 @@ model ExpenseItem {
   expense   ExpenseHeader @relation(fields: [expenseID], references: [id], onDelete: Cascade)
 }
 
-model Wallet {
-  id              String   @id @default(uuid())
-  userID          String   @db.Uuid
-  name            String
-  expense_method  String   @default("cash")
-  balance         Decimal  @default(0) @db.Decimal(15, 2)
-  balanceCurrency String   @default("idr")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now()) @db.Timestamp(6)
-}
-
 model GoalItem {
   id          String    @id @default(uuid())
   name        String
