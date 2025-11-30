@@ -18,7 +18,7 @@ export default class GoalItem {
     public price: number,
     public deposited: number,
     public completed: boolean,
-    public completedAt: Date,
+    public completedAt: Date | null,
 
     public createdAt: Date,
     public updatedAt: Date,
@@ -53,19 +53,5 @@ export default class GoalItem {
 
   remaining(): number {
     return Math.max(0, this.price - this.deposited);
-  }
-
-  static fromPersistence(data: any): GoalItem {
-    return new GoalItem(
-      new GoalItemID(data.id),
-      data.name,
-      Number(data.price),
-      Number(data.deposited),
-      Boolean(data.completed),
-      data.completedAt ? new Date(data.completedAt) : new Date(0),
-      data.createdAt ? new Date(data.createdAt) : new Date(0),
-      data.updatedAt ? new Date(data.updatedAt) : new Date(0),
-      new UserID(data.userID),
-    );
   }
 }

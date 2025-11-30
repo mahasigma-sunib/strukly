@@ -26,17 +26,17 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
       });
       const completed = (created.deposited ?? 0) >= (created.price ?? 0);
 
-      return GoalItem.fromPersistence({
-        id: created.id,
-        name: created.name,
-        price: created.price,
-        deposited: created.deposited ?? 0,
-        completed: completed,
-        completedAt: completed ? created.updatedAt : null,
-        createdAt: created.createdAt,
-        updatedAt: created.updatedAt,
-        userID: created.userID,
-      });
+      return new GoalItem(
+        goalItem.id,
+        goalItem.name,
+        goalItem.price,
+        goalItem.deposited,
+        completed,
+        completed ? created.updatedAt : null,
+        created.createdAt,
+        created.updatedAt,
+        new UserID(created.userID),
+      );
     } catch (error) {
       console.error(error);
 
@@ -60,17 +60,17 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
 
     const completed = (found.deposited ?? 0) >= (found.price ?? 0);
 
-    return GoalItem.fromPersistence({
-      id: found.id,
-      name: found.name,
-      price: found.price,
-      deposited: found.deposited ?? 0,
-      completed: completed,
-      completedAt: completed ? found.updatedAt : null,
-      createdAt: found.createdAt,
-      updatedAt: found.updatedAt,
-      userID: found.userID,
-    });
+    return new GoalItem(
+      new GoalItemID(found.id),
+      found.name,
+      found.price,
+      found.deposited ?? 0,
+      completed,
+      completed ? found.updatedAt : null,
+      found.createdAt,
+      found.updatedAt,
+      new UserID(found.userID),
+    );
   }
 
   async findByUserID(userID: UserID): Promise<GoalItem[]> {
@@ -79,17 +79,17 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
     });
     return rows.map((r) => {
       const completed = (r.deposited ?? 0) >= (r.price ?? 0);
-      return GoalItem.fromPersistence({
-        id: r.id,
-        name: r.name,
-        price: r.price,
-        deposited: r.deposited ?? 0,
-        completed: completed,
-        completedAt: completed ? r.updatedAt : null,
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-        userID: r.userID,
-      });
+      return new GoalItem(
+        new GoalItemID(r.id),
+        r.name,
+        r.price,
+        r.deposited ?? 0,
+        completed,
+        completed ? r.updatedAt : null,
+        r.createdAt,
+        r.updatedAt,
+        new UserID(r.userID),
+      );
     });
   }
 
@@ -105,17 +105,17 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
 
     const completed = (updated.deposited ?? 0) >= (updated.price ?? 0);
 
-    return GoalItem.fromPersistence({
-      id: updated.id,
-      name: updated.name,
-      price: updated.price,
-      deposited: updated.deposited ?? 0,
-      completed: completed,
-      completedAt: completed ? updated.updatedAt : null,
-      createdAt: updated.createdAt,
-      updatedAt: updated.updatedAt,
-      userID: updated.userID,
-    });
+    return new GoalItem(
+      new GoalItemID(updated.id),
+      updated.name,
+      updated.price,
+      updated.deposited ?? 0,
+      completed,
+      completed ? updated.updatedAt : null,
+      updated.createdAt,
+      updated.updatedAt,
+      new UserID(updated.userID),
+    );
   }
 
   async delete(goalItemID: GoalItemID): Promise<void> {
