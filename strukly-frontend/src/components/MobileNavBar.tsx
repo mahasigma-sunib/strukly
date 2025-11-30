@@ -1,15 +1,13 @@
-import {
-  RiHome5Line,
-  RiHome5Fill,
-  RiReceiptLine,
-  RiReceiptFill,
-  RiPieChart2Line,
-  RiPieChart2Fill,
-  RiUser3Line,
-  RiUser3Fill,
-  RiQrScan2Line,
-} from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
+import BudgetIconOutline from "./icons/BudgetIconOutline";
+import BudgetIconFilled from "./icons/BudgetIconFilled";
+import GoalsIconOutline from "./icons/GoalsIconOutline";
+import GoalsIconFilled from "./icons/GoalsIconFilled";
+import HomeIconOutline from "./icons/HomeIconOutline";
+import HomeIconFilled from "./icons/HomeIconFilled";
+import ExpenseIconFilled from "./icons/ExpenseIconFilled";
+import ExpenseIconOutline from "./icons/ExpenseIconOutline";
+import AddIcon from "./icons/AddIcon";
 
 interface NavLinkProps {
   to: string;
@@ -27,24 +25,17 @@ function NavLink({ to, label, activeIcon, inactiveIcon }: NavLinkProps) {
       to={to}
       className="flex flex-col items-center justify-center gap-1 transition-all duration-200"
     >
-      {/* Icon berubah warna */}
+      {/* Icon container */}
       <div
-        className={`transition-transform duration-200 ${
-          isActive ? "text-primary" : "text-text-disabled"
-        }`}
+        className={`flex items-center justify-center transition-all duration-300
+          ${isActive ? "text-active" : "text-inactive"}
+        `}
       >
         {isActive ? activeIcon : inactiveIcon}
       </div>
 
-      {/* Label selalu tampil */}
-      <span
-        className={`text-xs ${
-          isActive
-            ? "text-primary font-medium"
-            : "text-text-disabled font-regular"
-        }`}
-      >
-        {label}
+      <span className={`text-xs ${isActive ? "text-active font-bold" : ""}`}>
+        {isActive ? label : ""}
       </span>
     </Link>
   );
@@ -52,41 +43,45 @@ function NavLink({ to, label, activeIcon, inactiveIcon }: NavLinkProps) {
 
 export default function MobileNavBar() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 grid grid-cols-5 items-center h-16 bg-background border-t-2 border-t-border z-50">
+    <nav className="rounded-full fixed bottom-4 left-4 right-4 grid grid-cols-5 items-center h-16 bg-white border-2 border-background z-50 shadow-lg pl-1 pr-1">
       <NavLink
         to="/home"
-        label="Beranda"
-        activeIcon={<RiHome5Fill size={24} />}
-        inactiveIcon={<RiHome5Line size={24} />}
+        label="Home"
+        activeIcon={<HomeIconFilled width={24} height={24} />}
+        inactiveIcon={<HomeIconOutline width={24} height={24} />}
       />
       <NavLink
-        to="/history"
-        label="Riwayat"
-        activeIcon={<RiReceiptFill size={24} />}
-        inactiveIcon={<RiReceiptLine size={24} />}
+        to="/transactions"
+        label="Expense"
+        activeIcon={<ExpenseIconFilled width={24} height={24} />}
+        inactiveIcon={<ExpenseIconOutline width={24} height={24} />}
       />
 
-      {/* CTA di tengah (kolom ke-3) */}
       <div className="flex justify-center">
-        <Link
-          to="/addTransaction"
-          className="relative -translate-y-5 flex items-center justify-center w-14 h-14 rounded-full bg-primary text-white shadow-lg hover:scale-105 transition-transform duration-200"
-        >
-          <RiQrScan2Line size={28} />
+        <Link to="/add">
+          <div className="-mt-5 w-18 h-17 bg-white rounded-full flex justify-center items-center">
+            <div className="flex items-center justify-center w-12 h-12 bg-[#FFC606] border-6 border-[#FFE432] rounded-full shadow-[0_5px_0_0_#FFAA28] active:shadow-none active:translate-y-1 transition-all duration-100">
+              <AddIcon width={22} height={22} />
+            </div>
+          </div>
         </Link>
       </div>
 
       <NavLink
-        to="/tracker"
-        label="Tracker"
-        activeIcon={<RiPieChart2Fill size={24} />}
-        inactiveIcon={<RiPieChart2Line size={24} />}
+        to="/history"
+        label="Budget"
+        activeIcon={<BudgetIconFilled width={24} height={24} />}
+        inactiveIcon={<BudgetIconOutline width={24} height={24} />}
       />
       <NavLink
-        to="/profile"
-        label="Profil"
-        activeIcon={<RiUser3Fill size={24} />}
-        inactiveIcon={<RiUser3Line size={24} />}
+        to="/users"
+        label="Goals"
+        activeIcon={
+          <GoalsIconFilled className="text-orange" width={24} height={24} />
+        }
+        inactiveIcon={
+          <GoalsIconOutline className="text-inactive" width={24} height={24} />
+        }
       />
     </nav>
   );
