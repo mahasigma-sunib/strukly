@@ -10,6 +10,11 @@ export interface IGoalItemBuilder {
   price: number;
 }
 
+export interface IGoalItemEditor {
+  name: string;
+  price: number;
+}
+
 export default class GoalItem {
   constructor(
     public id: GoalItemID,
@@ -38,6 +43,24 @@ export default class GoalItem {
       new Date(),
       new UserID(builder.userID),
     );
+  }
+
+  public update(editor: Partial<IGoalItemEditor>) {
+    if (editor.name !== undefined) {
+      this.name = editor.name;
+    }
+    if (editor.price !== undefined) {
+      if (editor.price < 0) {
+        throw new InvalidDataError("Goal Item Price must be positive");
+      }
+      if (editor.price < this.deposited) {
+        throw new InvalidDataError(
+          "Goal Item New Price cannot be lower than deposited amount",
+        );
+      }
+      this.price = editor.price;
+    }
+    this.updatedAt = new Date();
   }
 
   deposit(amount: number) {
