@@ -20,7 +20,9 @@ export default class DepositGoalItemUseCase {
     if (!goalItem.userID.equals(new UserID(userID)))
       throw new UnauthorizedError("Unauthorized");
 
-    const currentBudget = await this.budgetService.getCurrentUserBudget(userID);
+    const currentBudget = await this.budgetService.getCurrentUserBudget(
+      new UserID(userID),
+    );
 
     if (goalItem.remaining() < amount)
       throw new InvalidDataError("Amount exceeds goal price");

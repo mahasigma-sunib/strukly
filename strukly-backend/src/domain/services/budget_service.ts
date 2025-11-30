@@ -10,7 +10,6 @@ export default class BudgetService {
     private readonly budgetHistoryRepository: IBudgetHistoryRepository,
   ) {}
 
-  // TODO: use UserID type
   /**
    * Selects the current month and year budget for user with userID.
    * Checks if the user exists.
@@ -24,9 +23,8 @@ export default class BudgetService {
    * @param userID
    * @returns userID's budget history for current month and year
    */
-  async getCurrentUserBudget(userID: string): Promise<BudgetHistory> {
-    const userIDValue = new UserID(userID);
-    const user = await this.userRepository.findById(userID);
+  async getCurrentUserBudget(userID: UserID): Promise<BudgetHistory> {
+    const user = await this.userRepository.findById(userID.value);
 
     if (!user) {
       throw new NotFoundError(`User with id ${userID} not found`);
@@ -37,7 +35,7 @@ export default class BudgetService {
     const yearNow = now.getUTCFullYear();
 
     let lastBudgetHistory =
-      await this.budgetHistoryRepository.findLastBudgetHistory(userIDValue);
+      await this.budgetHistoryRepository.findLastBudgetHistory(userID);
 
     if (
       !lastBudgetHistory ||
@@ -45,7 +43,7 @@ export default class BudgetService {
       lastBudgetHistory.year !== yearNow
     ) {
       const newBudgetHistory = BudgetHistory.new({
-        userID: userIDValue,
+        userID: userID,
         month: monthNow,
         year: yearNow,
         budget: 0,
@@ -65,7 +63,7 @@ export default class BudgetService {
   }
 
   async updateCurrentUserBudget(
-    userID: string,
+    userID: UserID,
     newBudget: number,
   ): Promise<void> {
     // getCurrentUserBudget already checks if user exists
@@ -80,7 +78,7 @@ export default class BudgetService {
   async useBudget(userID: UserID, amount: number) {
     // getCurrentUserBudget already checks if user exists
     // no need to check again
-    const budget = await this.getCurrentUserBudget(userID.value);
+    const budget = await this.getCurrentUserBudget(userID);
     budget.use(amount);
     await this.budgetHistoryRepository.update(budget);
   }
