@@ -1,5 +1,6 @@
 // src/domain/entities/goal_item.ts
 
+import InvalidDataError from "../errors/InvalidDataError";
 import GoalItemID from "../values/goal_item_id";
 import UserID from "../values/user_id";
 
@@ -40,7 +41,8 @@ export default class GoalItem {
   }
 
   deposit(amount: number) {
-    if (amount <= 0) throw new Error("Amount must be positive");
+    if (amount <= 0)
+      throw new InvalidDataError("Goal Item Deposit Amount must be positive");
     this.deposited += amount;
     this.updatedAt = new Date();
     if (this.deposited >= this.price && !this.completed) {
