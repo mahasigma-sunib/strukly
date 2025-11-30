@@ -5,11 +5,9 @@ import CreateGoalItemUseCase from "src/application/use_cases/goal_item/create_go
 import GetGoalItemUseCase from "src/application/use_cases/goal_item/get_goal_item";
 import UpdateGoalItemUseCase from "src/application/use_cases/goal_item/update_goal_item";
 import DeleteGoalItemUseCase from "src/application/use_cases/goal_item/delete_goal_item";
-import GoalItemID from "src/domain/values/goal_item_id";
 import GetGoalItemListUseCase from "src/application/use_cases/goal_item/get_goal_item_list";
 import { goalItemToDTO } from "../dto/goal_item_dto";
 import DepositGoalItemUseCase from "src/application/use_cases/goal_item/deposit_goal_item";
-import NotFoundError from "src/domain/errors/NotFoundError";
 
 export default class GoalItemController {
   constructor(
