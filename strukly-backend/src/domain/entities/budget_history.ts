@@ -12,8 +12,8 @@ export default class BudgetHistory {
     public readonly userID: UserID,
     public readonly month: number,
     public readonly year: number,
-    public budget: number,
-    public unusedBudget: number,
+    public budget: number, // must be positive
+    public unusedBudget: number, // may go negative
     public readonly createdAt: Date,
     public updatedAt: Date,
   ) {}
