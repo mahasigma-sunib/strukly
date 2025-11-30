@@ -2,7 +2,7 @@ import BudgetHistory from "src/domain/entities/budget_history";
 import z from "zod";
 
 export const UpdateBudgetDTOSchema = z.object({
-  budget: z.number().int().positive(),
+  budget: z.number().int().min(1),
 });
 
 export type UpdateBudgetDTO = z.infer<typeof UpdateBudgetDTOSchema>;
