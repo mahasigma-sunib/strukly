@@ -19,7 +19,7 @@ export default class GoalItemController {
     private readonly depositGoalItemUseCase: DepositGoalItemUseCase,
     private readonly updateGoalItemUseCase: UpdateGoalItemUseCase,
     private readonly deleteGoalItemUseCase: DeleteGoalItemUseCase,
-  ) {}
+  ) { }
 
   public createGoalItem = async (
     req: Request<{}, {}, { name: string; price: number }>,
@@ -72,10 +72,8 @@ export default class GoalItemController {
       const { goalItemID } = req.params;
 
       const goal = await this.getGoalItemUseCase.execute(
-        new GoalItemID(goalItemID),
+        userID, goalItemID,
       );
-
-      if (!goal) throw new NotFoundError("Goal Item not found");
 
       return res.status(200).json({ goal: goalItemToDTO(goal) });
     } catch (error) {
