@@ -1,6 +1,5 @@
 import InvalidDataError from "src/domain/errors/InvalidDataError";
 import NotFoundError from "src/domain/errors/NotFoundError";
-import UnauthorizedError from "src/domain/errors/UnauthorizedError";
 import { IGoalItemRepository } from "src/domain/repositories/goal_item_repository";
 import BudgetService from "src/domain/services/budget_service";
 import GoalItemID from "src/domain/values/goal_item_id";
@@ -15,10 +14,10 @@ export default class DepositGoalItemUseCase {
     const goalItem = await this.goalItemRepository.findByID(
       new GoalItemID(goalItemID),
     );
-    if (!goalItem) throw new NotFoundError("Goal item not found");
+    if (!goalItem) throw new NotFoundError("Goal item not found for this user");
 
     if (!goalItem.userID.equals(new UserID(userID)))
-      throw new UnauthorizedError("Unauthorized");
+      throw new NotFoundError("Goal item not found for this user");
 
     const currentBudget = await this.budgetService.getCurrentUserBudget(
       new UserID(userID),

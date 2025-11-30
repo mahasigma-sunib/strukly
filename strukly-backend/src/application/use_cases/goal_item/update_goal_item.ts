@@ -4,11 +4,10 @@ import { IGoalItemRepository } from "../../../domain/repositories/goal_item_repo
 import GoalItem, { IGoalItemEditor } from "../../../domain/entities/goal_item";
 import GoalItemID from "../../../domain/values/goal_item_id";
 import NotFoundError from "src/domain/errors/NotFoundError";
-import UnauthorizedError from "src/domain/errors/UnauthorizedError";
 import InvalidDataError from "src/domain/errors/InvalidDataError";
 
 export default class UpdateGoalItemUseCase {
-  constructor(private readonly goalItemRepository: IGoalItemRepository) {}
+  constructor(private readonly goalItemRepository: IGoalItemRepository) { }
 
   async execute(
     userId: string,
@@ -22,11 +21,10 @@ export default class UpdateGoalItemUseCase {
     const id = new GoalItemID(goalItemID);
 
     const existing = await this.goalItemRepository.findByID(id);
-    if (!existing) throw new NotFoundError("Goal Item not found");
+    if (!existing) throw new NotFoundError("Goal Item not found for this user");
 
-    if (existing.userID.value !== userId) {
-      throw new UnauthorizedError("Not allowed to update this Goal Item");
-    }
+    if (existing.userID.value !== userId)
+      throw new NotFoundError("Goal Item not found for this user");
 
     existing.update(data);
 
