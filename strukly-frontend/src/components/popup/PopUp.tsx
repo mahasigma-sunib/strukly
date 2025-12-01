@@ -30,7 +30,7 @@ const Popup: React.FC<PopupProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[fun-color-text-primary]/40 backdrop-blur-sm p-4 transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--fun-color-text-primary)]/40 backdrop-blur-sm p-4 transition-opacity"
       onClick={onClose}
     >
       <div
