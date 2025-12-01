@@ -37,7 +37,7 @@ export default function ExpenseTracker() {
 
   useLoadExpense(activeDate.month, activeDate.year, true); //month, year, getstat
 
-  // Reset temp date when drawer opens to match current active date
+  // reset temp date when drawer opens to match current active date
   useEffect(() => {
     if (isDrawerOpen) {
       setTempDate(activeDate);
@@ -51,10 +51,10 @@ export default function ExpenseTracker() {
 
   const { statistic, items, isLoading, error } = useExpense();
   // console.log(statistic.weekly);
-  
+
   return (
     <div>
-      {/* Page Title & Date button */}
+      {/* page Title & date btn */}
       <div className="m-4 my-7 flex items-center justify-between">
         <div className="font-bold text-3xl">
           <p>Tracker</p>
@@ -87,23 +87,23 @@ export default function ExpenseTracker() {
         >
           <div className="flex flex-col h-full">
             <div className="mb-6 mt-2">
-              <p className="text-gray-500 text-center mb-4 text-sm">
+              <p className="text-[var(--fun-color-text-secondary)] text-center mb-4 text-sm">
                 Scroll to select month and year
               </p>
-              
-              {/* THE WHEEL PICKER */}
-              <Datepicker 
+
+              {/* wheel picker */}
+              <Datepicker
                 selectedMonth={tempDate.month}
                 selectedYear={tempDate.year}
                 onChange={(month, year) => setTempDate({ month, year })}
               />
             </div>
 
-            {/* ACTION BUTTON */}
+            {/* action btn */}
             <div className="mt-auto">
               <Button
                 variant="primary"
-                size="lg" // Make it big and tap-friendly
+                size="lg"
                 className="w-full !rounded-xl shadow-lg"
                 onClick={handleApplyFilter}
               >
@@ -112,8 +112,6 @@ export default function ExpenseTracker() {
             </div>
           </div>
         </Drawer>
-
-        
       </div>
 
       <div className="my-5">
@@ -131,7 +129,7 @@ export default function ExpenseTracker() {
         />
       </div>
 
-      {/* Expense History */}
+      {/* expense history */}
       <div>
         <div className="ml-5 mb-0 font-bold text-xl">
           <p>Expense History</p>
@@ -139,15 +137,18 @@ export default function ExpenseTracker() {
         {isLoading && <p>Loading...</p>}
         {error && <p>{error}</p>}
         <div className="mt-0">
-          <Card size="md">
-            <ExpenseList
-              vendorName="McDonald's"
-              date={new Date()}
-              currency="-Rp"
-              amount="132.000"
-              category="food"
-            />
-          </Card>
+          {/* conditional example */}
+          {items.length === 0 && (
+            <Card size="md">
+              <ExpenseList
+                vendorName="Example"
+                date={new Date()}
+                currency="-Rp"
+                amount="123.000"
+                category="others"
+              />
+            </Card>
+          )}
 
           {items.map((item) => (
             <Card key={item.id} size="md">
