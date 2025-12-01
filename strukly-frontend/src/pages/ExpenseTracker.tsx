@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Card from "../components/card/card";
 import ExpenseList from "../components/card/ExpenseListCard";
 import useExpense, { useLoadExpense } from "../store/ExpenseStore";
 import Button from "../components/Button";
-import Popup from "../components/popup/PopUp";
 import CustomBarChart from "../components/chart/barchart";
+import Drawer from "../components/drawer/Drawer";
+import Datepicker from "../components/scroll/DatePicker";
 
 export default function ExpenseTracker() {
   const today = new Date();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
+
+  const [activeDate, setActiveDate] = useState({
+    month: today.getMonth() + 1,
+    year: today.getFullYear(),
+  });
 
   const monthNames = [
     "Jan",
@@ -25,13 +29,29 @@ export default function ExpenseTracker() {
     "Nov",
     "Dec",
   ];
-  const monthName = monthNames[month - 1];
+  const monthName = monthNames[activeDate.month - 1];
 
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  useLoadExpense(month, year, true); //month, year, getstat
+  const [tempDate, setTempDate] = useState(activeDate);
+
+  useLoadExpense(activeDate.month, activeDate.year, true); //month, year, getstat
+
+  // Reset temp date when drawer opens to match current active date
+  useEffect(() => {
+    if (isDrawerOpen) {
+      setTempDate(activeDate);
+    }
+  }, [isDrawerOpen, activeDate]);
+
+  const handleApplyFilter = () => {
+    setActiveDate(tempDate);
+    setIsDrawerOpen(false);
+  };
+
   const { statistic, items, isLoading, error } = useExpense();
-  console.log(statistic.weekly);
+  // console.log(statistic.weekly);
+  
   return (
     <div>
       {/* Page Title & Date button */}
@@ -41,7 +61,7 @@ export default function ExpenseTracker() {
         </div>
         <div>
           <Button
-            onClick={() => setIsPopupOpen(true)}
+            onClick={() => setIsDrawerOpen(true)}
             variant="primary"
             size="md"
             className="
@@ -55,14 +75,45 @@ export default function ExpenseTracker() {
               active:shadow-[inset_0_3px_5px_rgba(0,0,0,0.2)]
             "
           >
-            {monthName} {year}
+            {monthName} {activeDate.year}
           </Button>
         </div>
 
-        {/* popup */}
-        <Popup visible={isPopupOpen} onClose={() => setIsPopupOpen(false)}>
-          <p>ASD</p>
-        </Popup>
+        {/* drawer */}
+        <Drawer
+          visible={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          title="Select Period"
+        >
+          <div className="flex flex-col h-full">
+            <div className="mb-6 mt-2">
+              <p className="text-gray-500 text-center mb-4 text-sm">
+                Scroll to select month and year
+              </p>
+              
+              {/* THE WHEEL PICKER */}
+              <Datepicker 
+                selectedMonth={tempDate.month}
+                selectedYear={tempDate.year}
+                onChange={(month, year) => setTempDate({ month, year })}
+              />
+            </div>
+
+            {/* ACTION BUTTON */}
+            <div className="mt-auto">
+              <Button
+                variant="primary"
+                size="lg" // Make it big and tap-friendly
+                className="w-full !rounded-xl shadow-lg"
+                onClick={handleApplyFilter}
+              >
+                Apply Filter
+              </Button>
+            </div>
+          </div>
+        </Drawer>
+
+        
       </div>
 
       <div className="my-5">
@@ -71,7 +122,11 @@ export default function ExpenseTracker() {
           xAxisKey="name"
           height={300}
           bars={[
-            { key: "spending", color: "var(--fun-color-primary)", label: "Weekly Expense" },
+            {
+              key: "spending",
+              color: "var(--fun-color-primary)",
+              label: "Weekly Expense",
+            },
           ]}
         />
       </div>
