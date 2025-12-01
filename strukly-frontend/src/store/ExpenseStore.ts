@@ -116,7 +116,8 @@ function mapExpense(raw: any): ExpenseType {
 
 function mapWeeklyStats(raw: any[]): WeeklyStat[] {
   return raw.map((item) => ({
-    name: `Week ${item.week}`,
+    // name: `Week ${item.week}`,
+    name: `${item.startDate}-${item.endDate}`,
     week: item.week,
     spending: item.spending,
     startDate: item.startDate,
