@@ -23,7 +23,7 @@ export default function Card({
   return (
     <div
       className={`
-        bg-[--fun-color-background] shadow-md border border-[var(--fun-color-inactive)]
+        bg-[var(--fun-color-background)] shadow-md border border-[var(--fun-color-inactive)]
         transition-all duration-200
         m-4
         ${sizeClasses[size]}  ${className}
