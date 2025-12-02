@@ -51,14 +51,14 @@ export default function MobileNavBar() {
         inactiveIcon={<HomeIconOutline width={24} height={24} />}
       />
       <NavLink
-        to="/transactions"
+        to="/expense"
         label="Expense"
         activeIcon={<ExpenseIconFilled width={24} height={24} />}
         inactiveIcon={<ExpenseIconOutline width={24} height={24} />}
       />
 
       <div className="flex justify-center">
-        <Link to="/add">
+        <Link to="/newExpense">
           <div className="-mt-5 w-18 h-17 bg-white rounded-full flex justify-center items-center">
             <div className="flex items-center justify-center w-12 h-12 bg-[#FFC606] border-6 border-[#FFE432] rounded-full shadow-[0_5px_0_0_#FFAA28] active:shadow-none active:translate-y-1 transition-all duration-100">
               <AddIcon width={22} height={22} />
@@ -68,13 +68,13 @@ export default function MobileNavBar() {
       </div>
 
       <NavLink
-        to="/history"
+        to="/budget"
         label="Budget"
         activeIcon={<BudgetIconFilled width={24} height={24} />}
         inactiveIcon={<BudgetIconOutline width={24} height={24} />}
       />
       <NavLink
-        to="/users"
+        to="/goals"
         label="Goals"
         activeIcon={
           <GoalsIconFilled className="text-orange" width={24} height={24} />
