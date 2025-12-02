@@ -93,7 +93,7 @@ export default class ExpenseController {
       const referenceDate = dateString ? new Date(dateString) : new Date();
 
       if (isNaN(referenceDate.getTime())) {
-        return res.status(400).json({ error: "invalid date formate. YYYY-MM-DD" });
+        return res.status(400).json({ error: "invalid date format. YYYY-MM-DD" });
       }
 
       const reportData = await this.getWeeklyExpenseReportUseCase.execute(userID, referenceDate);
