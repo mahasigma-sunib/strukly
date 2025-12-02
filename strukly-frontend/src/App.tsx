@@ -13,7 +13,7 @@ import RegisterCookie from "./pages/auth/RegisterCookie";
 import Home from "./pages/Home";
 import ExpenseTracker from "./pages/ExpenseTracker";
 import ExpenseDetail from "./pages/ExpenseDetail";
-import NewExpense from "./pages/newExpense";
+import NewExpense from "./pages/NewExpense";
 import ExpenseBudget from "./pages/ExpenseBudget";
 import Goals from "./pages/auth/Goals";
 import Settings from "./pages/Settings";
