@@ -1,7 +1,5 @@
 import ExpenseService from "src/domain/services/expense_service";
 import UserID from "src/domain/values/user_id";
-import { WeeklyData } from "src/infrastructure/dto/expense_report_dto";
-
 export default class GetMonthlyExpenseListUseCase {
 constructor(private readonly expenseService: ExpenseService) {}
  async execute(
