@@ -5,17 +5,19 @@ import {
   expenseToDTO,
 } from "../dto/expense_dto";
 import CreateExpenseUseCase from "src/application/use_cases/expense/create_expense";
-import GetExpenseListUseCase from "src/application/use_cases/expense/get_expense_list";
+import GetExpenseListUseCase from "src/application/use_cases/expense/get_monthly_expense_list";
+import GetWeeklyExpenseReportUseCase from "src/application/use_cases/expense/get_weekly_expense_list";
 import GetExpenseDetailUseCase from "src/application/use_cases/expense/get_expense_detail";
 import UpdateExpenseUseCase from "src/application/use_cases/expense/update_expense";
 import DeleteExpenseUseCase from "src/application/use_cases/expense/delete_expense";
-import { createExpenseReportResponseDTO } from "../dto/expense_report_dto";
+import { createExpenseReportResponseDTO, toHistoryItemDTO } from "../dto/expense_report_dto";
 import ScanExpenseImageUseCase from "src/application/use_cases/expense/scan_expense_image";
 
 export default class ExpenseController {
   constructor(
     private readonly createExpenseUseCase: CreateExpenseUseCase,
     private readonly getExpenseListUseCase: GetExpenseListUseCase,
+    private readonly getWeeklyExpenseReportUseCase: GetWeeklyExpenseReportUseCase,
     private readonly getExpenseDetailUseCase: GetExpenseDetailUseCase,
     private readonly updateExpenseUseCase: UpdateExpenseUseCase,
     private readonly deleteExpenseUseCase: DeleteExpenseUseCase,
@@ -72,13 +74,39 @@ export default class ExpenseController {
 
       const reportData = await this.getExpenseListUseCase.execute(userID, month, year);
 
-      return res.status(200).json(createExpenseReportResponseDTO(reportData.weekly, reportData.history));
+      return res.status(200).json(createExpenseReportResponseDTO(reportData.total, reportData.weekly, reportData.history));
     } catch (error: unknown) {
       console.error(error);
       return res.status(500).json({ error: "Internal server error" });
     }
   };
 
+  public getWeeklyReport = async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const userID = req.user!.id;
+
+      // if date in query, use that. otherwise return this week
+      const dateString = req.query.date as string;
+      const referenceDate = dateString ? new Date(dateString) : new Date();
+
+      if (isNaN(referenceDate.getTime())) {
+        return res.status(400).json({ error: "invalid date format. YYYY-MM-DD" });
+      }
+
+      const reportData = await this.getWeeklyExpenseReportUseCase.execute(userID, referenceDate);
+
+      return res.status(200).json({
+        ...reportData,
+        history: reportData.history.map(toHistoryItemDTO)
+      });
+    } catch (error: unknown) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
   public getExpenseDetail = async (
     req: Request<{ expenseID: string }>,
     res: Response

@@ -1,17 +1,20 @@
 import axios from "axios";
 import useSWR from "swr";
-import { Fetcher } from "../fetcher/Fetcher";
+import { useEffect } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { ExpenseType } from "../type/ExpenseType";
+import type { ExpenseStatisticType, WeeklyStat } from "../type/expenseStatisticType";
 
 type State = {
+  statistic: ExpenseStatisticType;
   items: ExpenseType[];
   isLoading: boolean;
   error: string | null;
 };
 
 type Actions = {
+  setStats: (stat: ExpenseStatisticType) => void;
   setItems: (items: ExpenseType[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -26,11 +29,18 @@ type Actions = {
 const useExpense = create<State & Actions>()(
   immer((set) => ({
     //initial state
+    statistic: { month: -1, year: -1, weekly: [], total: 0 },
     items: [],
     isLoading: false,
     error: null,
 
     //load all the fetched data into state
+    setStats: (stat: ExpenseStatisticType) => {
+      set((prev) => {
+        prev.statistic = stat;
+      });
+    },
+
     setItems: (items: ExpenseType[]) => {
       set((prev) => {
         prev.items = items;
@@ -77,24 +87,83 @@ const useExpense = create<State & Actions>()(
       set((prev) => {
         const index = prev.items.findIndex((item) => item.id === id);
         if (index > -1) {
-          Object.assign(index, updateditem);
+          Object.assign(prev.items[index], updateditem);
         }
       });
     },
   }))
 );
 
-//to fetch & load the expense datas
-export function loadExpense(month: number, year: number) {
-  const { data, error, isLoading } = useSWR<ExpenseType[]>(
-    `http://localhost:3000/api/expenses?month=${month}&week=${year}`,
-    Fetcher<ExpenseType[]>
-  );
-  const { setItems, setError, setLoading } = useExpense();
+function mapExpense(raw: any): ExpenseType {
+  return {
+    userID: raw.user_id,
 
-  setLoading(isLoading);
-  if (error) setError("Failed to fetch expense");
-  if (data) setItems(data);
+    id: raw.id,
+    dateTime: new Date(raw.datetime),
+    vendorName: raw.vendor,
+    category: raw.category,
+
+    currency: "Rp ",
+    subtotalAmount: raw.subtotal,
+    taxAmount: raw.tax,
+    discountAmount: raw.discount,
+    serviceAmount: raw.service,
+    totalAmount: raw.total_my_expense,
+
+    items: [],
+  };
+}
+
+function mapWeeklyStats(raw: any[]): WeeklyStat[] {
+  return raw.map((item) => ({
+    // name: `Week ${item.week}`,
+    name: `${item.startDate}-${item.endDate}`,
+    week: item.week,
+    spending: item.spending,
+    startDate: item.startDate,
+    endDate: item.endDate,
+  }))
+}
+
+//to fetch & load the expense datas
+export function useLoadExpense(month: number, year: number, getStat: boolean) {
+  // console.log("running");
+  const { setStats, setItems, setError, setLoading } = useExpense();
+
+  const { data, error, isLoading } = useSWR(
+    `http://localhost:3000/api/expenses?month=${month}&year=${year}`,
+    (url) =>
+      fetch(url, {
+        credentials: "include",
+      }).then((res) => res.json())
+  );
+
+  useEffect(() => {
+    setLoading(isLoading);
+
+    if (error) {
+      setError("Failed to fetch expenses");
+    }
+
+    if (data?.history) {
+      const mapped = data.history.map(mapExpense);
+      setItems(mapped);
+      // console.log("mapped:", mapped);
+    }
+
+    if (getStat && data?.weekly) {
+      const stat = {
+        month,
+        year,
+        weekly: mapWeeklyStats(data.weekly),
+        total: data.total
+      };
+      console.log(stat);
+      setStats(stat);
+    }
+  }, [isLoading, error, data]);
+
+  return { data, error, isLoading };
 }
 
 // post a new expense
