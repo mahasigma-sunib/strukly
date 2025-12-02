@@ -25,9 +25,8 @@ export default function DatePicker({
   const yearRef = useRef<HTMLDivElement>(null);
 
   // 1. refs to store the debounce timers
-  // use "any" here to avoid TypeScript issues with NodeJS.Timeout vs browser number
-  const monthTimerRef = useRef<any>(null);
-  const yearTimerRef = useRef<any>(null);
+  const monthTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const yearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (monthRef.current) {
@@ -47,7 +46,7 @@ export default function DatePicker({
     selectedValue: string | number,
     onSelect: (index: number) => void,
     ref: React.RefObject<HTMLDivElement | null>,
-    timerRef: RefObject<any> // 2. pass the specific timer ref
+    timerRef: RefObject<ReturnType<typeof setTimeout> | null> // 2. pass the specific timer ref
   ) => {
     return (
       <div className="relative flex-1 h-48 overflow-hidden group">
