@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
-import Button from "../../components/Button";
+import Button from "../../components/button/Button";
 
 function UserRegister() {
   const [email, setEmail] = useState("");
@@ -137,7 +137,10 @@ function UserRegister() {
         )}
       </div>
 
-      <Button onClick={handleRegister} className="rounded cursor-pointer my-4 w-full">
+      <Button
+        onClick={handleRegister}
+        className="rounded cursor-pointer my-4 w-full"
+      >
         Register
       </Button>
 
@@ -148,7 +151,9 @@ function UserRegister() {
         </Button>
       </div>
       <div>
-        {registerError != "" && <p className="text-status-error">{registerError}</p>}
+        {registerError != "" && (
+          <p className="text-status-error">{registerError}</p>
+        )}
       </div>
     </div>
   );

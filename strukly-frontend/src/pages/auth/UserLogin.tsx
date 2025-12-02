@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
-import Button from "../../components/Button";
+import Button from "../../components/button/Button";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -54,7 +54,7 @@ function UserLogin() {
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-h-[100vh] px-10">
       <div className="font-extrabold text-4xl text-primary">Koinku</div>
-      
+
       <div className="flex flex-col gap-2 w-full">
         <input
           type="email"
@@ -94,7 +94,10 @@ function UserLogin() {
         )}
       </div>
 
-      <Button onClick={handleLogin} className="rounded cursor-pointer my-4 w-full">
+      <Button
+        onClick={handleLogin}
+        className="rounded cursor-pointer my-4 w-full"
+      >
         Log in
       </Button>
 

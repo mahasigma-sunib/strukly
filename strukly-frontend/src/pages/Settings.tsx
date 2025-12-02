@@ -1,5 +1,5 @@
 import useUserAuth from "../store/UserAuthStore";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 
 export default function Settings() {
   const logout = useUserAuth((s) => s.logout);
