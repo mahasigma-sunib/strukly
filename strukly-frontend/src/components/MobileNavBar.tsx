@@ -90,24 +90,24 @@ export default function MobileNavBar() {
         <div className="grid grid-cols-2 gap-6 px-4 pb-4 pt-2">
           <SquareButton
             label="Camera"
-            icon= {<HappyMascot/>}
+            icon={<HappyMascot />}
             onClick={() => handleAddBtn("camera")}
-          ></SquareButton>
+          />
           <SquareButton
             label="Gallery"
-            icon= {<WhistleMascot/>}
+            icon={<WhistleMascot />}
             onClick={() => handleAddBtn("gallery")}
-          ></SquareButton>
+          />
           <SquareButton
             label="Insert"
-            icon= {<HeadbandMascot/>}
+            icon={<HeadbandMascot />}
             onClick={() => handleAddBtn("insert")}
-          ></SquareButton>
+          />
           <SquareButton
             label="Split Bill"
-            icon= {<WinkMascot/>}
+            icon={<WinkMascot />}
             onClick={() => handleAddBtn("splitBill")}
-          ></SquareButton>
+          />
         </div>
       </Drawer>
 
