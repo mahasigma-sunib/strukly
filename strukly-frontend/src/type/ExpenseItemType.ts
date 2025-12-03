@@ -1,5 +1,5 @@
 export interface ExpenseItemType {
-  transactionID: string;
+  expenseID: string;
 
   id: string;
   name: string;
