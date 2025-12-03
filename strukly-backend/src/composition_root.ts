@@ -32,10 +32,10 @@ import UpdateCurrentBudgetUseCase from "./application/use_cases/budget/update_cu
 const prismaClient = new PrismaClient();
 
 // Repositories
-export const userRepository = new PrismaUserRepository();
-export const goalItemRepository = new PrismaGoalItemRepository();
+export const userRepository = new PrismaUserRepository(prismaClient);
+export const goalItemRepository = new PrismaGoalItemRepository(prismaClient);
 export const budgetHistoryRepository = new PrismaBudgetHistoryRepository(prismaClient);
-export const expenseRepository = new PrismaExpenseRepository();
+export const expenseRepository = new PrismaExpenseRepository(prismaClient);
 
 // Services
 export const hashingService = new BcryptService();
