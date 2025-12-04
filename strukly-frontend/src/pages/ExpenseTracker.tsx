@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import Card from "../components/card/card";
+import { useNavigate } from "react-router-dom";
+import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
 import useExpense, { useLoadExpense } from "../store/ExpenseStore";
 import Button from "../components/button/Button";
@@ -49,6 +50,7 @@ export default function ExpenseTracker() {
     setIsDrawerOpen(false);
   };
 
+  const navigate = useNavigate();
   const { statistic, items, isLoading, error } = useExpense();
   // console.log(statistic.weekly);
 
@@ -151,7 +153,11 @@ export default function ExpenseTracker() {
           )}
 
           {items.map((item) => (
-            <Card key={item.id} size="md">
+            <Card
+              key={item.id}
+              size="md"
+              onClick={() => navigate(`/expense/${item.id}`)}
+            >
               <ExpenseList
                 vendorName={item.vendorName}
                 date={new Date(item.dateTime)}
