@@ -31,6 +31,29 @@ import UpdateCurrentBudgetUseCase from "./application/use_cases/budget/update_cu
 // DB Client
 const prismaClient = new PrismaClient();
 
+// Graceful shutdown for PrismaClient
+const disconnectPrisma = async () => {
+  try {
+    await prismaClient.$disconnect();
+    // eslint-disable-next-line no-console
+    console.log("PrismaClient disconnected gracefully.");
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("Error disconnecting PrismaClient:", err);
+  }
+};
+
+process.on("SIGINT", async () => {
+  await disconnectPrisma();
+  process.exit(0);
+});
+process.on("SIGTERM", async () => {
+  await disconnectPrisma();
+  process.exit(0);
+});
+process.on("beforeExit", async () => {
+  await disconnectPrisma();
+});
 // Repositories
 export const userRepository = new PrismaUserRepository(prismaClient);
 export const goalItemRepository = new PrismaGoalItemRepository(prismaClient);
