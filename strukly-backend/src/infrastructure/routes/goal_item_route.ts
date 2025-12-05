@@ -1,5 +1,4 @@
 import { Router } from "express";
-import z from "zod";
 import GoalItemController from "../controllers/goal_item_controllers";
 import { authMiddleware } from "../middleware/auth_middleware";
 import {
@@ -8,9 +7,11 @@ import {
 } from "../middleware/validation_middleware";
 
 import {
-  CreateGoalItemDTOSchema,
-  UpdateGoalItemDTOSchema,
-} from "../dto/goal_item_dto";
+  CreateGoalItemRequestSchema,
+  UpdateGoalItemRequestSchema,
+  DepositGoalItemRequestSchema,
+  GoalItemIdParamSchema,
+} from "../schemas";
 import {
   createGoalItemUseCase as createUseCase,
   getGoalItemListUseCase as getListUseCase,
@@ -36,7 +37,7 @@ const controller = new GoalItemController(
 router.post(
   "/goals",
   authMiddleware,
-  validateBody(CreateGoalItemDTOSchema),
+  validateBody(CreateGoalItemRequestSchema),
   controller.createGoalItem,
 );
 
@@ -45,36 +46,36 @@ router.get("/goals", authMiddleware, controller.getGoalItemList);
 router.get(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(z.object({ goalItemID: z.uuid() })),
+  validateParams(GoalItemIdParamSchema),
   controller.getGoalItem,
 );
 
 router.patch(
   "/goals/complete/:goalItemID",
   authMiddleware,
-  validateParams(z.object({ goalItemID: z.uuid() })),
+  validateParams(GoalItemIdParamSchema),
   controller.markGoalItemCompleted,
 );
 
 router.patch(
   "/goals/deposit/:goalItemID",
   authMiddleware,
-  validateBody(z.object({ amount: z.number() })),
+  validateBody(DepositGoalItemRequestSchema),
   controller.depositGoalItem,
 );
 
 router.patch(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(z.object({ goalItemID: z.uuid() })),
-  validateBody(UpdateGoalItemDTOSchema),
+  validateParams(GoalItemIdParamSchema),
+  validateBody(UpdateGoalItemRequestSchema),
   controller.updateGoalItem,
 );
 
 router.delete(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(z.object({ goalItemID: z.uuid() })),
+  validateParams(GoalItemIdParamSchema),
   controller.deleteGoalItem,
 );
 

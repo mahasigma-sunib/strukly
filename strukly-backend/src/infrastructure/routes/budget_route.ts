@@ -3,7 +3,7 @@ import { Router } from "express";
 import BudgetController from "../controllers/budget_controller";
 import { authMiddleware } from "../middleware/auth_middleware";
 import { validateBody } from "../middleware/validation_middleware";
-import z from "zod";
+import { UpdateBudgetRequestSchema } from "../schemas";
 import {
   getCurrentBudgetUseCase,
   updateCurrentBudgetUseCase,
@@ -20,6 +20,6 @@ budgetRouter.get("/", authMiddleware, budgetController.getCurrentBudget);
 budgetRouter.patch(
   "/",
   authMiddleware,
-  validateBody(z.object({ budget: z.number().int().positive() })),
+  validateBody(UpdateBudgetRequestSchema),
   budgetController.updateCurrentBudget,
 );

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import GetCurrentBudgetUseCase from "src/application/use_cases/budget/get_current_budget";
 import UpdateCurrentBudgetUseCase from "src/application/use_cases/budget/update_current_budget";
-import { budgetHistoryToDTO } from "../dto/budget_history_dto";
+import { mapBudgetHistoryToResponse } from "../mappers";
 
 export default class BudgetController {
   constructor(
@@ -15,7 +15,7 @@ export default class BudgetController {
 
       const budgetHistory = await this.getCurrentBudgetUseCase.execute(userID);
 
-      res.status(200).json(budgetHistoryToDTO(budgetHistory));
+      res.status(200).json(mapBudgetHistoryToResponse(budgetHistory));
     } catch (error) {
       next(error);
     }

@@ -6,7 +6,7 @@ import GetGoalItemUseCase from "src/application/use_cases/goal_item/get_goal_ite
 import UpdateGoalItemUseCase from "src/application/use_cases/goal_item/update_goal_item";
 import DeleteGoalItemUseCase from "src/application/use_cases/goal_item/delete_goal_item";
 import GetGoalItemListUseCase from "src/application/use_cases/goal_item/get_goal_item_list";
-import { goalItemToDTO } from "../dto/goal_item_dto";
+import { mapGoalItemToResponse } from "../mappers";
 import DepositGoalItemUseCase from "src/application/use_cases/goal_item/deposit_goal_item";
 import MarkGoalItemCompletedUseCase from "src/application/use_cases/goal_item/mark_goal_item_completed";
 
@@ -38,7 +38,7 @@ export default class GoalItemController {
 
       return res
         .status(201)
-        .json({ message: "Goal Item created", goal: goalItemToDTO(created) });
+        .json({ message: "Goal Item created", goal: mapGoalItemToResponse(created) });
     } catch (error) {
       next(error);
     }
@@ -55,7 +55,7 @@ export default class GoalItemController {
       const goalItems = await this.getGoalItemListUseCase.execute(userID);
 
       return res.status(200).json({
-        goalItems: goalItems.map((goalItem) => goalItemToDTO(goalItem)),
+        goalItems: goalItems.map((goalItem) => mapGoalItemToResponse(goalItem)),
       });
     } catch (error) {
       next(error);
@@ -75,7 +75,7 @@ export default class GoalItemController {
         userID, goalItemID,
       );
 
-      return res.status(200).json({ goal: goalItemToDTO(goal) });
+      return res.status(200).json({ goal: mapGoalItemToResponse(goal) });
     } catch (error) {
       next(error);
     }
@@ -137,7 +137,7 @@ export default class GoalItemController {
 
       return res
         .status(200)
-        .json({ message: "GoalItem updated", goal: goalItemToDTO(updated) });
+        .json({ message: "GoalItem updated", goal: mapGoalItemToResponse(updated) });
     } catch (error) {
       next(error);
     }

@@ -6,12 +6,12 @@ import {
   validateQuery,
 } from "../middleware/validation_middleware";
 import {
-  CreateExpenseDTOSchema,
-  ExpenseDTOSchema,
-} from "../dto/expense_dto";
+  CreateExpenseRequestSchema,
+  ExpenseResponseSchema,
+  ExpenseReportQuerySchema,
+  ExpenseIdParamSchema,
+} from "../schemas";
 import { authMiddleware } from "../middleware/auth_middleware";
-import z from "zod";
-import { ExpenseReportRequestQuerySchema } from "../dto/expense_report_dto";
 import multer from "multer";
 import {
   createExpenseUseCase,
@@ -38,7 +38,7 @@ const expenseController = new ExpenseController(
 router.post(
   "/expenses",
   authMiddleware,
-  validateBody(CreateExpenseDTOSchema), // Validates req.body against the schema
+  validateBody(CreateExpenseRequestSchema),
   expenseController.createExpense
 );
 
@@ -53,7 +53,7 @@ router.post(
 router.get(
   "/expenses",
   authMiddleware,
-  validateQuery(ExpenseReportRequestQuerySchema),
+  validateQuery(ExpenseReportQuerySchema),
   expenseController.getExpenseList
 );
 
@@ -66,22 +66,22 @@ router.get(
 router.get(
   "/expenses/:expenseID",
   authMiddleware,
-  validateParams(z.object({ expenseID: z.uuid() })),
+  validateParams(ExpenseIdParamSchema),
   expenseController.getExpenseDetail
 );
 
 router.put(
   "/expenses/:expenseID",
   authMiddleware,
-  validateParams(z.object({ expenseID: z.uuid() })),
-  validateBody(ExpenseDTOSchema),
+  validateParams(ExpenseIdParamSchema),
+  validateBody(ExpenseResponseSchema),
   expenseController.updateExpense
 );
 
 router.delete(
   "/expenses/:expenseID",
   authMiddleware,
-  validateParams(z.object({ expenseID: z.uuid() })),
+  validateParams(ExpenseIdParamSchema),
   expenseController.deleteExpense
 );
 
