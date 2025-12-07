@@ -66,6 +66,15 @@ const controller = new GoalItemController(
  *     responses:
  *       201:
  *         description: Goal created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 goal:
+ *                   $ref: '#/components/schemas/GoalItemResponse'
  */
 router.post(
   "/goals",
@@ -83,6 +92,15 @@ router.post(
  *     responses:
  *       200:
  *         description: List of goals
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 goalItems:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/GoalItemResponse'
  */
 router.get("/goals", authMiddleware, controller.getGoalItemList);
 
@@ -103,6 +121,13 @@ router.get("/goals", authMiddleware, controller.getGoalItemList);
  *     responses:
  *       200:
  *         description: Goal details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 goal:
+ *                   $ref: '#/components/schemas/GoalItemResponse'
  *       404:
  *         description: Goal not found
  */
@@ -130,6 +155,13 @@ router.get(
  *     responses:
  *       200:
  *         description: Goal marked as completed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.patch(
   "/goals/complete/:goalItemID",
@@ -167,6 +199,13 @@ router.patch(
  *     responses:
  *       200:
  *         description: Deposit successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.patch(
   "/goals/deposit/:goalItemID",
@@ -203,6 +242,15 @@ router.patch(
  *     responses:
  *       200:
  *         description: Goal updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 goal:
+ *                   $ref: '#/components/schemas/GoalItemResponse'
  */
 router.patch(
   "/goals/:goalItemID",
@@ -229,6 +277,13 @@ router.patch(
  *     responses:
  *       200:
  *         description: Goal deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.delete(
   "/goals/:goalItemID",

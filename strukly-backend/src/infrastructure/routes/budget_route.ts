@@ -35,11 +35,7 @@ export const budgetRouter = Router();
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 budget:
- *                   type: integer
- *                   description: The monthly budget amount
+ *               $ref: '#/components/schemas/BudgetHistoryResponse'
  */
 budgetRouter.get("/", authMiddleware, budgetController.getCurrentBudget);
 
@@ -60,7 +56,7 @@ budgetRouter.get("/", authMiddleware, budgetController.getCurrentBudget);
  *             properties:
  *               budget:
  *                 type: integer
- *                 description: The monthly budget amount
+ *                 description: The monthly budget amountc
  *     responses:
  *       200:
  *         description: Budget updated successfully

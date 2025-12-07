@@ -7,7 +7,7 @@ import {
 } from "../middleware/validation_middleware";
 import {
   CreateExpenseRequestSchema,
-  ExpenseResponseSchema,
+  UpdateExpenseRequestSchema,
   ExpenseReportQuerySchema,
   ExpenseIdParamSchema,
 } from "../schemas";
@@ -53,50 +53,19 @@ const expenseController = new ExpenseController(
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - vendorName
- *               - category
- *               - dateTime
- *               - subtotalAmount
- *               - taxAmount
- *               - discountAmount
- *               - serviceAmount
- *               - items
- *             properties:
- *               vendorName:
- *                 type: string
- *               category:
- *                 type: string
- *               dateTime:
- *                 type: string
- *                 format: date-time
- *               subtotalAmount:
- *                 $ref: '#/components/schemas/Money'
- *               taxAmount:
- *                 $ref: '#/components/schemas/Money'
- *               discountAmount:
- *                 $ref: '#/components/schemas/Money'
- *               serviceAmount:
- *                 $ref: '#/components/schemas/Money'
- *               items:
- *                 type: array
- *                 items:
- *                   type: object
- *                   required:
- *                     - name
- *                     - quantity
- *                     - singlePrice
- *                   properties:
- *                     name:
- *                       type: string
- *                     quantity:
- *                       type: integer
- *                     singlePrice:
- *                       $ref: '#/components/schemas/Money'
+ *             $ref: '#/components/schemas/CreateExpenseRequest'
  *     responses:
  *       201:
  *         description: Expense created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 expense:
+ *                   $ref: '#/components/schemas/ExpenseResponse'
  */
 router.post(
   "/expenses",
@@ -125,6 +94,13 @@ const expenseImageUpload = multer(); // store in memory
  *     responses:
  *       200:
  *         description: Scanned expense data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 expense:
+ *                   $ref: '#/components/schemas/ExpenseResponse'
  */
 router.post(
   "/expenses/scan-image",
@@ -155,6 +131,10 @@ router.post(
  *     responses:
  *       200:
  *         description: List of expenses
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ExpenseReportResponse'
  */
 router.get(
   "/expenses",
@@ -172,6 +152,10 @@ router.get(
  *     responses:
  *       200:
  *         description: Weekly report
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ExpenseReportResponse'
  */
 router.get(
   "/expenses/weekly",
@@ -196,6 +180,10 @@ router.get(
  *     responses:
  *       200:
  *         description: Expense detail
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ExpenseResponse'
  *       404:
  *         description: Expense not found
  */
@@ -225,16 +213,25 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ExpenseResponse'
+ *             $ref: '#/components/schemas/UpdateExpenseRequest'
  *     responses:
  *       200:
  *         description: Expense updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 expense:
+ *                   $ref: '#/components/schemas/ExpenseResponse'
  */
 router.put(
   "/expenses/:expenseID",
   authMiddleware,
   validateParams(ExpenseIdParamSchema),
-  validateBody(ExpenseResponseSchema),
+  validateBody(UpdateExpenseRequestSchema),
   expenseController.updateExpense
 );
 
