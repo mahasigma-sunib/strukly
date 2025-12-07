@@ -6,6 +6,8 @@ import { goalItemRouter } from "./infrastructure/routes/goal_item_route";
 import { expenseRouter } from "./infrastructure/routes/expense_route";
 import { budgetRouter } from "./infrastructure/routes/budget_route";
 import { errorMiddleware } from "./infrastructure/middleware/error_middleware";
+import swaggerUi from "swagger-ui-express";
+import { specs } from "./infrastructure/config/swagger";
 
 const app = express();
 const port = 3000;
@@ -21,6 +23,8 @@ app.use("/api", authRouter);
 app.use("/api", goalItemRouter);
 app.use("/api", expenseRouter);
 app.use("/api/budget", budgetRouter);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

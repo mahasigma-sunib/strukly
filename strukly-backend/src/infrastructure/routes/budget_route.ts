@@ -16,7 +16,55 @@ const budgetController = new BudgetController(
 
 export const budgetRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Budget
+ *   description: Budget management
+ */
+
+/**
+ * @swagger
+ * /budget:
+ *   get:
+ *     summary: Get current budget
+ *     tags: [Budget]
+ *     responses:
+ *       200:
+ *         description: Current budget details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 budget:
+ *                   type: integer
+ *                   description: The monthly budget amount
+ */
 budgetRouter.get("/", authMiddleware, budgetController.getCurrentBudget);
+
+/**
+ * @swagger
+ * /budget:
+ *   patch:
+ *     summary: Update current budget
+ *     tags: [Budget]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - budget
+ *             properties:
+ *               budget:
+ *                 type: integer
+ *                 description: The monthly budget amount
+ *     responses:
+ *       200:
+ *         description: Budget updated successfully
+ */
 budgetRouter.patch(
   "/",
   authMiddleware,
