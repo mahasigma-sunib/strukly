@@ -3,7 +3,7 @@ import { Router } from "express";
 import BudgetController from "../controllers/budget_controller";
 import { authMiddleware } from "../middleware/auth_middleware";
 import { validateBody } from "../middleware/validation_middleware";
-import z from "zod";
+import { UpdateBudgetRequestSchema } from "../schemas";
 import {
   getCurrentBudgetUseCase,
   updateCurrentBudgetUseCase,
@@ -16,10 +16,54 @@ const budgetController = new BudgetController(
 
 export const budgetRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Budget
+ *   description: Budget management
+ */
+
+/**
+ * @swagger
+ * /budget:
+ *   get:
+ *     summary: Get current budget
+ *     tags: [Budget]
+ *     responses:
+ *       200:
+ *         description: Current budget details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BudgetHistoryResponse'
+ */
 budgetRouter.get("/", authMiddleware, budgetController.getCurrentBudget);
+
+/**
+ * @swagger
+ * /budget:
+ *   patch:
+ *     summary: Update current budget
+ *     tags: [Budget]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - budget
+ *             properties:
+ *               budget:
+ *                 type: integer
+ *                 description: The monthly budget amountc
+ *     responses:
+ *       204:
+ *         description: Budget updated successfully (no content)
+ */
 budgetRouter.patch(
   "/",
   authMiddleware,
-  validateBody(z.object({ budget: z.number().int().positive() })),
+  validateBody(UpdateBudgetRequestSchema),
   budgetController.updateCurrentBudget,
 );

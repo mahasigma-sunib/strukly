@@ -1,5 +1,4 @@
 import { Router } from "express";
-import z from "zod";
 import GoalItemController from "../controllers/goal_item_controllers";
 import { authMiddleware } from "../middleware/auth_middleware";
 import {
@@ -8,9 +7,11 @@ import {
 } from "../middleware/validation_middleware";
 
 import {
-  CreateGoalItemDTOSchema,
-  UpdateGoalItemDTOSchema,
-} from "../dto/goal_item_dto";
+  CreateGoalItemRequestSchema,
+  UpdateGoalItemRequestSchema,
+  DepositGoalItemRequestSchema,
+  GoalItemIdParamSchema,
+} from "../schemas";
 import {
   createGoalItemUseCase as createUseCase,
   getGoalItemListUseCase as getListUseCase,
@@ -23,6 +24,13 @@ import {
 
 const router = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Goals
+ *   description: Goal management
+ */
+
 const controller = new GoalItemController(
   createUseCase,
   getListUseCase,
@@ -33,48 +41,254 @@ const controller = new GoalItemController(
   deleteUseCase,
 );
 
+/**
+ * @swagger
+ * /goals:
+ *   post:
+ *     summary: Create a new goal
+ *     tags: [Goals]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - price
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the goal
+ *               price:
+ *                 type: integer
+ *                 description: The target price for the goal
+ *     responses:
+ *       201:
+ *         description: Goal created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 goal:
+ *                   $ref: '#/components/schemas/GoalItemResponse'
+ */
 router.post(
   "/goals",
   authMiddleware,
-  validateBody(CreateGoalItemDTOSchema),
+  validateBody(CreateGoalItemRequestSchema),
   controller.createGoalItem,
 );
 
+/**
+ * @swagger
+ * /goals:
+ *   get:
+ *     summary: Get list of goals
+ *     tags: [Goals]
+ *     responses:
+ *       200:
+ *         description: List of goals
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 goalItems:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/GoalItemResponse'
+ */
 router.get("/goals", authMiddleware, controller.getGoalItemList);
 
+/**
+ * @swagger
+ * /goals/{goalItemID}:
+ *   get:
+ *     summary: Get a specific goal
+ *     tags: [Goals]
+ *     parameters:
+ *       - in: path
+ *         name: goalItemID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         required: true
+ *         description: ID of the goal
+ *     responses:
+ *       200:
+ *         description: Goal details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 goal:
+ *                   $ref: '#/components/schemas/GoalItemResponse'
+ *       404:
+ *         description: Goal not found
+ */
 router.get(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(z.object({ goalItemID: z.uuid() })),
+  validateParams(GoalItemIdParamSchema),
   controller.getGoalItem,
 );
 
+/**
+ * @swagger
+ * /goals/complete/{goalItemID}:
+ *   patch:
+ *     summary: Mark a goal as completed
+ *     tags: [Goals]
+ *     parameters:
+ *       - in: path
+ *         name: goalItemID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         required: true
+ *         description: ID of the goal
+ *     responses:
+ *       200:
+ *         description: Goal marked as completed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 router.patch(
   "/goals/complete/:goalItemID",
   authMiddleware,
-  validateParams(z.object({ goalItemID: z.uuid() })),
+  validateParams(GoalItemIdParamSchema),
   controller.markGoalItemCompleted,
 );
 
+/**
+ * @swagger
+ * /goals/deposit/{goalItemID}:
+ *   patch:
+ *     summary: Deposit amount to a goal
+ *     tags: [Goals]
+ *     parameters:
+ *       - in: path
+ *         name: goalItemID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         required: true
+ *         description: ID of the goal
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *             properties:
+ *               amount:
+ *                 type: integer
+ *                 description: The amount to deposit
+ *     responses:
+ *       200:
+ *         description: Deposit successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 router.patch(
   "/goals/deposit/:goalItemID",
   authMiddleware,
-  validateBody(z.object({ amount: z.number() })),
+  validateBody(DepositGoalItemRequestSchema),
   controller.depositGoalItem,
 );
 
+/**
+ * @swagger
+ * /goals/{goalItemID}:
+ *   patch:
+ *     summary: Update a goal
+ *     tags: [Goals]
+ *     parameters:
+ *       - in: path
+ *         name: goalItemID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         required: true
+ *         description: ID of the goal
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               price:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Goal updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 goal:
+ *                   $ref: '#/components/schemas/GoalItemResponse'
+ */
 router.patch(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(z.object({ goalItemID: z.uuid() })),
-  validateBody(UpdateGoalItemDTOSchema),
+  validateParams(GoalItemIdParamSchema),
+  validateBody(UpdateGoalItemRequestSchema),
   controller.updateGoalItem,
 );
 
+/**
+ * @swagger
+ * /goals/{goalItemID}:
+ *   delete:
+ *     summary: Delete a goal
+ *     tags: [Goals]
+ *     parameters:
+ *       - in: path
+ *         name: goalItemID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         required: true
+ *         description: ID of the goal
+ *     responses:
+ *       200:
+ *         description: Goal deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 router.delete(
   "/goals/:goalItemID",
   authMiddleware,
-  validateParams(z.object({ goalItemID: z.uuid() })),
+  validateParams(GoalItemIdParamSchema),
   controller.deleteGoalItem,
 );
 
