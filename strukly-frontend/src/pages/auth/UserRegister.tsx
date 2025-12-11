@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
 import Button from "../../components/button/Button";
+import TextLogo from "../../components/logos/TextLogo";
+import WinkMascot from "../../components/mascots/WinkMascot";
 
 function UserRegister() {
   const [email, setEmail] = useState("");
@@ -68,92 +70,116 @@ function UserRegister() {
   };
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-[100vh] px-10">
-      <div className="font-extrabold text-4xl text-primary">Koinku</div>
+    <div className="bg-surface min-h-screen">
+      <div className="flex justify-center items-center w-full ">
+        <TextLogo width={108} height={108} />
+      </div>
 
-      <div className="flex flex-col gap-2 w-full">
-        <input
-          type="username"
-          id="username"
-          placeholder="Username"
-          value={username}
-          onChange={(event) => {
-            setUsername(event?.target.value);
-          }}
-          required
-          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
-                    focus:outline-none focus:border-primary"
-        />
-        <input
-          type="email"
-          id="email"
-          placeholder="Email"
-          value={email}
-          onChange={(event) => {
-            setEmail(event?.target.value);
-            handleEmailValidation();
-          }}
-          onBlur={handleEmailValidation}
-          required
-          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
-                    focus:outline-none focus:border-primary"
-        />
-        {emailError != "" && <p className="text-status-error">{emailError}</p>}
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          value={password}
-          onChange={(event) => {
-            setPassword(event?.target.value);
-            handlePasswordValidation();
-          }}
-          onBlur={handlePasswordValidation}
-          required
-          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
-                    focus:outline-none focus:border-primary"
-        />
-        {passwordError.length > 0 && (
-          <div className="text-status-error">
-            {passwordError.map((error, index) => (
-              <p key={index}>{error}</p>
-            ))}
+      <div className="flex flex-col gap-4  items-center justify-center px-10">
+        <div className="flex flex-col gap-1 mb-5 items-center justify-center">
+          <div className="mb-3">
+            <WinkMascot width={84} height={84} />
           </div>
-        )}
-        <input
-          type="password"
-          id="confirmPassword"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(event) => {
-            setConfirmPassword(event?.target.value);
-          }}
-          required
-          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
-                    focus:outline-none focus:border-primary"
-        />
-        {confirmPasswordError && (
-          <div className="text-status-error">{confirmPasswordError}</div>
-        )}
-      </div>
+          <p className="font-extrabold text-2xl text-text-primary">
+            Create Account
+          </p>
+          <p className="font-bold text-base text-inactive">
+            Let's set up your account!
+          </p>
+        </div>
 
-      <Button
-        onClick={handleRegister}
-        className="rounded cursor-pointer my-4 w-full"
-      >
-        Register
-      </Button>
+        <div className="flex flex-col gap-3 w-full">
+          <input
+            type="username"
+            id="username"
+            placeholder="Username"
+            value={username}
+            onChange={(event) => {
+              setUsername(event?.target.value);
+            }}
+            required
+            className="w-full p-3 border-2 border-border bg-background rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
+                     focus:outline-none focus:border-primary"
+          />
+          <input
+            type="email"
+            id="email"
+            placeholder="Email"
+            value={email}
+            onChange={(event) => {
+              setEmail(event?.target.value);
+              handleEmailValidation();
+            }}
+            onBlur={handleEmailValidation}
+            required
+            className="w-full p-3 border-2 border-border bg-background rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
+                     focus:outline-none focus:border-primary"
+          />
+          {emailError != "" && (
+            <p className="text-status-error">{emailError}</p>
+          )}
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            value={password}
+            onChange={(event) => {
+              setPassword(event?.target.value);
+              handlePasswordValidation();
+            }}
+            onBlur={handlePasswordValidation}
+            required
+            className="w-full p-3 border-2 border-border bg-background rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
+                     focus:outline-none focus:border-primary"
+          />
+          {passwordError.length > 0 && (
+            <div className="text-status-error">
+              {passwordError.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </div>
+          )}
+          <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(event) => {
+              setConfirmPassword(event?.target.value);
+            }}
+            required
+            className="w-full p-3 border-2 border-border bg-background rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
+                     focus:outline-none focus:border-primary"
+          />
+          {confirmPasswordError && (
+            <div className="text-status-error">{confirmPasswordError}</div>
+          )}
+        </div>
 
-      <div>
-        <span className="font-bold">Already have an account?</span>
-        <Button variant="text" onClick={() => navigate("/login")}>
-          Log in
+        <Button
+          onClick={handleRegister}
+          className="rounded cursor-pointer my-4 w-full"
+        >
+          SIGN UP
         </Button>
-      </div>
-      <div>
-        {registerError != "" && (
-          <p className="text-status-error">{registerError}</p>
-        )}
+
+        <div className="flex flex-row gap-2">
+          <span className="font-bold text-text-disabled">
+            Already have an account?
+          </span>
+          <span
+            onClick={() => navigate("/login")}
+            className="font-extrabold text-primary"
+          >
+            {" "}
+            Log in
+          </span>
+        </div>
+        <div>
+          {registerError != "" && (
+            <p className="text-status-error">{registerError}</p>
+          )}
+        </div>
       </div>
     </div>
   );

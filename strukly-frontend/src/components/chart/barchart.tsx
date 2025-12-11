@@ -13,16 +13,16 @@ import {
 
 // Configuration for a single bar
 export interface BarConfig {
-  key: string;       // data key 
-  color: string;     
-  label?: string;    // legend label (e.g., "Expense")
+  key: string; // data key
+  color: string;
+  label?: string; // legend label (e.g., "Expense")
 }
 
 interface CustomBarChartProps {
-  data: any[];       // Array of data objects
-  xAxisKey: string;  // Key for the X-axis labels (e.g., "name", "month")
+  data: any[]; // Array of data objects
+  xAxisKey: string; // Key for the X-axis labels (e.g., "name", "month")
   bars: BarConfig[]; // Array of bars to render
-  height?: number;   // Chart height (default: 300)
+  height?: number; // Chart height (default: 300)
   className?: string;
 }
 
@@ -49,14 +49,22 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({
           }}
         >
           {/* Grid lines: Horizontal only, subtle gray */}
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--fun-color-inactive)" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="var(--fun-color-inactive)"
+          />
 
           {/* X Axis: Clean, no axis line */}
           <XAxis
             dataKey={xAxisKey}
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "var(--fun-color-text-secondary)", fontSize: 12, fontWeight: 500 }}
+            tick={{
+              fill: "var(--fun-color-text-secondary)",
+              fontSize: 12,
+              fontWeight: 500,
+            }}
             dy={10}
           />
 
@@ -65,7 +73,7 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({
             axisLine={false}
             tickLine={false}
             tick={{ fill: "var(--fun-color-text-secondary)", fontSize: 12 }}
-            tickFormatter={(value) => 
+            tickFormatter={(value) =>
               // Optional: Shorten large numbers (1000 -> 1k)
               value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
             }
@@ -91,8 +99,8 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({
               dataKey={bar.key}
               name={bar.label || bar.key}
               fill={bar.color}
-              radius={[6, 6, 0, 0]} 
-              maxBarSize={35}      
+              radius={[6, 6, 0, 0]}
+              maxBarSize={35}
               // Hover Effect
               activeBar={
                 <Rectangle
