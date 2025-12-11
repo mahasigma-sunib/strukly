@@ -99,8 +99,10 @@ const expenseImageUpload = multer(); // store in memory
  *             schema:
  *               type: object
  *               properties:
- *                 expense:
- *                   $ref: '#/components/schemas/ExpenseResponse'
+ *                 transaction:
+ *                   $ref: '#/components/schemas/CreateExpenseRequest'
+ *       400:
+ *         description: Image is required
  */
 router.post(
   "/expenses/scan-image",
@@ -149,13 +151,41 @@ router.get(
  *   get:
  *     summary: Get weekly expense report
  *     tags: [Expenses]
+ *     parameters:
+ *       - in: query
+ *         name: date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: false
+ *         description: Optional reference date (YYYY-MM-DD). Defaults to the current week when omitted.
  *     responses:
  *       200:
  *         description: Weekly report
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/ExpenseReportResponse'
+ *               type: object
+ *               properties:
+ *                 startDate:
+ *                   type: string
+ *                   format: date
+ *                 endDate:
+ *                   type: string
+ *                   format: date
+ *                 totalSpent:
+ *                   type: number
+ *                 daily:
+ *                   type: array
+ *                   items:
+ *                     type: number
+ *                   description: Daily totals starting from Monday.
+ *                 history:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/HistoryItemResponse'
+ *       400:
+ *         description: Invalid date format
  */
 router.get(
   "/expenses/weekly",
@@ -213,7 +243,7 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateExpenseRequest'
+ *             $ref: '#/components/schemas/ExpenseResponse'
  *     responses:
  *       200:
  *         description: Expense updated successfully
@@ -226,6 +256,8 @@ router.get(
  *                   type: string
  *                 expense:
  *                   $ref: '#/components/schemas/ExpenseResponse'
+ *       400:
+ *         description: Validation error or mismatched expense ID
  */
 router.put(
   "/expenses/:expenseID",

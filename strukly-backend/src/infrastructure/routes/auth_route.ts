@@ -57,6 +57,13 @@ const router = Router();
  *     responses:
  *       201:
  *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  *       400:
  *         description: Invalid input
  *       409:
@@ -110,6 +117,13 @@ router.post('/auth/login', authController.login);
  *     responses:
  *       200:
  *         description: Logout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.post('/auth/logout', authMiddleware, authController.logout);
 
@@ -128,12 +142,28 @@ router.post('/auth/logout', authMiddleware, authController.logout);
  *             schema:
  *               type: object
  *               properties:
- *                 id:
+ *                 message:
  *                   type: string
- *                 email:
- *                   type: string
- *                 name:
- *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                     name:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
  */
 router.get('/auth/profile', authMiddleware, profileController.getProfile);
 
@@ -157,6 +187,13 @@ router.get('/auth/profile', authMiddleware, profileController.getProfile);
  *     responses:
  *       200:
  *         description: Profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.patch('/auth/profile', authMiddleware, profileController.updateProfile);
 

@@ -58,8 +58,8 @@ budgetRouter.get("/", authMiddleware, budgetController.getCurrentBudget);
  *                 type: integer
  *                 description: The monthly budget amountc
  *     responses:
- *       200:
- *         description: Budget updated successfully
+ *       204:
+ *         description: Budget updated successfully (no content)
  */
 budgetRouter.patch(
   "/",
