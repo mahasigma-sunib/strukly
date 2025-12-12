@@ -25,16 +25,15 @@ export default function ExpenseList({
           <div className="">{icon}</div>
 
           {/* vendor, date */}
-          <div>
-            <p className="font-bold text-[fun-color-text-primary]">
-              {vendorName}
-            </p>
-            <p className="text-[fun-color-text-secondary] text-sm">
+          <div className="flex flex-col gap-0.5">
+            <p className="font-bold text-text-primary text-lg">{vendorName}</p>
+            <p className="text-light-gray text-sm font-bold">
               {date.toLocaleDateString("en-US", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
-              })}{" "}
+              })}
+              {", "}
               {date.toLocaleTimeString("en-US", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -44,7 +43,7 @@ export default function ExpenseList({
         </div>
 
         {/* right */}
-        <div className="text-right">
+        <div className="text-right text-md font-bold text-text-secondary">
           <p>
             {currency}
             {amount}
