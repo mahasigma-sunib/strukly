@@ -3,7 +3,7 @@ import User from '../../domain/aggregates/user';
 import UserRepository from '../../domain/repositories/user_repository';
 
 export default class PrismaUserRepository implements UserRepository {
-  private prisma = new PrismaClient();
+  constructor(private readonly prisma: PrismaClient) {}
 
   async findByEmail(email: string): Promise<User | null> {
     const dbUser= await this.prisma.user.findUnique({

@@ -70,7 +70,7 @@ src/
 	infrastructure/
 		controllers/               # Web/controllers (Express) — translate HTTP <-> app/use cases
 		repositories/              # Adapters implementing domain repository interfaces (e.g., Prisma)
-		dto/                       # DTOs for IO boundaries (HTTP, messaging, etc.)
+		schemas/                   # HTTP Schemas
 		language_model/            # Adapters to LLMs/AI providers implementing domain ports
 ```
 
