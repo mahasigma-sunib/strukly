@@ -4,7 +4,10 @@ import { useEffect } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { ExpenseType } from "../type/ExpenseType";
-import type { ExpenseStatisticType, WeeklyStat } from "../type/expenseStatisticType";
+import type {
+  ExpenseStatisticType,
+  WeeklyStat,
+} from "../type/expenseStatisticType";
 
 type State = {
   statistic: ExpenseStatisticType;
@@ -122,7 +125,7 @@ function mapWeeklyStats(raw: any[]): WeeklyStat[] {
     spending: item.spending,
     startDate: item.startDate,
     endDate: item.endDate,
-  }))
+  }));
 }
 
 //to fetch & load the expense datas
@@ -156,7 +159,7 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
         month,
         year,
         weekly: mapWeeklyStats(data.weekly),
-        total: data.total
+        total: data.total,
       };
       console.log(stat);
       setStats(stat);
@@ -193,9 +196,12 @@ export async function putExpense(
 }
 
 export async function deleteExpense(id: string) {
+  console.log("nigger123delet");
   try {
-    const {} = useExpense();
-    await axios.delete(`http://localhost:3000/api/expense/${id}`);
+    // const {} = useExpense();
+    await axios.delete(`http://localhost:3000/api/expenses/${id}`, {
+      withCredentials: true,
+    });
   } catch (error) {
     console.error("Failed to put expense:", error);
     throw error; // rethrow so caller can handle it
