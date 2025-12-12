@@ -151,10 +151,10 @@ export default function ExpenseTracker() {
         </div>
         {isLoading && <p>Loading...</p>}
 
-        {/* {error && <p>{error}</p>} */}
+        {error && <p>{error}</p>}
 
         <div className="mt-0">
-          {/* conditional example */}
+          {/* conditional example
           {items.length === 0 && (
             <Card size="md">
               <ExpenseList
@@ -165,7 +165,7 @@ export default function ExpenseTracker() {
                 category="entertainment"
               />
             </Card>
-          )}
+          )} */}
 
           {items.map((item) => (
             <Card
