@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import AddIcon from "../icons/AddIcon";
 
 interface DrawerProps {
   visible: boolean;
