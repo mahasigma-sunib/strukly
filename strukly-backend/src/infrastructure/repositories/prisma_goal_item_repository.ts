@@ -1,5 +1,3 @@
-// src/infrastructure/repositories/prisma_goal_item_repository.ts
-
 import { PrismaClient } from "@prisma/client";
 import GoalItem from "../../domain/entities/goal_item";
 import { IGoalItemRepository } from "../../domain/repositories/goal_item_repository";
@@ -9,9 +7,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import AlreadyExistError from "src/domain/errors/AlreadyExistError";
 
 export default class PrismaGoalItemRepository implements IGoalItemRepository {
-  private prisma = new PrismaClient();
-
-  constructor() {}
+  constructor(private readonly prisma: PrismaClient) {}
 
   async create(goalItem: GoalItem): Promise<GoalItem> {
     try {

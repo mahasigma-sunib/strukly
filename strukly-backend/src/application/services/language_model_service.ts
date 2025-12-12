@@ -1,5 +1,5 @@
-import { CreateExpenseDTO } from "src/infrastructure/dto/expense_dto";
+import { CreateExpenseRequest } from "src/infrastructure/schemas";
 
 export default interface LanguageModelService {
-  imageToExpense: (base64Image: string) => Promise<CreateExpenseDTO>;
+  imageToExpense: (base64Image: string) => Promise<CreateExpenseRequest>;
 }

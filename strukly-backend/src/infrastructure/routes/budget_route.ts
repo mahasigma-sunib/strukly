@@ -3,28 +3,11 @@ import { Router } from "express";
 import BudgetController from "../controllers/budget_controller";
 import { authMiddleware } from "../middleware/auth_middleware";
 import { validateBody } from "../middleware/validation_middleware";
-import z from "zod";
-import GetCurrentBudgetUseCase from "src/application/use_cases/budget/get_current_budget";
-import BudgetService from "src/domain/services/budget_service";
-import PrismaBudgetHistoryRepository from "../repositories/prisma_budget_history_repository";
-import { PrismaClient } from "@prisma/client";
-import PrismaUserRepository from "../repositories/prisma_user_repository";
-import UpdateCurrentBudgetUseCase from "src/application/use_cases/budget/update_current_budget";
-
-const prismaUserRepository = new PrismaUserRepository();
-const prismaBudgetHistoryRepository = new PrismaBudgetHistoryRepository(
-  new PrismaClient(),
-);
-
-const budgetService = new BudgetService(
-  prismaUserRepository,
-  prismaBudgetHistoryRepository,
-);
-
-const getCurrentBudgetUseCase = new GetCurrentBudgetUseCase(budgetService);
-const updateCurrentBudgetUseCase = new UpdateCurrentBudgetUseCase(
-  budgetService,
-);
+import { UpdateBudgetRequestSchema } from "../schemas";
+import {
+  getCurrentBudgetUseCase,
+  updateCurrentBudgetUseCase,
+} from "src/composition_root";
 
 const budgetController = new BudgetController(
   getCurrentBudgetUseCase,
@@ -33,10 +16,54 @@ const budgetController = new BudgetController(
 
 export const budgetRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Budget
+ *   description: Budget management
+ */
+
+/**
+ * @swagger
+ * /budget:
+ *   get:
+ *     summary: Get current budget
+ *     tags: [Budget]
+ *     responses:
+ *       200:
+ *         description: Current budget details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BudgetHistoryResponse'
+ */
 budgetRouter.get("/", authMiddleware, budgetController.getCurrentBudget);
+
+/**
+ * @swagger
+ * /budget:
+ *   patch:
+ *     summary: Update current budget
+ *     tags: [Budget]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - budget
+ *             properties:
+ *               budget:
+ *                 type: integer
+ *                 description: The monthly budget amountc
+ *     responses:
+ *       204:
+ *         description: Budget updated successfully (no content)
+ */
 budgetRouter.patch(
   "/",
   authMiddleware,
-  validateBody(z.object({ budget: z.number().int().positive() })),
+  validateBody(UpdateBudgetRequestSchema),
   budgetController.updateCurrentBudget,
 );
