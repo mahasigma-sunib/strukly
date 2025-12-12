@@ -5,6 +5,7 @@ type cardSize = "sm" | "md" | "lg" | "xl";
 interface CardProps {
   size?: cardSize;
   children: React.ReactNode;
+  onClick?: () => void;
   className?: string;
 }
 
@@ -18,10 +19,12 @@ const sizeClasses: Record<cardSize, string> = {
 export default function Card({
   size = "md",
   children,
+  onClick,
   className = "",
 }: CardProps) {
   return (
     <div
+      onClick={onClick}
       className={`
         bg-[var(--fun-color-background)] shadow-md border border-[var(--fun-color-inactive)]
         transition-all duration-200

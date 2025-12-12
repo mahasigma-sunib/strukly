@@ -1,60 +1,58 @@
 import { useParams, Link } from "react-router-dom";
-import useExpense from "../store/ExpenseStore";
+import useSWR from "swr";
+import type { ExpenseType } from "../type/ExpenseType";
 
 function ExpenseDetail() {
   const { id } = useParams();
-  const { items: expenses } = useExpense();
-  const expense = expenses.find((tx) => tx.id === id);
+  const { data, error, isLoading } = useSWR(
+    `http://localhost:3000/api/expenses/${id}`,
+    (url) => fetch(url, { credentials: "include" }).then((res) => res.json())
+  );
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading expense</div>;
+  if (!data?.expense) return <div>No expense found</div>;
+
+  const raw = data.expense;
+  const expense: ExpenseType = {
+    userID: raw.userID,
+
+    id: raw.id,
+    dateTime: new Date(raw.dateTime),
+    vendorName: raw.vendorName,
+    category: raw.category,
+
+    currency: "Rp ",
+    subtotalAmount: raw.subtotalAmount.amount,
+    taxAmount: raw.taxAmount.amount,
+    discountAmount: raw.discountAmount.amount,
+    serviceAmount: raw.serviceAmount.amount,
+    totalAmount: raw.totalAmount.amount,
+
+    items: raw.items.map((item: any) => ({
+      expenseID: id,
+
+      id: item.id,
+      name: item.name,
+      quantity: item.quantity,
+      singleItemPrice: item.singlePrice.amount,
+      totalPrice: item.totalPrice.amount,
+    })),
+  };
+  // console.log(expense)
 
   if (!expense) {
     return (
       <div>
         <h2>Expense Not Found</h2>
         <p>No expense with the ID "{id}" exists.</p>
-        <Link to="/history">Go back to history</Link>
+        <Link to="/expense">Go back to expense</Link>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        paddingLeft: "1rem",
-        paddingRight: "1rem",
-        width: "100%",
-        margin: "0 auto",
-        boxSizing: "border-box",
-      }}
-    >
-      <h1>Expense Details</h1>
-      {/* <p>
-        <strong>ID:</strong> {expense.id}
-      </p> */}
-      <p>
-        <strong>Category:</strong> {expense.category}
-      </p>
-      <p>
-        <strong>{expense.vendorName}</strong>
-      </p>
-      <p>
-        <strong>Date:</strong> {expense.dateTime.toLocaleString()}
-      </p>
-      <p>
-        <strong>Total:</strong> ${expense.totalAmount.toFixed(2)}
-      </p>
-
-      <h3>Items:</h3>
-      <div>
-        {expense.items.map((item, index) => (
-          <div key={index}>
-            {item.quantity} x {item.name} ($
-            {item.singleItemPrice.toFixed(2)})
-          </div>
-        ))}
-      </div>
-
-      <Link to="/history">Go back to history</Link>
-    </div>
+    <div></div>
   );
 }
 
