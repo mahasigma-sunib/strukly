@@ -201,7 +201,7 @@ export async function deleteExpense(id: string) {
       withCredentials: true,
     });
   } catch (error) {
-    console.error("Failed to put expense:", error);
+    console.error("Failed to delete expense:", error);
     throw error; // rethrow so caller can handle it
   }
 }
