@@ -26,7 +26,7 @@ export default function Card({
     <div
       onClick={onClick}
       className={`
-        bg-[var(--fun-color-background)] shadow-md border border-[var(--fun-color-inactive)]
+        bg-surface border-border border-2 shadow-[0_4px_0_0_var(--color-border)]
         transition-all duration-200
         m-4
         ${sizeClasses[size]}  ${className}

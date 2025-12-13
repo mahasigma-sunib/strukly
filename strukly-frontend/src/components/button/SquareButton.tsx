@@ -1,22 +1,29 @@
 interface SquareButtonProps {
   icon: React.ReactNode;
   label: string;
+  sublabel?: string;
   onClick: () => void;
 }
 
 export default function SquareButton({
   icon,
   label,
+  sublabel,
   onClick,
 }: SquareButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center justify-center bg-[var(--fun-color-border)] rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] active:scale-95 active:bg-[var(--fun-color-light-gray)] transition-all duration-300 h-30 w-full"
+      className="px-2 flex flex-col items-start justify-center bg-background rounded-2xl transition-all h-18 w-full active:bg-border duration-300"
     >
-      <div className="mb-3">{icon}</div>
-      <div className="text-[var(--fun-color-text-secondary)] font-medium text-sm text-center">
-        {label}
+      <div className="flex flex-row items-center gap-2">
+        <div className="p-2">{icon}</div>
+        <div className="flex flex-col items-start">
+          <div className="text-text-primary text-regular font-bold">
+            {label}
+          </div>
+          <div className="text-text-secondary text-sm">{sublabel}</div>
+        </div>
       </div>
     </button>
   );
