@@ -151,7 +151,6 @@ function ExpenseDetail() {
               size="md"
               onClick={() => {
                 handleDelete();
-                console.log("Deleted");
                 setDeletePopUp(false);
               }}
             >
