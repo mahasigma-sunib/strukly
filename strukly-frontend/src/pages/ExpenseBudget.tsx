@@ -1,18 +1,19 @@
-import { useState } from "react";
+// import { useState } from "react";
 import BudgetList from "../components/card/BudgetListCard";
 import OverviewChart from "../components/graph/Chart";
-import useTransaction from "../store/TransactionStore";
-import Card from "../components/card/card";
-import Button from "../components/Button";
-import Popup from "../components/popup/PopUp";
+import useExpense from "../store/ExpenseStore";
+import Card from "../components/card/Card";
+import Button from "../components/button/Button";
+// import Popup from "../components/popup/PopUp";
+
 
 export default function ExpenseBudget() {
-  const { items: transactions } = useTransaction();
+  const { items: Expenses } = useExpense();
 
   const getSpentForCategory = (category: string) => {
-    return transactions
+    return Expenses
       .filter((t) => String(t.category || "").toLowerCase() === String(category || "").toLowerCase())
-      .reduce((acc, t) => acc + (typeof t.total === "number" ? t.total : Number(t.total) || 0), 0);
+      .reduce((acc, t) => acc + (typeof t.totalAmount === "number" ? t.totalAmount : Number(t.totalAmount) || 0), 0);
   };
 
   const budgets = [
@@ -28,9 +29,9 @@ export default function ExpenseBudget() {
   const totalBudget = budgets.reduce((s, b) => s + b.budget, 0);
 
   const categoriesSet = new Set(budgets.map((b) => b.category.toLowerCase()));
-  const totalSpent = transactions
+  const totalSpent = Expenses
     .filter((t) => categoriesSet.has(String(t.category || "").toLowerCase()))
-    .reduce((s, t) => s + (typeof t.total === "number" ? t.total : Number(t.total) || 0), 0);
+    .reduce((s, t) => s + (typeof t.totalAmount === "number" ? t.totalAmount : Number(t.totalAmount) || 0), 0);
 
   const formatMoney = (n: number) => `Rp ${new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(Math.round(n || 0))}`;
   const remaining = totalBudget - totalSpent;
