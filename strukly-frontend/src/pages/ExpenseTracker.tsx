@@ -168,7 +168,7 @@ export default function ExpenseTracker() {
             <Card
               key={item.id}
               size="md"
-              className="bg-[#EFF4FA] shadow-[0_4px_0_0_[#D9E8F5]]"
+              className="bg-[#EFF4FA] shadow-[0_4px_0_0_#D9E8F5]"
               onClick={() => navigate(`/expense/${item.id}`)}
             >
               <ExpenseList
