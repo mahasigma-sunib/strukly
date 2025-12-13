@@ -7,8 +7,8 @@ import Button from "../components/button/Button";
 import CustomBarChart from "../components/chart/barchart";
 import Drawer from "../components/drawer/Drawer";
 import Datepicker from "../components/scroll/DatePicker";
-// import CalendarIcon from "../components/utilityIcons/CalendarIcon";
-// import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
+import CalendarIcon from "../components/utilityIcons/CalendarIcon";
+import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
 
 export default function ExpenseTracker() {
   const today = new Date();

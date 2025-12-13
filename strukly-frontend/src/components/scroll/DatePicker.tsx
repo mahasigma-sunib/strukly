@@ -7,8 +7,18 @@ interface DatePickerProps {
 }
 
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const currentYear = new Date().getFullYear();
@@ -56,7 +66,7 @@ export default function DatePicker({
           // 3. SCROLL LOGIC
           onScroll={(e) => {
             const container = e.currentTarget;
-            
+
             // clear any existing timer so we dont update while still scrolling
             if (timerRef.current) clearTimeout(timerRef.current);
 
@@ -64,15 +74,18 @@ export default function DatePicker({
             timerRef.current = setTimeout(() => {
               // calculate index: scrollTop / 40px
               const scrollIndex = Math.round(container.scrollTop / ITEM_HEIGHT);
-              
+
               // ensure index is valid (0 to items.length - 1)
-              const clampedIndex = Math.max(0, Math.min(scrollIndex, items.length - 1));
+              const clampedIndex = Math.max(
+                0,
+                Math.min(scrollIndex, items.length - 1)
+              );
 
               // only update when value is different
               if (items[clampedIndex] !== selectedValue) {
                 onSelect(clampedIndex);
               }
-            }, 100); 
+            }, 100);
           }}
         >
           <div style={{ height: ITEM_HEIGHT * 2 }} />
@@ -87,13 +100,17 @@ export default function DatePicker({
                   if (ref.current) {
                     ref.current.scrollTo({
                       top: index * ITEM_HEIGHT,
-                      behavior: 'smooth'
+                      behavior: "smooth",
                     });
                   }
                 }}
                 className={`
                   h-[40px] flex items-center justify-center snap-center cursor-pointer transition-colors duration-200
-                  ${isSelected ? "text-[var(--fun-color-primary)] font-bold text-lg" : "text-[var(--fun-color-text-disabled)] text-base"}
+                  ${
+                    isSelected
+                      ? "text-text-primary font-bold text-lg"
+                      : "text-text-disabled font-medium text-base "
+                  }
                 `}
               >
                 {item}
@@ -107,23 +124,23 @@ export default function DatePicker({
   };
 
   return (
-    <div className="relative w-full bg-[var(--fun-color-background)] rounded-xl overflow-hidden">
-      <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 h-[40px] border-y border-[var(--fun-color-inactive)] pointer-events-none bg-[var(--fun-color-inactive)]/30 z-10" />
+    <div className="relative w-full bg-background rounded-2xl overflow-hidden">
+      <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 h-[40px] border-y border-inactive/40 pointer-events-none bg-inactive/15 z-10" />
 
-      <div className="flex justify-center relative z-20">
+      <div className="flex justify-center relative z-20 pt-2 pb-2">
         {/* pass specific timer refs here */}
         {renderColumn(
-          MONTHS, 
-          MONTHS[selectedMonth - 1], 
-          (index) => onChange(index + 1, selectedYear), 
+          MONTHS,
+          MONTHS[selectedMonth - 1],
+          (index) => onChange(index + 1, selectedYear),
           monthRef,
           monthTimerRef
         )}
 
         {renderColumn(
-          YEARS, 
-          selectedYear, 
-          (index) => onChange(selectedMonth, YEARS[index]), 
+          YEARS,
+          selectedYear,
+          (index) => onChange(selectedMonth, YEARS[index]),
           yearRef,
           yearTimerRef
         )}

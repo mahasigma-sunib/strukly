@@ -13,10 +13,10 @@ services:
     # volumes:
     #   - postgres_data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5433:5432
 
   strukly:
-    build: 
+    build:
       context: ./strukly-backend
     container_name: strukly-backend
     # restart: unless-stopped
