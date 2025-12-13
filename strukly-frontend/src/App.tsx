@@ -11,12 +11,12 @@ import UserRegister from "./pages/auth/UserRegister";
 import RegisterCookie from "./pages/auth/RegisterCookie";
 
 import Home from "./pages/Home";
-import TransactionHistory from "./pages/TransactionHistory";
-import TransactionDetail from "./pages/TransactionDetail";
-import AddTransaction from "./pages/AddTransaction";
-import UserProfile from "./pages/UserProfile";
 import ExpenseTracker from "./pages/ExpenseTracker";
+import ExpenseDetail from "./pages/ExpenseDetail";
+import NewExpense from "./pages/NewExpense";
 import ExpenseBudget from "./pages/ExpenseBudget";
+import Goals from "./pages/Goals";
+import Settings from "./pages/Settings";
 
 import MobileNavBar from "./components/MobileNavBar";
 
@@ -47,12 +47,12 @@ const App = () => {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<Home />} />
-            <Route path="/history" element={<TransactionHistory />} />
-            <Route path="/History/:id" element={<TransactionDetail />} />
-            <Route path="/addTransaction" element={<AddTransaction />} />
-            <Route path="/tracker" element={<ExpenseTracker />} />
+            <Route path="/expense" element={<ExpenseTracker />} />
+            <Route path="/expense/:id" element={<ExpenseDetail />} />
+            <Route path="/newExpense" element={<NewExpense />} />
             <Route path="/budget" element={<ExpenseBudget />} />
-            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/goals" element={<Goals />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
         </Routes>
       </div>

@@ -7,7 +7,7 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* Base Colors */
-  --fun-color-background: #f7fafc;
+  --fun-color-background: #f7f7f7;
   --fun-color-surface: #ffffff;
   --fun-color-text-primary: #252525;
   --fun-color-text-secondary: #7e7e80;
@@ -15,7 +15,7 @@
   --fun-color-border: #ebebec;
 
   /* Primary Colors */
-  --fun-color-primary: #ff9900;
+  --fun-color-primary: #ff9600;
   --fun-color-secondary: #ffc300;
   --fun-color-orange: #ff6600;
   --fun-color-yellow: #ffcc3e; /* might be useful later */
@@ -66,6 +66,7 @@
   --color-secondary-hover: var(--fun-color-secondary-hover);
   --color-primary-shadow: var(--fun-color-primary-shadow);
   --color-secondary-shadow: var(--fun-color-secondary-shadow);
+  --color-light-gray: var(--fun-color-light-gray);
 
   --color-category-food: var(--fun-color-category-food);
   --color-category-groceries: var(--fun-color-category-groceries);
@@ -85,6 +86,14 @@
 /* Global reset and base styles */
 * {
   box-sizing: border-box;
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }
 
 html,
@@ -92,6 +101,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
+  /* overflow: hidden; */
 }
 
 #root {

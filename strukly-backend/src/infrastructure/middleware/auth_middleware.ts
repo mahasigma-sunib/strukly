@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import JwtService from '../services/jwt_service';
+import { tokenService as jwtService } from "src/composition_root";
 
 declare global {
   namespace Express {
@@ -8,8 +8,6 @@ declare global {
     }
   }
 }
-
-const jwtService = new JwtService();
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -23,6 +21,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     next();
 
   } catch (error) {
+    console.error(error)
     return res.status(401).json({ error: 'invalid token' });
   }
 };

@@ -1,5 +1,5 @@
 import LanguageModelService from "src/application/services/language_model_service";
-import { CreateExpenseDTO, CreateExpenseDTOSchema } from "../dto/expense_dto";
+import { CreateExpenseRequest, CreateExpenseRequestSchema } from "../schemas";
 import { ContentListUnion, GoogleGenAI, Type } from "@google/genai";
 
 export default class GeminiLanguageModel implements LanguageModelService {
@@ -16,7 +16,7 @@ export default class GeminiLanguageModel implements LanguageModelService {
    * @param base64Image 
    * @returns 
    */
-  async imageToExpense(base64Image: string): Promise<CreateExpenseDTO> {
+  async imageToExpense(base64Image: string): Promise<CreateExpenseRequest> {
     const moneySchema = {
       type: Type.OBJECT,
       required: ["amount", "currency"],
@@ -96,6 +96,6 @@ export default class GeminiLanguageModel implements LanguageModelService {
       buffer += chunk.text;
     }
     console.log(JSON.parse(buffer))
-    return CreateExpenseDTOSchema.parse(JSON.parse(buffer));
+    return CreateExpenseRequestSchema.parse(JSON.parse(buffer));
   }
 }

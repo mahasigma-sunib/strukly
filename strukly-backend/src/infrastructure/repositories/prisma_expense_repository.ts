@@ -12,8 +12,8 @@ import ExpenseID from "../../domain/values/expense_id";
 export default class PrismaExpenseRepository
   implements IExpenseRepository
 {
-  private prisma = new PrismaClient();
-  constructor() {}
+  constructor(private readonly prisma: PrismaClient) { }
+
   async create(expense: Expense): Promise<Expense> {
     const createdExpense = await this.prisma.expenseHeader.create({
       data: {
@@ -114,51 +114,53 @@ export default class PrismaExpenseRepository
       )
     );
   }
-async findByUserID(userID: UserID, month: number, year: number): Promise<Expense[]> {
-  const startDate = new Date(year, month - 1, 1);
-  const endDate = new Date(year, month, 0);
-  endDate.setHours(23, 59, 59, 999);
 
-  const foundExpenses = await this.prisma.expenseHeader.findMany({
-    where: {
-      userID: userID.value,
-      dateTime: {
-        gte: startDate,
-        lte: endDate,
+  async findByDateRange(userID: UserID, from: Date, to: Date): Promise<Expense[]> {
+    const startDate = new Date(from);
+    startDate.setHours(0, 0, 0, 0)
+    const endDate = new Date(to);
+    endDate.setHours(23, 59, 59, 999);
+
+    const foundExpenses = await this.prisma.expenseHeader.findMany({
+      where: {
+        userID: userID.value,
+        dateTime: {
+          gte: startDate,
+          lte: endDate,
+        },
       },
-    },
-    include: { items: true },
-  });
+      include: { items: true },
+    });
 
-  return foundExpenses.map(
-    (expense) =>
-      new Expense(
-        new ExpenseHeader({
-          id: new ExpenseID(expense.id),
-          dateTime: expense.dateTime,
-          vendorName: expense.vendorName,
-          category: ExpenseCategory.fromString(expense.category),
-          subtotalAmount: Money.newWithDefault(expense.subtotalAmount),
-          taxAmount: Money.newWithDefault(expense.taxAmount),
-          discountAmount: Money.newWithDefault(expense.discountAmount),
-          serviceAmount: Money.newWithDefault(expense.serviceAmount),
-          totalAmount: Money.newWithDefault(expense.totalAmount),
+    return foundExpenses.map(
+      (expense) =>
+        new Expense(
+          new ExpenseHeader({
+            id: new ExpenseID(expense.id),
+            dateTime: expense.dateTime,
+            vendorName: expense.vendorName,
+            category: ExpenseCategory.fromString(expense.category),
+            subtotalAmount: Money.newWithDefault(expense.subtotalAmount),
+            taxAmount: Money.newWithDefault(expense.taxAmount),
+            discountAmount: Money.newWithDefault(expense.discountAmount),
+            serviceAmount: Money.newWithDefault(expense.serviceAmount),
+            totalAmount: Money.newWithDefault(expense.totalAmount),
 
-          userID: new UserID(expense.userID),
-        }),
-        expense.items.map(
-          (item) =>
-            new ExpenseItem({
-              id: new ExpenseItemID(item.id),
-              name: item.name,
-              quantity: item.quantity,
-              singlePrice: Money.newWithDefault(item.singlePrice),
-              totalPrice: Money.newWithDefault(item.totalPrice),
+            userID: new UserID(expense.userID),
+          }),
+          expense.items.map(
+            (item) =>
+              new ExpenseItem({
+                id: new ExpenseItemID(item.id),
+                name: item.name,
+                quantity: item.quantity,
+                singlePrice: Money.newWithDefault(item.singlePrice),
+                totalPrice: Money.newWithDefault(item.totalPrice),
 
-              expenseID: new ExpenseID(item.expenseID),
-            })
+                expenseID: new ExpenseID(item.expenseID),
+              })
+          )
         )
-      )
     );
   }
 
