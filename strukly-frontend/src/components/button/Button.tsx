@@ -33,12 +33,12 @@ const Button: React.FC<ButtonProps> = ({
       "bg-secondary text-white hover:bg-secondary-hover shadow-[0_4px_0_0_var(--color-secondary-shadow)] active:shadow-none active:bg-secondary",
 
     outline:
-      "border-2 border-primary text-primary hover:bg-primary hover:text-white shadow-none active:translate-y-0 active:shadow-none active:scale-100",
+      "border-2 border-primary text-primary hover:bg-primary hover:text-white shadow-none active:bg-primary-shadow active:scale-100",
 
     green:
       "bg-[#58CC02] text-white shadow-[0_4px_0_0_#4CB200] active:shadow-none ",
 
-    blue: "bg-[#1CB0F6] text-white shadow-[0_4px_0_0_#039be5] active:shadow-none ",
+    blue: "bg-[#21B1FF] text-white shadow-[0_4px_0_0_#039be5] active:shadow-none ",
 
     danger:
       "bg-red text-white hover:bg-red-hover shadow-[0_4px_0_0_#991B1B] active:shadow-none",

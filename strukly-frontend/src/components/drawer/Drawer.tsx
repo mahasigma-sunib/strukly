@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
+import AddIcon from "../icons/AddIcon";
 
 interface DrawerProps {
   visible: boolean;
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
+  mascot?: React.ReactNode;
   className?: string;
 }
 
@@ -45,7 +47,7 @@ const Drawer: React.FC<DrawerProps> = ({
       {/* drawer */}
       <div
         className={`
-          relative w-full max-w-md bg-[var(--fun-color-background)] rounded-t-2xl shadow-xl 
+          relative w-full max-w-md bg-surface rounded-t-3xl shadow-xl 
           transform transition-transform duration-300 ease-out 
           max-h-[90vh] flex flex-col
           ${visible ? "translate-y-0" : "translate-y-full"}
@@ -54,15 +56,13 @@ const Drawer: React.FC<DrawerProps> = ({
       >
         {/* header */}
         {title && (
-          <div className="px-6 pt-8 pb-4">
-            <h2 className="text-xl font-bold text-[var(--fun-color-text-primary)]">
-              {title}
-            </h2>
+          <div className="px-6 pt-8 pb-3 flex justify-center">
+            <h2 className="text-xl font-bold text-text-primary">{title}</h2>
           </div>
         )}
 
         {/* content */}
-        <div className="px-6 pb-8 overflow-y-auto">{children}</div>
+        <div className="px-4 pb-4 overflow-y-auto">{children}</div>
       </div>
     </div>
   );
