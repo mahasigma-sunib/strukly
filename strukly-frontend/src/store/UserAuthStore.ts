@@ -10,7 +10,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   register: async (name, email, password) => {
     try {
       //create user infomation in db
-      await axios.post("http://localhost:3000/api/auth/register", {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/register`, {
         name,
         email,
         password,
@@ -30,7 +30,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   login: async (userEmail, password) => {
     // Fetching and storing token
     await axios.post(
-      "http://localhost:3000/api/auth/login",
+      `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
       {
         email: userEmail,
         password,
@@ -42,7 +42,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   fetchProfile: async () => {
     try {
       const userRes = await axios.get(
-        "http://localhost:3000/api/auth/profile",
+        `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
         {
           withCredentials: true,
         }
@@ -64,7 +64,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
   logout: async () => {
     set({ user: null });
     await axios.post(
-      "http://localhost:3000/api/auth/logout",
+      `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
       {},
       { withCredentials: true }
     );

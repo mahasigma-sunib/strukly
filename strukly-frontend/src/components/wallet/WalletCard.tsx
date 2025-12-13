@@ -1,4 +1,4 @@
-import type { WalletType } from "../type/WalletType";
+import type { WalletType } from "../../type/WalletType";
 
 interface WalletCardProps {
   item: WalletType;
