@@ -1,39 +1,12 @@
-import FoodIcon from "../categoryIcons/FoodIcon";
-import GroceriesIcon from "../categoryIcons/GroceriesIcon";
-import VehicleIcon from "../categoryIcons/VehicleIcon";
-import ShoppingIcon from "../categoryIcons/ShoppingIcon";
-import EntertainmentIcon from "../categoryIcons/EntertainmentIcon";
-import OthersIcon from "../categoryIcons/OthersIcon";
-import UtilityIcon from "../categoryIcons/UtilityIcons";
-import type React from "react";
+import { getCategoryData } from "../../utils/CategoryConfig";
 
 interface ExpenseListProps {
   vendorName: string;
   date: Date;
   currency: string;
   amount: string;
-  category: keyof typeof categoryColors;
+  category: string;
 }
-
-const categoryColors: Record<string, string> = {
-  food: "var(--fun-color-category-food)",
-  groceries: "var(--fun-color-category-groceries)",
-  transportation: "var(--fun-color-category-transportation)",
-  housebills: "var(--fun-color-category-housebills)",
-  shopping: "var(--fun-color-category-shopping)",
-  entertainment: "var(--fun-color-category-entertainment)",
-  others: "var(--fun-color-category-others)",
-};
-
-const categoryIconMap: Record<keyof typeof categoryColors, React.ReactNode> = {
-  food: <FoodIcon />,
-  groceries: <GroceriesIcon />,
-  transportation: <VehicleIcon />,
-  shopping: <ShoppingIcon />,
-  entertainment: <EntertainmentIcon />,
-  housebills: <UtilityIcon />,
-  others: <OthersIcon />,
-};
 
 export default function ExpenseList({
   vendorName,
@@ -42,13 +15,14 @@ export default function ExpenseList({
   amount,
   category,
 }: ExpenseListProps) {
+  const { icon } = getCategoryData(category);
   return (
     <div>
       <div className="flex items-center justify-between">
         {/* left */}
         <div className="flex gap-4 items-center">
           {/* icon */}
-          <div className="">{categoryIconMap[category]}</div>
+          <div className="">{icon}</div>
 
           {/* vendor, date */}
           <div className="flex flex-col gap-0.5">
