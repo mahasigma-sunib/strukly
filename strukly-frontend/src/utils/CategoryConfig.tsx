@@ -1,7 +1,4 @@
-// src/utils/CategoryConfig.tsx
-
 import React from "react";
-// Adjust these import paths to match where your icons actually live
 import FoodIcon from "../components/categoryIcons/FoodIcon";
 import GroceriesIcon from "../components/categoryIcons/GroceriesIcon";
 import VehicleIcon from "../components/categoryIcons/VehicleIcon";
@@ -10,7 +7,6 @@ import EntertainmentIcon from "../components/categoryIcons/EntertainmentIcon";
 import OthersIcon from "../components/categoryIcons/OthersIcon";
 import UtilityIcon from "../components/categoryIcons/UtilityIcons";
 
-// 1. The Colors Map
 export const categoryColors: Record<string, string> = {
   food: "var(--fun-color-category-food)",
   groceries: "var(--fun-color-category-groceries)",
@@ -21,7 +17,6 @@ export const categoryColors: Record<string, string> = {
   others: "var(--fun-color-category-others)",
 };
 
-// 2. The Icons Map
 export const categoryIconMap: Record<string, React.ReactNode> = {
   food: <FoodIcon />,
   groceries: <GroceriesIcon />,
@@ -32,7 +27,6 @@ export const categoryIconMap: Record<string, React.ReactNode> = {
   others: <OthersIcon />,
 };
 
-// 3. Helper to safely get data (fallback to 'others' if API returns unknown category)
 export const getCategoryData = (category: string) => {
   const key = category?.toLowerCase();
   return {
