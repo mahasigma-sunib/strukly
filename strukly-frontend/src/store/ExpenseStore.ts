@@ -173,7 +173,9 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
 export async function postExpense(expense: ExpenseType) {
   const { addExpense } = useExpense();
   try {
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/expenses`, expense);
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/expenses`, expense, {
+      withCredentials: true,
+    });
     addExpense(expense);
   } catch (error) {
     console.error("Failed to post expense:", error);
@@ -188,8 +190,11 @@ export async function putExpense(
   const { updateExpense } = useExpense();
   try {
     await axios.put(
-      `${import.meta.env.VITE_API_BASE_URL}/expense/${id}`,
-      expense
+      `${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`,
+      expense,
+      {
+        withCredentials: true,
+      }
     );
     updateExpense(id, expense);
   } catch (error) {
@@ -200,7 +205,7 @@ export async function putExpense(
 
 export async function deleteExpense(id: string) {
   try {
-    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/expense/${id}`, {
+    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`, {
       withCredentials: true,
     });
   } catch (error) {
