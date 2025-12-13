@@ -131,7 +131,7 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
   const { setStats, setItems, setError, setLoading } = useExpense();
 
   const { data, error, isLoading } = useSWR(
-    `http://localhost:3000/api/expenses?month=${month}&year=${year}`,
+    `${import.meta.env.VITE_API_BASE_URL}/expenses?month=${month}&year=${year}`,
     (url) =>
       fetch(url, {
         credentials: "include",
@@ -170,7 +170,7 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
 export async function postExpense(expense: ExpenseType) {
   const { addExpense } = useExpense();
   try {
-    await axios.post("http://localhost:3000/api/expenses", expense);
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/expenses`, expense);
     addExpense(expense);
   } catch (error) {
     console.error("Failed to post expense:", error);
@@ -184,7 +184,7 @@ export async function putExpense(
 ) {
   const { updateExpense } = useExpense();
   try {
-    await axios.put(`http://localhost:3000/api/expense/${id}`, expense);
+    await axios.put(`${import.meta.env.VITE_API_BASE_URL}/expense/${id}`, expense);
     updateExpense(id, expense);
   } catch (error) {
     console.error("Failed to put expense:", error);
@@ -195,7 +195,7 @@ export async function putExpense(
 export async function deleteExpense(id: string) {
   try {
     const {} = useExpense();
-    await axios.delete(`http://localhost:3000/api/expense/${id}`);
+    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/expense/${id}`);
   } catch (error) {
     console.error("Failed to put expense:", error);
     throw error; // rethrow so caller can handle it
