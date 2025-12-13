@@ -17,22 +17,38 @@ export const categoryColors: Record<string, string> = {
   others: "var(--fun-color-category-others)",
 };
 
-export const categoryIconMap: Record<string, React.ReactNode> = {
-  food: <FoodIcon />,
-  groceries: <GroceriesIcon />,
-  transportation: <VehicleIcon />,
-  shopping: <ShoppingIcon />,
-  entertainment: <EntertainmentIcon />,
-  housebills: <UtilityIcon />,
-  others: <OthersIcon />,
-};
-
 export const getCategoryData = (category: string) => {
   const key = category?.toLowerCase();
-  return {
-    color: categoryColors[key] || categoryColors.others,
-    icon: categoryIconMap[key] || categoryIconMap.others,
-  };
+  
+  const color = categoryColors[key] || categoryColors.others;
+  let icon: React.ReactNode;
+
+  switch (key) {
+    case "food":
+      icon = <FoodIcon />;
+      break;
+    case "groceries":
+      icon = <GroceriesIcon />;
+      break;
+    case "transportation":
+      icon = <VehicleIcon />;
+      break;
+    case "shopping":
+      icon = <ShoppingIcon />;
+      break;
+    case "entertainment":
+      icon = <EntertainmentIcon />;
+      break;
+    case "housebills":
+      icon = <UtilityIcon />;
+      break;
+    case "others":
+    default:
+      icon = <OthersIcon />;
+      break;
+  }
+
+  return { color, icon };
 };
 
 // 4. Export the Type for use in props
