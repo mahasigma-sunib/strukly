@@ -58,7 +58,8 @@ export default function MobileNavBar() {
 
   const navigate = useNavigate();
   const handleAddBtn = (target: string) => {
-    navigate(`/newExpense/${target}`);
+    setIsDrawerOpen(false);
+    navigate(`/expense/${target}`);
   };
 
   return (
@@ -120,7 +121,7 @@ export default function MobileNavBar() {
                 height={36}
               />
             }
-            onClick={() => handleAddBtn("insert")}
+            onClick={() => handleAddBtn("add")}
           />
           <div className="flex justify-center mt-2">
             <CloseIcon
