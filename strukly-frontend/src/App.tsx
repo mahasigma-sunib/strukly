@@ -13,7 +13,7 @@ import RegisterCookie from "./pages/auth/RegisterCookie";
 import Home from "./pages/Home";
 import ExpenseTracker from "./pages/ExpenseTracker";
 import ExpenseDetail from "./pages/ExpenseDetail";
-import NewExpense from "./pages/NewExpense";
+import AddExpense from "./pages/AddExpense";
 import ExpenseBudget from "./pages/ExpenseBudget";
 import Goals from "./pages/Goals";
 import Settings from "./pages/Settings";
@@ -49,7 +49,7 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/expense" element={<ExpenseTracker />} />
             <Route path="/expense/:id" element={<ExpenseDetail />} />
-            <Route path="/newExpense" element={<NewExpense />} />
+            <Route path="/expense/add" element={<AddExpense />} />
             <Route path="/budget" element={<ExpenseBudget />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/settings" element={<Settings />} />
