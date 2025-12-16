@@ -1,7 +1,7 @@
 import React from 'react';
 import { Target, CheckCircle2, ArrowUpCircle, Edit3, Trash2 } from 'lucide-react';
 import ProgressBar from '../graph/ProgressBar';
-import type { GoalItem } from './types';
+import type { GoalItem } from '../../type/GoalsType';
 
 interface Props {
 	goal: GoalItem;

@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 
 import { Plus, Target, Trash2, Edit3, ArrowUpCircle, X, CheckCircle2 } from 'lucide-react';
-
-// --- Types ---
-export type GoalItem = {
-  id: string;
-  name: string;
-  price: number;
-  currentAmount: number;
-  isCompleted: boolean;
-};
+import type { GoalItem } from '../type/GoalsType';
 
 // --- Local components (inlined) ---
 const GoalsHeader: React.FC<{ activeCount: number; onAdd: () => void }> = ({ activeCount, onAdd }) => (
