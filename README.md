@@ -6,39 +6,6 @@ Clone the repository!
 git clone https://github.com/mahasigma-sunib/strukly.git
 ```
 
-### Starting on a new feature
-
-First create a separate branch
-
-```sh
-git branch <BRANCH_NAME>
-```
-
-Activate your new branch.
-
-```sh
-git checkout <BRANCH_NAME>
-```
-
-Then push the branch
-
-```sh
-git push -u origin <BRANCHNAME>
-```
-
-### Merging your feature
-
-Create a pull request to merge from your branch to master.
-
-Wait for a review and merge.
-
-After it is merged to master you may fast-forward your branch. (Make sure the active branch is your branch.)
-
-```sh
-git fetch --all
-git merge origin/master 
-```
-
 ### Running the Backend
 
 #### Docker
@@ -48,23 +15,26 @@ you can start the backend server using docker:
 
 (make sure your active directory is in the project root and not strukly-backend)
 
+Make sure `.env` file is present.
+
 ```sh
 docker compose up -d
 ```
 
 If there were changes to the backend code, please run with `--build` flag.
 
-If you're done you can just run:
+To turn off the backend server:
 
 ```sh
 docker compose down
 ```
 
-#### Local run without Docker
+#### Running The Backend Without Docker
 
 If you are working on the backend and need live reload:
 
-Ensure you have a postgres server running and set `strukly-backend/.env` environment variables.
+1. Ensure you have a postgres server running
+2. Set `strukly-backend/.env` environment variables.
 
 ```sh
 cd strukly-backend
@@ -79,7 +49,9 @@ Run the server in dev mode with live reload.
 npm run dev
 ```
 
-### Running the Frontend
+### Running The Frontend
+
+Make sure `.env` file is present in `strukly-frontend/`.
 
 ```sh
 cd strukly-frontend
