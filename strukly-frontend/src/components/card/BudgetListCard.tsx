@@ -16,14 +16,11 @@ export default function BudgetList({
 }: BudgetListProps) {
   const { icon } = getCategoryData(category);
 
-  const spentNum = spent;
-  const budgetNum = budget;
-
   const idFormatter = new Intl.NumberFormat("id-ID", {
     maximumFractionDigits: 0,
   });
-  const spentString = `${idFormatter.format(spentNum)}`;
-  const budgetString = `${idFormatter.format(budgetNum)}`;
+  const spentString = `${idFormatter.format(spent)}`;
+  const budgetString = `${idFormatter.format(budget)}`;
 
   return (
     <div>
@@ -39,7 +36,7 @@ export default function BudgetList({
           {/* category, expense budget bar , expense budget text */}
           <p className="font-bold text-[fun-color-text-primary]">{category}</p>
 
-          <ProgressBar value={spentNum} max={budgetNum} height={8} />
+          <ProgressBar value={spent} max={budget} height={8} />
           <p className="text-[fun-color-text-secondary] text-xs">
             {currency} {spentString} / {budgetString}
           </p>
