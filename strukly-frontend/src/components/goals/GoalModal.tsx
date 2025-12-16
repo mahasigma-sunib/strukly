@@ -1,0 +1,48 @@
+import React from 'react';
+import { X } from 'lucide-react';
+
+type ModalMode = 'create' | 'deposit' | 'edit' | null;
+
+interface Props {
+	activeModal: ModalMode;
+	formData: { name: string; price: number };
+	setFormData: React.Dispatch<React.SetStateAction<{ name: string; price: number }>>;
+	tempAmount: number;
+	setTempAmount: React.Dispatch<React.SetStateAction<number>>;
+	onClose: () => void;
+	onConfirm: () => void;
+}
+
+const GoalModal: React.FC<Props> = ({ activeModal, formData, setFormData, tempAmount, setTempAmount, onClose, onConfirm }) => {
+	if (!activeModal) return null;
+	return (
+		<div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+			<div className="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
+				<div className="flex justify-between items-center mb-6">
+					<h2 className="text-xl font-black text-slate-800 uppercase italic">
+						{activeModal === 'create' && 'Add New Goal'}{activeModal === 'edit' && 'Update Goal'}{activeModal === 'deposit' && 'Add Savings'}
+					</h2>
+					<button onClick={onClose} className="p-2 bg-slate-100 rounded-full text-slate-500"><X size={20} /></button>
+				</div>
+
+				<div className="space-y-4">
+					{activeModal !== 'deposit' ? (
+						<>
+							<input type="text" placeholder="Goal Name" value={formData.name} className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 focus:border-blue-500 outline-none transition-all" onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+							<input type="number" placeholder="Target Price (Rp)" value={formData.price || ''} className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 focus:border-blue-500 outline-none transition-all" onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })} />
+						</>
+					) : (
+						<div className="text-center">
+							<p className="text-sm text-slate-500 mb-2">Berapa yang ingin kamu tabung?</p>
+							<input type="number" autoFocus placeholder="0" className="w-full text-center text-3xl font-black bg-transparent border-b-2 border-blue-500 outline-none p-4" onChange={(e) => setTempAmount(Number(e.target.value))} value={tempAmount || ''} />
+						</div>
+					)}
+
+					<button onClick={onConfirm} className="w-full bg-slate-900 text-white font-black py-5 rounded-2xl mt-4 shadow-xl shadow-slate-200 uppercase tracking-widest active:scale-95 transition-all">Confirm</button>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default GoalModal;
