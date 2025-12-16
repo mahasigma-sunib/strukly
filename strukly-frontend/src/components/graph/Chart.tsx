@@ -14,7 +14,7 @@ export default function OverviewChart({
   if (totalBudget <= 0) {
     return (
       <div className="flex flex-col items-center gap-2 p-2">
-        <div className="text-sm text-[fun-color-text-primary]">
+        <div className="text-sm text-[var(--fun-color-text-primary)]">
           Set budgets to see an overview
         </div>
       </div>
@@ -78,7 +78,7 @@ export default function OverviewChart({
           <div className={`text-lg font-semibold ${isOver ? "text-red-500" : "text-emerald-400"}`}>
             {percent}%
           </div>
-          <div className="text-xs text-[fun-color-text-secondary] -mt-1">of total budget used</div>
+          <div className="text-xs text-[var(--fun-color-text-secondary)] -mt-1">of total budget used</div>
         </div>
       </div>
     </div>
