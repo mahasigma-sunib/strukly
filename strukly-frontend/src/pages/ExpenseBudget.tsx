@@ -114,7 +114,7 @@ export default function ExpenseBudget() {
   if (error)
     return (
       <div className="flex h-screen items-center justify-center text-red-500">
-        Error loading expense
+        Error loading budget data
       </div>
     );
 
