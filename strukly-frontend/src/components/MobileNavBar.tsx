@@ -12,10 +12,10 @@ import AddIcon from "./icons/AddIcon";
 import Drawer from "./drawer/Drawer";
 import SquareButton from "./button/SquareButton";
 
-import HappyMascot from "./mascots/HappyMascot";
-import WinkMascot from "./mascots/WinkMascot";
-import WhistleMascot from "./mascots/WhistleMascot";
-import HeadbandMascot from "./mascots/HeadbandMascot";
+import CameraIcon from "./utilityIcons/CameraIcon";
+import GalleryIcon from "./utilityIcons/GalleryIcon";
+import ManualWriteIcon from "./utilityIcons/ManualWriteIcon";
+import CloseIcon from "./utilityIcons/CloseIcon";
 
 interface NavLinkProps {
   to: string;
@@ -42,8 +42,12 @@ function NavLink({ to, label, activeIcon, inactiveIcon }: NavLinkProps) {
         {isActive ? activeIcon : inactiveIcon}
       </div>
 
-      <span className={`text-xs ${isActive ? "text-active font-bold" : ""}`}>
-        {isActive ? label : ""}
+      <span
+        className={`text-xs ${
+          isActive ? "text-active font-bold" : "text-inactive font-bold"
+        }`}
+      >
+        {label}
       </span>
     </Link>
   );
@@ -58,7 +62,7 @@ export default function MobileNavBar() {
   };
 
   return (
-    <nav className="rounded-full fixed bottom-4 left-4 right-4 grid grid-cols-5 items-center h-16 bg-white border-2 border-background z-50 shadow-lg pl-1 pr-1">
+    <nav className="rounded-t-3xl fixed bottom-0 left-0 right-0 grid grid-cols-5 items-center h-16 bg-white z-50 shadow-[0_0_20px_5px_rgba(0,0,0,0.02)] pl-1 pr-1">
       <NavLink
         to="/home"
         label="Home"
@@ -74,7 +78,7 @@ export default function MobileNavBar() {
 
       <div className="flex justify-center">
         <button onClick={() => setIsDrawerOpen(true)}>
-          <div className="-mt-5 w-18 h-17 bg-white rounded-full flex justify-center items-center">
+          <div className="-mt-7 w-18 h-17 bg-white rounded-full flex justify-center items-center">
             <div className="flex items-center justify-center w-12 h-12 bg-[#FFC606] border-6 border-[#FFE432] rounded-full shadow-[0_5px_0_0_#FFAA28] active:shadow-none active:translate-y-1 transition-all duration-100">
               <AddIcon width={22} height={22} />
             </div>
@@ -87,27 +91,43 @@ export default function MobileNavBar() {
         onClose={() => setIsDrawerOpen(false)}
         title="Add New Expense"
       >
-        <div className="grid grid-cols-2 gap-6 px-4 pb-4 pt-2">
+        <div className="flex flex-col space-y-4 px-2 pb-2 pt-2">
           <SquareButton
-            label="Camera"
-            icon={<HappyMascot />}
+            label="Open Camera"
+            sublabel="Scan your receipt quickly"
+            icon={<CameraIcon className="text-orange" width={36} height={36} />}
             onClick={() => handleAddBtn("camera")}
           />
           <SquareButton
-            label="Gallery"
-            icon={<WhistleMascot />}
+            label="Open Gallery"
+            sublabel="Import images from your gallery"
+            icon={
+              <GalleryIcon
+                className="text-primary-hover"
+                width={36}
+                height={36}
+              />
+            }
             onClick={() => handleAddBtn("gallery")}
           />
           <SquareButton
-            label="Insert"
-            icon={<HeadbandMascot />}
+            label="Write Manually"
+            sublabel="Input transaction details manually"
+            icon={
+              <ManualWriteIcon
+                className="text-secondary"
+                width={36}
+                height={36}
+              />
+            }
             onClick={() => handleAddBtn("insert")}
           />
-          <SquareButton
-            label="Split Bill"
-            icon={<WinkMascot />}
-            onClick={() => handleAddBtn("splitBill")}
-          />
+          <div className="flex justify-center mt-2">
+            <CloseIcon
+              onClick={() => setIsDrawerOpen(false)}
+              className="w-13 h-13 text-disabled p-3 rounded-full bg-background"
+            />
+          </div>
         </div>
       </Drawer>
 

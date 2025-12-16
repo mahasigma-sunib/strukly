@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
 import Button from "../../components/button/Button";
+import TextLogo from "../../components/logos/TextLogo";
+import LoginMascot from "../../components/mascots/LoginMascot";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -40,7 +42,9 @@ function UserLogin() {
     setLoginError("");
 
     if (!email || !password || emailError !== "" || passwordError.length > 0) {
-      return; // Stop if there are errors
+      if (!email) setEmailError("Email cannot be empty");
+      if (!password) setPasswordError(["Password cannot be empty"]);
+      return;
     }
 
     try {
@@ -52,63 +56,103 @@ function UserLogin() {
   };
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-[100vh] px-10">
-      <div className="font-extrabold text-4xl text-primary">Koinku</div>
+    <div className="bg-surface min-h-screen flex flex-col items-center">
+      <div className="flex justify-center items-center w-full pt-10 pb-4">
+        <TextLogo width={108} height={84} />
+      </div>
 
-      <div className="flex flex-col gap-2 w-full">
-        <input
-          type="email"
-          id="email"
-          placeholder="Email"
-          value={email}
-          onChange={(event) => {
-            setEmail(event?.target.value);
-            handleEmailValidation();
-          }}
-          onBlur={handleEmailValidation}
-          required
-          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
-                    focus:outline-none focus:border-primary"
-        />
-        {emailError != "" && <p className="text-status-error">{emailError}</p>}
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          value={password}
-          onChange={(event) => {
-            setPassword(event?.target.value);
-            handlePasswordValidation();
-          }}
-          onBlur={handlePasswordValidation}
-          required
-          className="w-full p-2.5 border-2 border-border bg-surface rounded-xl text-base mx-auto block
-                    focus:outline-none focus:border-primary"
-        />
-        {passwordError.length > 0 && (
-          <div className="text-status-error">
-            {passwordError.map((error, index) => (
-              <p key={index}>{error}</p>
-            ))}
+      <div className="flex flex-col gap-4 items-center w-full max-w-sm md:max-w-md px-6">
+        <div className="flex flex-col gap-1 mb-5 mt-4 items-center justify-center text-center">
+          <div className="mb-1">
+            <LoginMascot width={144} height={144} />
           </div>
-        )}
-      </div>
+          <p className="font-extrabold text-2xl text-text-primary">
+            Welcome Back!
+          </p>
+          <p className="font-bold text-base text-inactive">
+            Let's get you back in!
+          </p>
+        </div>
 
-      <Button
-        onClick={handleLogin}
-        className="rounded cursor-pointer my-4 w-full"
-      >
-        Log in
-      </Button>
+        {/* Form Fields Section */}
+        <div className="flex flex-col gap-3 w-full">
+          {/* Email Input */}
+          <input
+            type="email"
+            id="email"
+            placeholder="Email or username"
+            value={email}
+            onChange={(event) => {
+              setEmail(event?.target.value);
+              handleEmailValidation();
+            }}
+            onBlur={handleEmailValidation}
+            required
+            className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
+                      bg-background focus:outline-none focus:border-primary 
+                      ${emailError ? "border-status-error" : "border-border"}`}
+          />
+          {emailError != "" && (
+            <p className="text-status-error text-sm mt-[-4px]">{emailError}</p>
+          )}
 
-      <div>
-        <span className="font-bold">Don&apos;t have an account?</span>
-        <Button variant="text" onClick={() => navigate("/register")}>
-          Register here
+          {/* Password Input */}
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            value={password}
+            onChange={(event) => {
+              setPassword(event?.target.value);
+              handlePasswordValidation();
+            }}
+            onBlur={handlePasswordValidation}
+            required
+            className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
+                      bg-background focus:outline-none focus:border-primary 
+                      ${
+                        passwordError.length > 0
+                          ? "border-status-error"
+                          : "border-border"
+                      }`}
+          />
+          {passwordError.length > 0 && (
+            <div className="text-status-error text-sm mt-[-4px]">
+              {passwordError.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Login Button */}
+        <Button
+          variant="primary"
+          onClick={handleLogin}
+          className="rounded cursor-pointer my-4 w-full py-3"
+        >
+          LOG IN
         </Button>
-      </div>
-      <div>
-        {loginError != "" && <p className="text-status-error">{loginError}</p>}
+
+        {/* Register Link */}
+        <div className="flex flex-row gap-2">
+          <span className="font-bold text-text-disabled">
+            Don&apos;t have an account?
+          </span>
+          <span
+            onClick={() => navigate("/register")}
+            className="font-extrabold text-primary cursor-pointer"
+          >
+            Sign Up
+          </span>
+        </div>
+
+        {/* Login Error Display */}
+        <div>
+          {loginError != "" && (
+            <p className="text-status-error">{loginError}</p>
+          )}
+        </div>
       </div>
     </div>
   );
