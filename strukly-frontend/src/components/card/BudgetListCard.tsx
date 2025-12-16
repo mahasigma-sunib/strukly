@@ -34,10 +34,10 @@ export default function BudgetList({
         {/* right */}
         <div className="gap-4 items-center w-3/4">
           {/* category, expense budget bar , expense budget text */}
-          <p className="font-bold text-[fun-color-text-primary]">{category}</p>
+          <p className="font-bold text-[var(--fun-color-text-primary)]">{category}</p>
 
           <ProgressBar value={spent} max={budget} height={8} />
-          <p className="text-[fun-color-text-secondary] text-xs">
+          <p className="text-[var(--fun-color-text-secondary)] text-xs">
             {currency} {spentString} / {budgetString}
           </p>
         </div>
