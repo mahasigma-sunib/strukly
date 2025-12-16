@@ -78,7 +78,7 @@ export default function OverviewChart({
           <div className={`text-lg font-semibold ${isOver ? "text-red-500" : "text-emerald-400"}`}>
             {percent}%
           </div>
-          <div className="text-xs text-[fun-color-text-secondary] -mt-1">of total budget used</div>
+          <div className="text-xs text-[var(--fun-color-text-secondary)] -mt-1">of total budget used</div>
         </div>
       </div>
     </div>
