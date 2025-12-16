@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Plus, Target, Trash2, Edit3, ArrowUpCircle, X, CheckCircle2 } from 'lucide-react';
 import type { GoalItem } from '../type/GoalsType';
 
-// --- Local components (inlined) ---
 const GoalsHeader: React.FC<{ activeCount: number; onAdd: () => void }> = ({ activeCount, onAdd }) => (
   <header className="p-6 bg-white border-b border-slate-100 sticky top-0 z-10">
     <div className="flex justify-between items-center">
@@ -37,7 +36,6 @@ const GoalCard: React.FC<{ goal: GoalItem; onDeposit: (g: GoalItem) => void; onE
     </div>
 
     <div className="mt-1">
-      {/* use graph ProgressBar */}
       <div className="w-full"><div className="w-full bg-neutral-700 rounded-full overflow-hidden h-2"><div className={`${goal.currentAmount > goal.price ? 'bg-red-500' : 'bg-gradient-to-r from-green-400 via-yellow-400 to-orange-400'} h-full transition-all`} style={{ width: `${Math.max(0, Math.min(100, (goal.currentAmount / Math.max(goal.price, 1)) * 100))}%` }} /></div></div>
     </div>
   </div>
@@ -83,7 +81,6 @@ const GoalModal: React.FC<{
   );
 };
 
-// --- Page (uses local components) ---
 const GoalsPage: React.FC = () => {
   const [goals, setGoals] = useState<GoalItem[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
