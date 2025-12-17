@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import CloseIcon from '../utilityIcons/CloseIcon';
 
 type ModalMode = 'create' | 'deposit' | 'edit' | null;
 
@@ -19,10 +19,10 @@ const GoalModal: React.FC<Props> = ({ activeModal, formData, setFormData, tempAm
 		<div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
 			<div className="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
 				<div className="flex justify-between items-center mb-6">
-					<h2 className="text-xl font-black text-slate-800 uppercase italic">
+					<h2 className="text-xl font-black text-slate-800 uppercase">
 						{activeModal === 'create' && 'Add New Goal'}{activeModal === 'edit' && 'Update Goal'}{activeModal === 'deposit' && 'Add Savings'}
 					</h2>
-					<button onClick={onClose} className="p-2 bg-slate-100 rounded-full text-slate-500"><X size={20} /></button>
+					<button onClick={onClose} className="p-2 bg-slate-100 rounded-full text-slate-500"><CloseIcon width={20} height={20}/></button>
 				</div>
 
 				<div className="space-y-4">
