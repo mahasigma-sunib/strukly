@@ -1,5 +1,6 @@
 import React from 'react';
 import CloseIcon from '../utilityIcons/CloseIcon';
+import Button from '../button/Button'
 
 type ModalMode = 'create' | 'deposit' | 'edit' | null;
 
@@ -22,7 +23,7 @@ const GoalModal: React.FC<Props> = ({ activeModal, formData, setFormData, tempAm
 					<h2 className="text-xl font-black text-slate-800 uppercase">
 						{activeModal === 'create' && 'Add New Goal'}{activeModal === 'edit' && 'Update Goal'}{activeModal === 'deposit' && 'Add Savings'}
 					</h2>
-					<button onClick={onClose} className="p-2 bg-slate-100 rounded-full text-slate-500"><CloseIcon width={20} height={20}/></button>
+					<button onClick={onClose} className="text-slate-500"><CloseIcon width={20} height={20}/></button>
 				</div>
 
 				<div className="space-y-4">
@@ -38,7 +39,7 @@ const GoalModal: React.FC<Props> = ({ activeModal, formData, setFormData, tempAm
 						</div>
 					)}
 
-					<button onClick={onConfirm} className="w-full bg-slate-900 text-white font-black py-5 rounded-2xl mt-4 shadow-xl shadow-slate-200 uppercase tracking-widest active:scale-95 transition-all">Confirm</button>
+					<Button onClick={onConfirm} className="w-full text-white font-black uppercase tracking-widest active:scale-95 transition-all" variant="secondary">Confirm</Button>
 				</div>
 			</div>
 		</div>
