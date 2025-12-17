@@ -1,5 +1,7 @@
 import React from 'react';
-import { Target, CheckCircle2, ArrowUpCircle, Edit3, Trash2 } from 'lucide-react';
+import { Target, CheckCircle2, ArrowUpCircle} from 'lucide-react';
+import EditIcon from '../utilityIcons/EditIcon'
+import DeleteIcon from '../utilityIcons/DeleteIcon'
 import ProgressBar from '../graph/ProgressBar';
 import type { GoalItem } from '../../type/GoalsType';
 
@@ -46,10 +48,10 @@ const GoalCard: React.FC<Props> = ({ goal, onDeposit, onEdit, onDelete }) => {
 						onClick={() => onEdit(goal)}
 						className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
 					>
-						<Edit3 size={18} />
+						<EditIcon width={20} height={20}/>
 					</button>
 					<button onClick={() => onDelete(goal.id)} className="p-2 text-red-400 hover:bg-red-50 rounded-lg">
-						<Trash2 size={18} />
+						<DeleteIcon width={20} height={30} />
 					</button>
 				</div>
 			</div>

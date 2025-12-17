@@ -33,7 +33,7 @@ const GoalsPage: React.FC = () => {
   const handleDelete = (id: string) => setGoals((g) => g.filter((it) => it.id !== id));
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-[#F8FAFC] pb-24 text-slate-900">
+    <div className="max-w-md mx-auto min-h-screen bg-[var(--fun-color-background)] pb-24 text-slate-900">
       <GoalsHeader activeCount={goals.filter((g) => !g.isCompleted).length} onAdd={() => { setFormData({ name: '', price: 0 }); setActiveModal('create'); }} />
 
       <main className="p-6 space-y-4">
