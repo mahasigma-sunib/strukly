@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -15,7 +16,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:
+      process.env.PRODUCTION === "1"
+        ? "https://koinku.my.id"
+        : "http://localhost:5173",
     credentials: true,
   }),
 );

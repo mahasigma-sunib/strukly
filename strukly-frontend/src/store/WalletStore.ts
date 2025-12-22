@@ -100,7 +100,7 @@ const useWallet = create<State & Actions>()(
 export async function postWallet(wallet: WalletType) {
   const { addWallet } = useWallet();
   try {
-    await axios.post("http://localhost:3000/api/wallet/add", wallet);
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/wallet/add`, wallet);
     addWallet(wallet);
   } catch (error) {
     console.error("Failed to post wallet:", error);

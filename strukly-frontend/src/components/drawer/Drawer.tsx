@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import AddIcon from "../icons/AddIcon";
 
 interface DrawerProps {
   visible: boolean;
@@ -47,8 +46,8 @@ const Drawer: React.FC<DrawerProps> = ({
       {/* drawer */}
       <div
         className={`
-          relative w-full max-w-md bg-surface rounded-t-3xl shadow-xl 
-          transform transition-transform duration-300 ease-out 
+          relative w-full max-w-md bg-surface rounded-t-3xl shadow-xl
+          transform transition-transform duration-300 ease-out
           max-h-[90vh] flex flex-col
           ${visible ? "translate-y-0" : "translate-y-full"}
           ${className}

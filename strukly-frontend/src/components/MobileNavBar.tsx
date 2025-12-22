@@ -12,10 +12,6 @@ import AddIcon from "./icons/AddIcon";
 import Drawer from "./drawer/Drawer";
 import SquareButton from "./button/SquareButton";
 
-import HappyMascot from "./mascots/HappyMascot";
-import WinkMascot from "./mascots/WinkMascot";
-import WhistleMascot from "./mascots/WhistleMascot";
-import HeadbandMascot from "./mascots/HeadbandMascot";
 import CameraIcon from "./utilityIcons/CameraIcon";
 import GalleryIcon from "./utilityIcons/GalleryIcon";
 import ManualWriteIcon from "./utilityIcons/ManualWriteIcon";

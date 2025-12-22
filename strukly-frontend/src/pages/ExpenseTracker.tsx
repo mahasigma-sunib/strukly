@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import Card from "../components/card/card";
+import { useNavigate } from "react-router-dom";
+import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
 import useExpense, { useLoadExpense } from "../store/ExpenseStore";
 import Button from "../components/button/Button";
@@ -51,6 +52,7 @@ export default function ExpenseTracker() {
     setIsDrawerOpen(false);
   };
 
+  const navigate = useNavigate();
   const { statistic, items, isLoading, error } = useExpense();
   // console.log(statistic.weekly);
 
@@ -147,36 +149,12 @@ export default function ExpenseTracker() {
         <div className="ml-5 mb-4 font-bold text-2xl">
           <p>History</p>
         </div>
+        
         {isLoading && <p>Loading...</p>}
 
-        {/* {error && <p>{error}</p>} */}
+        {error && <p>{error}</p>}
 
         <div className="mt-0">
-          {/* conditional example */}
-          {items.length === 0 && (
-            <Card size="md">
-              <ExpenseList
-                vendorName="Example"
-                date={new Date()}
-                currency="-Rp"
-                amount="123.000"
-                category="entertainment"
-              />
-            </Card>
-          )}
-
-          {items.map((item) => (
-            <Card key={item.id} size="md">
-              <ExpenseList
-                vendorName={item.vendorName}
-                date={new Date(item.dateTime)}
-                currency={item.currency}
-                amount={item.totalAmount.toString()}
-                category={item.category}
-              />
-            </Card>
-          ))}
-
           {items.length === 0 && !isLoading && (
             <div className="flex flex-col items-center justify-center mt-20 ">
               <ExpenseEmptyMascot width={148} height={148} />
@@ -186,23 +164,22 @@ export default function ExpenseTracker() {
             </div>
           )}
 
-          {/* Tampilkan daftar transaksi kalau ada */}
-          {items.length > 0 &&
-            items.map((item) => (
-              <Card
-                key={item.id}
-                size="md"
-                className="bg-[#EFF4FA] shadow-[0_4px_0_0_[#D9E8F5]]"
-              >
-                <ExpenseList
-                  vendorName={item.vendorName}
-                  date={new Date(item.dateTime)}
-                  currency={item.currency}
-                  amount={item.totalAmount.toString()}
-                  category={item.category}
-                />
-              </Card>
-            ))}
+          {items.map((item) => (
+            <Card
+              key={item.id}
+              size="md"
+              className="bg-[#EFF4FA] shadow-[0_4px_0_0_#D9E8F5]"
+              onClick={() => navigate(`/expense/${item.id}`)}
+            >
+              <ExpenseList
+                vendorName={item.vendorName}
+                date={new Date(item.dateTime)}
+                currency={item.currency}
+                amount={item.totalAmount.toString()}
+                category={item.category}
+              />
+            </Card>
+          ))}
         </div>
       </div>
     </div>
