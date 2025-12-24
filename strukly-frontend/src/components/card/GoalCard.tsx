@@ -1,10 +1,12 @@
 import React from "react";
-import { CheckCircle2, ArrowUpCircle } from "lucide-react";
+
 import EditIcon from "../utilityIcons/EditIcon";
 import DeleteIcon from "../utilityIcons/DeleteIcon";
-import ProgressBar from "../graph/ProgressBar";
-import type { GoalItem } from "../../type/GoalItem";
 import FlagIcon from "../utilityIcons/FlagIcon";
+import ProgressBar from "../graph/ProgressBar";
+
+import type { GoalItem } from "../../type/GoalItem";
+import { CheckCircle2, ArrowUpCircle } from "lucide-react";
 
 interface Props {
   goal: GoalItem;
