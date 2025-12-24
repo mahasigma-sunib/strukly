@@ -1,4 +1,5 @@
 import React from "react";
+import { useRef } from "react";
 
 import EditIcon from "../utilityIcons/EditIcon";
 import DeleteIcon from "../utilityIcons/DeleteIcon";
@@ -24,6 +25,21 @@ const GoalCard: React.FC<Props> = ({
   colorIdx,
 }) => {
   const colors = ["red", "blue", "green", "yellow", "purple"];
+  const timerRef = useRef<number | null>(null);
+
+  const handleStart = () => {
+    timerRef.current = setTimeout(() => {
+      onEdit(goal);
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 800);
+  };
+
+  const handleEnd = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
 
   return (
     <div
@@ -33,6 +49,11 @@ const GoalCard: React.FC<Props> = ({
           ? "border-emerald-100 bg-emerald-50/30"
           : "border-slate-100"
       }`}
+      onMouseDown={handleStart}
+      onMouseUp={handleEnd}
+      onMouseLeave={handleEnd}
+      onTouchStart={handleStart}
+      onTouchEnd={handleEnd}
     >
       <div className="flex justify-between items-start mb-4">
         <div className="flex gap-4">
