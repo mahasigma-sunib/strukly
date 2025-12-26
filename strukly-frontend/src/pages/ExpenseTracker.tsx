@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Card from "../components/card/Card";
+import Card from "../components/card/card";
 import ExpenseList from "../components/card/ExpenseListCard";
 import useExpense, { useLoadExpense } from "../store/ExpenseStore";
 import Button from "../components/button/Button";
@@ -149,7 +149,7 @@ export default function ExpenseTracker() {
         <div className="ml-5 mb-4 font-bold text-2xl">
           <p>History</p>
         </div>
-        
+
         {isLoading && <p>Loading...</p>}
 
         {error && <p>{error}</p>}
