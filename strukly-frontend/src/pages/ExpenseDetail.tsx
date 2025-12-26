@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import type { ExpenseType } from "../type/ExpenseType";
-import Card from "../components/card/Card";
+import Card from "../components/card/card";
 import BackIcon from "../components/utilityIcons/BackIcon";
 import EditIcon from "../components/utilityIcons/EditIcon";
 import DeleteIcon from "../components/utilityIcons/DeleteIcon";
