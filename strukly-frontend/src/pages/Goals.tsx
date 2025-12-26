@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 
 import type { GoalItem } from "../type/GoalItem";
 import GoalsHeader from "../components/GoalsHeader";
-import Card from "../components/card/card";
+import Card from "../components/card/Card";
 import ProgressBar from "../components/graph/ProgressBar";
 import GoalModal from "../components/modal/GoalModal";
 import FlagMascot from "../components/mascots/FlagMascot";
