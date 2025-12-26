@@ -5,7 +5,7 @@ import BudgetList from "../components/card/BudgetListCard";
 import OverviewChart from "../components/graph/Chart";
 import useExpense from "../store/ExpenseStore";
 import type BudgetType from "../type/BudgetType";
-import Card from "../components/card/Card";
+import Card from "../components/card/card";
 import Button from "../components/button/Button";
 import Popup from "../components/popup/PopUp";
 
