@@ -9,7 +9,6 @@ import Drawer from "../components/drawer/Drawer";
 import Datepicker from "../components/scroll/DatePicker";
 import CalendarIcon from "../components/utilityIcons/CalendarIcon";
 import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
-import TextLogo from "../components/logos/TextLogo";
 
 export default function ExpenseTracker() {
   const today = new Date();
@@ -149,8 +148,8 @@ export default function ExpenseTracker() {
         </div>
 
         {/* expense history */}
-        <div className="w-full min-h-dvh mt-22">
-          <div className="mb-4 font-bold text-2xl">
+        <div className="w-full min-h-dvh mt-24">
+          <div className="font-bold text-2xl">
             <p>History</p>
           </div>
 
@@ -160,7 +159,7 @@ export default function ExpenseTracker() {
 
           <div className="mt-0">
             {items.length === 0 && !isLoading && (
-              <div className="flex flex-col items-center justify-center mt-20 gap-4 ">
+              <div className="flex flex-col items-center justify-center mt-28 gap-4 ">
                 <ExpenseEmptyMascot width={148} height={148} />
                 <p className="text-inactive font-bold text-lg text-center">
                   You have no transactions yet.
