@@ -7,15 +7,14 @@ interface Props {
   onAdd: () => void;
 }
 
-const GoalsHeader: React.FC<Props> = ({ activeCount, onAdd }) => {
+const GoalsHeader: React.FC<Props> = ({ onAdd }) => {
   return (
-    <header className="p-5 fixed w-full top-0 z-10 bg-white border-b-2 border-border rounded-b-3xl">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold ">Goals</h1>
-          <p className="text-sm font-bold text-active bg-secondary-hover/10 px-2 py-1 rounded-md inline-block mt-1">
+          {/* <p className="text-sm font-bold text-active bg-secondary-hover/10 px-2 py-1 rounded-md inline-block mt-1">
             {activeCount} Active Targets
-          </p>
+          </p> */}
         </div>
         <Button
           onClick={onAdd}
@@ -27,7 +26,6 @@ const GoalsHeader: React.FC<Props> = ({ activeCount, onAdd }) => {
           <AddIcon width={22} height={22} />
         </Button>
       </div>
-    </header>
   );
 };
 

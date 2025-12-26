@@ -82,18 +82,25 @@ const GoalsPage: React.FC = () => {
     }
   };
 
-  return (
-    <div className="max-w-md mx-auto min-h-screen bg-background text-text-primary">
-      <GoalsHeader
-        activeCount={goals.filter((g) => !g.isCompleted).length}
-        onAdd={() => {
-          setFormData({ name: "", price: 0 });
-          setActiveModal("create");
-        }}
-      />
+  const activeGoals = goals.filter((g) => !g.isCompleted);
+  const completedGoals = goals.filter((g) => g.isCompleted);
 
-      <main className="p-5 mt-28 space-y-4">
-        <p className="text-2xl font-bold">My Goals</p>
+  return (
+    <div className="min-h-screen pb-20 overflow-y-auto bg-background text-text-primary">
+      <div className="m-4 my-7 items-center justify-between">
+        <GoalsHeader
+          activeCount={goals.filter((g) => !g.isCompleted).length}
+          onAdd={() => {
+            setFormData({ name: "", price: 0 });
+            setActiveModal("create");
+          }}
+        />
+      </div>
+
+      <main className="ml-5 mr-4 mt-6 space-y-4">
+        <div className="mt-11 mb-2 font-bold text-2xl">
+          <p>My Goals</p>
+        </div>
         {goals.length === 0 && (
           <div className="flex flex-col items-center justify-center mt-20 ">
             <FlagMascot width={148} height={148} className="ml-8" />
@@ -104,74 +111,179 @@ const GoalsPage: React.FC = () => {
         )}
 
 
-        {goals.map((goal, idx) => (
-          <Card
-            key={goal.id}
-            className={`m-0 bg-white rounded-[24px] p-5 shadow-sm border ${
-              goal.isCompleted ? "border-emerald-100 bg-emerald-50/30" : "border-slate-100"
-            }`}
-            onMouseDown={() => startEditTimer(goal)}
-            onMouseUp={clearEditTimer}
-            onMouseLeave={clearEditTimer}
-            onTouchStart={() => startEditTimer(goal)}
-            onTouchEnd={clearEditTimer}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex gap-4">
-                <div
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                    goal.isCompleted ? "bg-emerald-100 text-emerald-600" : "bg-blue-50 text-blue-600"
-                  }`}
-                >
-                  {goal.isCompleted ? (
-                    <CheckCircle2 size={24} />
-                  ) : (
-                    <FlagIcon
-                      width={32}
-                      className={`text-${colors[idx % colors.length]}-500`}
-                    />
-                  )}
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 leading-tight">{goal.name}</h3>
-                  <p className="text-xs font-medium text-slate-400 mt-1">
-                    Rp {goal.currentAmount.toLocaleString()} / Rp {goal.price.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-1">
-                <button
-                  onClick={() => {
-                    setSelectedGoal(goal);
-                    setActiveModal("deposit");
-                  }}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                >
-                  <ArrowUpCircle size={20} />
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedGoal(goal);
-                    setFormData({ name: goal.name, price: goal.price });
-                    setActiveModal("edit");
-                  }}
-                  className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
-                >
-                  <EditIcon width={20} height={20} />
-                </button>
-                <button
-                  onClick={() => handleDelete(goal.id)}
-                  className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
-                >
-                  <DeleteIcon width={20} height={30} />
-                </button>
-              </div>
+        {/* Active goals */}
+        {activeGoals.length > 0 && (
+          <div>
+            <div className="mt-2 text-sm font-bold text-active bg-secondary-hover/10 px-2 py-1 rounded-md inline-block mb-2">
+              {activeGoals.length} Active Goals
             </div>
+            <div className="space-y-4">
+              {activeGoals.map((goal, idx) => (
+                <Card
+                  key={goal.id}
+                  className={`mx-0 w-full bg-white rounded-[24px] p-5 shadow-sm border ${
+                    goal.isCompleted ? "border-emerald-100 bg-emerald-50/30" : "border-slate-100"
+                  }`}
+                  onMouseDown={(e) => {
+                    if ((e.target as HTMLElement).closest("button")) return;
+                    startEditTimer(goal);
+                  }}
+                  onMouseUp={clearEditTimer}
+                  onMouseLeave={clearEditTimer}
+                  onTouchStart={(e) => {
+                    // TouchEvent target check — ignore touches that start on actionable children
+                    const touchTarget = (e.target as HTMLElement);
+                    if (touchTarget.closest("button")) return;
+                    startEditTimer(goal);
+                  }}
+                  onTouchEnd={clearEditTimer}
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex gap-4">
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                          goal.isCompleted ? "bg-emerald-100 text-emerald-600" : "bg-blue-50 text-blue-600"
+                        }`}
+                      >
+                        {goal.isCompleted ? (
+                          <CheckCircle2 size={24} />
+                        ) : (
+                          <FlagIcon
+                            width={32}
+                            className={`text-${colors[idx % colors.length]}-500`}
+                          />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-800 leading-tight">{goal.name}</h3>
+                        <p className="text-xs font-medium text-slate-400 mt-1">
+                          Rp {goal.currentAmount.toLocaleString()} / Rp {goal.price.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
 
-            <ProgressBar value={goal.currentAmount} max={goal.price} height={8} />
-          </Card>
-        ))}
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => {
+                          setSelectedGoal(goal);
+                          setActiveModal("deposit");
+                        }}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                      >
+                        <ArrowUpCircle size={20} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedGoal(goal);
+                          setFormData({ name: goal.name, price: goal.price });
+                          setActiveModal("edit");
+                        }}
+                        className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
+                      >
+                        <EditIcon width={20} height={20} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(goal.id)}
+                        className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
+                      >
+                        <DeleteIcon width={20} height={30} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <ProgressBar value={goal.currentAmount} max={goal.price} height={8} />
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Completed goals */}
+        {completedGoals.length > 0 && (
+          <div>
+            {/* <div className="text-sm font-semibold text-slate-600 mt-6 mb-2">Completed ({completedGoals.length})</div> */}
+            <div className="mt-2 text-sm font-bold text-category-groceris bg-status-success/10 px-2 py-1 rounded-md inline-block mb-2">
+              {completedGoals.length} Complete Goals
+            </div>
+            <div className="space-y-4">
+              {completedGoals.map((goal, idx) => (
+                <Card
+                  key={goal.id}
+                  className={`mx-0 w-full bg-white rounded-[24px] p-5 shadow-sm border ${
+                    goal.isCompleted ? "border-emerald-100 bg-emerald-50/30" : "border-slate-100"
+                  }`}
+                  onMouseDown={(e) => {
+                    if ((e.target as HTMLElement).closest("button")) return;
+                    startEditTimer(goal);
+                  }}
+                  onMouseUp={clearEditTimer}
+                  onMouseLeave={clearEditTimer}
+                  onTouchStart={(e) => {
+                    const touchTarget = (e.target as HTMLElement);
+                    if (touchTarget.closest("button")) return;
+                    startEditTimer(goal);
+                  }}
+                  onTouchEnd={clearEditTimer}
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex gap-4">
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                          goal.isCompleted ? "bg-emerald-100 text-emerald-600" : "bg-blue-50 text-blue-600"
+                        }`}
+                      >
+                        {goal.isCompleted ? (
+                          <CheckCircle2 size={24} />
+                        ) : (
+                          <FlagIcon
+                            width={32}
+                            className={`text-${colors[idx % colors.length]}-500`}
+                          />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-800 leading-tight">{goal.name}</h3>
+                        <p className="text-xs font-medium text-slate-400 mt-1">
+                          Rp {goal.currentAmount.toLocaleString()} / Rp {goal.price.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => {
+                          setSelectedGoal(goal);
+                          setActiveModal("deposit");
+                        }}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                      >
+                        <ArrowUpCircle size={20} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedGoal(goal);
+                          setFormData({ name: goal.name, price: goal.price });
+                          setActiveModal("edit");
+                        }}
+                        className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
+                      >
+                        <EditIcon width={20} height={20} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(goal.id)}
+                        className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
+                      >
+                        <DeleteIcon width={20} height={30} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <ProgressBar value={goal.currentAmount} max={goal.price} height={8} />
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       {/* <FlagMascot></FlagMascot> */}
