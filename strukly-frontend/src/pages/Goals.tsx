@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import type { GoalItem } from "../type/GoalItem";
 import GoalsHeader from "../components/GoalsHeader";
-import GoalCard from "../components/card/GoalCard";
+import Card from "../components/card/card";
+import ProgressBar from "../components/graph/ProgressBar";
 import GoalModal from "../components/modal/GoalModal";
 import FlagMascot from "../components/mascots/FlagMascot";
+import FlagIcon from "../components/utilityIcons/FlagIcon";
+import EditIcon from "../components/utilityIcons/EditIcon";
+import DeleteIcon from "../components/utilityIcons/DeleteIcon";
+import { CheckCircle2, ArrowUpCircle } from "lucide-react";
 
 const GoalsPage: React.FC = () => {
   const [goals, setGoals] = useState<GoalItem[]>([]);
@@ -58,6 +63,25 @@ const GoalsPage: React.FC = () => {
   const handleDelete = (id: string) =>
     setGoals((g) => g.filter((it) => it.id !== id));
 
+  const timerRef = useRef<number | null>(null);
+  const colors = ["red", "blue", "green", "yellow", "purple"];
+
+  const startEditTimer = (g: GoalItem) => {
+    timerRef.current = window.setTimeout(() => {
+      setSelectedGoal(g);
+      setFormData({ name: g.name, price: g.price });
+      setActiveModal("edit");
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 800);
+  };
+
+  const clearEditTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto min-h-screen bg-background text-text-primary">
       <GoalsHeader
@@ -79,22 +103,74 @@ const GoalsPage: React.FC = () => {
           </div>
         )}
 
+
         {goals.map((goal, idx) => (
-          <GoalCard
+          <Card
             key={goal.id}
-            colorIdx={idx}
-            goal={goal}
-            onDeposit={(g) => {
-              setSelectedGoal(g);
-              setActiveModal("deposit");
-            }}
-            onEdit={(g) => {
-              setSelectedGoal(g);
-              setFormData({ name: g.name, price: g.price });
-              setActiveModal("edit");
-            }}
-            onDelete={handleDelete}
-          />
+            className={`m-0 bg-white rounded-[24px] p-5 shadow-sm border ${
+              goal.isCompleted ? "border-emerald-100 bg-emerald-50/30" : "border-slate-100"
+            }`}
+            onMouseDown={() => startEditTimer(goal)}
+            onMouseUp={clearEditTimer}
+            onMouseLeave={clearEditTimer}
+            onTouchStart={() => startEditTimer(goal)}
+            onTouchEnd={clearEditTimer}
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex gap-4">
+                <div
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                    goal.isCompleted ? "bg-emerald-100 text-emerald-600" : "bg-blue-50 text-blue-600"
+                  }`}
+                >
+                  {goal.isCompleted ? (
+                    <CheckCircle2 size={24} />
+                  ) : (
+                    <FlagIcon
+                      width={32}
+                      className={`text-${colors[idx % colors.length]}-500`}
+                    />
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800 leading-tight">{goal.name}</h3>
+                  <p className="text-xs font-medium text-slate-400 mt-1">
+                    Rp {goal.currentAmount.toLocaleString()} / Rp {goal.price.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-1">
+                <button
+                  onClick={() => {
+                    setSelectedGoal(goal);
+                    setActiveModal("deposit");
+                  }}
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                >
+                  <ArrowUpCircle size={20} />
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedGoal(goal);
+                    setFormData({ name: goal.name, price: goal.price });
+                    setActiveModal("edit");
+                  }}
+                  className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
+                >
+                  <EditIcon width={20} height={20} />
+                </button>
+                <button
+                  onClick={() => handleDelete(goal.id)}
+                  className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
+                >
+                  <DeleteIcon width={20} height={30} />
+                </button>
+              </div>
+            </div>
+
+            <ProgressBar value={goal.currentAmount} max={goal.price} height={8} />
+          </Card>
         ))}
       </main>
 

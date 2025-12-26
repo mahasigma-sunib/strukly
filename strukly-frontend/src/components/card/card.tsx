@@ -2,10 +2,9 @@ import type React from "react";
 
 type cardSize = "sm" | "md" | "lg" | "xl";
 
-interface CardProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: cardSize;
   children: React.ReactNode;
-  onClick?: () => void;
   className?: string;
 }
 
@@ -19,12 +18,12 @@ const sizeClasses: Record<cardSize, string> = {
 export default function Card({
   size = "md",
   children,
-  onClick,
   className = "",
+  ...rest
 }: CardProps) {
   return (
     <div
-      onClick={onClick}
+      {...rest}
       className={`
         bg-surface border-border border-2 shadow-[0_4px_0_0_var(--color-border)]
         transition-all duration-200
@@ -35,4 +34,4 @@ export default function Card({
       {children}
     </div>
   );
-}
+} 
