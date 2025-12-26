@@ -59,7 +59,7 @@ const GoalsPage: React.FC = () => {
     setGoals((g) => g.filter((it) => it.id !== id));
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-background pb-24 text-text-primary">
+    <div className="max-w-md mx-auto min-h-screen bg-background text-text-primary">
       <GoalsHeader
         activeCount={goals.filter((g) => !g.isCompleted).length}
         onAdd={() => {
@@ -68,7 +68,8 @@ const GoalsPage: React.FC = () => {
         }}
       />
 
-      <main className="p-6 space-y-4">
+      <main className="p-5 mt-28 space-y-4">
+        <p className="text-2xl font-bold">My Goals</p>
         {goals.length === 0 && (
           <div className="flex flex-col items-center justify-center mt-20 ">
             <FlagMascot width={148} height={148} className="ml-8" />

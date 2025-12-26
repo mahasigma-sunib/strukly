@@ -9,7 +9,7 @@ interface Props {
 
 const GoalsHeader: React.FC<Props> = ({ activeCount, onAdd }) => {
   return (
-    <header className="px-6 pt-6 pb-4 sticky top-0 z-10 bg-white shadow-[0_0_20px_5px_rgba(0,0,0,0.02)]">
+    <header className="p-5 fixed w-full top-0 z-10 bg-white border-b-2 border-border rounded-b-3xl">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold ">Goals</h1>
@@ -20,11 +20,11 @@ const GoalsHeader: React.FC<Props> = ({ activeCount, onAdd }) => {
         <Button
           onClick={onAdd}
           // className="bg-[var(--fun-color-secondary)] p-3 rounded-2xl hover:scale-105 transition-transform flex items-center justify-center"
-          className="rounded-full px-[12px]"
+          className="rounded-2xl !p-3"
           variant="secondary"
           size="md"
         >
-          <AddIcon width={20} height={20} />
+          <AddIcon width={22} height={22} />
         </Button>
       </div>
     </header>
