@@ -31,7 +31,7 @@ const GoalCard: React.FC<Props> = ({
     timerRef.current = setTimeout(() => {
       onEdit(goal);
       if (navigator.vibrate) navigator.vibrate(50);
-    }, 800);
+    }, 300);
   };
 
   const handleEnd = () => {
