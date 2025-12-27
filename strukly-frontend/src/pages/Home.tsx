@@ -21,43 +21,76 @@ const getGreeting = () => {
   }
 };
 
-const MASCOTS = [HappyMascot, HeadbandMascot, NeutralMascot, WhistleMascot];
-
-const getRandomMascot = () => {
-  const randomIndex = Math.floor(Math.random() * MASCOTS.length);
-
-  return MASCOTS[randomIndex];
-};
-
 function Home() {
   const username = useUserAuth((s) => s.user?.name || "User");
-  const firstName = username.split(" ")[0];
+
   const greeting = getGreeting();
 
-  const RandomMascotComponent = getRandomMascot();
+  const today = new Date();
+  const currentMonthIndex = today.getMonth(); // getMonth() menghasilkan 0 (Januari) hingga 11 (Desember)
+  const currentYear = today.getFullYear();
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const currentMonthName = monthNames[currentMonthIndex];
+  const currentMonthYear = `${currentMonthName} ${currentYear}`;
 
   return (
     <div>
-      <div className="py-2 px-4 flex items-center bg-surface border-b-2 border-border">
-        <TextLogo width={100}></TextLogo>
+      <div className="p-4">
+        <TextLogo width={96} />
       </div>
-      <div className="p-5">
+      <div className="px-5 flex flex-col gap-6">
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row gap-4 items-center">
             <div>
-              <RandomMascotComponent width={48} />
+              <HappyMascot width={48} height={48} />
             </div>
-            <div className="flex flex-col">
-              <p className="font-semibold text-lg text-text-secondary">
+            <div>
+              <p className="font-semibold text-lg text-light-gray">
                 Good {greeting},
               </p>
-              <p className="font-bold text-3xl">{firstName}</p>
+              <p className="font-bold text-2xl">{username}</p>
             </div>
           </div>
           <div>
-            <Button variant="blue" size="sm" className="!p-1 rounded-full">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="!p-2 rounded-2xl items-center"
+            >
               <SettingsIcon width={28} />
             </Button>
+          </div>
+        </div>
+        <div className="p-4 bg-orange text-white rounded-3xl">
+          <div className="flex flex-row justify-between mb-4">
+            <p className="font-bold text-xl ">Dashboard</p>
+            <p className="px-3 py-1 bg-surface font-extrabold text-orange rounded-full">
+              {currentMonthYear}
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-1">
+            <p className="text-lg">Total Expense</p>
+            <p className="font-bold text-3xl tracking-wide">
+              Rp2.540.000{/* total expense goes here */}
+              <span className="font-semibold text-xl text-white/80">,00</span>
+            </p>
+          </div>
+
+          <div className="bg-surface p-4 rounded-2xl text-text-primary mt-4">
+            <p>Budget</p>
           </div>
         </div>
       </div>

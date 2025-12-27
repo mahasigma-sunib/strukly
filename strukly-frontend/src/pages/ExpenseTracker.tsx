@@ -149,7 +149,7 @@ export default function ExpenseTracker() {
         <div className="ml-5 mb-4 font-bold text-2xl">
           <p>History</p>
         </div>
-        
+
         {isLoading && <p>Loading...</p>}
 
         {error && <p>{error}</p>}
