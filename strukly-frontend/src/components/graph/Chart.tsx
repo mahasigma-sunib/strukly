@@ -34,7 +34,9 @@ export default function OverviewChart({
   const gapLength = circumference - visibleLength;
 
   const isOver = rawPercent > 100;
-  const filledLength = isOver ? visibleLength : (clampedPercent / 100) * visibleLength;
+  const filledLength = isOver
+    ? visibleLength
+    : (clampedPercent / 100) * visibleLength;
 
   // background track draws the fixed 2/3 arc
   const trackDash = `${visibleLength} ${gapLength}`;
@@ -49,7 +51,11 @@ export default function OverviewChart({
     <div className="flex items-center gap-4 p-2">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-          <g transform={`translate(${size / 2},${size / 2}) rotate(${rotateDeg})`}>
+          <g
+            transform={`translate(${size / 2},${
+              size / 2
+            }) rotate(${rotateDeg})`}
+          >
             <circle
               r={radius}
               fill="none"
@@ -73,10 +79,16 @@ export default function OverviewChart({
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className={`text-lg font-semibold ${isOver ? "text-red-500" : "text-emerald-400"}`}>
+          <div
+            className={`text-lg font-semibold ${
+              isOver ? "text-red-500" : "text-emerald-400"
+            }`}
+          >
             {percent}%
           </div>
-          <div className="text-xs text-[var(--fun-color-text-secondary)] -mt-1">of total budget used</div>
+          <div className="text-xs text-[var(--fun-color-text-secondary)] -mt-1">
+            of total budget used
+          </div>
         </div>
       </div>
     </div>
