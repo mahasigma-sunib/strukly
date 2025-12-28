@@ -117,10 +117,10 @@ function ExpenseDetail() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div
-            onClick={() => console.log("Edit")}
-            className="cursor-pointer active:opacity-70 transition-opacity text-[var(--fun-color-text-secondary)]"
+            onClick={() => navigate('../expense/edit')}
+            className="cursor-pointer active:opacity-70 transition-opacity text-blue-600"
           >
             <EditIcon width={32} height={32} />
           </div>
