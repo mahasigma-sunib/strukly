@@ -51,7 +51,7 @@ const App = () => {
             <Route path="/expense" element={<ExpenseTracker />} />
             <Route path="/expense/:id" element={<ExpenseDetail />} />
             <Route path="/expense/add" element={<AddExpense />} />
-            <Route path="/expense/edit" element={<EditExpense />} />
+            <Route path="/expense/:id/edit" element={<EditExpense />} />
             <Route path="/budget" element={<ExpenseBudget />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/settings" element={<Settings />} />
