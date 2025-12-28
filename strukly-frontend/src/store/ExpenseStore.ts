@@ -93,22 +93,3 @@ const useExpense = create<State & Actions>()(
 );
 export default useExpense;
 
-export async function putExpense(
-  id: string, //expense id
-  expense: Partial<Omit<ExpenseType, "id">>
-) {
-  const { updateExpense } = useExpense();
-  try {
-    await axios.put(
-      `${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`,
-      expense,
-      {
-        withCredentials: true,
-      }
-    );
-    updateExpense(id, expense);
-  } catch (error) {
-    console.error("Failed to put expense:", error);
-    throw error; // rethrow so caller can handle it
-  }
-}
