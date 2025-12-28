@@ -59,7 +59,7 @@ export default function ExpenseTracker() {
   return (
     <div>
       {/* page Title & date btn */}
-      <div className="p-5 flex bg-surface border-b-2 w-full border-border fixed rounded-b-3xl">
+      <div className="px-5 py-4 flex bg-surface border-b-2 w-full border-border fixed rounded-b-3xl">
         <div className="flex flex-row justify-between w-full items-center">
           <div>
             <p className="font-bold text-3xl">Expense</p>
@@ -148,7 +148,7 @@ export default function ExpenseTracker() {
         </div>
 
         {/* expense history */}
-        <div className="w-full min-h-dvh mt-24">
+        <div className="w-full min-h-dvh mt-22">
           <div className="font-bold text-2xl">
             <p>History</p>
           </div>
