@@ -59,17 +59,16 @@ export default function ExpenseTracker() {
   return (
     <div>
       {/* page Title & date btn */}
-      <div className="px-5 py-4 flex bg-surface border-b-2 w-full border-border fixed rounded-b-3xl">
-        <div className="flex flex-row justify-between w-full items-center">
-          <div>
-            <p className="font-bold text-3xl">Expense</p>
-          </div>
-          <div className="pb-2">
-            <Button
-              onClick={() => setIsDrawerOpen(true)}
-              variant="primary"
-              size="md"
-              className="
+      <div className="p-5 flex items-center justify-between bg-surface border-b-2 border-border sticky top-0 z-20 w-full">
+        <div className="font-bold text-3xl">
+          <p>Expense</p>
+        </div>
+        <div>
+          <Button
+            onClick={() => setIsDrawerOpen(true)}
+            variant="primary"
+            size="md"
+            className="
               !rounded-full 
               !font-bold 
               active:translate-y-[4px]
@@ -80,12 +79,12 @@ export default function ExpenseTracker() {
               items-center
               !py-2
               !px-3
+              !mb-1
             "
-            >
-              {<CalendarIcon className="text-white" />}
-              {monthName} {activeDate.year}
-            </Button>
-          </div>
+          >
+            {<CalendarIcon className="text-white" />}
+            {monthName} {activeDate.year}
+          </Button>
         </div>
 
         {/* drawer */}
@@ -95,7 +94,7 @@ export default function ExpenseTracker() {
           title="Select Period"
         >
           <div className="flex flex-col h-full">
-            <div className="mb-5">
+            <div className="mb-6">
               <p className="text-text-secondary text-center mb-4 text-md">
                 Scroll to select month and year
               </p>
@@ -123,67 +122,65 @@ export default function ExpenseTracker() {
         </Drawer>
       </div>
 
-      <div className="p-5">
-        {/* Bar Chart */}
-        <div>
-          {items.length > 0 && (
-            <div className="mx-4 my-5 bg-surface rounded-3xl py-6 border-border border-1">
-              <p className="ml-6 mb-2 text-2xl text-text-primary font-bold">
-                Tracker
-              </p>
-              <CustomBarChart
-                data={statistic.weekly}
-                xAxisKey="name"
-                height={300}
-                bars={[
-                  {
-                    key: "spending",
-                    color: "var(--fun-color-primary)",
-                    label: "Weekly Expense",
-                  },
-                ]}
-              />
-            </div>
-          )}
+      {/* Bar Chart */}
+      <div>
+        {items.length > 0 && (
+          <div className="mx-4 my-5 bg-surface rounded-3xl py-6 border-border border-1">
+            <p className="ml-6 mb-2 text-2xl text-text-primary font-bold">
+              Tracker
+            </p>
+            <CustomBarChart
+              data={statistic.weekly}
+              xAxisKey="name"
+              height={300}
+              bars={[
+                {
+                  key: "spending",
+                  color: "var(--fun-color-primary)",
+                  label: "Weekly Expense",
+                },
+              ]}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* expense history */}
+      <div className="w-full min-h-dvh pt-6 ">
+        <div className="ml-5 mb-4 font-bold text-2xl">
+          <p>History</p>
         </div>
 
-        {/* expense history */}
-        <div className="w-full min-h-dvh mt-22">
-          <div className="font-bold text-2xl">
-            <p>History</p>
-          </div>
+        {isLoading && <p>Loading...</p>}
 
-          {isLoading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
 
-          {error && <p>{error}</p>}
+        <div className="mt-0">
+          {items.length === 0 && !isLoading && (
+            <div className="flex flex-col items-center justify-center mt-20 ">
+              <ExpenseEmptyMascot width={148} height={148} />
+              <p className="text-inactive mt-4 font-bold text-lg text-center">
+                You have no transactions yet.
+              </p>
+            </div>
+          )}
 
-          <div className="mt-0">
-            {items.length === 0 && !isLoading && (
-              <div className="flex flex-col items-center justify-center mt-28 gap-4 ">
-                <ExpenseEmptyMascot width={148} height={148} />
-                <p className="text-inactive font-bold text-lg text-center">
-                  You have no transactions yet.
-                </p>
-              </div>
-            )}
-
-            {items.map((item) => (
-              <Card
-                key={item.id}
-                size="md"
-                className="bg-[#EFF4FA] shadow-[0_4px_0_0_#D9E8F5]"
-                onClick={() => navigate(`/expense/${item.id}`)}
-              >
-                <ExpenseList
-                  vendorName={item.vendorName}
-                  date={new Date(item.dateTime)}
-                  currency={item.currency}
-                  amount={item.totalAmount.toString()}
-                  category={item.category}
-                />
-              </Card>
-            ))}
-          </div>
+          {items.map((item) => (
+            <Card
+              key={item.id}
+              size="md"
+              className="bg-[#EFF4FA] shadow-[0_4px_0_0_#D9E8F5]"
+              onClick={() => navigate(`/expense/${item.id}`)}
+            >
+              <ExpenseList
+                vendorName={item.vendorName}
+                date={new Date(item.dateTime)}
+                currency={item.currency}
+                amount={item.totalAmount.toString()}
+                category={item.category}
+              />
+            </Card>
+          ))}
         </div>
       </div>
     </div>
