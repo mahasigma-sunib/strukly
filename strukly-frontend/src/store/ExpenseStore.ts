@@ -116,14 +116,4 @@ export async function putExpense(
   }
 }
 
-export async function deleteExpense(id: string) {
-  try {
-    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`, {
-      withCredentials: true,
-    });
-  } catch (error) {
-    console.error("Failed to delete expense:", error);
-    throw error; // rethrow so caller can handle it
-  }
-}
 
