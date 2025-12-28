@@ -2,9 +2,7 @@ import axios from "axios";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { ExpenseType } from "../type/ExpenseType";
-import type {
-  ExpenseStatisticType,
-} from "../type/expenseStatisticType";
+import type { ExpenseStatisticType } from "../type/expenseStatisticType";
 
 type State = {
   statistic: ExpenseStatisticType;
@@ -95,7 +93,6 @@ const useExpense = create<State & Actions>()(
 );
 export default useExpense;
 
-
 export async function putExpense(
   id: string, //expense id
   expense: Partial<Omit<ExpenseType, "id">>
@@ -115,5 +112,3 @@ export async function putExpense(
     throw error; // rethrow so caller can handle it
   }
 }
-
-

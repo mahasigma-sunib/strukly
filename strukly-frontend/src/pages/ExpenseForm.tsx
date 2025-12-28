@@ -15,7 +15,8 @@ interface Props {
 }
 
 export default function ExpenseForm({ expense, setExpense }: Props) {
-  const [isDetailed, setIsDetailed] = useState(expense.items.length > 0);
+  // const [isDetailed, setIsDetailed] = useState(expense.items.length > 0);
+  const [isDetailed, setIsDetailed] = useState(true);
 
   const { icon } = getCategoryData(expense.category);
 
@@ -63,6 +64,10 @@ export default function ExpenseForm({ expense, setExpense }: Props) {
 
   useEffect(() => {
     if (!isDetailed) return;
+
+    if (isDetailed && expense.items.length === 0) {
+      addItem();
+    }
 
     const subtotal = expense.items.reduce(
       (sum, item) => sum + item.totalPrice,
