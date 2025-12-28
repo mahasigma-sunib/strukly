@@ -87,7 +87,7 @@ export default function AddExpense() {
 
   return (
     <div className="pb-26 min-h-screen bg-[var(--fun-color-background)]">
-      <div className="sticky z-99 top-0 bg-white border-b px-4 py-4 flex items-center gap-3">
+      <div className="bg-[var(--fun-color-surface)] px-6 py-4 flex items-center gap-3 sticky top-0 z-10 shadow-sm border-b border-[var(--fun-color-border)]">
         <button onClick={() => navigate(-1)}>
           <BackIcon width={28} height={28} />
         </button>
