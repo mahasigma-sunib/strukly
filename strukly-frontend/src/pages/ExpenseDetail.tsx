@@ -119,7 +119,7 @@ function ExpenseDetail() {
 
         <div className="flex items-center gap-4">
           <div
-            onClick={() => navigate('../expense/edit')}
+            onClick={() => navigate('./edit')}
             className="cursor-pointer active:opacity-70 transition-opacity text-blue-600"
           >
             <EditIcon width={32} height={32} />
