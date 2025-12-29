@@ -51,8 +51,8 @@ const GoalModal: React.FC<Props> = ({
                 type="text"
                 placeholder="Goal Name"
                 value={formData.name}
-                className={`w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
-                  errorMessage && !formData.name
+                className={`w-full bg-slate-50 border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
+                  errorMessage && !formData.name.trim()
                     ? "border-red-500"
                     : "border-slate-100 focus:border-primary"
                 }`}
@@ -65,9 +65,9 @@ const GoalModal: React.FC<Props> = ({
                 type="number"
                 placeholder="Target Price (Rp)"
                 value={formData.price || ""}
-                className={`w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
-                  errorMessage && !formData.price
-                    ? "border-red-500"
+                className={`w-full bg-slate-50 border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
+                  errorMessage && formData.price <= 0
+                    ? "border-status-error"
                     : "border-slate-100 focus:border-primary"
                 }`}
                 onChange={(e) => {
@@ -76,8 +76,8 @@ const GoalModal: React.FC<Props> = ({
                 }}
               />
               {errorMessage && (
-                <div className="p-3 bg-red-50 border border-red-100 rounded-2xl animate-in slide-in-from-top-2 duration-200">
-                  <p className="text-xs font-bold text-red-500 text-center">
+                <div className="p-3 bg-red-50 border border-border rounded-2xl animate-in slide-in-from-top-2 duration-200">
+                  <p className="text-xs font-bold text-status-error text-center">
                     ⚠️ {errorMessage}
                   </p>
                 </div>
@@ -92,7 +92,7 @@ const GoalModal: React.FC<Props> = ({
                 placeholder="0"
                 className={`w-full text-center text-3xl font-black bg-transparent border-b-2 border-blue-500 outline-none p-4 ${
                   errorMessage
-                    ? "border-red-500 text-red-500"
+                    ? "border-status-error text-status-error"
                     : "border-blue-500 text-text-primary"
                 }`}
                 onChange={(e) => {
@@ -102,8 +102,8 @@ const GoalModal: React.FC<Props> = ({
                 value={tempAmount || ""}
               />
               {errorMessage && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-2xl animate-in slide-in-from-top-2 duration-200">
-                  <p className="text-xs font-bold text-red-500 leading-relaxed">
+                <div className="mt-4 p-3 bg-red-50 border-status-error rounded-2xl animate-in slide-in-from-top-2 duration-200">
+                  <p className="text-xs font-bold text-status-error leading-relaxed">
                     ⚠️ {errorMessage}
                   </p>
                 </div>
