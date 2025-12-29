@@ -68,7 +68,7 @@ const GoalModal: React.FC<Props> = ({
             </>
           ) : (
             <div className="text-center">
-              <p className="text-sm text-slate-500 mb-2">Add a new goal</p>
+              <p className="text-sm text-slate-500 mb-2">Add savings</p>
               <input
                 type="number"
                 autoFocus

@@ -20,6 +20,16 @@ const GoalsPage: React.FC = () => {
   const [formData, setFormData] = useState({ name: "", price: 0 });
   const [errorMessage, setErrorMessage] = useState("");
   const handleCreate = () => {
+    if (!formData.name.trim()) {
+      setErrorMessage("Nama goal tidak boleh kosong!");
+      return;
+    }
+
+    if (formData.price <= 0) {
+      setErrorMessage("Harga target harus lebih dari 0!");
+      return;
+    }
+
     const newGoal: GoalItem = {
       id: Math.random().toString(36).substring(7),
       name: formData.name,
@@ -28,7 +38,10 @@ const GoalsPage: React.FC = () => {
       isCompleted: false,
     };
     setGoals((g) => [...g, newGoal]);
+
+    setErrorMessage("");
     setActiveModal(null);
+    setFormData({ name: "", price: 0 });
   };
 
   const handleDeposit = () => {
@@ -40,7 +53,7 @@ const GoalsPage: React.FC = () => {
       setErrorMessage(
         `Jumlah melebihi target! Maksimal: Rp ${remaining.toLocaleString()}`
       );
-      return; 
+      return;
     }
 
     setGoals((g) =>
