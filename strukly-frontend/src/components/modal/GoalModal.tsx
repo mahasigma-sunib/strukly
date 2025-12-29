@@ -53,7 +53,7 @@ const GoalModal: React.FC<Props> = ({
                 value={formData.name}
                 className={`w-full bg-slate-50 border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                   errorMessage && !formData.name.trim()
-                    ? "border-red-500"
+                    ? "border-status-error placeholder-status-error"
                     : "border-slate-100 focus:border-primary"
                 }`}
                 onChange={(e) => {
@@ -67,7 +67,7 @@ const GoalModal: React.FC<Props> = ({
                 value={formData.price || ""}
                 className={`w-full bg-slate-50 border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                   errorMessage && formData.price <= 0
-                    ? "border-status-error"
+                    ? "border-status-error placeholder-status-error"
                     : "border-slate-100 focus:border-primary"
                 }`}
                 onChange={(e) => {
