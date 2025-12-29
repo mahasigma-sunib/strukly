@@ -9,12 +9,20 @@ import Dropdown from "../components/dropdown/Dropdown";
 import Toggle from "../components/button/ToggleButton";
 import DropDownIcon from "../components/utilityIcons/DropdownIcon";
 
-interface Props {
-  expense: Omit<ExpenseType, "userID">;
-  setExpense: React.Dispatch<React.SetStateAction<Omit<ExpenseType, "userID">>>;
+// interface Props {
+//   expense: Omit<ExpenseType, "userID">;
+//   setExpense: React.Dispatch<React.SetStateAction<Omit<ExpenseType, "userID">>>;
+// }
+
+interface Props<T extends Omit<ExpenseType, "userID"> | ExpenseType> {
+  expense: T;
+  setExpense: React.Dispatch<React.SetStateAction<T>>;
 }
 
-export default function ExpenseForm({ expense, setExpense }: Props) {
+export default function ExpenseForm<
+  T extends Omit<ExpenseType, "userID"> | ExpenseType
+>({ expense, setExpense }: Props<T>) {
+  
   // const [isDetailed, setIsDetailed] = useState(expense.items.length > 0);
   const [isDetailed, setIsDetailed] = useState(true);
 
