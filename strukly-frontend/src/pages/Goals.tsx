@@ -37,11 +37,9 @@ const GoalsPage: React.FC = () => {
       currentAmount: 0,
       isCompleted: false,
     };
+    
     setGoals((g) => [...g, newGoal]);
-
-    setErrorMessage("");
     setActiveModal(null);
-    setFormData({ name: "", price: 0 });
   };
 
   const handleDeposit = () => {
@@ -51,7 +49,7 @@ const GoalsPage: React.FC = () => {
 
     if (tempAmount > remaining) {
       setErrorMessage(
-        `Jumlah melebihi target! Maksimal: Rp ${remaining.toLocaleString()}`
+        `The input amount greater than target, Maximal: Rp ${remaining.toLocaleString()}`
       );
       return;
     }

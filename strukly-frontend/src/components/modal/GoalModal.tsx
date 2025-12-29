@@ -26,8 +26,8 @@ const GoalModal: React.FC<Props> = ({
   setTempAmount,
   onClose,
   onConfirm,
-  errorMessage, 
-  setErrorMessage
+  errorMessage,
+  setErrorMessage,
 }) => {
   if (!activeModal) return null;
   return (
@@ -51,20 +51,37 @@ const GoalModal: React.FC<Props> = ({
                 type="text"
                 placeholder="Goal Name"
                 value={formData.name}
-                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 focus:border-primary outline-none transition-all"
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                className={`w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
+                  errorMessage && !formData.name
+                    ? "border-red-500"
+                    : "border-slate-100 focus:border-primary"
+                }`}
+                onChange={(e) => {
+                  if (errorMessage) setErrorMessage("");
+                  setFormData({ ...formData, name: e.target.value });
+                }}
               />
               <input
                 type="number"
                 placeholder="Target Price (Rp)"
                 value={formData.price || ""}
-                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 focus:border-primary outline-none transition-all"
-                onChange={(e) =>
-                  setFormData({ ...formData, price: Number(e.target.value) })
-                }
+                className={`w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
+                  errorMessage && !formData.price
+                    ? "border-red-500"
+                    : "border-slate-100 focus:border-primary"
+                }`}
+                onChange={(e) => {
+                  if (errorMessage) setErrorMessage("");
+                  setFormData({ ...formData, price: Number(e.target.value) });
+                }}
               />
+              {errorMessage && (
+                <div className="p-3 bg-red-50 border border-red-100 rounded-2xl animate-in slide-in-from-top-2 duration-200">
+                  <p className="text-xs font-bold text-red-500 text-center">
+                    ⚠️ {errorMessage}
+                  </p>
+                </div>
+              )}
             </>
           ) : (
             <div className="text-center">
@@ -74,7 +91,9 @@ const GoalModal: React.FC<Props> = ({
                 autoFocus
                 placeholder="0"
                 className={`w-full text-center text-3xl font-black bg-transparent border-b-2 border-blue-500 outline-none p-4 ${
-                  errorMessage ? "border-red-500 text-red-500" : "border-blue-500 text-text-primary"
+                  errorMessage
+                    ? "border-red-500 text-red-500"
+                    : "border-blue-500 text-text-primary"
                 }`}
                 onChange={(e) => {
                   setErrorMessage("");
