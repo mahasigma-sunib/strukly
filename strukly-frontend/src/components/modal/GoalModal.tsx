@@ -14,6 +14,8 @@ interface Props {
   setTempAmount: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
   onConfirm: () => void;
+  errorMessage: string;
+  setErrorMessage: (msg: string) => void;
 }
 
 const GoalModal: React.FC<Props> = ({
@@ -24,6 +26,8 @@ const GoalModal: React.FC<Props> = ({
   setTempAmount,
   onClose,
   onConfirm,
+  errorMessage, 
+  setErrorMessage
 }) => {
   if (!activeModal) return null;
   return (
@@ -69,10 +73,22 @@ const GoalModal: React.FC<Props> = ({
                 type="number"
                 autoFocus
                 placeholder="0"
-                className="w-full text-center text-3xl font-black bg-transparent border-b-2 border-blue-500 outline-none p-4"
-                onChange={(e) => setTempAmount(Number(e.target.value))}
+                className={`w-full text-center text-3xl font-black bg-transparent border-b-2 border-blue-500 outline-none p-4 ${
+                  errorMessage ? "border-red-500 text-red-500" : "border-blue-500 text-text-primary"
+                }`}
+                onChange={(e) => {
+                  setErrorMessage("");
+                  setTempAmount(Number(e.target.value));
+                }}
                 value={tempAmount || ""}
               />
+              {errorMessage && (
+                <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-2xl animate-in slide-in-from-top-2 duration-200">
+                  <p className="text-xs font-bold text-red-500 leading-relaxed">
+                    ⚠️ {errorMessage}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
