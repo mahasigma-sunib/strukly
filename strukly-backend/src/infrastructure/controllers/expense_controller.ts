@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   CreateExpenseRequest,
   UpdateExpenseRequest,
@@ -31,7 +31,8 @@ export default class ExpenseController {
   public createExpense = async (
     req: Request<{}, {}, CreateExpenseRequest>,
     res: Response,
-  ): Promise<Response> => {
+    next: NextFunction,
+  ) => {
     try {
       const expenseData = req.body;
       const userID = req.user!.id;
@@ -46,10 +47,7 @@ export default class ExpenseController {
         expense: mapExpenseToResponse(result),
       });
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
-      }
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
 
@@ -70,7 +68,8 @@ export default class ExpenseController {
   public getExpenseList = async (
     req: Request,
     res: Response,
-  ): Promise<Response> => {
+    next: NextFunction,
+  ) => {
     try {
       const userID = req.user!.id;
       const month = parseInt(req.query.month as string, 10);
@@ -92,15 +91,15 @@ export default class ExpenseController {
           ),
         );
     } catch (error: unknown) {
-      console.error(error);
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
 
   public getWeeklyReport = async (
     req: Request,
     res: Response,
-  ): Promise<Response> => {
+    next: NextFunction,
+  ) => {
     try {
       const userID = req.user!.id;
 
@@ -124,14 +123,14 @@ export default class ExpenseController {
         history: reportData.history.map(mapExpenseToHistoryItem),
       });
     } catch (error: unknown) {
-      console.error(error);
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
   public getExpenseDetail = async (
     req: Request<{ expenseID: string }>,
     res: Response,
-  ): Promise<Response> => {
+    next: NextFunction,
+  ) => {
     try {
       const userID = req.user!.id;
       const { expenseID } = req.params;
@@ -147,17 +146,15 @@ export default class ExpenseController {
 
       return res.status(200).json({ expense: mapExpenseToResponse(expense) });
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
-      }
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
 
   public updateExpense = async (
     req: Request<{ expenseID: string }, {}, UpdateExpenseRequest>,
     res: Response,
-  ): Promise<Response> => {
+    next: NextFunction,
+  ) => {
     try {
       const userID = req.user!.id;
       const { expenseID } = req.params;
@@ -178,18 +175,15 @@ export default class ExpenseController {
         expense: mapExpenseToResponse(updatedExpense),
       });
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
-      }
-      console.error(error);
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
 
   public deleteExpense = async (
     req: Request<{ expenseID: string }>,
     res: Response,
-  ): Promise<Response> => {
+    next: NextFunction,
+  ) => {
     try {
       const userID = req.user!.id;
       const { expenseID } = req.params;
@@ -198,17 +192,15 @@ export default class ExpenseController {
 
       return res.status(200).json({ message: "Expense deleted successfully" });
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
-      }
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
 
   public scanExpenseImage = async (
     req: Request<{}, {}, { image: string }>,
     res: Response,
-  ): Promise<Response> => {
+    next: NextFunction,
+  ) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: "Image is required" });
@@ -220,7 +212,7 @@ export default class ExpenseController {
 
       return res.status(200).json({ transaction: expenseData });
     } catch (error: unknown) {
-      return res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
 }
