@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { MoneySchema } from "../common";
 import { CreateExpenseItemRequestSchema } from "./expense-item.request";
+import { ExpenseResponseSchema } from "../responses";
 
 // ============ Path Params ============
 
@@ -29,9 +30,13 @@ export const ExpenseReportQuerySchema = z.object({
 export const CreateExpenseRequestSchema = z.object({
   vendorName: z.string().describe("The name of the vendor/store"),
   category: z.string().describe("The expense category"),
-  dateTime: z.iso.datetime().describe("The date and time of the expense (ISO 8601)"),
+  dateTime: z.iso
+    .datetime()
+    .describe("The date and time of the expense (ISO 8601)"),
 
-  subtotalAmount: MoneySchema.describe("The subtotal before tax/service/discount"),
+  subtotalAmount: MoneySchema.describe(
+    "The subtotal before tax/service/discount",
+  ),
   taxAmount: MoneySchema.describe("The tax amount"),
   discountAmount: MoneySchema.describe("The discount amount"),
   serviceAmount: MoneySchema.describe("The service charge amount"),
@@ -41,7 +46,7 @@ export const CreateExpenseRequestSchema = z.object({
     .describe("The list of expense items"),
 });
 
-export const UpdateExpenseRequestSchema = CreateExpenseRequestSchema.partial();
+export const UpdateExpenseRequestSchema = CreateExpenseRequestSchema;
 
 // ============ Types ============
 

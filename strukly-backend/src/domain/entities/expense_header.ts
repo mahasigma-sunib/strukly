@@ -27,15 +27,15 @@ export interface IExpenseHeaderProps extends IExpenseHeaderBuilder {
 export default class ExpenseHeader {
   public readonly id: ExpenseID;
 
-  public readonly dateTime: Date;
-  public readonly vendorName: string;
-  public readonly category: ExpenseCategory;
-  public readonly subtotalAmount: Money;
-  public readonly taxAmount: Money;
-  public readonly discountAmount: Money;
-  public readonly serviceAmount: Money;
+  public dateTime: Date;
+  public vendorName: string;
+  public category: ExpenseCategory;
+  public subtotalAmount: Money;
+  public taxAmount: Money;
+  public discountAmount: Money;
+  public serviceAmount: Money;
 
-  public readonly totalAmount: Money;
+  public totalAmount: Money;
 
   public readonly userID: UserID;
 
@@ -65,5 +65,22 @@ export default class ExpenseHeader {
         Money.negate(props.discountAmount),
       ]),
     });
+  }
+
+  update(props: Partial<IExpenseHeaderEditable>) {
+    this.dateTime = props.dateTime ?? this.dateTime;
+    this.vendorName = props.vendorName ?? this.vendorName;
+    this.category = props.category ?? this.category;
+    this.subtotalAmount = props.subtotalAmount ?? this.subtotalAmount;
+    this.taxAmount = props.taxAmount ?? this.taxAmount;
+    this.discountAmount = props.discountAmount ?? this.discountAmount;
+    this.serviceAmount = props.serviceAmount ?? this.serviceAmount;
+
+    this.totalAmount = Money.sum([
+      this.subtotalAmount,
+      this.taxAmount,
+      this.serviceAmount,
+      Money.negate(this.discountAmount),
+    ]);
   }
 }
