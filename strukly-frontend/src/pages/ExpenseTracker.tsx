@@ -65,7 +65,12 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
     }
 
     if (data?.history) {
-      const mapped = data.history.map(mapExpense);
+      const mapped = data.history
+        .map(mapExpense)
+        .sort(
+          (a: ExpenseType, b: ExpenseType) =>
+            new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
+        );
       setItems(mapped);
       // console.log("mapped:", mapped);
     }
@@ -132,7 +137,7 @@ export default function ExpenseTracker() {
   // console.log(statistic.weekly);
 
   return (
-    <div>
+    <div className="pb-20">
       {/* page Title & date btn */}
       <div className="m-4 my-7 flex items-center justify-between">
         <div className="font-bold text-3xl">
