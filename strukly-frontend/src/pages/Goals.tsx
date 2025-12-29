@@ -21,12 +21,12 @@ const GoalsPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const handleCreate = () => {
     if (!formData.name.trim()) {
-      setErrorMessage("Nama goal tidak boleh kosong!");
+      setErrorMessage("A goal name must be filled");
       return;
     }
 
     if (formData.price <= 0) {
-      setErrorMessage("Harga target harus lebih dari 0!");
+      setErrorMessage("Target price must be greater than 0!");
       return;
     }
 
