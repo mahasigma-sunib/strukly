@@ -79,7 +79,7 @@ export default function AddExpense() {
           withCredentials: true,
         }
       );
-      navigate(-1);
+      navigate("../expense");
     } catch (err) {
       console.error(err);
     }
