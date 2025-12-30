@@ -113,7 +113,7 @@ const GoalsPage: React.FC = () => {
   const completedGoals = goals.filter((g) => g.isCompleted);
 
   return (
-    <div className="min-h-screen pb-20 overflow-y-auto bg-background text-text-primary">
+    <div className="min-h-screen pb-20 bg-background text-text-primary">
       <GoalsHeader
         activeCount={goals.filter((g) => !g.isCompleted).length}
         onAdd={() => {
