@@ -1,15 +1,18 @@
 import React, { useState, useRef } from "react";
-import type { GoalItem } from "../type/GoalItem";
-import GoalsHeader from "../components/GoalsHeader";
+import { ArrowUpCircle } from "lucide-react";
+
 import Card from "../components/card/Card";
+import GoalsHeader from "../components/GoalsHeader";
 import ProgressBar from "../components/graph/ProgressBar";
 import GoalModal from "../components/modal/GoalModal";
 import FlagMascot from "../components/mascots/FlagMascot";
+
 import FlagIcon from "../components/utilityIcons/FlagIcon";
 import EditIcon from "../components/utilityIcons/EditIcon";
 import DeleteIcon from "../components/utilityIcons/DeleteIcon";
 import CheckIcon from "../components/utilityIcons/CheckIcon";
-import { ArrowUpCircle } from "lucide-react";
+
+import type { GoalItem } from "../type/GoalItem";
 
 const GoalsPage: React.FC = () => {
   const [goals, setGoals] = useState<GoalItem[]>([]);
