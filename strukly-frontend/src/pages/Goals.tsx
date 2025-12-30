@@ -8,6 +8,7 @@ import FlagMascot from "../components/mascots/FlagMascot";
 import FlagIcon from "../components/utilityIcons/FlagIcon";
 import EditIcon from "../components/utilityIcons/EditIcon";
 import DeleteIcon from "../components/utilityIcons/DeleteIcon";
+import CheckIcon from "../components/utilityIcons/CheckIcon";
 import { CheckCircle2, ArrowUpCircle } from "lucide-react";
 
 const GoalsPage: React.FC = () => {
@@ -19,6 +20,7 @@ const GoalsPage: React.FC = () => {
   const [tempAmount, setTempAmount] = useState<number>(0);
   const [formData, setFormData] = useState({ name: "", price: 0 });
   const [errorMessage, setErrorMessage] = useState("");
+
   const handleCreate = () => {
     if (!formData.name.trim()) {
       setErrorMessage("A goal name must be filled");
@@ -109,7 +111,7 @@ const GoalsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 overflow-y-auto bg-background text-text-primary">
-      <div className="p-5 items-center justify-between bg-surface border-b-2 border-border rounded-b-3xl sticky top-0 z-20">
+      <div className="p-5 items-center justify-between bg-surface border-b-2 border-border rounded-b-3xl sticky top-0 z-20 mb-8">
         <GoalsHeader
           activeCount={goals.filter((g) => !g.isCompleted).length}
           onAdd={() => {
@@ -120,225 +122,256 @@ const GoalsPage: React.FC = () => {
       </div>
 
       <main className="ml-5 mr-4 mt-6 space-y-4">
-        <div className="mt-6 mb-2 font-bold text-2xl">
+        {/* <div className="mt-6 mb-2 font-bold text-2xl">
           <p>My Goals</p>
-        </div>
+        </div> */}
         {goals.length === 0 && (
-          <div className="flex flex-col items-center justify-center mt-20 ">
-            <FlagMascot width={148} height={148} className="ml-8" />
-            <p className="text-inactive mt-4 font-bold text-lg text-center">
-              You have no goals yet.
-            </p>
+          <div>
+            <div className="mt-6 mb-2 font-bold text-2xl">
+              <p>My Goals</p>
+            </div>
+            <div className="flex flex-col items-center justify-center mt-20 ">
+              <FlagMascot width={148} height={148} className="ml-8" />
+              <p className="text-inactive mt-4 font-bold text-lg text-center">
+                You have no goals yet.
+              </p>
+            </div>
           </div>
         )}
 
-        {/* Active goals */}
-        {activeGoals.length > 0 && (
-          <div>
-            <div className="mt-2 text-sm font-bold text-active bg-secondary-hover/10 px-2 py-1 rounded-md inline-block mb-2">
-              {activeGoals.length} Active Goals
-            </div>
-            <div className="space-y-4">
-              {activeGoals.map((goal, idx) => (
-                <div
-                  onMouseDown={(e) => {
-                    if ((e.target as HTMLElement).closest("button")) return;
-                    startEditTimer(goal);
-                  }}
-                  onMouseUp={clearEditTimer}
-                  onMouseLeave={clearEditTimer}
-                  onTouchStart={(e) => {
-                    const touchTarget = e.target as HTMLElement;
-                    if (touchTarget.closest("button")) return;
-                    startEditTimer(goal);
-                  }}
-                  onTouchEnd={clearEditTimer}
-                >
-                  <Card
-                    key={goal.id}
-                    className={`mx-0 w-full bg-white rounded-[24px] p-5 shadow-sm border ${
-                      goal.isCompleted
-                        ? "border-emerald-100 bg-emerald-50/30"
-                        : "border-slate-100"
-                    }`}
+        <div className="flex flex-col gap-6">
+          {/* Active goals */}
+          {activeGoals.length > 0 && (
+            <div>
+              <div className="flex flex-row justify-between items-center">
+                <p className="font-bold text-2xl">My Goals</p>
+                <p className="text-base px-3 py-1 font-bold text-[#f14c1a] bg-secondary-hover/30 rounded-full ">
+                  {activeGoals.length} Active Goals
+                </p>
+              </div>
+              <div className="space-y-4">
+                {activeGoals.map((goal, idx) => (
+                  <div
+                    onMouseDown={(e) => {
+                      if ((e.target as HTMLElement).closest("button")) return;
+                      startEditTimer(goal);
+                    }}
+                    onMouseUp={clearEditTimer}
+                    onMouseLeave={clearEditTimer}
+                    onTouchStart={(e) => {
+                      const touchTarget = e.target as HTMLElement;
+                      if (touchTarget.closest("button")) return;
+                      startEditTimer(goal);
+                    }}
+                    onTouchEnd={clearEditTimer}
                   >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                            goal.isCompleted
-                              ? "bg-emerald-100 text-emerald-600"
-                              : "bg-blue-50 text-blue-600"
-                          }`}
-                        >
-                          {goal.isCompleted ? (
-                            <CheckCircle2 size={24} />
-                          ) : (
+                    <Card key={goal.id} className="mx-0 w-full rounded-2xl p-5">
+                      <div className="flex justify-between w-full items-start mb-4">
+                        <div className="flex flex-row gap-2 items-center w-full">
+                          <div className="mx-2 rounded-2xl flex items-center justify-center">
                             <FlagIcon
-                              width={32}
+                              width={44}
+                              height={44}
                               className={`text-${
                                 colors[idx % colors.length]
-                              }-500`}
+                              }-500 -rotate-20`}
                             />
-                          )}
+                          </div>
+                          <div className="flex flex-col gap-1 flex-1">
+                            <p className="text-xl font-bold text-text-primary">
+                              {goal.name}
+                            </p>
+
+                            <div className="flex flex-row w-full justify-between items-center">
+                              <p className="text-lg font-semibold text-inactive">
+                                {(() => {
+                                  const progress =
+                                    (goal.currentAmount / goal.price) * 100;
+                                  if (progress >= 75)
+                                    return <span>You're almost there!</span>;
+                                  else if (progress >= 50 && progress < 75)
+                                    return <span>Halfway done, nice!</span>;
+                                  else if (progress >= 25 && progress < 50)
+                                    return <span>Let's keep it up!</span>;
+                                  else if (progress < 25 && progress >= 0)
+                                    return <span>Off to a great start!</span>;
+                                })()}
+                              </p>
+
+                              <p className="text-lg font-bold text-text-disabled/90 mr-1">
+                                {Math.ceil(
+                                  (goal.currentAmount / goal.price) * 100
+                                )}
+                                %
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-bold text-slate-800 leading-tight">
-                            {goal.name}
-                          </h3>
-                          <p className="text-xs font-medium text-slate-400 mt-1">
-                            Rp {goal.currentAmount.toLocaleString()} / Rp{" "}
-                            {goal.price.toLocaleString()}
-                          </p>
+
+                        <div className="flex gap-1 hidden">
+                          <button
+                            onClick={() => {
+                              setSelectedGoal(goal);
+                              setActiveModal("deposit");
+                            }}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                          >
+                            <ArrowUpCircle size={20} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedGoal(goal);
+                              setFormData({
+                                name: goal.name,
+                                price: goal.price,
+                              });
+                              setActiveModal("edit");
+                            }}
+                            className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
+                          >
+                            <EditIcon width={20} height={20} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(goal.id)}
+                            className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
+                          >
+                            <DeleteIcon width={20} height={30} />
+                          </button>
                         </div>
                       </div>
 
-                      <div className="flex gap-1">
-                        <button
-                          onClick={() => {
-                            setSelectedGoal(goal);
-                            setActiveModal("deposit");
-                          }}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                        >
-                          <ArrowUpCircle size={20} />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedGoal(goal);
-                            setFormData({ name: goal.name, price: goal.price });
-                            setActiveModal("edit");
-                          }}
-                          className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
-                        >
-                          <EditIcon width={20} height={20} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(goal.id)}
-                          className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
-                        >
-                          <DeleteIcon width={20} height={30} />
-                        </button>
+                      <ProgressBar
+                        value={goal.currentAmount}
+                        max={goal.price}
+                        height={12}
+                        barColor="bg-category-transportation"
+                      />
+
+                      <div className="mt-4 flex flex-row justify-between items-center">
+                        <p className="font-bold text-base text-text-disabled/70">
+                          Rp {goal.currentAmount.toLocaleString()}
+                        </p>
+                        <p className="font-bold text-base text-text-disabled/70">
+                          Rp {goal.price.toLocaleString()}
+                        </p>
                       </div>
-                    </div>
-
-                    <ProgressBar
-                      value={goal.currentAmount}
-                      max={goal.price}
-                      height={8}
-                    />
-                  </Card>
-                </div>
-              ))}
+                    </Card>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Completed goals */}
-        {completedGoals.length > 0 && (
-          <div>
-            {/* <div className="text-sm font-semibold text-slate-600 mt-6 mb-2">Completed ({completedGoals.length})</div> */}
-            <div className="mt-2 text-sm font-bold text-category-groceris bg-status-success/10 px-2 py-1 rounded-md inline-block mb-2">
-              {completedGoals.length} Complete Goals
-            </div>
-            <div className="space-y-4">
-              {completedGoals.map((goal, idx) => (
-                <div
-                  onMouseDown={(e) => {
-                    if ((e.target as HTMLElement).closest("button")) return;
-                    startEditTimer(goal);
-                  }}
-                  onMouseUp={clearEditTimer}
-                  onMouseLeave={clearEditTimer}
-                  onTouchStart={(e) => {
-                    const touchTarget = e.target as HTMLElement;
-                    if (touchTarget.closest("button")) return;
-                    startEditTimer(goal);
-                  }}
-                  onTouchEnd={clearEditTimer}
-                >
-                  <Card
-                    key={goal.id}
-                    className={`mx-0 w-full bg-white rounded-[24px] p-5 shadow-sm border ${
-                      goal.isCompleted
-                        ? "border-emerald-100 bg-emerald-50/30"
-                        : "border-slate-100"
-                    }`}
+          {/* Completed goals */}
+          {completedGoals.length > 0 && (
+            <div>
+              <div className="flex flex-row justify-between items-center">
+                <p className="font-bold text-2xl">Completed</p>
+                <p className="text-base font-bold text-[#198010] bg-status-success/10 px-2 py-1 rounded-full">
+                  {completedGoals.length} Completed Goals
+                </p>
+              </div>
+              <div className="space-y-4">
+                {completedGoals.map((goal, idx) => (
+                  <div
+                    onMouseDown={(e) => {
+                      if ((e.target as HTMLElement).closest("button")) return;
+                      startEditTimer(goal);
+                    }}
+                    onMouseUp={clearEditTimer}
+                    onMouseLeave={clearEditTimer}
+                    onTouchStart={(e) => {
+                      const touchTarget = e.target as HTMLElement;
+                      if (touchTarget.closest("button")) return;
+                      startEditTimer(goal);
+                    }}
+                    onTouchEnd={clearEditTimer}
                   >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex gap-4">
-                        <div
-                          className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                            goal.isCompleted
-                              ? "bg-emerald-100 text-emerald-600"
-                              : "bg-blue-50 text-blue-600"
-                          }`}
-                        >
-                          {goal.isCompleted ? (
-                            <CheckCircle2 size={24} />
-                          ) : (
-                            <FlagIcon
-                              width={32}
-                              className={`text-${
-                                colors[idx % colors.length]
-                              }-500`}
+                    <Card key={goal.id} className="mx-0 w-full rounded-2xl p-5">
+                      <div className="flex justify-between w-full items-start mb-4">
+                        <div className="flex flex-row gap-2 items-center w-full">
+                          <div className="mx-2 rounded-2xl flex items-center justify-center">
+                            <CheckIcon
+                              width={40}
+                              height={40}
+                              className="mx-1"
                             />
-                          )}
+                          </div>
+                          <div className="flex flex-col gap-1 flex-1">
+                            <p className="text-xl font-bold text-text-primary">
+                              {goal.name}
+                            </p>
+
+                            <div className="flex flex-row w-full justify-between items-center">
+                              <p className="text-lg font-semibold text-inactive">
+                                Goals reached!
+                              </p>
+
+                              <p className="text-lg font-bold text-text-disabled/90 mr-1">
+                                {Math.ceil(
+                                  (goal.currentAmount / goal.price) * 100
+                                )}
+                                %
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-bold text-slate-800 leading-tight">
-                            {goal.name}
-                          </h3>
-                          <p className="text-xs font-medium text-slate-400 mt-1">
-                            Rp {goal.currentAmount.toLocaleString()} / Rp{" "}
-                            {goal.price.toLocaleString()}
-                          </p>
+
+                        <div className="flex gap-1 hidden">
+                          <button
+                            onClick={() => {
+                              setSelectedGoal(goal);
+                              setActiveModal("deposit");
+                            }}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                          >
+                            <ArrowUpCircle size={20} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedGoal(goal);
+                              setFormData({
+                                name: goal.name,
+                                price: goal.price,
+                              });
+                              setActiveModal("edit");
+                            }}
+                            className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
+                          >
+                            <EditIcon width={20} height={20} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(goal.id)}
+                            className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
+                          >
+                            <DeleteIcon width={20} height={30} />
+                          </button>
                         </div>
                       </div>
 
-                      <div className="flex gap-1">
-                        <button
-                          onClick={() => {
-                            setSelectedGoal(goal);
-                            setActiveModal("deposit");
-                          }}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                        >
-                          <ArrowUpCircle size={20} />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedGoal(goal);
-                            setFormData({ name: goal.name, price: goal.price });
-                            setActiveModal("edit");
-                          }}
-                          className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
-                        >
-                          <EditIcon width={20} height={20} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(goal.id)}
-                          className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
-                        >
-                          <DeleteIcon width={20} height={30} />
-                        </button>
-                      </div>
-                    </div>
+                      <ProgressBar
+                        value={goal.currentAmount}
+                        max={goal.price}
+                        height={12}
+                        barColor="bg-status-success"
+                      />
 
-                    <ProgressBar
-                      value={goal.currentAmount}
-                      max={goal.price}
-                      height={8}
-                    />
-                  </Card>
-                </div>
-              ))}
+                      <div className="mt-4 flex flex-row justify-between items-center">
+                        <p className="font-bold text-base text-text-disabled/70">
+                          Rp {goal.currentAmount.toLocaleString()}
+                        </p>
+                        <p className="font-bold text-base text-text-disabled/70">
+                          Rp {goal.price.toLocaleString()}
+                        </p>
+                      </div>
+                    </Card>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
-
-      {/* <FlagMascot></FlagMascot> */}
 
       <GoalModal
         activeModal={activeModal}
