@@ -51,10 +51,10 @@ const GoalModal: React.FC<Props> = ({
                 type="text"
                 placeholder="Goal Name"
                 value={formData.name}
-                className={`w-full bg-slate-50 border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
+                className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                   errorMessage && !formData.name.trim()
-                    ? "border-status-error placeholder-status-error"
-                    : "border-slate-100 focus:border-primary"
+                    ? "border-status-error "
+                    : "border-border focus:border-primary"
                 }`}
                 onChange={(e) => {
                   if (errorMessage) setErrorMessage("");
@@ -65,10 +65,10 @@ const GoalModal: React.FC<Props> = ({
                 type="number"
                 placeholder="Target Price (Rp)"
                 value={formData.price || ""}
-                className={`w-full bg-slate-50 border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
+                className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                   errorMessage && formData.price <= 0
-                    ? "border-status-error placeholder-status-error"
-                    : "border-slate-100 focus:border-primary"
+                    ? "border-status-error "
+                    : "border-border focus:border-primary"
                 }`}
                 onChange={(e) => {
                   if (errorMessage) setErrorMessage("");
@@ -76,9 +76,12 @@ const GoalModal: React.FC<Props> = ({
                 }}
               />
               {errorMessage && (
-                <div className="p-3 bg-red-50 border border-border rounded-2xl animate-in slide-in-from-top-2 duration-200">
-                  <p className="text-xs font-bold text-status-error text-center">
-                    ⚠️ {errorMessage}
+                <div className="w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex justify-center items-center gap-3 animate-in zoom-in-95 duration-300">
+                  <div className="bg-status-error text-white rounded-full p-2 h-5 w-5 flex items-center justify-center text-sm font-bold">
+                    !
+                  </div>
+                  <p className="text-status-error text-base font-semibold">
+                    {errorMessage}
                   </p>
                 </div>
               )}
@@ -90,10 +93,10 @@ const GoalModal: React.FC<Props> = ({
                 type="number"
                 autoFocus
                 placeholder="0"
-                className={`w-full text-center text-3xl font-black bg-transparent border-b-2 border-blue-500 outline-none p-4 ${
+                className={`w-full text-center text-2xl font-extrabold bg-transparent border-b-2  outline-none p-4  ${
                   errorMessage
-                    ? "border-status-error text-status-error"
-                    : "border-blue-500 text-text-primary"
+                    ? "border-status-error focus:border-status-error"
+                    : "border-text-disabled focus:border-primary text-text-primary"
                 }`}
                 onChange={(e) => {
                   setErrorMessage("");
@@ -102,9 +105,12 @@ const GoalModal: React.FC<Props> = ({
                 value={tempAmount || ""}
               />
               {errorMessage && (
-                <div className="mt-4 p-3 bg-red-50 border-status-error rounded-2xl animate-in slide-in-from-top-2 duration-200">
-                  <p className="text-xs font-bold text-status-error leading-relaxed">
-                    ⚠️ {errorMessage}
+                <div className="mt-5 w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex justify-center items-center gap-3 animate-in zoom-in-95 duration-300">
+                  <div className="bg-status-error text-white rounded-full p-2 h-5 w-5 flex items-center justify-center text-sm font-bold">
+                    !
+                  </div>
+                  <p className="text-status-error text-base font-semibold">
+                    {errorMessage}
                   </p>
                 </div>
               )}
@@ -113,7 +119,7 @@ const GoalModal: React.FC<Props> = ({
 
           <Button
             onClick={onConfirm}
-            className="w-full text-surface font-black active:scale-95 transition-all "
+            className="w-full text-surface text-base font-black active:scale-95 transition-all "
             variant="primary"
           >
             Confirm

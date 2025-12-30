@@ -9,7 +9,7 @@ import FlagIcon from "../components/utilityIcons/FlagIcon";
 import EditIcon from "../components/utilityIcons/EditIcon";
 import DeleteIcon from "../components/utilityIcons/DeleteIcon";
 import CheckIcon from "../components/utilityIcons/CheckIcon";
-import { CheckCircle2, ArrowUpCircle } from "lucide-react";
+import { ArrowUpCircle } from "lucide-react";
 
 const GoalsPage: React.FC = () => {
   const [goals, setGoals] = useState<GoalItem[]>([]);
@@ -96,7 +96,7 @@ const GoalsPage: React.FC = () => {
       setFormData({ name: g.name, price: g.price });
       setActiveModal("edit");
       if (navigator.vibrate) navigator.vibrate(50);
-    }, 800);
+    }, 600);
   };
 
   const clearEditTimer = () => {
@@ -122,9 +122,6 @@ const GoalsPage: React.FC = () => {
       </div>
 
       <main className="ml-5 mr-4 mt-6 space-y-4">
-        {/* <div className="mt-6 mb-2 font-bold text-2xl">
-          <p>My Goals</p>
-        </div> */}
         {goals.length === 0 && (
           <div>
             <div className="mt-6 mb-2 font-bold text-2xl">
@@ -165,7 +162,10 @@ const GoalsPage: React.FC = () => {
                     }}
                     onTouchEnd={clearEditTimer}
                   >
-                    <Card key={goal.id} className="mx-0 w-full rounded-2xl p-5">
+                    <Card
+                      key={goal.id}
+                      className="mx-0 w-full rounded-2xl p-5 active:bg-slate-100"
+                    >
                       <div className="flex justify-between w-full items-start mb-4">
                         <div className="flex flex-row gap-2 items-center w-full">
                           <div className="mx-2 rounded-2xl flex items-center justify-center">
@@ -194,7 +194,7 @@ const GoalsPage: React.FC = () => {
                                   else if (progress >= 25 && progress < 50)
                                     return <span>Let's keep it up!</span>;
                                   else if (progress < 25 && progress >= 0)
-                                    return <span>Off to a great start!</span>;
+                                    return <span>Let's get started!</span>;
                                 })()}
                               </p>
 
@@ -208,7 +208,7 @@ const GoalsPage: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="flex gap-1 hidden">
+                        <div className="flex gap-1 ">
                           <button
                             onClick={() => {
                               setSelectedGoal(goal);
