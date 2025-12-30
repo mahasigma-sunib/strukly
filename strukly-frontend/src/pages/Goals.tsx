@@ -114,15 +114,13 @@ const GoalsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 overflow-y-auto bg-background text-text-primary">
-      <div className="">
-        <GoalsHeader
-          activeCount={goals.filter((g) => !g.isCompleted).length}
-          onAdd={() => {
-            setFormData({ name: "", price: 0 });
-            setActiveModal("create");
-          }}
-        />
-      </div>
+      <GoalsHeader
+        activeCount={goals.filter((g) => !g.isCompleted).length}
+        onAdd={() => {
+          setFormData({ name: "", price: 0 });
+          setActiveModal("create");
+        }}
+      />
 
       <main className="ml-5 mr-4 mt-6 space-y-4">
         {goals.length === 0 && (
