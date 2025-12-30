@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import {
   CreateExpenseRequest,
   UpdateExpenseRequest,
-  ExpenseResponse,
 } from "../schemas";
 import {
   mapExpenseToResponse,
