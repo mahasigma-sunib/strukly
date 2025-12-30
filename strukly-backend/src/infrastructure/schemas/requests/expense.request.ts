@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { MoneySchema } from "../common";
 import { CreateExpenseItemRequestSchema } from "./expense-item.request";
-import { ExpenseResponseSchema } from "../responses";
 
 // ============ Path Params ============
 
