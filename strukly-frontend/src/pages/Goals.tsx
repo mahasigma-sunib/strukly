@@ -37,7 +37,7 @@ const GoalsPage: React.FC = () => {
       currentAmount: 0,
       isCompleted: false,
     };
-    
+
     setGoals((g) => [...g, newGoal]);
     setActiveModal(null);
   };
@@ -109,7 +109,7 @@ const GoalsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 overflow-y-auto bg-background text-text-primary">
-      <div className="m-4 my-7 items-center justify-between">
+      <div className="p-5 items-center justify-between bg-surface border-b-2 border-border rounded-b-3xl sticky top-0 z-20">
         <GoalsHeader
           activeCount={goals.filter((g) => !g.isCompleted).length}
           onAdd={() => {
@@ -120,7 +120,7 @@ const GoalsPage: React.FC = () => {
       </div>
 
       <main className="ml-5 mr-4 mt-6 space-y-4">
-        <div className="mt-11 mb-2 font-bold text-2xl">
+        <div className="mt-6 mb-2 font-bold text-2xl">
           <p>My Goals</p>
         </div>
         {goals.length === 0 && (
