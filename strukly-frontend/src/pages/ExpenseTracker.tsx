@@ -86,41 +86,41 @@ export default function ExpenseTracker() {
             {monthName} {activeDate.year}
           </Button>
         </div>
-
-        {/* drawer */}
-        <Drawer
-          visible={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
-          title="Select Period"
-        >
-          <div className="flex flex-col h-full">
-            <div className="mb-6">
-              <p className="text-text-secondary text-center mb-4 text-md">
-                Scroll to select month and year
-              </p>
-
-              {/* wheel picker */}
-              <Datepicker
-                selectedMonth={tempDate.month}
-                selectedYear={tempDate.year}
-                onChange={(month, year) => setTempDate({ month, year })}
-              />
-            </div>
-
-            {/* action btn */}
-            <div className="mt-auto">
-              <Button
-                variant="primary"
-                size="md"
-                className="w-full !rounded-2xl pt-4 pb-4 text-lg"
-                onClick={handleApplyFilter}
-              >
-                Apply Filter
-              </Button>
-            </div>
-          </div>
-        </Drawer>
       </div>
+
+      {/* drawer */}
+      <Drawer
+        visible={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Select Period"
+      >
+        <div className="flex flex-col h-full">
+          <div className="mb-6">
+            <p className="text-text-secondary text-center mb-4 text-md">
+              Scroll to select month and year
+            </p>
+
+            {/* wheel picker */}
+            <Datepicker
+              selectedMonth={tempDate.month}
+              selectedYear={tempDate.year}
+              onChange={(month, year) => setTempDate({ month, year })}
+            />
+          </div>
+
+          {/* action btn */}
+          <div className="mt-auto">
+            <Button
+              variant="primary"
+              size="md"
+              className="w-full !rounded-2xl pt-4 pb-4 text-lg"
+              onClick={handleApplyFilter}
+            >
+              Apply Filter
+            </Button>
+          </div>
+        </div>
+      </Drawer>
 
       {/* Bar Chart */}
       <div>

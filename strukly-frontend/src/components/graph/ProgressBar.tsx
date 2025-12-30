@@ -8,7 +8,12 @@ type ProgressBarProps = {
   className?: string;
 };
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ value, max, height = 8, className = "" }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({
+  value,
+  max,
+  height = 8,
+  className = "",
+}) => {
   if (max <= 0) {
     return (
       <div className={`w-full ${className}`}>
@@ -21,7 +26,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ value, max, height = 8, class
   const clampedPercent = Math.max(0, Math.min(100, rawPercent));
   const isOver = rawPercent > 100;
 
-  const bgColor = isOver ? "bg-red-500" : "bg-gradient-to-r from-green-400 via-yellow-400 to-orange-400";
+  const bgColor = isOver
+    ? "bg-red-500"
+    : "bg-gradient-to-r from-green-400 via-yellow-400 to-orange-400";
 
   return (
     <div className={`w-full ${className}`}>
