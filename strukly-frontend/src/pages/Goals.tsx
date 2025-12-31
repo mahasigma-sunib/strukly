@@ -165,6 +165,7 @@ const GoalsPage: React.FC = () => {
                     <GoalList
                       goal={goal}
                       idx={idx}
+                      isComplete={false}
                       onOpenDrawer={handleOpenUpdate}
                     ></GoalList>
                   </Card>
