@@ -46,7 +46,7 @@ function mapWeeklyStats(raw: any[]): WeeklyStat[] {
 }
 //to fetch & load the expense datas
 export function useLoadExpense(month: number, year: number, getStat: boolean) {
-  console.log("running");
+  // console.log("running");
   const { setStats, setItems, setError, setLoading } = useExpense();
 
   const { data, error, isLoading } = useSWR(
