@@ -4,9 +4,10 @@ import type { GoalItem } from "../../type/GoalItem";
 interface GoalListProps {
   goal: GoalItem;
   idx: number;
+  onEditClick: (goal: GoalItem) => void;
 }
 
-export default function GoalList({ goal, idx }: GoalListProps) {
+export default function GoalList({ goal, idx, onEditClick }: GoalListProps) {
   const colors = ["red", "blue", "green", "yellow", "purple"];
   const progress = (goal.currentAmount / goal.price) * 100;
 
@@ -46,10 +47,7 @@ export default function GoalList({ goal, idx }: GoalListProps) {
 
         <div className="flex gap-1 ">
           <button
-            onClick={() => {
-              setSelectedGoal(goal);
-              setActiveModal("deposit");
-            }}
+            onClick={() => onEditClick(goal)}
             className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
           >
             <ArrowUpCircle size={20} />
