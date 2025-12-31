@@ -91,7 +91,13 @@ const GoalsPage: React.FC = () => {
     setGoals((g) => g.filter((it) => it.id !== id));
 
   const timerRef = useRef<number | null>(null);
-  const colors = ["red", "blue", "green", "yellow", "purple"];
+  const colorClasses = [
+    "text-red-500",
+    "text-blue-500",
+    "text-green-500",
+    "text-yellow-500",
+    "text-purple-500",
+  ];
 
   const startEditTimer = (g: GoalItem) => {
     timerRef.current = window.setTimeout(() => {
@@ -173,9 +179,9 @@ const GoalsPage: React.FC = () => {
                             <FlagIcon
                               width={44}
                               height={44}
-                              className={`text-${
-                                colors[idx % colors.length]
-                              }-500 -rotate-20`}
+                              className={`${
+                                colorClasses[idx % colorClasses.length]
+                              } -rotate-20`}
                             />
                           </div>
                           <div className="flex flex-col gap-1 flex-1">
