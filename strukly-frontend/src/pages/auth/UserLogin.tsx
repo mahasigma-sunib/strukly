@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
@@ -7,151 +6,158 @@ import Button from "../../components/button/Button";
 import TextLogo from "../../components/logos/TextLogo";
 import LoginMascot from "../../components/mascots/LoginMascot";
 
+// Helper error message component
+const ErrorMessage = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-status-error text-sm font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1 duration-200">
+    {children}
+  </p>
+);
+
 function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<string[]>([]);
   const [loginError, setLoginError] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Tambahkan state loading
 
   const navigate = useNavigate();
   const login = useUserAuth((s) => s.login);
 
-  const handleEmailValidation = () => {
-    const { error, success } = emailSchema.safeParse(email);
-    if (success) {
-      setEmailError("");
-    } else {
-      setEmailError(error.issues[0].message);
-    }
-  };
+  const validate = () => {
+    const emailVal = emailSchema.safeParse(email);
+    const passVal = passwordSchema.safeParse(password);
 
-  const handlePasswordValidation = () => {
-    const { error, success } = passwordSchema.safeParse(password);
-    if (success) {
-      setPasswordError([]);
-    } else {
-      const errors = error.issues.map((issue) => issue.message);
-      setPasswordError(errors);
-    }
+    if (!emailVal.success) setEmailError(emailVal.error.issues[0].message);
+    else setEmailError("");
+
+    if (!passVal.success)
+      setPasswordError(passVal.error.issues.map((i) => i.message));
+    else setPasswordError([]);
+
+    return emailVal.success && passVal.success;
   };
 
   const handleLogin = async () => {
-    handleEmailValidation();
-    handlePasswordValidation();
     setLoginError("");
+    const isValid = validate();
 
-    if (!email || !password || emailError !== "" || passwordError.length > 0) {
-      if (!email) setEmailError("Email cannot be empty");
-      if (!password) setPasswordError(["Password cannot be empty"]);
-      return;
-    }
+    if (!isValid) return;
 
+    setIsLoading(true);
     try {
       await login(email, password);
-      document.location.href = "/cookie";
-    } catch {
-      setLoginError("Invalid email or password");
+      window.location.href = "/cookie";
+    } catch (err) {
+      setLoginError(
+        "The email or password you entered is incorrect. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-surface min-h-screen flex flex-col items-center">
+    <div className="bg-surface min-h-screen flex flex-col items-center antialiased">
       <div className="flex justify-center items-center w-full pt-10 pb-4">
         <TextLogo width={108} height={84} />
       </div>
 
       <div className="flex flex-col gap-4 items-center w-full max-w-sm md:max-w-md px-6">
-        <div className="flex flex-col gap-1 mb-5 mt-4 items-center justify-center text-center">
+        <div className="flex flex-col gap-1 mb-5 mt-4 items-center text-center">
           <div className="mb-1">
             <LoginMascot width={144} height={144} />
           </div>
-          <p className="font-extrabold text-2xl text-text-primary">
+          <h1 className="font-extrabold text-2xl text-text-primary">
             Welcome Back!
-          </p>
+          </h1>
           <p className="font-bold text-base text-inactive">
             Let's get you back in!
           </p>
         </div>
 
-        {/* Form Fields Section */}
-        <div className="flex flex-col gap-3 w-full">
-          {/* Email Input */}
-          <input
-            type="email"
-            id="email"
-            placeholder="Email or username"
-            value={email}
-            onChange={(event) => {
-              setEmail(event?.target.value);
-              handleEmailValidation();
-            }}
-            onBlur={handleEmailValidation}
-            required
-            className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
-                      bg-background focus:outline-none focus:border-primary 
-                      ${emailError ? "border-status-error" : "border-border"}`}
-          />
-          {emailError != "" && (
-            <p className="text-status-error text-sm mt-[-4px]">{emailError}</p>
-          )}
-
-          {/* Password Input */}
-          <input
-            type="password"
-            id="password"
-            placeholder="Password"
-            value={password}
-            onChange={(event) => {
-              setPassword(event?.target.value);
-              handlePasswordValidation();
-            }}
-            onBlur={handlePasswordValidation}
-            required
-            className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
-                      bg-background focus:outline-none focus:border-primary 
-                      ${
-                        passwordError.length > 0
-                          ? "border-status-error"
-                          : "border-border"
-                      }`}
-          />
-          {passwordError.length > 0 && (
-            <div className="text-status-error text-sm mt-[-4px]">
-              {passwordError.map((error, index) => (
-                <p key={index}>{error}</p>
-              ))}
+        {/* Global Login Error Alert */}
+        {loginError && (
+          <div className="w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex items-center gap-3 animate-in zoom-in-95 duration-300">
+            <div className="bg-status-error text-white rounded-full p-3 h-5 w-5 flex items-center justify-center text-sm font-bold">
+              !
             </div>
-          )}
+            <p className="text-status-error text-sm font-bold">{loginError}</p>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-4 w-full">
+          {/* Email Input Group */}
+          <div className="flex flex-col">
+            <input
+              type="email"
+              placeholder="Email or username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => {
+                const res = emailSchema.safeParse(email);
+                setEmailError(res.success ? "" : res.error.issues[0].message);
+              }}
+              className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
+                bg-background focus:outline-none focus:ring-4 focus:ring-primary/10
+                ${
+                  emailError
+                    ? "border-status-error bg-status-error/5"
+                    : "border-border focus:border-primary"
+                }`}
+            />
+            {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+          </div>
+
+          {/* Password Input Group */}
+          <div className="flex flex-col">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onBlur={() => {
+                const res = passwordSchema.safeParse(password);
+                setPasswordError(
+                  res.success ? [] : res.error.issues.map((i) => i.message)
+                );
+              }}
+              className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
+                bg-background focus:outline-none focus:ring-4 focus:ring-primary/10
+                ${
+                  passwordError.length > 0
+                    ? "border-status-error bg-status-error/5"
+                    : "border-border focus:border-primary"
+                }`}
+            />
+            {passwordError.map((err, i) => (
+              <ErrorMessage key={i}>{err}</ErrorMessage>
+            ))}
+          </div>
         </div>
 
-        {/* Login Button */}
         <Button
           variant="primary"
           onClick={handleLogin}
-          className="rounded cursor-pointer my-4 w-full py-3"
+          disabled={isLoading}
+          className={`rounded-2xl cursor-pointer my-2 w-full py-4 font-black tracking-wide transition-all
+            ${
+              isLoading ? "opacity-70" : "hover:shadow-lg active:scale-[0.98]"
+            }`}
         >
-          LOG IN
+          {isLoading ? "LOGGING IN..." : "LOG IN"}
         </Button>
 
-        {/* Register Link */}
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 mt-2">
           <span className="font-bold text-text-disabled">
-            Don&apos;t have an account?
+            Don't have an account?
           </span>
           <span
             onClick={() => navigate("/register")}
-            className="font-extrabold text-primary cursor-pointer"
+            className="font-extrabold text-primary cursor-pointer hover:underline"
           >
             Sign Up
           </span>
-        </div>
-
-        {/* Login Error Display */}
-        <div>
-          {loginError != "" && (
-            <p className="text-status-error">{loginError}</p>
-          )}
         </div>
       </div>
     </div>
