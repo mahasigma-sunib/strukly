@@ -8,10 +8,10 @@ import ProgressBar from "../../components/graph/ProgressBar";
 interface GoalListProps {
   goal: GoalItem;
   idx: number;
-  onEdit: (goal: GoalItem) => void;
+  onOpenDrawer: (goal: GoalItem) => void;
 }
 
-export default function GoalList({ goal, idx, onEdit }: GoalListProps) {
+export default function GoalList({ goal, idx, onOpenDrawer }: GoalListProps) {
   const colorClasses = [
     "text-red-500",
     "text-blue-500",
@@ -25,7 +25,7 @@ export default function GoalList({ goal, idx, onEdit }: GoalListProps) {
 
   const handleStart = () => {
     timerRef.current = setTimeout(() => {
-      onEdit(goal);
+      onOpenDrawer(goal);
       if (navigator.vibrate) navigator.vibrate(50);
     }, 600);
   };
