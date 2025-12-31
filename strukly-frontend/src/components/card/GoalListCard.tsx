@@ -9,17 +9,11 @@ import type { GoalItem } from "../../type/GoalItem";
 
 interface GoalListProps {
   goal: GoalItem;
-  idx: number;
-  isCompleted: Boolean;
+  idx: number | null;
   onOpenDrawer: (goal: GoalItem) => void;
 }
 
-export default function GoalList({
-  goal,
-  idx,
-  isCompleted,
-  onOpenDrawer,
-}: GoalListProps) {
+export default function GoalList({ goal, idx, onOpenDrawer }: GoalListProps) {
   const colorClasses = [
     "text-red-500",
     "text-blue-500",
@@ -56,14 +50,14 @@ export default function GoalList({
       <div className="flex justify-between w-full items-start mb-4">
         <div className="flex flex-row gap-2 items-center w-full">
           <div className="mx-2 rounded-2xl flex items-center justify-center">
-            {isCompleted ? (
+            {goal.isCompleted ? (
               <CheckIcon width={40} height={40} className="mx-1" />
             ) : (
               <FlagIcon
                 width={44}
                 height={44}
                 className={`${
-                  colorClasses[idx % colorClasses.length]
+                  colorClasses[(idx ?? 0) % colorClasses.length]
                 } -rotate-20`}
               />
             )}
@@ -72,7 +66,7 @@ export default function GoalList({
               width={44}
               height={44}
               className={`${
-                colorClasses[idx % colorClasses.length]
+                colorClasses[(idx ?? 0) % colorClasses.length]
               } -rotate-20`}
             />
           </div>
