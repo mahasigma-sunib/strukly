@@ -1,21 +1,15 @@
 import { FlagIcon } from "lucide-react";
+import type { GoalItem } from "../../type/GoalItem";
 
 interface GoalListProps {
-  name: string;
-  price: number;
-  currentAmount: number;
-  isCompleted: boolean;
+  goal: GoalItem;
+  idx: number;
 }
 
-export default function GoalList({
-  name,
-  price,
-  currentAmount,
-  isCompleted,
-}: GoalListProps) {
+export default function GoalList({ goal, idx }: GoalListProps) {
   const colors = ["red", "blue", "green", "yellow", "purple"];
-  const randNumber = Math.random(); // randNumber to determine the color of the flag
   const progress = (goal.currentAmount / goal.price) * 100;
+
   return (
     <div>
       <div className="flex justify-between w-full items-start mb-4">
@@ -24,9 +18,7 @@ export default function GoalList({
             <FlagIcon
               width={44}
               height={44}
-              className={`text-${
-                colors[randNumber % colors.length]
-              }-500 -rotate-20`}
+              className={`text-${colors[idx % colors.length]}-500 -rotate-20`}
             />
           </div>
           <div className="flex flex-col gap-1 flex-1">
