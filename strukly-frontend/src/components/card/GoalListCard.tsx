@@ -1,25 +1,59 @@
-import { FlagIcon } from "lucide-react";
+import { useRef } from "react";
+
+import FlagIcon from "../../components/utilityIcons/FlagIcon";
 import type { GoalItem } from "../../type/GoalItem";
+
+import ProgressBar from "../../components/graph/ProgressBar";
 
 interface GoalListProps {
   goal: GoalItem;
   idx: number;
-  onEditClick: (goal: GoalItem) => void;
+  onEdit: (goal: GoalItem) => void;
 }
 
-export default function GoalList({ goal, idx, onEditClick }: GoalListProps) {
-  const colors = ["red", "blue", "green", "yellow", "purple"];
+export default function GoalList({ goal, idx, onEdit }: GoalListProps) {
+  const colorClasses = [
+    "text-red-500",
+    "text-blue-500",
+    "text-green-500",
+    "text-yellow-500",
+    "text-purple-500",
+  ];
   const progress = (goal.currentAmount / goal.price) * 100;
 
+  const timerRef = useRef<number | null>(null);
+
+  const handleStart = () => {
+    timerRef.current = setTimeout(() => {
+      onEdit(goal);
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 600);
+  };
+
+  const handleEnd = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
   return (
-    <div>
+    <div
+      onMouseDown={handleStart}
+      onMouseUp={handleEnd}
+      onMouseLeave={handleEnd}
+      onTouchStart={handleStart}
+      onTouchEnd={handleEnd}
+    >
       <div className="flex justify-between w-full items-start mb-4">
         <div className="flex flex-row gap-2 items-center w-full">
           <div className="mx-2 rounded-2xl flex items-center justify-center">
             <FlagIcon
               width={44}
               height={44}
-              className={`text-${colors[idx % colors.length]}-500 -rotate-20`}
+              className={`${
+                colorClasses[idx % colorClasses.length]
+              } -rotate-20`}
             />
           </div>
           <div className="flex flex-col gap-1 flex-1">
@@ -43,34 +77,6 @@ export default function GoalList({ goal, idx, onEditClick }: GoalListProps) {
               </p>
             </div>
           </div>
-        </div>
-
-        <div className="flex gap-1 ">
-          <button
-            onClick={() => onEditClick(goal)}
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-          >
-            <ArrowUpCircle size={20} />
-          </button>
-          <button
-            onClick={() => {
-              setSelectedGoal(goal);
-              setFormData({
-                name: goal.name,
-                price: goal.price,
-              });
-              setActiveModal("edit");
-            }}
-            className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
-          >
-            <EditIcon width={20} height={20} />
-          </button>
-          <button
-            onClick={() => handleDelete(goal.id)}
-            className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
-          >
-            <DeleteIcon width={20} height={30} />
-          </button>
         </div>
       </div>
 
