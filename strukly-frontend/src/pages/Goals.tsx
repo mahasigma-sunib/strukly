@@ -101,13 +101,6 @@ const GoalsPage: React.FC = () => {
   };
 
   const timerRef = useRef<number | null>(null);
-  const colorClasses = [
-    "text-red-500",
-    "text-blue-500",
-    "text-green-500",
-    "text-yellow-500",
-    "text-purple-500",
-  ];
 
   const startEditTimer = (g: GoalItem) => {
     timerRef.current = window.setTimeout(() => {
