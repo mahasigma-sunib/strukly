@@ -183,100 +183,14 @@ const GoalsPage: React.FC = () => {
                 </p>
               </div>
               <div className="space-y-4">
-                {completedGoals.map((goal, idx) => (
-                  <div
-                    onMouseDown={(e) => {
-                      if ((e.target as HTMLElement).closest("button")) return;
-                      startEditTimer(goal);
-                    }}
-                    onMouseUp={clearEditTimer}
-                    onMouseLeave={clearEditTimer}
-                    onTouchStart={(e) => {
-                      const touchTarget = e.target as HTMLElement;
-                      if (touchTarget.closest("button")) return;
-                      startEditTimer(goal);
-                    }}
-                    onTouchEnd={clearEditTimer}
-                  >
-                    <Card key={goal.id} className="mx-0 w-full rounded-2xl p-5">
-                      <div className="flex justify-between w-full items-start mb-4">
-                        <div className="flex flex-row gap-2 items-center w-full">
-                          <div className="mx-2 rounded-2xl flex items-center justify-center">
-                            <CheckIcon
-                              width={40}
-                              height={40}
-                              className="mx-1"
-                            />
-                          </div>
-                          <div className="flex flex-col gap-1 flex-1">
-                            <p className="text-xl font-bold text-text-primary">
-                              {goal.name}
-                            </p>
-
-                            <div className="flex flex-row w-full justify-between items-center">
-                              <p className="text-lg font-semibold text-inactive">
-                                Goals reached!
-                              </p>
-
-                              <p className="text-lg font-bold text-text-disabled/90 mr-1">
-                                {Math.ceil(
-                                  (goal.currentAmount / goal.price) * 100
-                                )}
-                                %
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-1 hidden">
-                          <button
-                            onClick={() => {
-                              setSelectedGoal(goal);
-                              setActiveModal("deposit");
-                            }}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                          >
-                            <ArrowUpCircle size={20} />
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedGoal(goal);
-                              setFormData({
-                                name: goal.name,
-                                price: goal.price,
-                              });
-                              setActiveModal("edit");
-                            }}
-                            className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
-                          >
-                            <EditIcon width={20} height={20} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(goal.id)}
-                            className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
-                          >
-                            <DeleteIcon width={20} height={30} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <ProgressBar
-                        value={goal.currentAmount}
-                        max={goal.price}
-                        height={12}
-                        barColor="bg-status-success"
-                      />
-
-                      <div className="mt-4 flex flex-row justify-between items-center">
-                        <p className="font-bold text-base text-text-disabled/70">
-                          Rp {goal.currentAmount.toLocaleString()}
-                        </p>
-                        <p className="font-bold text-base text-text-disabled/70">
-                          Rp {goal.price.toLocaleString()}
-                        </p>
-                      </div>
-                    </Card>
-                  </div>
+                {completedGoals.map((goal) => (
+                  <Card key={goal.id} className="mx-0 w-full rounded-2xl p-5">
+                    <GoalList
+                      goal={goal}
+                      idx={null}
+                      onOpenDrawer={handleOpenUpdate}
+                    ></GoalList>
+                  </Card>
                 ))}
               </div>
             </div>
