@@ -9,7 +9,7 @@ interface Props {
 
 const GoalsHeader: React.FC<Props> = ({ onAdd }) => {
   return (
-    <div className="sticky top-0 z-20 flex items-center justify-between mb-8 p-5 rounded-b-3xl border-b-2 border-border bg-surface">
+    <div className="sticky top-0 z-20 flex items-center justify-between mb-4 p-5 rounded-b-3xl border-b-2 border-border bg-surface">
       <div>
         <h1 className="text-3xl font-bold ">Goals</h1>
       </div>

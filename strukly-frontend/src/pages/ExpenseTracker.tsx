@@ -59,7 +59,7 @@ export default function ExpenseTracker() {
   return (
     <div>
       {/* page Title & date btn */}
-      <div className="m-4 my-7 flex items-center justify-between">
+      <div className="sticky top-0 z-20 flex items-center justify-between p-5 rounded-b-3xl border-b-2 border-border bg-surface">
         <div className="font-bold text-3xl">
           <p>Expense</p>
         </div>
@@ -87,39 +87,39 @@ export default function ExpenseTracker() {
         </div>
 
         {/* drawer */}
-        <Drawer
-          visible={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
-          title="Select Period"
-        >
-          <div className="flex flex-col h-full">
-            <div className="mb-6">
-              <p className="text-text-secondary text-center mb-4 text-md">
-                Scroll to select month and year
-              </p>
-
-              {/* wheel picker */}
-              <Datepicker
-                selectedMonth={tempDate.month}
-                selectedYear={tempDate.year}
-                onChange={(month, year) => setTempDate({ month, year })}
-              />
-            </div>
-
-            {/* action btn */}
-            <div className="mt-auto">
-              <Button
-                variant="primary"
-                size="md"
-                className="w-full !rounded-2xl pt-4 pb-4 text-lg"
-                onClick={handleApplyFilter}
-              >
-                Apply Filter
-              </Button>
-            </div>
-          </div>
-        </Drawer>
       </div>
+      <Drawer
+        visible={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Select Period"
+      >
+        <div className="flex flex-col h-full">
+          <div className="mb-6">
+            <p className="text-text-secondary text-center mb-4 text-md">
+              Scroll to select month and year
+            </p>
+
+            {/* wheel picker */}
+            <Datepicker
+              selectedMonth={tempDate.month}
+              selectedYear={tempDate.year}
+              onChange={(month, year) => setTempDate({ month, year })}
+            />
+          </div>
+
+          {/* action btn */}
+          <div className="mt-auto">
+            <Button
+              variant="primary"
+              size="md"
+              className="w-full !rounded-2xl pt-4 pb-4 text-lg"
+              onClick={handleApplyFilter}
+            >
+              Apply Filter
+            </Button>
+          </div>
+        </div>
+      </Drawer>
 
       {/* Bar Chart */}
       <div>
@@ -157,7 +157,7 @@ export default function ExpenseTracker() {
         <div className="mt-0">
           {items.length === 0 && !isLoading && (
             <div className="flex flex-col items-center justify-center mt-20 ">
-              <ExpenseEmptyMascot width={148} height={148} />
+              <ExpenseEmptyMascot className="ml-6" width={150} height={150} />
               <p className="text-inactive mt-4 font-bold text-lg text-center">
                 You have no transactions yet.
               </p>
