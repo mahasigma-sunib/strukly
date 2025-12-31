@@ -72,7 +72,6 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
             new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
         );
       setItems(mapped);
-      // console.log("mapped:", mapped);
     }
 
     if (getStat && data?.weekly) {
@@ -82,7 +81,7 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
         weekly: mapWeeklyStats(data.weekly),
         total: data.total,
       };
-      console.log(stat);
+      // console.log(stat);
       setStats(stat);
     }
   }, [isLoading, error, data]);
