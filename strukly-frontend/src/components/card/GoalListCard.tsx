@@ -8,10 +8,16 @@ import ProgressBar from "../../components/graph/ProgressBar";
 interface GoalListProps {
   goal: GoalItem;
   idx: number;
+  isComplete: Boolean;
   onOpenDrawer: (goal: GoalItem) => void;
 }
 
-export default function GoalList({ goal, idx, onOpenDrawer }: GoalListProps) {
+export default function GoalList({
+  goal,
+  idx,
+  isComplete,
+  onOpenDrawer,
+}: GoalListProps) {
   const colorClasses = [
     "text-red-500",
     "text-blue-500",
