@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { ArrowUpCircle } from "lucide-react";
 
 import Card from "../components/card/Card";
+import GoalList from "../components/card/GoalListCard";
 import GoalsHeader from "../components/GoalsHeader";
 import ProgressBar from "../components/graph/ProgressBar";
 import GoalModal from "../components/modal/GoalModal";
@@ -89,6 +90,15 @@ const GoalsPage: React.FC = () => {
 
   const handleDelete = (id: string) =>
     setGoals((g) => g.filter((it) => it.id !== id));
+
+  const handleOpenUpdate = (goal: GoalItem) => {
+    setSelectedGoal(goal);
+    setFormData({
+      name: goal.name,
+      price: goal.price,
+    });
+    setActiveModal("edit");
+  };
 
   const timerRef = useRef<number | null>(null);
   const colorClasses = [
@@ -262,6 +272,16 @@ const GoalsPage: React.FC = () => {
                           Rp {goal.price.toLocaleString()}
                         </p>
                       </div>
+                    </Card>
+                    <Card
+                      key={goal.id}
+                      className="mx-0 w-full rounded-2xl p-5 active:bg-slate-100"
+                    >
+                      <GoalList
+                        goal={goal}
+                        idx={idx}
+                        onEdit={handleOpenUpdate}
+                      ></GoalList>
                     </Card>
                   </div>
                 ))}
