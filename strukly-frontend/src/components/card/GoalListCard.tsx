@@ -1,9 +1,11 @@
 import { useRef } from "react";
 
-import FlagIcon from "../../components/utilityIcons/FlagIcon";
-import type { GoalItem } from "../../type/GoalItem";
-
 import ProgressBar from "../../components/graph/ProgressBar";
+
+import CheckIcon from "../../components/utilityIcons/CheckIcon";
+import FlagIcon from "../../components/utilityIcons/FlagIcon";
+
+import type { GoalItem } from "../../type/GoalItem";
 
 interface GoalListProps {
   goal: GoalItem;
@@ -54,6 +56,18 @@ export default function GoalList({
       <div className="flex justify-between w-full items-start mb-4">
         <div className="flex flex-row gap-2 items-center w-full">
           <div className="mx-2 rounded-2xl flex items-center justify-center">
+            {isCompleted ? (
+              <CheckIcon width={40} height={40} className="mx-1" />
+            ) : (
+              <FlagIcon
+                width={44}
+                height={44}
+                className={`${
+                  colorClasses[idx % colorClasses.length]
+                } -rotate-20`}
+              />
+            )}
+
             <FlagIcon
               width={44}
               height={44}
