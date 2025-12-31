@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useCallback } from "react";
 import type { ExpenseType } from "../type/ExpenseType";
 import type { ExpenseItemType } from "../type/ExpenseItemType";
 import { getCategoryData, categoryColors } from "../utils/CategoryConfig";
@@ -33,7 +32,7 @@ export default function ExpenseForm<
     setIsDetailed(enabled);
   };
 
-  const addItem = () => {
+  const addItem = useCallback(() => {
     const newItem: ExpenseItemType = {
       expenseID: expense.id,
       id: Date.now().toString(),
@@ -42,8 +41,12 @@ export default function ExpenseForm<
       singleItemPrice: 0,
       totalPrice: 0,
     };
-    setExpense({ ...expense, items: [...expense.items, newItem] });
-  };
+    // Use functional update to avoid needing 'expense' in the dependency array
+    setExpense((prev) => ({ 
+      ...prev, 
+      items: [...prev.items, newItem] 
+    }));
+  }, [expense.id, setExpense]);
 
   const updateItem = (
     index: number,
@@ -100,7 +103,10 @@ export default function ExpenseForm<
     expense.taxAmount,
     expense.serviceAmount,
     expense.discountAmount,
+    expense.subtotalAmount,
+    expense.totalAmount,
     isDetailed,
+    addItem,
   ]);
 
   const capitalizeWords = (sentence: string) =>
