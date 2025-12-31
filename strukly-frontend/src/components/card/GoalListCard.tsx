@@ -61,14 +61,6 @@ export default function GoalList({ goal, idx, onOpenDrawer }: GoalListProps) {
                 } -rotate-20`}
               />
             )}
-
-            <FlagIcon
-              width={44}
-              height={44}
-              className={`${
-                colorClasses[(idx ?? 0) % colorClasses.length]
-              } -rotate-20`}
-            />
           </div>
           <div className="flex flex-col gap-1 flex-1">
             <p className="text-xl font-bold text-text-primary">{goal.name}</p>
@@ -76,7 +68,10 @@ export default function GoalList({ goal, idx, onOpenDrawer }: GoalListProps) {
             <div className="flex flex-row w-full justify-between items-center">
               <p className="text-lg font-semibold text-inactive">
                 {(() => {
-                  if (progress >= 75) return <span>You're almost there!</span>;
+                  if (progress === 100) {
+                    return "Goals reached!";
+                  } else if (progress >= 75 && progress < 100)
+                    return <span>You're almost there!</span>;
                   else if (progress >= 50 && progress < 75)
                     return <span>Halfway done, nice!</span>;
                   else if (progress >= 25 && progress < 50)
