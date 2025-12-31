@@ -22,13 +22,13 @@ export default function ShoppingIcon(props: ShoppingIconProps) {
       <path
         d="M17 14V12C17 10.3431 18.3431 9 20 9C21.6569 9 23 10.3431 23 12V14"
         stroke="white"
-        stroke-width="2"
+        strokeWidth="2"
       />
       <path
         d="M23 16L23 17C23 18.6569 21.6569 20 20 20C18.3431 20 17 18.6569 17 17L17 16"
         stroke="#FF87D1"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

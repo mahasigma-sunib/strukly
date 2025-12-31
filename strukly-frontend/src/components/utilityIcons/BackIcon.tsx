@@ -15,8 +15,8 @@ export default function BackIcon(props: BackIconProps) {
       <path
         d="M6 11.5L18 11.5249M6 11.5L11.7581 6M6 11.5L11.7581 17"
         stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
     </svg>
   );

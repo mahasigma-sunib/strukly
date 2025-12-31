@@ -12,7 +12,7 @@ export default function ManualWriteIcon(props: ManualWriteIconProps) {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g clip-path="url(#clip0_1181_94)">
+      <g clipPath="url(#clip0_1181_94)">
         <circle cx="16" cy="16" r="16" fill="currentColor" />
         <rect
           x="5.99075"
