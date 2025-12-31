@@ -18,8 +18,8 @@ function ExpenseDetail() {
   const navigate = useNavigate();
 
   const { data, error, isLoading } = useSWR(
-    `http://localhost:3000/api/expenses/${id}`,
-    (url) => fetch(url, { credentials: "include" }).then((res) => res.json())
+    `${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`,
+    (url : string) => fetch(url, { credentials: "include" }).then((res) => res.json())
   );
 
   const [deletePopUp, setDeletePopUp] = useState(false);
@@ -85,7 +85,7 @@ function ExpenseDetail() {
     dateTime: new Date(raw.dateTime),
     vendorName: raw.vendorName,
     category: raw.category,
-    currency: "Rp ",
+    currency: raw.totalAmount.currency,
     subtotalAmount: raw.subtotalAmount.amount,
     taxAmount: raw.taxAmount.amount,
     discountAmount: raw.discountAmount.amount,
