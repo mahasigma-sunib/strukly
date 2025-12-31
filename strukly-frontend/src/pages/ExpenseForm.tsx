@@ -339,7 +339,7 @@ export default function ExpenseForm<
                     onChange={(e) =>
                       setExpense({
                         ...expense,
-                        discountAmount: Number(e.target.value),
+                        discountAmount: Math.max(0, Number(e.target.value)),
                       })
                     }
                   />
