@@ -14,7 +14,7 @@ import Home from "./pages/Home";
 import ExpenseTracker from "./pages/ExpenseTracker";
 import ExpenseDetail from "./pages/ExpenseDetail";
 import AddExpense from "./pages/AddExpense";
-import EditExpense from "./pages/auth/EditExpense";
+import EditExpense from "./pages/EditExpense";
 import ExpenseBudget from "./pages/ExpenseBudget";
 import Goals from "./pages/Goals";
 import Settings from "./pages/Settings";

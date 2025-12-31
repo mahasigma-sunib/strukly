@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-import ExpenseForm from "../ExpenseForm";
-import BackIcon from "../../components/utilityIcons/BackIcon";
+import ExpenseForm from "./ExpenseForm";
+import BackIcon from "../components/utilityIcons/BackIcon";
 
-import type { ExpenseType } from "../../type/ExpenseType";
+import type { ExpenseType } from "../type/ExpenseType";
 
 export default function EditExpense() {
   const { id } = useParams();
@@ -32,7 +32,7 @@ export default function EditExpense() {
 
   const handleSubmit = async () => {
     if (!expense || !id) return;
-    
+
     try {
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/expenses/${expense.id}`,
