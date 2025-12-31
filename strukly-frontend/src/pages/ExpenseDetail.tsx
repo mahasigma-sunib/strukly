@@ -31,11 +31,11 @@ function ExpenseDetail() {
           withCredentials: true,
         }
       );
+      navigate(-1);
     } catch (error) {
       console.error("Failed to delete expense:", error);
       throw error; // rethrow so caller can handle it
     }
-    navigate(-1);
   };
 
   const formatCurrency = (amount: number) => {
