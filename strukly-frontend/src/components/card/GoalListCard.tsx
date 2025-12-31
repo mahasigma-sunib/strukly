@@ -93,7 +93,9 @@ export default function GoalList({ goal, idx, onOpenDrawer }: GoalListProps) {
         value={goal.currentAmount}
         max={goal.price}
         height={12}
-        barColor="bg-category-transportation"
+        barColor={
+          goal.isCompleted ? "bg-category-transportation" : "bg-status-success"
+        }
       />
 
       <div className="mt-4 flex flex-row justify-between items-center">
