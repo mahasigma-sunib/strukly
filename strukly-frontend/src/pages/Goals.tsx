@@ -1,17 +1,10 @@
 import React, { useState, useRef } from "react";
-import { ArrowUpCircle } from "lucide-react";
 
 import Card from "../components/card/Card";
 import GoalList from "../components/card/GoalListCard";
 import GoalsHeader from "../components/GoalsHeader";
-import ProgressBar from "../components/graph/ProgressBar";
 import GoalModal from "../components/modal/GoalModal";
 import FlagMascot from "../components/mascots/FlagMascot";
-
-import FlagIcon from "../components/utilityIcons/FlagIcon";
-import EditIcon from "../components/utilityIcons/EditIcon";
-import DeleteIcon from "../components/utilityIcons/DeleteIcon";
-import CheckIcon from "../components/utilityIcons/CheckIcon";
 
 import type { GoalItem } from "../type/GoalItem";
 
