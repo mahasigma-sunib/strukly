@@ -71,7 +71,7 @@ export default function AddExpense() {
   const handleSubmit = async () => {
     try {
       const payload = mapExpenseToPostPayload(expense);
-      console.log("POST payload:", payload);
+      // console.log("POST payload:", payload);
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/expenses`,
         payload,
