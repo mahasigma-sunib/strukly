@@ -24,8 +24,14 @@ import AddExpenseCamera from "./pages/AddExpenseCamera";
 
 const App = () => {
   const location = useLocation();
-  const isProtectedPath =
-    location.pathname !== "/login" && location.pathname !== "/register";
+  const hideNavbarRoutes = [
+    "/login",
+    "/register",
+    "/expense/add",
+    "/expense/camera",
+    "/expense/:id",
+  ];
+  const isProtectedPath = !hideNavbarRoutes.includes(location.pathname);
 
   const fetchProfile = useUserAuth((s) => s.fetchProfile);
   useEffect(() => {
