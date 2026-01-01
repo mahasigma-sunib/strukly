@@ -37,7 +37,6 @@ export default function EditExpense() {
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/expenses/${expense.id}`,
         {
-          id: String(id),
 
           vendorName: expense.vendorName,
           category: expense.category,
@@ -59,26 +58,14 @@ export default function EditExpense() {
             amount: expense.serviceAmount,
             currency: expense.currency,
           },
-          totalAmount: {
-            amount: expense.totalAmount,
-            currency: expense.currency,
-          },
-
-          userID: expense.userID,
 
           items: expense.items.map((item) => ({
-            id: item.id,
             name: item.name,
             quantity: item.quantity,
             singlePrice: {
               amount: item.singleItemPrice,
               currency: expense.currency,
             },
-            totalPrice: {
-              amount: item.totalPrice,
-              currency: expense.currency,
-            },
-            expenseID: id,
           })),
         },
         { withCredentials: true }
