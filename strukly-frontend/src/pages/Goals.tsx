@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 
-import Button from "../components/button/Button";
 import Card from "../components/card/Card";
 import Drawer from "../components/drawer/Drawer";
+import FlagMascot from "../components/mascots/FlagMascot";
+
+import GoalDrawer from "../components/drawer/GoalDrawer";
 import GoalsHeader from "../components/GoalsHeader";
 import GoalList from "../components/card/GoalListCard";
 import GoalModal from "../components/modal/GoalModal";
-import FlagMascot from "../components/mascots/FlagMascot";
 
 import type { GoalItem } from "../type/GoalItem";
 
@@ -19,6 +20,9 @@ const GoalsPage: React.FC = () => {
   const [tempAmount, setTempAmount] = useState<number>(0);
   const [formData, setFormData] = useState({ name: "", price: 0 });
   const [errorMessage, setErrorMessage] = useState("");
+
+  const activeGoals = goals.filter((g) => !g.isCompleted);
+  const completedGoals = goals.filter((g) => g.isCompleted);
 
   const handleCreate = () => {
     if (!formData.name.trim()) {
@@ -95,9 +99,6 @@ const GoalsPage: React.FC = () => {
     setActiveModal("edit");
   };
 
-  const activeGoals = goals.filter((g) => !g.isCompleted);
-  const completedGoals = goals.filter((g) => g.isCompleted);
-
   return (
     <div className="min-h-screen pb-20 bg-background text-text-primary">
       <GoalsHeader
@@ -155,17 +156,7 @@ const GoalsPage: React.FC = () => {
             onClose={() => setSelectedGoal(null)}
             title="Edit Goal"
           >
-            <div className="p-4">
-              <Button
-                onClick={() => {
-                  handleUpdate();
-                  setSelectedGoal(null);
-                }}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                Update
-              </Button>
-            </div>
+            <GoalDrawer goal={selectedGoal}></GoalDrawer>
           </Drawer>
 
           {/* Completed goals */}
