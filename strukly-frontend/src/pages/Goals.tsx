@@ -87,7 +87,7 @@ const GoalsPage: React.FC = () => {
     setActiveModal(null);
   };
 
-  const handleDelete = (id: string) =>
+  const handleDelete = (id: string | undefined) =>
     setGoals((g) => g.filter((it) => it.id !== id));
 
   const handleOpenUpdate = (goal: GoalItem) => {
@@ -156,7 +156,12 @@ const GoalsPage: React.FC = () => {
             onClose={() => setSelectedGoal(null)}
             title="Edit Goal"
           >
-            <GoalDrawer goal={selectedGoal}></GoalDrawer>
+            <GoalDrawer
+              onAddSaving={() => setActiveModal("deposit")}
+              onEdit={() => setActiveModal("edit")}
+              onDelete={() => handleDelete(selectedGoal?.id)}
+              onClose={() => setSelectedGoal(null)}
+            ></GoalDrawer>
           </Drawer>
 
           {/* Completed goals */}
@@ -174,7 +179,7 @@ const GoalsPage: React.FC = () => {
                     <GoalList
                       goal={goal}
                       idx={null}
-                      onOpenDrawer={handleOpenUpdate}
+                      onHold={handleOpenUpdate}
                     ></GoalList>
                   </Card>
                 ))}
