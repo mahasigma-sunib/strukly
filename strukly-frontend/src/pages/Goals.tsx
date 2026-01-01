@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import Button from "../components/button/Button";
 import Card from "../components/card/Card";
 import Drawer from "../components/drawer/Drawer";
 import GoalsHeader from "../components/GoalsHeader";
@@ -155,31 +156,15 @@ const GoalsPage: React.FC = () => {
             title="Edit Goal"
           >
             <div className="p-4">
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full p-2 border rounded mb-2"
-              />
-              <input
-                type="number"
-                value={formData.price}
-                onChange={(e) =>
-                  setFormData({ ...formData, price: Number(e.target.value) })
-                }
-                className="w-full p-2 border rounded mb-2"
-              />
-              <button
+              <Button
                 onClick={() => {
                   handleUpdate();
                   setSelectedGoal(null);
                 }}
                 className="bg-blue-500 text-white px-4 py-2 rounded"
               >
-                Save
-              </button>
+                Update
+              </Button>
             </div>
           </Drawer>
 
