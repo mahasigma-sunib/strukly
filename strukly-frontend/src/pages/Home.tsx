@@ -10,6 +10,7 @@ import WinkMascot from "../components/mascots/WinkMascot";
 import FoodIcon from "../components/categoryIcons/FoodIcon";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import type { ExpenseType } from "../type/ExpenseType";
 // import NeutralMascot from "../components/mascots/NeutralMascot";
 // import LoginMascot from "../components/mascots/LoginMascot";
 // import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
@@ -65,40 +66,41 @@ function Home() {
   const currentMonthName = monthNames[currentMonthIndex];
   const currentMonthYear = `${currentMonthName} ${currentYear}`;
 
-  // Beritahu TS bahwa ini adalah array dari GoalItem
   const [goals, setGoals] = useState<GoalItem[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const [expenses, setExpenses] = useState<ExpenseType[]>([]);
+
   useEffect(() => {
-    const fetchGoals = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
+        const headers = { Authorization: `Bearer ${token}` };
 
-        const response = await fetch("http://localhost:5173/goals", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const [resGoals, resExpenses] = await Promise.all([
+          fetch("http://localhost:3000/goals", { headers }),
+          fetch("http://localhost:3000/expenses", { headers }),
+        ]);
 
-        if (!response.ok) throw new Error("Failed to fetch goals");
+        if (resGoals.ok) {
+          const data = await resGoals.json();
+          setGoals(data.goalItems || []);
+        }
 
-        const data = await response.json();
-        // Berdasarkan route Express kamu, data ada di property 'goalItems'
-        setGoals(data.goalItems || []);
+        if (resExpenses.ok) {
+          const data = await resExpenses.json();
+          setExpenses(data.expenseItems || []);
+        }
       } catch (error) {
-        console.error("Error fetching goals:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchGoals();
+    fetchData();
   }, []);
 
-  // State Loading: Bisa kamu ganti dengan Skeleton UI agar lebih cantik
   if (loading) {
     return (
       <div className="p-5 text-center text-inactive">Loading goals...</div>
@@ -261,17 +263,66 @@ function Home() {
             <p className="text-2xl font-bold mb-2 text-text-primary">
               Recent Expenses
             </p>
-            <Card className="!m-0">
-              <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
-                <WhistleMascot width={72} height={72} />
-                <p className="text-inactive font-semibold text-base text-center">
-                  You haven't added a new expense yet
-                </p>
-                <Button size="lg" variant="primary" className="!py-2">
-                  Add expense
-                </Button>
+
+            {expenses.length > 0 ? (
+              <div className="flex flex-col gap-3">
+                {expenses.slice(0, 3).map((exp) => (
+                  <Card
+                    key={exp.id}
+                    className="p-4 bg-surface rounded-2xl flex justify-between items-center shadow-sm border-none"
+                  >
+                    <div className="flex flex-col">
+                      <p className="font-bold text-text-primary text-lg leading-tight">
+                        {exp.vendorName}
+                      </p>
+                      <p className="text-xs text-inactive uppercase tracking-wider font-semibold">
+                        {exp.category}
+                      </p>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="font-bold text-red-500 text-lg">
+                        - Rp{exp.totalAmount.toLocaleString("id-ID")}
+                      </p>
+                      <p className="text-[10px] text-inactive">
+                        {new Date(exp.dateTime).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                        })}
+                      </p>
+                    </div>
+                  </Card>
+                ))}
+
+                {/* Tombol See All jika data lebih dari 3 */}
+                {expenses.length > 3 && (
+                  <button
+                    onClick={() => navigate("/expenses")}
+                    className="text-sm font-bold text-primary mt-1 text-center"
+                  >
+                    See all expenses
+                  </button>
+                )}
               </div>
-            </Card>
+            ) : (
+              /* TAMPILAN MASCOT JIKA KOSONG */
+              <Card className="!m-0">
+                <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
+                  <WhistleMascot width={72} height={72} />
+                  <p className="text-inactive font-semibold text-base text-center">
+                    You haven't added a new expense yet
+                  </p>
+                  <Button
+                    size="lg"
+                    variant="primary"
+                    className="!py-2"
+                    onClick={() => navigate("/add-expense")}
+                  >
+                    Add expense
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
         </div>
       </div>
