@@ -20,6 +20,7 @@ import Goals from "./pages/Goals";
 import Settings from "./pages/Settings";
 
 import MobileNavBar from "./components/MobileNavBar";
+import AddExpenseCamera from "./pages/AddExpenseCamera";
 
 const App = () => {
   const location = useLocation();
@@ -50,6 +51,7 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/expense" element={<ExpenseTracker />} />
             <Route path="/expense/add" element={<AddExpense />} />
+            <Route path="/expense/camera" element={<AddExpenseCamera />} />
             <Route path="/expense/:id" element={<EditExpense />} />
             <Route path="/expense/:id/view" element={<ExpenseDetail />} />
             <Route path="/budget" element={<ExpenseBudget />} />
