@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import axios from "axios";
 
@@ -12,6 +13,7 @@ export default function AddExpenseCamera() {
 
   const webcamRef = useRef<Webcam>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const navigate = useNavigate();
 
   const capture = useCallback(
     async () => {
@@ -44,13 +46,16 @@ export default function AddExpenseCamera() {
         );
 
         console.log('Upload successful:', result.data);
+        
+        // Navigate to AddExpense with scanned data
+        navigate('/expense/add', { state: { scannedData: result.data.transaction } });
       } catch (error) {
         console.error('Upload failed:', error);
       } finally {
         setIsUploading(false);
       }
     },
-    [webcamRef]
+    [navigate]
   );
 
   return (

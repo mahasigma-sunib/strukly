@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import axios from "axios";
 
@@ -67,6 +67,39 @@ export default function AddExpense() {
     useState<Omit<ExpenseType, "userID">>(emptyExpense);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const scannedData = location.state?.scannedData;
+
+  useEffect(() => {
+    if (scannedData) {
+      // Transform backend response to frontend format
+      const transformedExpense: Omit<ExpenseType, "userID"> = {
+        id: "",
+        dateTime: new Date(scannedData.dateTime),
+        vendorName: scannedData.vendorName || "",
+        category: scannedData.category || "food",
+        currency: scannedData.subtotalAmount?.currency || "IDR",
+        subtotalAmount: scannedData.subtotalAmount?.amount || 0,
+        taxAmount: scannedData.taxAmount?.amount || 0,
+        discountAmount: scannedData.discountAmount?.amount || 0,
+        serviceAmount: scannedData.serviceAmount?.amount || 0,
+        totalAmount:
+          (scannedData.subtotalAmount?.amount || 0) +
+          (scannedData.taxAmount?.amount || 0) +
+          (scannedData.serviceAmount?.amount || 0) -
+          (scannedData.discountAmount?.amount || 0),
+        items: (scannedData.items || []).map((item: { name?: string; quantity?: number; singlePrice?: { amount?: number; currency?: string } }, index: number) => ({
+          expenseID: "",
+          id: Date.now().toString() + index,
+          name: item.name || "",
+          quantity: item.quantity || 1,
+          singleItemPrice: item.singlePrice?.amount || 0,
+          totalPrice: (item.singlePrice?.amount || 0) * (item.quantity || 1),
+        })),
+      };
+      setExpense(transformedExpense);
+    }
+  }, [scannedData]);
 
   const handleSubmit = async () => {
     try {
