@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 import Card from "../components/card/Card";
 import GoalList from "../components/card/GoalListCard";
@@ -91,24 +91,6 @@ const GoalsPage: React.FC = () => {
       price: goal.price,
     });
     setActiveModal("edit");
-  };
-
-  const timerRef = useRef<number | null>(null);
-
-  const startEditTimer = (g: GoalItem) => {
-    timerRef.current = window.setTimeout(() => {
-      setSelectedGoal(g);
-      setFormData({ name: g.name, price: g.price });
-      setActiveModal("edit");
-      if (navigator.vibrate) navigator.vibrate(50);
-    }, 600);
-  };
-
-  const clearEditTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
   };
 
   const activeGoals = goals.filter((g) => !g.isCompleted);
