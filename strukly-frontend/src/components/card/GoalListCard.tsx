@@ -10,10 +10,10 @@ import type { GoalItem } from "../../type/GoalItem";
 interface GoalListProps {
   goal: GoalItem;
   idx: number | null;
-  onOpenDrawer: (goal: GoalItem) => void;
+  onHold: (goal: GoalItem) => void;
 }
 
-export default function GoalList({ goal, idx, onOpenDrawer }: GoalListProps) {
+export default function GoalList({ goal, idx, onHold }: GoalListProps) {
   const colorClasses = [
     "text-red-500",
     "text-blue-500",
@@ -27,7 +27,7 @@ export default function GoalList({ goal, idx, onOpenDrawer }: GoalListProps) {
 
   const handleStart = () => {
     timerRef.current = setTimeout(() => {
-      onOpenDrawer(goal);
+      onHold(goal);
       if (navigator.vibrate) navigator.vibrate(50);
     }, 600);
   };
