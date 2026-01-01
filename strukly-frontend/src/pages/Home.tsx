@@ -8,9 +8,11 @@ import Card from "../components/card/Card";
 import WhistleMascot from "../components/mascots/WhistleMascot";
 import WinkMascot from "../components/mascots/WinkMascot";
 import FoodIcon from "../components/categoryIcons/FoodIcon";
-import NeutralMascot from "../components/mascots/NeutralMascot";
-import LoginMascot from "../components/mascots/LoginMascot";
-import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+// import NeutralMascot from "../components/mascots/NeutralMascot";
+// import LoginMascot from "../components/mascots/LoginMascot";
+// import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -25,6 +27,18 @@ const getGreeting = () => {
     return "Night"; // (19:00 - 03:59)
   }
 };
+
+interface GoalItem {
+  id: string;
+  name: string;
+  price: number;
+  deposited: number;
+  completed: boolean;
+  completedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  userID: string;
+}
 
 function Home() {
   const username = useUserAuth((s) => s.user?.name || "User");
@@ -50,137 +64,193 @@ function Home() {
   ];
   const currentMonthName = monthNames[currentMonthIndex];
   const currentMonthYear = `${currentMonthName} ${currentYear}`;
+  
+  // Beritahu TS bahwa ini adalah array dari GoalItem
+  const [goals, setGoals] = useState<GoalItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchGoals = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        
+        const response = await fetch('http://localhost:5173/goals', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch goals');
+
+        const data = await response.json();
+        // Berdasarkan route Express kamu, data ada di property 'goalItems'
+        setGoals(data.goalItems || []);
+      } catch (error) {
+        console.error("Error fetching goals:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGoals();
+  }, []);
+
+  // State Loading: Bisa kamu ganti dengan Skeleton UI agar lebih cantik
+  if (loading) {
+    return <div className="p-5 text-center text-inactive">Loading goals...</div>;
+  }
+  
   return (
-    <div>
-      <div className="px-4 py-2 sticky top-0 z-20 bg-surface ">
-        <TextLogo width={80} />
-      </div>
-      <div className="flex flex-col py-4 mb-4 bg-surface border-b-2 border-border rounded-b-3xl">
-        <div className="px-5 flex flex-row justify-between items-center">
-          <div className="flex flex-row gap-4 items-center">
-            <div>
-              <WinkMascot width={48} height={48} />
-            </div>
-            <div className="flex flex-col">
-              <p className="font-semibold text-lg text-text-disabled/70">
-                Good {greeting},
-              </p>
-              <p className="font-bold text-2xl">{username}</p>
-            </div>
-          </div>
+  <div>
+    {/* Header & Greeting */}
+    <div className="px-4 py-2 sticky top-0 z-20 bg-surface ">
+      <TextLogo width={80} />
+    </div>
+    <div className="flex flex-col py-4 mb-4 bg-surface border-b-2 border-border rounded-b-3xl">
+      <div className="px-5 flex flex-row justify-between items-center">
+        <div className="flex flex-row gap-4 items-center">
           <div>
-            <Button variant="blue" size="sm" className="!p-1 rounded-2xl">
-              <SettingsIcon width={28} />
-            </Button>
+            <WinkMascot width={48} height={48} />
           </div>
+          <div className="flex flex-col">
+            <p className="font-semibold text-lg text-text-disabled/70">
+              Good {greeting},
+            </p>
+            <p className="font-bold text-2xl">{username}</p>
+          </div>
+        </div>
+        <div>
+          <Button variant="blue" size="sm" className="!p-1 rounded-2xl">
+            <SettingsIcon width={28} />
+          </Button>
+        </div>
+      </div>
+    </div>
+
+    {/* Budget Card Section */}
+    <div className="relative flex flex-col p-5">
+      <div className="w-fit mb-4">
+        <p className="text-2xl font-bold text-text-primary">
+          🗓️ {currentMonthYear}
+        </p>
+      </div>
+
+      <div className="absolute right-10 top-2 z-0">
+        <div className=" rounded-full flex items-center justify-center text-xs font-bold ">
+          <HappyMascot width={88} height={88} />
         </div>
       </div>
 
-      <div className="relative flex flex-col p-5">
-        <div className="w-fit mb-4">
-          <p className="text-2xl font-bold text-text-primary">
-            🗓️ {currentMonthYear}
+      <div className="relative p-4 bg-gradient-to-br from-[#ff8717] to-[#fabd15] rounded-2xl flex flex-col shadow-[0_6px_0_0_#e9a613] z-10 ">
+        <div className="flex flex-col gap-2 justify-center items-center">
+          <p className="font-bold text-lg text-white/80">You've spent</p>
+          <p className="font-bold text-4xl tracking-wide text-white">
+            Rp2.540.000
+            <span className="font-semibold text-xl text-white/80">,00</span>
           </p>
         </div>
-
-        <div className="absolute right-10 top-2 z-0">
-          <div className=" rounded-full flex items-center justify-center text-xs font-bold ">
-            <HappyMascot width={88} height={88} />
-          </div>
-        </div>
-
-        <div className="relative p-4 bg-gradient-to-br from-[#ff8717] to-[#fabd15] rounded-2xl flex flex-col shadow-[0_6px_0_0_#e9a613] z-10 ">
-          <div className="flex flex-col gap-2 justify-center items-center">
-            <p className="font-bold text-lg text-white/80">You've spent</p>
-            <p className="font-bold text-4xl tracking-wide text-white">
-              Rp2.540.000{/* total expense goes here */}
-              <span className="font-semibold text-xl text-white/80">,00</span>
-            </p>
-          </div>
-          <div className="mt-4 p-4 bg-surface flex flex-col gap-2 rounded-xl">
-            <p className="text-text-primary/80 font-bold text-2xl">
-              Your Budget
-            </p>
-            <div>
-              <p className="font-bold text-inactive">
-                Budget Progress Bar goes here!
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-5">
-        <Card className="!m-0 flex flex-col gap-2 !bg-[#46bafe] !shadow-[0_6px_0_0_#30b3ff] !border-0">
-          <div className="flex justify-center items-center !p-1">
-            <p className="font-bold text-2xl text-white">Analysis</p>
-          </div>
-          <div className="grid grid-rows-2 gap-3">
-            <div className="flex flex-row items-center gap-3 p-2 rounded-xl bg-surface">
-              <p className="text-[40px] text-center">💸</p>
-              <div className="flex flex-col">
-                <p className="text-base text-text-secondary/90 font-semibold">
-                  AVG. SPENT PER DAY
-                </p>
-                <p className="text-xl font-bold text-text-primary">Rp200.000</p>
-              </div>
-            </div>
-
-            <div className="flex flex-row items-center gap-3 p-2 rounded-xl bg-surface">
-              <div className="mx-2">
-                <FoodIcon />
-              </div>
-              <div className="flex flex-col">
-                <p className="text-base text-text-secondary/90 font-semibold">
-                  TOP CATEGORY EXPENSES
-                </p>
-                <p className="text-xl font-bold text-text-primary">Food</p>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      <div className="pb-24">
-        <div className="p-5 mt-4 flex flex-col gap-8">
+        <div className="mt-4 p-4 bg-surface flex flex-col gap-2 rounded-xl">
+          <p className="text-text-primary/80 font-bold text-2xl">
+            Your Budget
+          </p>
           <div>
-            <p className="text-2xl font-bold mb-2">Current Goals</p>
-            {/* Goals goes here */}
+            <p className="font-bold text-inactive text-sm">
+              Budget Progress Bar goes here!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Analysis Section */}
+    <div className="px-5">
+      <Card className="!m-0 flex flex-col gap-2 !bg-[#46bafe] !shadow-[0_6px_0_0_#30b3ff] !border-0">
+        <div className="flex justify-center items-center !p-1">
+          <p className="font-bold text-2xl text-white">Analysis</p>
+        </div>
+        <div className="grid grid-rows-2 gap-3 pb-2">
+          <div className="flex flex-row items-center gap-3 p-2 rounded-xl bg-surface">
+            <p className="text-[40px] text-center px-2">💸</p>
+            <div className="flex flex-col">
+              <p className="text-xs text-text-secondary/90 font-semibold uppercase tracking-wider">
+                Avg. Spent Per Day
+              </p>
+              <p className="text-xl font-bold text-text-primary">Rp200.000</p>
+            </div>
+          </div>
+
+          <div className="flex flex-row items-center gap-3 p-2 rounded-xl bg-surface">
+            <div className="mx-2">
+              <FoodIcon />
+            </div>
+            <div className="flex flex-col">
+              <p className="text-xs text-text-secondary/90 font-semibold uppercase tracking-wider">
+                Top Category Expenses
+              </p>
+              <p className="text-xl font-bold text-text-primary">Food</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+
+    {/* Dynamic Content: Goals & Expenses */}
+    <div className="pb-24">
+      <div className="p-5 mt-4 flex flex-col gap-8">
+        
+        {/* CURRENT GOALS */}
+        <div>
+          <p className="text-2xl font-bold mb-2 text-text-primary">Current Goals</p>
+          {goals.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {goals.map((item) => (
+                <Card key={item.id} className="p-4 bg-surface rounded-2xl border-none shadow-sm">
+                   <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-bold text-text-primary">{item.name}</p>
+                        <p className="text-sm text-inactive">Rp {item.deposited.toLocaleString()} / Rp {item.price.toLocaleString()}</p>
+                      </div>
+                   </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
             <Card className="!m-0">
               <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
                 <HeadbandMascot width={72} height={72} />
                 <p className="text-inactive font-semibold text-base text-center">
                   You haven't made a goal yet
                 </p>
-                {/* Link to Goals Page */}
-                <Button size="lg" variant="primary" className="!py-2">
+                <Button size="lg" variant="primary" className="!py-2" onClick={() => navigate('/goals')}>
                   Make a goal
                 </Button>
               </div>
             </Card>
-          </div>
+          )}
+        </div>
 
-          <div>
-            <p className="text-2xl font-bold mb-2">Recent Expenses</p>
-            {/* Recent expenses goes here */}
-            <Card className="!m-0">
-              <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
-                <WhistleMascot width={72} height={72} />
-                <p className="text-inactive font-semibold text-base text-center">
-                  You haven't add a new expense yet
-                </p>
-                {/* Link to Goals Page */}
-                <Button size="lg" variant="primary" className="!py-2">
-                  Add expense
-                </Button>
-              </div>
-            </Card>
-          </div>
+        {/* RECENT EXPENSES */}
+        <div>
+          <p className="text-2xl font-bold mb-2 text-text-primary">Recent Expenses</p>
+          <Card className="!m-0">
+            <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
+              <WhistleMascot width={72} height={72} />
+              <p className="text-inactive font-semibold text-base text-center">
+                You haven't added a new expense yet
+              </p>
+              <Button size="lg" variant="primary" className="!py-2">
+                Add expense
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     </div>
-
+  </div>
+    
     // <div>
     //   <div className="px-4 py-2 sticky top-0 z-20 bg-surface ">
     //     <TextLogo width={80} />
