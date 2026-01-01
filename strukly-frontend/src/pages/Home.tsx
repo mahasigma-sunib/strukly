@@ -294,7 +294,6 @@ function Home() {
                   </Card>
                 ))}
 
-                {/* Tombol See All jika data lebih dari 3 */}
                 {expenses.length > 3 && (
                   <button
                     onClick={() => navigate("/expenses")}
@@ -305,7 +304,6 @@ function Home() {
                 )}
               </div>
             ) : (
-              /* TAMPILAN MASCOT JIKA KOSONG */
               <Card className="!m-0">
                 <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
                   <WhistleMascot width={72} height={72} />
@@ -324,6 +322,8 @@ function Home() {
               </Card>
             )}
           </div>
+
+          {/* End Of The Page */}
         </div>
       </div>
     </div>
