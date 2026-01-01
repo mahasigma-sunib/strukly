@@ -1,24 +1,46 @@
-import type Button from "../button/Button";
-
-import type { GoalItem } from "../../type/GoalItem";
+import Button from "../button/Button";
 
 interface GoalDrawerProps {
-  goal: GoalItem | null;
+  onAddSaving: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onClose: () => void;
 }
 
-export default function GoalDrawer({ goal }: GoalDrawerProps) {
+export default function GoalDrawer({
+  onAddSaving,
+  onEdit,
+  onDelete,
+  onClose,
+}: GoalDrawerProps) {
   return (
     <div>
       <Button
         onClick={() => {
-          handleUpdate();
-          setSelectedGoal(null);
+          onAddSaving();
+          onClose();
         }}
       >
         Add Saving
       </Button>
-      <Button>Update</Button>
-      <Button>Delete</Button>
+
+      <Button
+        onClick={() => {
+          onEdit();
+          onClose();
+        }}
+      >
+        Update
+      </Button>
+
+      <Button
+        onClick={() => {
+          onDelete();
+          onClose();
+        }}
+      >
+        Delete
+      </Button>
     </div>
   );
 }
