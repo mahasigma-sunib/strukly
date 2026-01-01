@@ -150,7 +150,7 @@ const GoalsPage: React.FC = () => {
           )}
 
           <Drawer
-            isOpen={!!selectedGoal}
+            visible={!!selectedGoal}
             onClose={() => setSelectedGoal(null)}
             title="Edit Goal"
           >
