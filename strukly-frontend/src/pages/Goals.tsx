@@ -143,7 +143,7 @@ const GoalsPage: React.FC = () => {
                     <GoalList
                       goal={goal}
                       idx={idx}
-                      onOpenDrawer={setSelectedGoal}
+                      onHold={setSelectedGoal}
                     ></GoalList>
                   </Card>
                 ))}
