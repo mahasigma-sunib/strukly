@@ -44,9 +44,8 @@ function NavLink({ to, label, activeIcon, inactiveIcon }: NavLinkProps) {
       </div>
 
       <span
-        className={`text-xs ${
-          isActive ? "text-active font-bold" : "text-inactive font-bold"
-        }`}
+        className={`text-xs ${isActive ? "text-active font-bold" : "text-inactive font-bold"
+          }`}
       >
         {label}
       </span>
