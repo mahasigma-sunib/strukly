@@ -84,7 +84,8 @@ export default class GeminiLanguageModel implements LanguageModelService {
         Watch out for single price and total price. Ensure the numbers make sense.
         Field dateTime should be in ISO 8601 format, default with UTC designator.
         Currencies should be in 3 letter ISO 4217 format.
-        The possible categories are: "food", "entertainment", "health", "lifestyle"` }
+        The possible categories are: "food", "groceries", "transportation", "housebills", "shopping", "entertainment", "others";
+` }
     ];
     const response = await this.ai.models.generateContentStream({
       model,
