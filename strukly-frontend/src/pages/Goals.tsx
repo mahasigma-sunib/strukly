@@ -94,15 +94,6 @@ const GoalsPage: React.FC = () => {
     setSelectedGoal(null);
   };
 
-  const handleOpenUpdate = (goal: GoalItem) => {
-    setSelectedGoal(goal);
-    setFormData({
-      name: goal.name,
-      price: goal.price,
-    });
-    setActiveModal("edit");
-  };
-
   return (
     <div className="min-h-screen pb-20 bg-background text-text-primary">
       <GoalsHeader
