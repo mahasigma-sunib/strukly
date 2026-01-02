@@ -142,24 +142,6 @@ const GoalsPage: React.FC = () => {
             </div>
           )}
 
-          <Popup
-            visible={!!selectedGoal && !activeModal}
-            onClose={() => setSelectedGoal(null)}
-          >
-            <GoalPopup
-              goalName={selectedGoal?.name}
-              onAddSaving={() => setActiveModal("deposit")}
-              onEdit={() => {
-                setFormData({
-                  name: selectedGoal!.name,
-                  price: selectedGoal!.price,
-                });
-                setActiveModal("edit");
-              }}
-              onDelete={() => setActiveModal("delete")}
-            />
-          </Popup>
-
           {/* Completed goals */}
           {completedGoals.length > 0 && (
             <div>
@@ -178,6 +160,24 @@ const GoalsPage: React.FC = () => {
               </div>
             </div>
           )}
+
+          <Popup
+            visible={!!selectedGoal && !activeModal}
+            onClose={() => setSelectedGoal(null)}
+          >
+            <GoalPopup
+              goalName={selectedGoal?.name}
+              onAddSaving={() => setActiveModal("deposit")}
+              onEdit={() => {
+                setFormData({
+                  name: selectedGoal!.name,
+                  price: selectedGoal!.price,
+                });
+                setActiveModal("edit");
+              }}
+              onDelete={() => setActiveModal("delete")}
+            />
+          </Popup>
         </div>
       </main>
 
