@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import Card from "../components/card/Card";
 import Drawer from "../components/drawer/Drawer";
 import FlagMascot from "../components/mascots/FlagMascot";
+import Popup from "../components/popup/PopUp";
 
 import GoalDrawer from "../components/drawer/GoalDrawer";
 import GoalsHeader from "../components/GoalsHeader";
 import GoalList from "../components/card/GoalListCard";
 import GoalModal from "../components/modal/GoalModal";
+import GoalPopup from "../components/popup/GoalPopup";
 
 import type { GoalItem } from "../type/GoalItem";
 
@@ -140,29 +142,20 @@ const GoalsPage: React.FC = () => {
                     key={goal.id}
                     className="mx-0 w-full rounded-2xl p-5 active:bg-slate-100"
                   >
-                    <GoalList
-                      goal={goal}
-                      idx={idx}
-                      onHold={setSelectedGoal}
-                    ></GoalList>
+                    <GoalList goal={goal} idx={idx} onHold={setSelectedGoal} />
                   </Card>
                 ))}
               </div>
             </div>
           )}
 
-          <Drawer
-            visible={!!selectedGoal}
+          <Popup
+            // visible={!!selectedGoal}
+            visible={true}
             onClose={() => setSelectedGoal(null)}
-            title="Edit Goal"
           >
-            <GoalDrawer
-              onAddSaving={() => setActiveModal("deposit")}
-              onEdit={() => setActiveModal("edit")}
-              onDelete={() => handleDelete(selectedGoal?.id)}
-              onClose={() => setSelectedGoal(null)}
-            ></GoalDrawer>
-          </Drawer>
+            <GoalPopup></GoalPopup>
+          </Popup>
 
           {/* Completed goals */}
           {completedGoals.length > 0 && (
@@ -176,11 +169,7 @@ const GoalsPage: React.FC = () => {
               <div className="space-y-4">
                 {completedGoals.map((goal) => (
                   <Card key={goal.id} className="mx-0 w-full rounded-2xl p-5">
-                    <GoalList
-                      goal={goal}
-                      idx={null}
-                      onHold={handleOpenUpdate}
-                    ></GoalList>
+                    <GoalList goal={goal} idx={null} onHold={setSelectedGoal} />
                   </Card>
                 ))}
               </div>
