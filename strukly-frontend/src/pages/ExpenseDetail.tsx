@@ -1,29 +1,41 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useSWR from "swr";
+import axios from "axios";
+
 import type { ExpenseType } from "../type/ExpenseType";
+import { getCategoryData } from "../utils/CategoryConfig";
+
 import Card from "../components/card/Card";
 import BackIcon from "../components/utilityIcons/BackIcon";
 import EditIcon from "../components/utilityIcons/EditIcon";
 import DeleteIcon from "../components/utilityIcons/DeleteIcon";
 import Popup from "../components/popup/PopUp";
 import Button from "../components/button/Button";
-import { getCategoryData } from "../utils/CategoryConfig";
-import { deleteExpense } from "../store/ExpenseStore";
-import { useState } from "react";
 
 function ExpenseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { data, error, isLoading } = useSWR(
-    `http://localhost:3000/api/expenses/${id}`,
-    (url) => fetch(url, { credentials: "include" }).then((res) => res.json())
+    `${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`,
+    (url : string) => fetch(url, { credentials: "include" }).then((res) => res.json())
   );
 
   const [deletePopUp, setDeletePopUp] = useState(false);
-  const handleDelete = () => {
-    deleteExpense(raw.id);
-    navigate(-1);
+  const handleDelete = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/expenses/${raw.id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      navigate(-1);
+    } catch (error) {
+      console.error("Failed to delete expense:", error);
+      throw error; // rethrow so caller can handle it
+    }
   };
 
   const formatCurrency = (amount: number) => {
@@ -73,7 +85,7 @@ function ExpenseDetail() {
     dateTime: new Date(raw.dateTime),
     vendorName: raw.vendorName,
     category: raw.category,
-    currency: "Rp ",
+    currency: raw.totalAmount.currency,
     subtotalAmount: raw.subtotalAmount.amount,
     taxAmount: raw.taxAmount.amount,
     discountAmount: raw.discountAmount.amount,
@@ -105,10 +117,10 @@ function ExpenseDetail() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div
-            onClick={() => console.log("Edit")}
-            className="cursor-pointer active:opacity-70 transition-opacity text-[var(--fun-color-text-secondary)]"
+            onClick={() => navigate(`/expense/${id}`, {state: {expense}})}
+            className="cursor-pointer active:opacity-70 transition-opacity text-blue-600"
           >
             <EditIcon width={32} height={32} />
           </div>

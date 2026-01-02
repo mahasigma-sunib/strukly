@@ -2,13 +2,92 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
-import useExpense, { useLoadExpense } from "../store/ExpenseStore";
+import useExpense from "../store/ExpenseStore";
 import Button from "../components/button/Button";
 import CustomBarChart from "../components/chart/barchart";
 import Drawer from "../components/drawer/Drawer";
 import Datepicker from "../components/scroll/DatePicker";
 import CalendarIcon from "../components/utilityIcons/CalendarIcon";
 import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
+
+import useSWR from "swr";
+import type { ExpenseType } from "../type/ExpenseType";
+import type { WeeklyStat } from "../type/expenseStatisticType";
+
+function mapExpense(raw: any): ExpenseType {
+  return {
+    userID: raw.user_id,
+
+    id: raw.id,
+    dateTime: new Date(raw.datetime),
+    vendorName: raw.vendor,
+    category: raw.category,
+
+    currency: "Rp ",
+    subtotalAmount: raw.subtotal,
+    taxAmount: raw.tax,
+    discountAmount: raw.discount,
+    serviceAmount: raw.service,
+    totalAmount: raw.total_my_expense,
+
+    items: [],
+  };
+}
+
+function mapWeeklyStats(raw: any[]): WeeklyStat[] {
+  return raw.map((item) => ({
+    // name: `Week ${item.week}`,
+    name: `${item.startDate}-${item.endDate}`,
+    week: item.week,
+    spending: item.spending,
+    startDate: item.startDate,
+    endDate: item.endDate,
+  }));
+}
+//to fetch & load the expense datas
+export function useLoadExpense(month: number, year: number, getStat: boolean) {
+  // console.log("running");
+  const { setStats, setItems, setError, setLoading } = useExpense();
+
+  const { data, error, isLoading } = useSWR(
+    `${import.meta.env.VITE_API_BASE_URL}/expenses?month=${month}&year=${year}`,
+    (url) =>
+      fetch(url, {
+        credentials: "include",
+      }).then((res) => res.json())
+  );
+
+  useEffect(() => {
+    setLoading(isLoading);
+
+    if (error) {
+      setError("Failed to fetch expenses");
+    }
+
+    if (data?.history) {
+      const mapped = data.history
+        .map(mapExpense)
+        .sort(
+          (a: ExpenseType, b: ExpenseType) =>
+            new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
+        );
+      setItems(mapped);
+    }
+
+    if (getStat && data?.weekly) {
+      const stat = {
+        month,
+        year,
+        weekly: mapWeeklyStats(data.weekly),
+        total: data.total,
+      };
+      // console.log(stat);
+      setStats(stat);
+    }
+  }, [isLoading, error, data]);
+
+  return { data, error, isLoading };
+}
 
 export default function ExpenseTracker() {
   const today = new Date();
@@ -57,7 +136,7 @@ export default function ExpenseTracker() {
   // console.log(statistic.weekly);
 
   return (
-    <div>
+    <div className="pb-20">
       {/* page Title & date btn */}
       <div className="m-4 my-7 flex items-center justify-between">
         <div className="font-bold text-3xl">
@@ -145,11 +224,11 @@ export default function ExpenseTracker() {
       </div>
 
       {/* expense history */}
-      <div className="w-full min-h-dvh pt-6 ">
+      <div className="w-full pt-6 ">
         <div className="ml-5 mb-4 font-bold text-2xl">
           <p>History</p>
         </div>
-        
+
         {isLoading && <p>Loading...</p>}
 
         {error && <p>{error}</p>}
@@ -169,7 +248,7 @@ export default function ExpenseTracker() {
               key={item.id}
               size="md"
               className="bg-[#EFF4FA] shadow-[0_4px_0_0_#D9E8F5]"
-              onClick={() => navigate(`/expense/${item.id}`)}
+              onClick={() => navigate(`/expense/${item.id}/view`)}
             >
               <ExpenseList
                 vendorName={item.vendorName}
