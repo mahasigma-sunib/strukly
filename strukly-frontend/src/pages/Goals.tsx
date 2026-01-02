@@ -9,7 +9,7 @@ import GoalDrawer from "../components/drawer/GoalDrawer";
 import GoalsHeader from "../components/GoalsHeader";
 import GoalList from "../components/card/GoalListCard";
 import GoalModal from "../components/modal/GoalModal";
-import GoalPopup from "../components/popup/GoalPopup";
+import GoalPopup from "../components/popup/GoalPopUp";
 
 import type { GoalItem } from "../type/GoalItem";
 
@@ -17,7 +17,7 @@ const GoalsPage: React.FC = () => {
   const [goals, setGoals] = useState<GoalItem[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
   const [activeModal, setActiveModal] = useState<
-    "create" | "deposit" | "edit" | null
+    "create" | "deposit" | "edit" | "delete" | null
   >(null);
   const [tempAmount, setTempAmount] = useState<number>(0);
   const [formData, setFormData] = useState({ name: "", price: 0 });
@@ -89,8 +89,12 @@ const GoalsPage: React.FC = () => {
     setActiveModal(null);
   };
 
-  const handleDelete = (id: string | undefined) =>
-    setGoals((g) => g.filter((it) => it.id !== id));
+  const handleDelete = () => {
+    if (!selectedGoal) return;
+    setGoals((g) => g.filter((it) => it.id !== selectedGoal.id));
+    setActiveModal(null);
+    setSelectedGoal(null);
+  };
 
   const handleOpenUpdate = (goal: GoalItem) => {
     setSelectedGoal(goal);
@@ -150,11 +154,21 @@ const GoalsPage: React.FC = () => {
           )}
 
           <Popup
-            // visible={!!selectedGoal}
-            visible={true}
+            visible={!!selectedGoal && !activeModal}
             onClose={() => setSelectedGoal(null)}
           >
-            <GoalPopup></GoalPopup>
+            <GoalPopup
+              goalName={selectedGoal?.name}
+              onAddSaving={() => setActiveModal("deposit")}
+              onEdit={() => {
+                setFormData({
+                  name: selectedGoal!.name,
+                  price: selectedGoal!.price,
+                });
+                setActiveModal("edit");
+              }}
+              onDelete={() => setActiveModal("delete")}
+            />
           </Popup>
 
           {/* Completed goals */}
@@ -190,7 +204,9 @@ const GoalsPage: React.FC = () => {
             ? handleCreate
             : activeModal === "edit"
             ? handleUpdate
-            : handleDeposit
+            : activeModal === "deposit"
+            ? handleDeposit
+            : handleDelete
         }
         errorMessage={errorMessage}
         setErrorMessage={setErrorMessage}
