@@ -12,7 +12,7 @@ export default function AddExpenseCamera() {
   const videoConstraints = {
     width: 1280,
     height: 720,
-    facingMode: "environment", // 👈 better for receipts
+    facingMode: "environment",
   };
 
   const capture = useCallback(async () => {
