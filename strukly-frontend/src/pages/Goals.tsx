@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 
 import Card from "../components/card/Card";
-import Drawer from "../components/drawer/Drawer";
 import FlagMascot from "../components/mascots/FlagMascot";
 import Popup from "../components/popup/PopUp";
 
-import GoalDrawer from "../components/drawer/GoalDrawer";
 import GoalsHeader from "../components/GoalsHeader";
 import GoalList from "../components/card/GoalListCard";
 import GoalModal from "../components/modal/GoalModal";
