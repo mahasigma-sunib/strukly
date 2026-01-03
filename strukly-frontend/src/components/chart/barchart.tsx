@@ -99,7 +99,7 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({
               dataKey={bar.key}
               name={bar.label || bar.key}
               fill={bar.color}
-              radius={[6, 6, 0, 0]}
+              radius={[8, 8, 0, 0]}
               maxBarSize={35}
               // Hover Effect
               activeBar={

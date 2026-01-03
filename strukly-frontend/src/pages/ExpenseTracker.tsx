@@ -13,6 +13,7 @@ import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
 import useSWR from "swr";
 import type { ExpenseType } from "../type/ExpenseType";
 import type { WeeklyStat } from "../type/expenseStatisticType";
+import { Divide } from "lucide-react";
 
 function mapExpense(raw: any): ExpenseType {
   return {
@@ -138,7 +139,7 @@ export default function ExpenseTracker() {
   return (
     <div className="pb-20">
       {/* page Title & date btn */}
-      <div className="m-4 my-7 flex items-center justify-between">
+      <div className="p-5 flex items-center justify-between bg-surface border-b-2 border-border shadow-sm sticky top-0 z-20 w-full">
         <div className="font-bold text-3xl">
           <p>Expense</p>
         </div>
@@ -164,47 +165,47 @@ export default function ExpenseTracker() {
             {monthName} {activeDate.year}
           </Button>
         </div>
-
-        {/* drawer */}
-        <Drawer
-          visible={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
-          title="Select Period"
-        >
-          <div className="flex flex-col h-full">
-            <div className="mb-6">
-              <p className="text-text-secondary text-center mb-4 text-md">
-                Scroll to select month and year
-              </p>
-
-              {/* wheel picker */}
-              <Datepicker
-                selectedMonth={tempDate.month}
-                selectedYear={tempDate.year}
-                onChange={(month, year) => setTempDate({ month, year })}
-              />
-            </div>
-
-            {/* action btn */}
-            <div className="mt-auto">
-              <Button
-                variant="primary"
-                size="md"
-                className="w-full !rounded-2xl pt-4 pb-4 text-lg"
-                onClick={handleApplyFilter}
-              >
-                Apply Filter
-              </Button>
-            </div>
-          </div>
-        </Drawer>
       </div>
+
+      {/* drawer */}
+      <Drawer
+        visible={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Select Period"
+      >
+        <div className="flex flex-col h-full">
+          <div className="mb-6">
+            <p className="text-text-secondary text-center mb-4 text-md">
+              Scroll to select month and year
+            </p>
+
+            {/* wheel picker */}
+            <Datepicker
+              selectedMonth={tempDate.month}
+              selectedYear={tempDate.year}
+              onChange={(month, year) => setTempDate({ month, year })}
+            />
+          </div>
+
+          {/* action btn */}
+          <div className="mt-auto">
+            <Button
+              variant="primary"
+              size="md"
+              className="w-full !rounded-2xl pt-4 pb-4 text-lg"
+              onClick={handleApplyFilter}
+            >
+              Apply Filter
+            </Button>
+          </div>
+        </div>
+      </Drawer>
 
       {/* Bar Chart */}
       <div>
         {items.length > 0 && (
-          <div className="mx-4 my-5 bg-surface rounded-3xl py-6 border-border border-1">
-            <p className="ml-6 mb-2 text-2xl text-text-primary font-bold">
+          <div className="mx-4 mt-5 mb-2 bg-surface rounded-3xl py-6 border-border border-2 shadow-[0_4px_0_0_var(--color-border)]">
+            <p className="ml-6 mb-4 text-2xl text-text-primary font-bold">
               Tracker
             </p>
             <CustomBarChart
@@ -229,7 +230,12 @@ export default function ExpenseTracker() {
           <p>History</p>
         </div>
 
-        {isLoading && <p>Loading...</p>}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center min-h-screen -mt-40 gap-4">
+            <div className="w-20 h-20 border-12 border-t-primary border-inactive/10 rounded-full animate-spin" />
+            <p className="text-base text-inactive">Please wait a moment...</p>
+          </div>
+        )}
 
         {error && <p>{error}</p>}
 
@@ -247,8 +253,8 @@ export default function ExpenseTracker() {
             <Card
               key={item.id}
               size="md"
-              className="bg-[#EFF4FA] shadow-[0_4px_0_0_#D9E8F5]"
               onClick={() => navigate(`/expense/${item.id}/view`)}
+              className="active:bg-slate-100 !my-3"
             >
               <ExpenseList
                 vendorName={item.vendorName}
