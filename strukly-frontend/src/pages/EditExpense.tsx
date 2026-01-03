@@ -37,7 +37,6 @@ export default function EditExpense() {
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/expenses/${expense.id}`,
         {
-
           vendorName: expense.vendorName,
           category: expense.category,
           dateTime: expense.dateTime.toISOString(),
@@ -80,8 +79,8 @@ export default function EditExpense() {
   return (
     <div className="pb-16 min-h-screen bg-[var(--fun-color-background)]">
       {/* Header */}
-      <div className="bg-[var(--fun-color-surface)] px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm border-b border-[var(--fun-color-border)]">
-        <div className="flex gap-4 items-center">
+      <div className="bg-[var(--fun-color-surface)] px-4 py-5 flex items-center justify-between sticky top-0 z-10 shadow-sm border-b border-[var(--fun-color-border)]">
+        <div className="flex gap-3 items-center">
           <button onClick={() => navigate(-1)}>
             <BackIcon width={28} height={28} />
           </button>
@@ -90,7 +89,7 @@ export default function EditExpense() {
 
         <button
           onClick={handleSubmit}
-          className="cursor-pointer active:opacity-70 transition-opacity text-blue-600 font-bold text-xl mr-2 "
+          className="cursor-pointer active:opacity-70 transition-opacity text-blue-500 font-bold text-xl mr-2 "
         >
           Done
         </button>
