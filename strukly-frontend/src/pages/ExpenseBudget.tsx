@@ -119,9 +119,9 @@ export default function ExpenseBudget() {
     );
 
   return (
-    <div className="min-h-screen pb-20 overflow-y-auto">
-      <div className="px-5 py-6 mb-6 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
-        <div className="font-bold text-3xl">
+    <div className="min-h-screen pb-20 ">
+      <div className="px-5 py-6 mb-6 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full overflow-hidden">
+        <div className="font-bold text-3xl z-10">
           <p>Budget</p>
         </div>
       </div>
@@ -213,9 +213,9 @@ export default function ExpenseBudget() {
       </Popup>
 
       {/* Expense budget List */}
-      <div className="ml-5 mr-4 mt-5 mb-0 flex items-center justify-between">
-        <div className="font-bold text-xl">
-          <p>My Budgets</p>
+      <div className="ml-5 mr-4 mt-6 mb-0 flex items-center justify-between">
+        <div className="font-bold text-2xl">
+          <p>Top Categories</p>
         </div>
       </div>
 

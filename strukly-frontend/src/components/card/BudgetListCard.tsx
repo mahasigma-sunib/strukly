@@ -24,20 +24,20 @@ export default function BudgetList({
 
   return (
     <div>
-      <div className="flex items-center">
+      <div className="flex py-1 items-center justify-between gap-4 ">
         {/* left */}
-        <div className="flex gap-4 items-center w-1/4">
+        <div className="flex items-center px-2">
           {/* icon */}
           <div className="">{icon}</div>
         </div>
 
         {/* right */}
-        <div className="gap-4 items-center w-3/4">
+        <div className="flex flex-col gap-1 w-full">
           {/* category, expense budget bar , expense budget text */}
-          <p className="font-bold text-[var(--fun-color-text-primary)]">{category}</p>
+          <p className="font-bold text-lg text-text-primary">{category}</p>
 
           <ProgressBar value={spent} max={budget} height={8} />
-          <p className="text-[var(--fun-color-text-secondary)] text-xs">
+          <p className="text-text-disabled text-sm">
             {currency} {spentString} / {budgetString}
           </p>
         </div>
