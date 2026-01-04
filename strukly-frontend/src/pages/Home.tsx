@@ -1,5 +1,4 @@
 import useUserAuth from "../store/UserAuthStore";
-import TextLogo from "../components/logos/TextLogo";
 import SettingsIcon from "../components/utilityIcons/SettingsIcon";
 import Button from "../components/button/Button";
 import HappyMascot from "../components/mascots/HappyMascot";
@@ -159,7 +158,7 @@ function Home() {
                 My Budget
               </p>
 
-              {/* Progress bar here! No logic yet, just a dummy */}
+              {/* Progress bar here! No logic here yet, just dummy */}
               <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
                 <ProgressBar
                   value={200000}
@@ -200,7 +199,7 @@ function Home() {
         </div>
       </div>
 
-      {/* Dynamic Content: Goals & Expenses */}
+      {/* Dynamic Content: Goals & Expenses (Not yet integrated with the same style as Goals page (on progress by Jeta))*/}
       <div className="pb-24">
         <div className="p-5 mt-4 flex flex-col gap-8">
           {/* CURRENT GOALS */}
