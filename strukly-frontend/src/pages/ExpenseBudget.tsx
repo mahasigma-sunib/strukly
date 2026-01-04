@@ -120,9 +120,9 @@ export default function ExpenseBudget() {
 
   return (
     <div className="min-h-screen pb-20 overflow-y-auto">
-      <div className="m-4 my-7 items-center justify-between">
+      <div className="px-5 py-6 mb-6 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
         <div className="font-bold text-3xl">
-          <p>Expense Budget</p>
+          <p>Budget</p>
         </div>
       </div>
 
@@ -131,7 +131,12 @@ export default function ExpenseBudget() {
         <div className="font-bold text-2xl">
           <p>Overview</p>
         </div>
-        <Button variant="primary" size="sm" onClick={openEditPopup}>
+        <Button
+          variant="primary"
+          size="md"
+          onClick={openEditPopup}
+          className="mb-2 rounded-full !py-2 !px-4"
+        >
           Edit Budget
         </Button>
       </div>
@@ -146,18 +151,16 @@ export default function ExpenseBudget() {
               size={170}
             />
           </div>
-          <div className="w-full max-w-xs text-sm">
-            <div className="flex justify-between">
-              <div className="text-[var(--fun-color-text-primary)]">Used</div>
-              <div className="font-semibold">{formatMoney(totalSpent)}</div>
+          <div className="flex flex-row justify-between w-full max-w-xs text-sm">
+            <div className="flex flex-col justify-start items-start flex-1 pr-4">
+              <div className="text-text-secondary">Used</div>
+              <div className="font-bold text-lg">{formatMoney(totalSpent)}</div>
             </div>
-            <div className="flex justify-between mt-1">
-              <div className="text-[var(--fun-color-text-primary)]">
-                Remaining
-              </div>
+            <div className="flex flex-col justify-start items-start flex-1 border-l-2 border-gray-300 pl-4">
+              <div className="text-text-secondary">Remaining</div>
               <div
-                className={`font-semibold ${
-                  remainingNegative ? "text-red-400" : ""
+                className={`font-bold text-lg ${
+                  remainingNegative ? "text-red-500" : ""
                 }`}
               >
                 {remainingNegative ? "-" : ""}
