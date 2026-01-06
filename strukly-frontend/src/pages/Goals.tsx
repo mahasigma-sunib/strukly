@@ -77,13 +77,31 @@ const GoalsPage: React.FC = () => {
 
   const handleUpdate = () => {
     if (!selectedGoal) return;
+
+    if (!formData.name.trim()) {
+      setErrorMessage("Nama goal tidak boleh kosong!");
+      return; 
+    }
+
+    if (formData.price <= 0) {
+      setErrorMessage("Harga target harus lebih dari 0!");
+      return;
+    }
+
     setGoals((g) =>
       g.map((it) =>
         it.id === selectedGoal.id
-          ? { ...it, name: formData.name, price: formData.price }
+          ? {
+              ...it,
+              name: formData.name,
+              price: formData.price,
+              isCompleted: it.currentAmount >= formData.price,
+            }
           : it
       )
     );
+
+    setErrorMessage("");
     setActiveModal(null);
   };
 
