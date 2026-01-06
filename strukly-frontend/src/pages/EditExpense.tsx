@@ -7,6 +7,8 @@ import BackIcon from "../components/utilityIcons/BackIcon";
 
 import type { ExpenseType } from "../type/ExpenseType";
 
+import useExpense from "../store/ExpenseStore";
+
 export default function EditExpense() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -29,6 +31,7 @@ export default function EditExpense() {
   }
 
   const [expense, setExpense] = useState<ExpenseType>(passedExpense);
+  const { updateExpense } = useExpense();
 
   const handleSubmit = async () => {
     if (!expense || !id) return;
@@ -70,6 +73,7 @@ export default function EditExpense() {
         { withCredentials: true }
       );
 
+      updateExpense(id, expense);
       navigate(-1);
     } catch (err) {
       console.error("Failed to update expense", err);

@@ -13,6 +13,7 @@ import DeleteIcon from "../components/utilityIcons/DeleteIcon";
 import Popup from "../components/popup/PopUp";
 import Button from "../components/button/Button";
 import TrashMascot from "../components/mascots/TrashMascot";
+import useExpense from "../store/ExpenseStore";
 
 function ExpenseDetail() {
   const { id } = useParams();
@@ -25,6 +26,7 @@ function ExpenseDetail() {
   );
 
   const [deletePopUp, setDeletePopUp] = useState(false);
+  const { deleteExpense } = useExpense();
   const handleDelete = async () => {
     try {
       await axios.delete(
@@ -33,6 +35,7 @@ function ExpenseDetail() {
           withCredentials: true,
         }
       );
+      deleteExpense(raw.id);
       navigate(-1);
     } catch (error) {
       console.error("Failed to delete expense:", error);

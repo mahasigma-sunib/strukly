@@ -9,6 +9,8 @@ import Button from "../components/button/Button";
 import BackIcon from "../components/utilityIcons/BackIcon";
 
 import type { ExpenseType } from "../type/ExpenseType";
+import useExpense from "../store/ExpenseStore";
+import { mapExpense } from "../hooks/useLoadExpense";
 
 const emptyExpense: Omit<ExpenseType, "userID"> = {
   id: "",
@@ -110,17 +112,19 @@ export default function AddExpense() {
     }
   }, [scannedData]);
 
+  const { addExpense } = useExpense();
   const handleSubmit = async () => {
     try {
       const payload = mapExpenseToPostPayload(expense);
       // console.log("POST payload:", payload);
-      await axios.post(
+      const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/expenses`,
         payload,
         {
           withCredentials: true,
         }
       );
+      addExpense(mapExpense(res.data.expense))
       navigate("/expense");
     } catch (err) {
       console.error(err);
