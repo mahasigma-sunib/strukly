@@ -4,44 +4,54 @@ import ProgressBar from "../graph/ProgressBar";
 interface BudgetListProps {
   currency: string;
   spent: number;
-  budget: number;
+  usedBudget: number;
   category: string;
 }
 
-export default function BudgetList({
+export default function BudgetListCard({
   currency,
   spent,
-  budget,
+  usedBudget,
   category,
 }: BudgetListProps) {
-  const { icon } = getCategoryData(category);
+  const { icon, color } = getCategoryData(category.toLowerCase());
 
-  const idFormatter = new Intl.NumberFormat("id-ID", {
-    maximumFractionDigits: 0,
-  });
-  const spentString = `${idFormatter.format(spent)}`;
-  const budgetString = `${idFormatter.format(budget)}`;
+  const percent =
+    usedBudget > 0 ? Number(((spent / usedBudget) * 100).toFixed(2)) : 0;
+
+  const formatIDR = (value: number) =>
+    value ? value.toLocaleString("id-ID") : "0";
 
   return (
-    <div>
-      <div className="flex py-1 items-center justify-between gap-4 ">
-        {/* left */}
-        <div className="flex items-center px-2">
-          {/* icon */}
-          <div className="">{icon}</div>
+    <div className="rounded-xl bg-surface px-4 py-3 shadow-sm border border-border">
+      {/* Top row */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-3">
+          <div
+            className="flex items-center justify-center w-10 h-10 rounded-full"
+            style={{ backgroundColor: color }}
+          >
+            {icon}
+          </div>
+
+          <div className="flex flex-col">
+            <span className="font-semibold text-text-primary capitalize">
+              {category}
+            </span>
+            <span className="text-sm text-text-secondary">
+              {currency} {formatIDR(spent)}
+            </span>
+          </div>
         </div>
 
-        {/* right */}
-        <div className="flex flex-col gap-1 w-full">
-          {/* category, expense budget bar , expense budget text */}
-          <p className="font-bold text-lg text-text-primary">{category}</p>
-
-          <ProgressBar value={spent} max={budget} height={8} />
-          <p className="text-text-disabled text-sm">
-            {currency} {spentString} / {budgetString}
-          </p>
+        {/* Percentage */}
+        <div className="text-sm font-semibold text-text-secondary">
+          {percent}%
         </div>
       </div>
+
+      {/* Progress bar */}
+      <ProgressBar value={spent} max={usedBudget} height="h-3" color={color} />
     </div>
   );
 }
