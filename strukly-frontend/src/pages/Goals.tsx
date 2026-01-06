@@ -50,6 +50,13 @@ const GoalsPage: React.FC = () => {
   const handleDeposit = () => {
     if (!selectedGoal) return;
 
+    if(tempAmount <= 0){
+      setErrorMessage(
+        `The input amount must be greater than zero!`
+      );
+      return;
+    }
+
     const remaining = selectedGoal.price - selectedGoal.currentAmount;
 
     if (tempAmount > remaining) {
@@ -58,6 +65,8 @@ const GoalsPage: React.FC = () => {
       );
       return;
     }
+
+    
 
     setGoals((g) =>
       g.map((item) =>
@@ -79,12 +88,12 @@ const GoalsPage: React.FC = () => {
     if (!selectedGoal) return;
 
     if (!formData.name.trim()) {
-      setErrorMessage("Nama goal tidak boleh kosong!");
+      setErrorMessage("A goal name must be filled");
       return; 
     }
 
     if (formData.price <= 0) {
-      setErrorMessage("Harga target harus lebih dari 0!");
+      setErrorMessage("Target price must be greater than 0!");
       return;
     }
 
@@ -205,7 +214,10 @@ const GoalsPage: React.FC = () => {
         setFormData={setFormData}
         tempAmount={tempAmount}
         setTempAmount={setTempAmount}
-        onClose={() => setActiveModal(null)}
+        onClose={() => {
+          setActiveModal(null);
+          setErrorMessage("");
+        }}
         onConfirm={
           activeModal === "create"
             ? handleCreate
