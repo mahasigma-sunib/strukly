@@ -53,3 +53,7 @@ export const getCategoryData = (category: string) => {
 
 // 4. Export the Type for use in props
 export type CategoryKey = keyof typeof categoryColors;
+
+export const CategoryKeys = Object.keys(
+  categoryColors
+) as CategoryKey[];
