@@ -139,7 +139,7 @@ export default function ExpenseTracker() {
   return (
     <div className="pb-20">
       {/* page Title & date btn */}
-      <div className="p-5 flex items-center justify-between bg-surface border-b-2 border-border shadow-sm sticky top-0 z-20 w-full">
+      <div className="p-5 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
         <div className="font-bold text-3xl">
           <p>Expense</p>
         </div>

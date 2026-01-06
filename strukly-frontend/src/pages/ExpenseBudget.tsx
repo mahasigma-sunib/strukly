@@ -154,12 +154,14 @@ export default function ExpenseBudget() {
           <div className="flex flex-row justify-between w-full max-w-xs text-sm">
             <div className="flex flex-col justify-start items-start flex-1 pr-4">
               <div className="text-text-secondary">Used</div>
-              <div className="font-bold text-lg">{formatMoney(totalSpent)}</div>
+              <div className="font-bold text-lg text-text-secondary">
+                {formatMoney(totalSpent)}
+              </div>
             </div>
             <div className="flex flex-col justify-start items-start flex-1 border-l-2 border-gray-300 pl-4">
               <div className="text-text-secondary">Remaining</div>
               <div
-                className={`font-bold text-lg ${
+                className={`font-bold text-lg text-text-secondary ${
                   remainingNegative ? "text-red-500" : ""
                 }`}
               >
