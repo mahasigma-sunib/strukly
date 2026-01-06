@@ -92,6 +92,11 @@ const GoalsPage: React.FC = () => {
       return; 
     }
 
+    if(formData.price < selectedGoal.currentAmount){
+      setErrorMessage("New price must be less than current amount!");
+      return;
+    }
+
     if (formData.price <= 0) {
       setErrorMessage("Target price must be greater than 0!");
       return;
