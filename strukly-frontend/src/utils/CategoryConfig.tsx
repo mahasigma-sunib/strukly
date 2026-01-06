@@ -8,13 +8,13 @@ import OthersIcon from "../components/categoryIcons/OthersIcon";
 import UtilityIcon from "../components/categoryIcons/UtilityIcons";
 
 export const categoryColors: Record<string, string> = {
-  food: "var(--fun-color-category-food)",
-  groceries: "var(--fun-color-category-groceries)",
-  transportation: "var(--fun-color-category-transportation)",
-  housebills: "var(--fun-color-category-housebills)",
-  shopping: "var(--fun-color-category-shopping)",
-  entertainment: "var(--fun-color-category-entertainment)",
-  others: "var(--fun-color-category-others)",
+  food: "bg-category-food",
+  groceries: "bg-category-groceries",
+  transportation: "bg-category-transportation",
+  housebills: "bg-category-housebills",
+  shopping: "bg-category-shopping",
+  entertainment: "bg-category-entertainment",
+  others: "bg-category-others",
 };
 
 export const getCategoryData = (category: string) => {
