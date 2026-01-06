@@ -8,6 +8,7 @@ import type BudgetType from "../type/BudgetType";
 import Card from "../components/card/Card";
 import Button from "../components/button/Button";
 import Popup from "../components/popup/PopUp";
+import HappyMascot from "../components/mascots/HappyMascot";
 
 export default function ExpenseBudget() {
   const { data, error, isLoading, mutate } = useSWR<BudgetType>(
@@ -120,25 +121,45 @@ export default function ExpenseBudget() {
 
   return (
     <div className="min-h-screen pb-20 ">
-      <div className="px-5 py-6 mb-6 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full overflow-hidden">
-        <div className="font-bold text-3xl z-10">
+      <div className="p-5 flex items-center mb-4 justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
+        <div className="font-bold text-3xl">
           <p>Budget</p>
+        </div>
+        <div>
+          <Button
+            onClick={openEditPopup}
+            variant="primary"
+            size="md"
+            className="
+              !rounded-full 
+              !font-bold 
+              active:translate-y-[4px]
+              !transition-all
+              flex flex-row gap-1
+              text-lg
+              justify-center
+              items-center
+              !py-2
+              !px-3
+            "
+          >
+            Edit Budget
+          </Button>
         </div>
       </div>
 
       {/* Budget Overview */}
+      <div className="absolute top-18 right-10">
+        <div className="overflow-hidden">
+          <div className="transform translate-y-1/3">
+            <HappyMascot width={80} height={80} />
+          </div>
+        </div>
+      </div>
       <div className="ml-5 mb-0 mr-4 flex justify-between items-center">
         <div className="font-bold text-2xl">
           <p>Overview</p>
         </div>
-        <Button
-          variant="primary"
-          size="md"
-          onClick={openEditPopup}
-          className="mb-2 rounded-full !py-2 !px-4"
-        >
-          Edit Budget
-        </Button>
       </div>
 
       {/* Overview Chart */}
