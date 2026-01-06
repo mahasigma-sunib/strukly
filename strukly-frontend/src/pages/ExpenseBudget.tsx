@@ -239,12 +239,12 @@ export default function ExpenseBudget() {
         </div>
       </div>
 
-      <Card size="md">
-        <div className="space-y-2">
-          {CategoryKeys.map((b) => ({ b, spent: getSpentForCategory(b) }))
-            .filter(({ spent }) => spent > 1)
-            .sort((a, b) => b.spent - a.spent)
-            .map(({ b, spent }) => (
+      <div className="space-y-2">
+        {CategoryKeys.map((b) => ({ b, spent: getSpentForCategory(b) }))
+          .filter(({ spent }) => spent > 1)
+          .sort((a, b) => b.spent - a.spent)
+          .map(({ b, spent }) => (
+            <Card>
               <div key={b} className="py-2">
                 <BudgetListCard
                   currency="Rp"
@@ -253,9 +253,9 @@ export default function ExpenseBudget() {
                   category={b}
                 />
               </div>
-            ))}
-        </div>
-      </Card>
+            </Card>
+          ))}
+      </div>
     </div>
   );
 }

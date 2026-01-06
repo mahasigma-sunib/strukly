@@ -23,7 +23,7 @@ export default function BudgetListCard({
     value ? value.toLocaleString("id-ID") : "0";
 
   return (
-    <div className="rounded-xl bg-surface px-4 py-3 shadow-sm border border-border">
+    <div>
       {/* Top row */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
