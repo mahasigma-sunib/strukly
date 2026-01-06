@@ -89,11 +89,6 @@ const GoalsPage: React.FC = () => {
 
     if (!formData.name.trim()) {
       setErrorMessage("A goal name must be filled");
-      return; 
-    }
-
-    if(formData.price < selectedGoal.currentAmount){
-      setErrorMessage("New price must be less than current amount!");
       return;
     }
 
