@@ -187,7 +187,10 @@ const GoalsPage: React.FC = () => {
         setFormData={setFormData}
         tempAmount={tempAmount}
         setTempAmount={setTempAmount}
-        onClose={() => setActiveModal(null)}
+        onClose={() => {
+          setActiveModal(null);
+          setErrorMessage("");
+        }}
         onConfirm={
           activeModal === "create"
             ? handleCreate
