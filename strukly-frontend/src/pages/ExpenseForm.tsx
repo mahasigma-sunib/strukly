@@ -34,7 +34,7 @@ export default function ExpenseForm<
   const addItem = useCallback(() => {
     const newItem: ExpenseItemType = {
       expenseID: expense.id,
-      id: "",
+      id: crypto.randomUUID(),
       name: "",
       quantity: 1,
       singleItemPrice: 0,
