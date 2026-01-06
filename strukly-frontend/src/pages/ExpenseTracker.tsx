@@ -13,7 +13,6 @@ import Datepicker from "../components/scroll/DatePicker";
 import CalendarIcon from "../components/utilityIcons/CalendarIcon";
 import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
 
-
 export default function ExpenseTracker() {
   const today = new Date();
 
@@ -58,6 +57,7 @@ export default function ExpenseTracker() {
 
   const navigate = useNavigate();
   const { statistic, items, isLoading, error } = useExpense();
+
   // console.log(statistic.weekly);
 
   return (
@@ -184,7 +184,7 @@ export default function ExpenseTracker() {
                 vendorName={item.vendorName}
                 date={new Date(item.dateTime)}
                 currency={item.currency}
-                amount={item.totalAmount.toString()}
+                amount={(item.totalAmount ?? 0).toString()}
                 category={item.category}
               />
             </Card>
