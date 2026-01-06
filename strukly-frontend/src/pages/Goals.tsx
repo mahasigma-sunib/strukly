@@ -77,6 +77,17 @@ const GoalsPage: React.FC = () => {
 
   const handleUpdate = () => {
     if (!selectedGoal) return;
+
+    if (!formData.name.trim()) {
+      setErrorMessage("A goal name must be filled");
+      return;
+    }
+
+    if (formData.price <= 0) {
+      setErrorMessage("Target price must be greater than 0!");
+      return;
+    }
+
     setGoals((g) =>
       g.map((it) =>
         it.id === selectedGoal.id
