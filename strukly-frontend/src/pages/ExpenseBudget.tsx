@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import axios from "axios";
-import BudgetList from "../components/card/BudgetListCard";
+
+import BudgetListCard from "../components/card/BudgetListCard";
 import OverviewChart from "../components/graph/Chart";
-import useExpense from "../store/ExpenseStore";
-import type BudgetType from "../type/BudgetType";
 import Card from "../components/card/Card";
 import Button from "../components/button/Button";
 import Popup from "../components/popup/PopUp";
 import HappyMascot from "../components/mascots/HappyMascot";
+
+import useExpense from "../store/ExpenseStore";
+import { useLoadExpense } from "../hooks/useLoadExpense";
+import type BudgetType from "../type/BudgetType";
+import { CategoryKeys } from "../utils/CategoryConfig";
 
 export default function ExpenseBudget() {
   const { data, error, isLoading, mutate } = useSWR<BudgetType>(
@@ -21,10 +25,12 @@ export default function ExpenseBudget() {
 
   const { items: Expenses } = useExpense();
 
-  const [editedBudget, setEditedBudget] = useState<number | string>(0);
+  const [editedBudget, setEditedBudget] = useState<number>(0);
   const [editPopUp, setEditPopUp] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const today = new Date();
+  useLoadExpense(today.getMonth() + 1, today.getFullYear(), true);
   useEffect(() => {
     if (data) {
       setEditedBudget(data.budget);
@@ -59,20 +65,8 @@ export default function ExpenseBudget() {
     setEditPopUp(true);
   };
 
-  const budgets = [
-    { category: "Food", budget: 3000000 },
-    { category: "Groceries", budget: 2000000 },
-    { category: "Transportation", budget: 1200000 },
-    { category: "Utilities", budget: 2500000 },
-    { category: "Shopping", budget: 1500000 },
-    { category: "Entertainment", budget: 1000000 },
-    { category: "Others", budget: 800000 },
-  ] as const;
-
-  const formatMoney = (n: number) =>
-    `Rp ${new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(
-      Math.round(n || 0)
-    )}`;
+  const formatIDR = (value: number) =>
+    value ? value.toLocaleString("id-ID") : "";
 
   const getSpentForCategory = (category: string) => {
     return Expenses.filter(
@@ -89,12 +83,9 @@ export default function ExpenseBudget() {
     );
   };
 
-  const totalBudget = budgets.reduce((s, b) => s + b.budget, 0);
+  const totalBudget = data?.budget ? data.budget : 0;
 
-  const categoriesSet = new Set(budgets.map((b) => b.category.toLowerCase()));
-  const totalSpent = Expenses.filter((t) =>
-    categoriesSet.has(String(t.category || "").toLowerCase())
-  ).reduce(
+  const totalSpent = Expenses.reduce(
     (s, t) =>
       s +
       (typeof t.totalAmount === "number"
@@ -176,18 +167,18 @@ export default function ExpenseBudget() {
             <div className="flex flex-col justify-start items-start flex-1 pr-4">
               <div className="text-text-secondary">Used</div>
               <div className="font-bold text-lg text-text-secondary">
-                {formatMoney(totalSpent)}
+                {formatIDR(totalSpent)}
               </div>
             </div>
             <div className="flex flex-col justify-start items-start flex-1 border-l-2 border-gray-300 pl-4">
               <div className="text-text-secondary">Remaining</div>
               <div
-                className={`font-bold text-lg text-text-secondary ${
-                  remainingNegative ? "text-red-500" : ""
+                className={`font-bold text-lg  ${
+                  remainingNegative ? "text-red-500" : "text-text-secondary"
                 }`}
               >
                 {remainingNegative ? "-" : ""}
-                {formatMoney(Math.abs(remaining))}
+                {formatIDR(Math.abs(remaining))}
               </div>
             </div>
           </div>
@@ -201,14 +192,20 @@ export default function ExpenseBudget() {
 
           <div className="mt-4 mb-6">
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
               aria-label="Budget-Amount"
               className="w-full rounded border px-3 py-2"
-              value={editedBudget}
+              value={formatIDR(editedBudget)}
               min={0}
               onChange={(e) => {
-                const val = e.target.value;
-                setEditedBudget(val === "" ? "" : Number(val));
+                const digitsOnly = e.target.value.replace(/[^\d]/g, "");
+
+                if (digitsOnly === "") {
+                  setEditedBudget(0);
+                } else {
+                  setEditedBudget(Number(digitsOnly));
+                }
               }}
             />
           </div>
@@ -244,19 +241,19 @@ export default function ExpenseBudget() {
 
       <Card size="md">
         <div className="space-y-2">
-          {budgets.map((b) => {
-            const spent = getSpentForCategory(b.category);
-            return (
-              <div key={b.category} className="py-2">
-                <BudgetList
+          {CategoryKeys.map((b) => ({ b, spent: getSpentForCategory(b) }))
+            .filter(({ spent }) => spent > 1)
+            .sort((a, b) => b.spent - a.spent)
+            .map(({ b, spent }) => (
+              <div key={b} className="py-2">
+                <BudgetListCard
                   currency="Rp"
                   spent={spent}
-                  budget={b.budget}
-                  category={b.category}
+                  usedBudget={totalSpent}
+                  category={b}
                 />
               </div>
-            );
-          })}
+            ))}
         </div>
       </Card>
     </div>
