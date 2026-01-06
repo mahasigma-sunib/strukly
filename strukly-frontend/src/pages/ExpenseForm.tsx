@@ -127,8 +127,6 @@ export default function ExpenseForm<
   const formatIDR = (value: number) =>
     value ? value.toLocaleString("id-ID") : "";
 
-  const parseNumber = (value: string) => Number(value.replace(/\./g, "")) || 0;
-
   const labelCase = "text-sm font-bold text-gray-400";
 
   const inputBase =
@@ -362,12 +360,21 @@ export default function ExpenseForm<
                 className={`${numberInput} !w-full text-2xl !text-right`}
                 value={formatIDR(expense.totalAmount)}
                 onChange={(e) => {
-                  const raw = parseNumber(e.target.value);
-                  setExpense({
-                    ...expense,
-                    totalAmount: raw,
-                    subtotalAmount: raw,
-                  });
+                  const raw = e.target.value.replace(/[^\d]/g, "");
+
+                  if (raw === "") {
+                    setExpense({
+                      ...expense,
+                      totalAmount: 0,
+                      subtotalAmount: 0,
+                    });
+                  } else {
+                    setExpense({
+                      ...expense,
+                      totalAmount: Number(raw),
+                      subtotalAmount: Number(raw),
+                    });
+                  }
                 }}
               />
             </div>
