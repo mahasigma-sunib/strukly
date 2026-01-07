@@ -44,8 +44,9 @@ function NavLink({ to, label, activeIcon, inactiveIcon }: NavLinkProps) {
       </div>
 
       <span
-        className={`text-xs ${isActive ? "text-active font-bold" : "text-inactive font-bold"
-          }`}
+        className={`text-xs ${
+          isActive ? "text-active font-bold" : "text-inactive font-bold"
+        }`}
       >
         {label}
       </span>
@@ -205,9 +206,19 @@ export default function MobileNavBar() {
       />
 
       {isUploading && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[60]">
-          <div className="text-white text-lg font-semibold animate-pulse">
-            Scanning receipt...
+        <div className="absolute inset-0 bg-black/70 flex flex-col gap-10 items-center justify-center z-50">
+          <div className="flex flex-row gap-2">
+            <div className="w-4 h-4 rounded-full bg-orange-400 animate-bounce" />
+            <div className="w-4 h-4 rounded-full bg-orange-400 animate-bounce [animation-delay:-.3s]" />
+            <div className="w-4 h-4 rounded-full bg-orange-400 animate-bounce [animation-delay:-.5s]" />
+          </div>
+          <div className="flex flex-col items-center justify-center mx-20 gap-3">
+            <p className="text-white text-xl font-semibold animate-pulse">
+              Scanning Receipt
+            </p>
+            <p className="text-gray-300 text-sm text-center">
+              Please wait a moment while we're reading your receipt
+            </p>
           </div>
         </div>
       )}

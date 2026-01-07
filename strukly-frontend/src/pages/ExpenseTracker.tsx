@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { useLoadExpense } from "../hooks/useLoadExpense";
+
 import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
 import useExpense from "../store/ExpenseStore";
@@ -9,85 +12,6 @@ import Drawer from "../components/drawer/Drawer";
 import Datepicker from "../components/scroll/DatePicker";
 import CalendarIcon from "../components/utilityIcons/CalendarIcon";
 import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
-
-import useSWR from "swr";
-import type { ExpenseType } from "../type/ExpenseType";
-import type { WeeklyStat } from "../type/expenseStatisticType";
-
-function mapExpense(raw: any): ExpenseType {
-  return {
-    userID: raw.user_id,
-
-    id: raw.id,
-    dateTime: new Date(raw.datetime),
-    vendorName: raw.vendor,
-    category: raw.category,
-
-    currency: "Rp ",
-    subtotalAmount: raw.subtotal,
-    taxAmount: raw.tax,
-    discountAmount: raw.discount,
-    serviceAmount: raw.service,
-    totalAmount: raw.total_my_expense,
-
-    items: [],
-  };
-}
-
-function mapWeeklyStats(raw: any[]): WeeklyStat[] {
-  return raw.map((item) => ({
-    // name: `Week ${item.week}`,
-    name: `${item.startDate}-${item.endDate}`,
-    week: item.week,
-    spending: item.spending,
-    startDate: item.startDate,
-    endDate: item.endDate,
-  }));
-}
-//to fetch & load the expense datas
-export function useLoadExpense(month: number, year: number, getStat: boolean) {
-  // console.log("running");
-  const { setStats, setItems, setError, setLoading } = useExpense();
-
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE_URL}/expenses?month=${month}&year=${year}`,
-    (url) =>
-      fetch(url, {
-        credentials: "include",
-      }).then((res) => res.json())
-  );
-
-  useEffect(() => {
-    setLoading(isLoading);
-
-    if (error) {
-      setError("Failed to fetch expenses");
-    }
-
-    if (data?.history) {
-      const mapped = data.history
-        .map(mapExpense)
-        .sort(
-          (a: ExpenseType, b: ExpenseType) =>
-            new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
-        );
-      setItems(mapped);
-    }
-
-    if (getStat && data?.weekly) {
-      const stat = {
-        month,
-        year,
-        weekly: mapWeeklyStats(data.weekly),
-        total: data.total,
-      };
-      // console.log(stat);
-      setStats(stat);
-    }
-  }, [isLoading, error, data]);
-
-  return { data, error, isLoading };
-}
 
 export default function ExpenseTracker() {
   const today = new Date();
@@ -133,12 +57,13 @@ export default function ExpenseTracker() {
 
   const navigate = useNavigate();
   const { statistic, items, isLoading, error } = useExpense();
+
   // console.log(statistic.weekly);
 
   return (
     <div className="pb-20">
       {/* page Title & date btn */}
-      <div className="m-4 my-7 flex items-center justify-between">
+      <div className="p-5 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
         <div className="font-bold text-3xl">
           <p>Expense</p>
         </div>
@@ -164,47 +89,47 @@ export default function ExpenseTracker() {
             {monthName} {activeDate.year}
           </Button>
         </div>
-
-        {/* drawer */}
-        <Drawer
-          visible={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
-          title="Select Period"
-        >
-          <div className="flex flex-col h-full">
-            <div className="mb-6">
-              <p className="text-text-secondary text-center mb-4 text-md">
-                Scroll to select month and year
-              </p>
-
-              {/* wheel picker */}
-              <Datepicker
-                selectedMonth={tempDate.month}
-                selectedYear={tempDate.year}
-                onChange={(month, year) => setTempDate({ month, year })}
-              />
-            </div>
-
-            {/* action btn */}
-            <div className="mt-auto">
-              <Button
-                variant="primary"
-                size="md"
-                className="w-full !rounded-2xl pt-4 pb-4 text-lg"
-                onClick={handleApplyFilter}
-              >
-                Apply Filter
-              </Button>
-            </div>
-          </div>
-        </Drawer>
       </div>
+
+      {/* drawer */}
+      <Drawer
+        visible={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Select Period"
+      >
+        <div className="flex flex-col h-full">
+          <div className="mb-6">
+            <p className="text-text-secondary text-center mb-4 text-md">
+              Scroll to select month and year
+            </p>
+
+            {/* wheel picker */}
+            <Datepicker
+              selectedMonth={tempDate.month}
+              selectedYear={tempDate.year}
+              onChange={(month, year) => setTempDate({ month, year })}
+            />
+          </div>
+
+          {/* action btn */}
+          <div className="mt-auto">
+            <Button
+              variant="primary"
+              size="md"
+              className="w-full !rounded-2xl pt-4 pb-4 text-lg"
+              onClick={handleApplyFilter}
+            >
+              Apply Filter
+            </Button>
+          </div>
+        </div>
+      </Drawer>
 
       {/* Bar Chart */}
       <div>
         {items.length > 0 && (
-          <div className="mx-4 my-5 bg-surface rounded-3xl py-6 border-border border-1">
-            <p className="ml-6 mb-2 text-2xl text-text-primary font-bold">
+          <div className="mx-4 mt-5 mb-2 bg-surface rounded-3xl py-6 border-border border-2 shadow-[0_4px_0_0_var(--color-border)]">
+            <p className="ml-6 mb-4 text-2xl text-text-primary font-bold">
               Tracker
             </p>
             <CustomBarChart
@@ -224,12 +149,17 @@ export default function ExpenseTracker() {
       </div>
 
       {/* expense history */}
-      <div className="w-full pt-6 ">
+      <div className="w-full pt-6 pb-16">
         <div className="ml-5 mb-4 font-bold text-2xl">
           <p>History</p>
         </div>
 
-        {isLoading && <p>Loading...</p>}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center min-h-screen -mt-40 gap-4">
+            <div className="w-20 h-20 border-12 border-t-primary border-inactive/10 rounded-full animate-spin" />
+            <p className="text-base text-inactive">Please wait a moment...</p>
+          </div>
+        )}
 
         {error && <p>{error}</p>}
 
@@ -247,14 +177,14 @@ export default function ExpenseTracker() {
             <Card
               key={item.id}
               size="md"
-              className="bg-[#EFF4FA] shadow-[0_4px_0_0_#D9E8F5]"
               onClick={() => navigate(`/expense/${item.id}/view`)}
+              className="active:bg-slate-100 !my-3"
             >
               <ExpenseList
                 vendorName={item.vendorName}
                 date={new Date(item.dateTime)}
                 currency={item.currency}
-                amount={item.totalAmount.toString()}
+                amount={(item.totalAmount ?? 0).toString()}
                 category={item.category}
               />
             </Card>

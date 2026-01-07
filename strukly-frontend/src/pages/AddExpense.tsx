@@ -9,6 +9,8 @@ import Button from "../components/button/Button";
 import BackIcon from "../components/utilityIcons/BackIcon";
 
 import type { ExpenseType } from "../type/ExpenseType";
+import useExpense from "../store/ExpenseStore";
+import { mapExpense } from "../hooks/useLoadExpense";
 
 const emptyExpense: Omit<ExpenseType, "userID"> = {
   id: "",
@@ -88,30 +90,41 @@ export default function AddExpense() {
           (scannedData.taxAmount?.amount || 0) +
           (scannedData.serviceAmount?.amount || 0) -
           (scannedData.discountAmount?.amount || 0),
-        items: (scannedData.items || []).map((item: { name?: string; quantity?: number; singlePrice?: { amount?: number; currency?: string } }, index: number) => ({
-          expenseID: "",
-          id: Date.now().toString() + index,
-          name: item.name || "",
-          quantity: item.quantity || 1,
-          singleItemPrice: item.singlePrice?.amount || 0,
-          totalPrice: (item.singlePrice?.amount || 0) * (item.quantity || 1),
-        })),
+        items: (scannedData.items || []).map(
+          (
+            item: {
+              name?: string;
+              quantity?: number;
+              singlePrice?: { amount?: number; currency?: string };
+            },
+            index: number
+          ) => ({
+            expenseID: "",
+            id: Date.now().toString() + index,
+            name: item.name || "",
+            quantity: item.quantity || 1,
+            singleItemPrice: item.singlePrice?.amount || 0,
+            totalPrice: (item.singlePrice?.amount || 0) * (item.quantity || 1),
+          })
+        ),
       };
       setExpense(transformedExpense);
     }
   }, [scannedData]);
 
+  const { addExpense } = useExpense();
   const handleSubmit = async () => {
     try {
       const payload = mapExpenseToPostPayload(expense);
       // console.log("POST payload:", payload);
-      await axios.post(
+      const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/expenses`,
         payload,
         {
           withCredentials: true,
         }
       );
+      addExpense(mapExpense(res.data.expense));
       navigate("/expense");
     } catch (err) {
       console.error(err);
@@ -119,8 +132,8 @@ export default function AddExpense() {
   };
 
   return (
-    <div className="pb-26 min-h-screen bg-[var(--fun-color-background)]">
-      <div className="bg-[var(--fun-color-surface)] px-6 py-4 flex items-center gap-3 sticky top-0 z-10 shadow-sm border-b border-[var(--fun-color-border)]">
+    <div className="pb-16 min-h-screen bg-background">
+      <div className="bg-surface px-4 py-5 flex items-center gap-3 sticky top-0 z-10 shadow-sm border-b-2 border-border">
         <button onClick={() => navigate(-1)}>
           <BackIcon width={28} height={28} />
         </button>
@@ -129,8 +142,15 @@ export default function AddExpense() {
 
       <div>
         <ExpenseForm expense={expense} setExpense={setExpense} />
-        <div className="flex justify-center " >
-          <Button onClick={handleSubmit}>Add Expense</Button>
+        <div className="flex justify-center px-6">
+          <Button
+            variant="primary"
+            size="md"
+            className="!w-screen"
+            onClick={handleSubmit}
+          >
+            Add Expense
+          </Button>
         </div>
       </div>
     </div>

@@ -21,7 +21,6 @@ interface Props<T extends Omit<ExpenseType, "userID"> | ExpenseType> {
 export default function ExpenseForm<
   T extends Omit<ExpenseType, "userID"> | ExpenseType
 >({ expense, setExpense }: Props<T>) {
-  
   // const [isDetailed, setIsDetailed] = useState(expense.items.length > 0);
   const [isDetailed, setIsDetailed] = useState(true);
 
@@ -35,16 +34,16 @@ export default function ExpenseForm<
   const addItem = useCallback(() => {
     const newItem: ExpenseItemType = {
       expenseID: expense.id,
-      id: "",
+      id: crypto.randomUUID(),
       name: "",
       quantity: 1,
       singleItemPrice: 0,
       totalPrice: 0,
     };
     // Use functional update to avoid needing 'expense' in the dependency array
-    setExpense((prev) => ({ 
-      ...prev, 
-      items: [...prev.items, newItem] 
+    setExpense((prev) => ({
+      ...prev,
+      items: [...prev.items, newItem],
     }));
   }, [expense.id, setExpense]);
 
@@ -128,12 +127,10 @@ export default function ExpenseForm<
   const formatIDR = (value: number) =>
     value ? value.toLocaleString("id-ID") : "";
 
-  const parseNumber = (value: string) => Number(value.replace(/\./g, "")) || 0;
-
   const labelCase = "text-sm font-bold text-gray-400";
 
   const inputBase =
-    "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500";
+    "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-base outline-none focus:ring-2 focus:ring-blue-500";
 
   const numberInput =
     "w-32 text-right border border-gray-300 rounded-lg px-4 py-2 font-bold outline-none";
@@ -141,7 +138,7 @@ export default function ExpenseForm<
   return (
     <div>
       {/* main content */}
-      <div className="p-2 m-1 flex flex-col gap-2">
+      <div className="p-1 m-1 mt-4 flex flex-col gap-2">
         {/* DO NOT TOUCH THIS, it is for the card size consistency */}
 
         {/* Category */}
@@ -161,8 +158,8 @@ export default function ExpenseForm<
                 <div className="flex items-center gap-3">
                   {icon}
                   <div>
-                    <div className="text-xs text-gray-400">Category</div>
-                    <div className="font-semibold">
+                    <div className="text-sm text-gray-400">Category</div>
+                    <div className="text-lg font-semibold">
                       {capitalizeWords(expense.category)}
                     </div>
                   </div>
@@ -238,7 +235,7 @@ export default function ExpenseForm<
                 <div key={item.id} className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">
                     <input
-                      className="flex-1 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium"
+                      className="flex-1 border border-gray-200 rounded-lg px-4 py-2.5 text-base font-medium"
                       placeholder="Item Name"
                       value={item.name}
                       onChange={(e) =>
@@ -256,7 +253,7 @@ export default function ExpenseForm<
                   <div className="flex items-center gap-3">
                     <input
                       type="number"
-                      className="w-32 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium"
+                      className="w-32 border border-gray-200 rounded-lg px-4 py-2.5 text-base font-medium"
                       placeholder="Price"
                       value={item.singleItemPrice || ""}
                       onChange={(e) =>
@@ -267,18 +264,18 @@ export default function ExpenseForm<
                     <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2">
                       <input
                         type="number"
-                        className="w-8 text-center text-sm font-medium outline-none"
+                        className="w-8 text-center text-base font-medium outline-none"
                         value={item.quantity}
                         onChange={(e) =>
                           updateItem(index, "quantity", e.target.value)
                         }
                       />
-                      <span className="text-xs font-bold text-gray-400 ml-1">
+                      <span className="text-sm font-bold text-gray-400 ml-1">
                         &#215;
                       </span>
                     </div>
 
-                    <div className="flex-1 text-right font-bold text-gray-600 mr-2">
+                    <div className="flex-1 text-right font-bold text-gray-500 mr-2">
                       {item.totalPrice.toLocaleString("id-ID")}
                     </div>
                   </div>
@@ -287,7 +284,7 @@ export default function ExpenseForm<
 
               <button
                 onClick={addItem}
-                className="w-full py-3 border border-blue-500 rounded-xl text-blue-500 font-bold"
+                className="w-full text-base py-3 border border-blue-500 rounded-xl text-blue-500 font-bold"
               >
                 &#43; Add Item
               </button>
@@ -295,13 +292,13 @@ export default function ExpenseForm<
               <div className="pt-6 border-t border-gray-100 flex flex-col gap-4">
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-400">Subtotal</span>
-                  <span className="font-bold mr-2">
+                  <span className="font-bold mr-2 text-gray-500">
                     {expense.subtotalAmount.toLocaleString("id-ID")}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Pajak</span>
+                  <span className="text-sm text-gray-400">Tax</span>
                   <input
                     type="number"
                     className={numberInput}
@@ -331,7 +328,7 @@ export default function ExpenseForm<
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Diskon</span>
+                  <span className="text-sm text-gray-400">Discount</span>
                   <input
                     type="number"
                     className={`${numberInput} text-red-500`}
@@ -347,7 +344,7 @@ export default function ExpenseForm<
 
                 <div className="flex justify-between pt-2">
                   <span className="font-bold text-gray-500">Total</span>
-                  <span className="text-xl font-black text-gray-900 mr-2">
+                  <span className="text-xl font-extrabold text-gray-600 mr-2">
                     {expense.totalAmount.toLocaleString("id-ID")}
                   </span>
                 </div>
@@ -360,15 +357,24 @@ export default function ExpenseForm<
                 type="text"
                 inputMode="numeric"
                 placeholder="999.999"
-                className={`${numberInput} !w-full text-3xl !text-right`}
+                className={`${numberInput} !w-full text-2xl !text-right`}
                 value={formatIDR(expense.totalAmount)}
                 onChange={(e) => {
-                  const raw = parseNumber(e.target.value);
-                  setExpense({
-                    ...expense,
-                    totalAmount: raw,
-                    subtotalAmount: raw,
-                  });
+                  const raw = e.target.value.replace(/[^\d]/g, "");
+
+                  if (raw === "") {
+                    setExpense({
+                      ...expense,
+                      totalAmount: 0,
+                      subtotalAmount: 0,
+                    });
+                  } else {
+                    setExpense({
+                      ...expense,
+                      totalAmount: Number(raw),
+                      subtotalAmount: Number(raw),
+                    });
+                  }
                 }}
               />
             </div>

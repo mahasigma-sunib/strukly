@@ -4,7 +4,7 @@ interface ToggleProps {
   ariaLabel?: string;
 }
 
-export default function Toggle ({ enabled, onChange, ariaLabel }: ToggleProps) {
+export default function Toggle({ enabled, onChange, ariaLabel }: ToggleProps) {
   return (
     <button
       type="button"
@@ -14,7 +14,7 @@ export default function Toggle ({ enabled, onChange, ariaLabel }: ToggleProps) {
       onClick={() => onChange(!enabled)}
       className={`
         relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none
-        ${enabled ? "bg-blue-600" : "bg-gray-200"}
+        ${enabled ? "bg-sky-400" : "bg-gray-200"}
       `}
     >
       <span
@@ -25,4 +25,4 @@ export default function Toggle ({ enabled, onChange, ariaLabel }: ToggleProps) {
       />
     </button>
   );
-};
+}

@@ -6,6 +6,22 @@ import Button from "../../components/button/Button";
 import TextLogo from "../../components/logos/TextLogo";
 import WinkMascot from "../../components/mascots/WinkMascot";
 
+// Error Icon component (exclusive for this page only)
+const ErrorIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-4 w-4 inline mr-1 text-status-error align-middle"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
+    <path
+      fillRule="evenodd"
+      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
 function UserRegister() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -20,6 +36,12 @@ function UserRegister() {
   const navigate = useNavigate();
   const register = useUserAuth((s) => s.register);
 
+  const clearRegisterError = () => {
+    if (registerError) {
+      setRegisterError("");
+    }
+  };
+
   useEffect(() => {
     if (confirmPassword && confirmPassword !== password) {
       setConfirmPasswordError("Password do not match");
@@ -29,6 +51,10 @@ function UserRegister() {
   }, [password, confirmPassword]);
 
   const handleEmailValidation = () => {
+    if (!email.trim()) {
+      setEmailError("");
+      return;
+    }
     const { error, success } = emailSchema.safeParse(email);
     if (success) {
       setEmailError("");
@@ -38,6 +64,10 @@ function UserRegister() {
   };
 
   const handlePasswordValidation = () => {
+    if (!password.trim()) {
+      setPasswordError([]);
+      return;
+    }
     const { error, success } = passwordSchema.safeParse(password);
     if (success) {
       setPasswordError([]);
@@ -50,16 +80,19 @@ function UserRegister() {
   const handleRegister = async () => {
     handleEmailValidation();
     handlePasswordValidation();
-    setRegisterError("");
 
     let hasError = false;
+
     if (!username) {
+      setRegisterError("Username is required.");
       hasError = true;
     }
 
     if (confirmPassword !== password) {
       setConfirmPasswordError("Password do not match");
       hasError = true;
+    } else {
+      setConfirmPasswordError("");
     }
 
     if (
@@ -71,8 +104,13 @@ function UserRegister() {
       confirmPasswordError !== "" ||
       hasError
     ) {
+      if (!registerError) {
+        setRegisterError("Please fill the form correctly.");
+      }
       return;
     }
+
+    setRegisterError("");
 
     try {
       await register(username, email, password);
@@ -102,22 +140,28 @@ function UserRegister() {
         </div>
 
         <div className="flex flex-col gap-3 w-full">
+          {/* USERNAME FIELD */}
           <input
-            type="username"
+            type="text"
             id="username"
             placeholder="Username"
             value={username}
             onChange={(event) => {
               setUsername(event?.target.value);
+              clearRegisterError();
             }}
             required
             className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
-                      bg-background focus:outline-none focus:border-primary 
-                      ${
-                        !username && !email ? "border-border" : "border-border"
-                      }`}
+                        bg-background focus:outline-none focus:border-primary 
+                        ${
+                          !username &&
+                          registerError.includes("Username is required")
+                            ? "border-status-error"
+                            : "border-border"
+                        }`}
           />
 
+          {/* EMAIL FIELD */}
           <input
             type="email"
             id="email"
@@ -125,18 +169,25 @@ function UserRegister() {
             value={email}
             onChange={(event) => {
               setEmail(event?.target.value);
-              handleEmailValidation();
+              if (emailError) setEmailError("");
+              clearRegisterError();
             }}
             onBlur={handleEmailValidation}
             required
             className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
-                      bg-background focus:outline-none focus:border-primary
-                      ${emailError ? "border-status-error" : "border-border"}`}
+                        bg-background focus:outline-none focus:border-primary
+                        ${
+                          emailError ? "border-status-error" : "border-border"
+                        }`}
           />
           {emailError != "" && (
-            <p className="text-status-error text-sm mt-[-4px]">{emailError}</p>
+            <p className="text-status-error text-sm mt-[-4px] font-medium">
+              <ErrorIcon />
+              {emailError}
+            </p>
           )}
 
+          {/* PASSWORD FIELD */}
           <input
             type="password"
             id="password"
@@ -144,26 +195,31 @@ function UserRegister() {
             value={password}
             onChange={(event) => {
               setPassword(event?.target.value);
-              handlePasswordValidation();
+              if (passwordError.length > 0) setPasswordError([]);
+              clearRegisterError();
             }}
             onBlur={handlePasswordValidation}
             required
             className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
-                      bg-background focus:outline-none focus:border-primary
-                      ${
-                        passwordError.length > 0 || confirmPasswordError
-                          ? "border-status-error"
-                          : "border-border"
-                      }`}
+                        bg-background focus:outline-none focus:border-primary
+                        ${
+                          passwordError.length > 0 || confirmPasswordError
+                            ? "border-status-error"
+                            : "border-border"
+                        }`}
           />
           {passwordError.length > 0 && (
-            <div className="text-status-error text-sm mt-[-4px]">
+            <div className="text-status-error text-sm mt-[-4px] font-medium">
               {passwordError.map((error, index) => (
-                <p key={index}>{error}</p>
+                <p key={index}>
+                  <ErrorIcon />
+                  {error}
+                </p>
               ))}
             </div>
           )}
 
+          {/* CONFIRM PASSWORD FIELD */}
           <input
             type="password"
             id="confirmPassword"
@@ -171,18 +227,20 @@ function UserRegister() {
             value={confirmPassword}
             onChange={(event) => {
               setConfirmPassword(event?.target.value);
+              clearRegisterError();
             }}
             required
             className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold text-text-secondary mx-auto block
-                      bg-background focus:outline-none focus:border-primary
-                      ${
-                        confirmPasswordError
-                          ? "border-status-error"
-                          : "border-border"
-                      }`}
+                        bg-background focus:outline-none focus:border-primary
+                        ${
+                          confirmPasswordError
+                            ? "border-status-error"
+                            : "border-border"
+                        }`}
           />
           {confirmPasswordError && (
-            <div className="text-status-error text-sm mt-[-4px]">
+            <div className="text-status-error text-sm mt-[-4px] font-medium">
+              <ErrorIcon />
               {confirmPasswordError}
             </div>
           )}
@@ -203,16 +261,23 @@ function UserRegister() {
           </span>
           <span
             onClick={() => navigate("/login")}
-            className="font-extrabold text-primary cursor-pointer" // Tambahkan cursor-pointer
+            className="font-extrabold text-primary cursor-pointer"
           >
             Log in
           </span>
         </div>
 
-        {/* Register Error Display */}
+        {/* Register Error Display (Error Global/Backend) */}
         <div>
           {registerError != "" && (
-            <p className="text-status-error">{registerError}</p>
+            <div className="w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex items-center gap-3 animate-in zoom-in-95 duration-300 mt-4">
+              <div className="bg-status-error text-white rounded-full p-3 h-5 w-5 flex items-center justify-center text-sm font-bold shrink-0">
+                !
+              </div>
+              <p className="text-status-error text-sm font-bold">
+                {registerError}
+              </p>
+            </div>
           )}
         </div>
       </div>
