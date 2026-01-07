@@ -1,33 +1,52 @@
-interface ProgressBarProps {
+import React from "react";
+
+type ProgressBarProps = {
   value: number;
   max: number;
-  height?: "h-1" | "h-2" | "h-3" | "h-4";
-  color?: string; // Tailwind class ONLY
+  height?: number;
+  showLabel?: boolean;
   className?: string;
-}
+  barColor?: string;
+};
 
-export default function ProgressBar({
+const ProgressBar: React.FC<ProgressBarProps> = ({
   value,
   max,
-  height = "h-2",
-  color = "bg-category-others",
+  height = 8,
   className = "",
-}: ProgressBarProps) {
-  if (max <= 0) return null;
+  barColor = "bg-secondary",
+}) => {
+  if (max <= 0) {
+    return (
+      <div className={`w-full ${className}`}>
+        <div className="text-xs text-gray-400">Invalid budget</div>
+      </div>
+    );
+  }
 
-  const percent = Math.min(100, Math.max(0, (value / max) * 100));
+  const rawPercent = (value / max) * 100;
+  const clampedPercent = Math.max(0, Math.min(100, rawPercent));
+  const isOver = rawPercent > 100;
+
+  const finalBarColor = isOver ? "bg-red-500" : barColor;
 
   return (
     <div className={`w-full ${className}`}>
       <div
-        className={`relative w-full ${height} rounded-full bg-neutral-700 overflow-hidden`}
+        role="progressbar"
+        aria-valuenow={Math.round(rawPercent)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        className="w-full bg-inactive/30 rounded-full overflow-hidden"
+        style={{ height }}
       >
-        {/* Fill */}
         <div
-          className={`relative h-full rounded-full transition-all duration-500 ease-out ${color}`}
-          style={{ width: `${percent}%` }}
-        ></div>
+          className={`${finalBarColor} h-full rounded-full transition-all duration-500`}
+          style={{ width: `${clampedPercent}%` }}
+        />
       </div>
     </div>
   );
-}
+};
+
+export default ProgressBar;
