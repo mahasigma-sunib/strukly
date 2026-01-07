@@ -187,35 +187,51 @@ export default function ExpenseBudget() {
 
       {/* edit budget popup */}
       <Popup visible={editPopUp} onClose={() => setEditPopUp(false)}>
-        <div className="p-6 text-center">
-          <h3 className="text-lg font-bold text-gray-900">Edit Budget</h3>
+        <div className="p-6 w-full max-w-sm mx-auto">
+          {/* Title */}
+          <h3 className="text-xl font-bold text-text-primary mb-1">
+            Edit Budget
+          </h3>
+          <p className="text-sm text-text-secondary mb-6">
+            Set your total monthly budget
+          </p>
 
-          <div className="mt-4 mb-6">
+          {/* Input */}
+          <div className="relative mb-6">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
+              Rp
+            </span>
             <input
               type="text"
               inputMode="numeric"
               aria-label="Budget-Amount"
-              className="w-full rounded border px-3 py-2"
+              className="
+                w-full pl-10 pr-4 py-3
+                rounded-xl
+                border border-border
+                text-lg font-bold
+                text-right
+                outline-none
+                focus:ring-2 focus:ring-primary
+                transition
+              "
+              placeholder="0"
               value={formatIDR(editedBudget)}
-              min={0}
               onChange={(e) => {
                 const digitsOnly = e.target.value.replace(/[^\d]/g, "");
-
-                if (digitsOnly === "") {
-                  setEditedBudget(0);
-                } else {
-                  setEditedBudget(Number(digitsOnly));
-                }
+                setEditedBudget(digitsOnly === "" ? 0 : Number(digitsOnly));
               }}
             />
           </div>
 
-          <div className="flex justify-between gap-4">
+          {/* Actions */}
+          <div className="flex gap-3">
             <Button
               variant="outline"
               size="md"
               onClick={() => setEditPopUp(false)}
               disabled={isSubmitting}
+              className="flex-1"
             >
               Cancel
             </Button>
@@ -225,6 +241,7 @@ export default function ExpenseBudget() {
               size="md"
               onClick={handleEditBudget}
               disabled={isSubmitting}
+              className="flex-1"
             >
               {isSubmitting ? "Saving..." : "Save"}
             </Button>
