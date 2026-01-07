@@ -217,7 +217,7 @@ export default function MobileNavBar() {
               Scanning Receipt
             </p>
             <p className="text-gray-300 text-sm text-center">
-              Please wait a moment while we're reading you're receipt
+              Please wait a moment while we're reading your receipt
             </p>
           </div>
         </div>

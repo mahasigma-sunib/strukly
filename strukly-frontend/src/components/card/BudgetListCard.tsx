@@ -28,8 +28,7 @@ export default function BudgetListCard({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
           <div
-            className="flex items-center justify-center w-10 h-10 rounded-full"
-            style={{ backgroundColor: color }}
+            className={`flex items-center justify-center w-10 h-10 rounded-full ${color}`}
           >
             {icon}
           </div>
@@ -49,15 +48,6 @@ export default function BudgetListCard({
           {percent}%
         </div>
       </div>
-
-      {/* Progress bar */}
-      {/* <ProgressBar
-        value={spent}
-        max={usedBudget}
-        height="h-3"
-        color={color}
-        className="!mt-4"
-      /> */}
 
       <ProgressBar
         value={spent}

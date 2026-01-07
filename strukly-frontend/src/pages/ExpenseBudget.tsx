@@ -271,8 +271,8 @@ export default function ExpenseBudget() {
           .filter(({ spent }) => spent > 1)
           .sort((a, b) => b.spent - a.spent)
           .map(({ b, spent }) => (
-            <Card>
-              <div key={b} className="py-2">
+            <Card key={b} >
+              <div className="py-2">
                 <BudgetListCard
                   currency="Rp"
                   spent={spent}

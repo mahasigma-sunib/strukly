@@ -142,7 +142,6 @@ function ExpenseDetail() {
       <Popup visible={deletePopUp} onClose={() => setDeletePopUp(false)}>
         <div className="p-4 text-center">
           <div className="mb-6 flex items-center justify-center text-red-500">
-            {/* <DeleteIcon width={40} height={40} /> */}
             <TrashMascot width={120} height={100} />
           </div>
 

@@ -19,7 +19,7 @@ function UserLogin() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<string[]>([]);
   const [loginError, setLoginError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Tambahkan state loading
+  const [isLoading, setIsLoading] = useState(false); 
 
   const navigate = useNavigate();
   const login = useUserAuth((s) => s.login);
