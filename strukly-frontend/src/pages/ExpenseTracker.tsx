@@ -149,7 +149,7 @@ export default function ExpenseTracker() {
       </div>
 
       {/* expense history */}
-      <div className="w-full pt-6 ">
+      <div className="w-full pt-6 pb-16">
         <div className="ml-5 mb-4 font-bold text-2xl">
           <p>History</p>
         </div>

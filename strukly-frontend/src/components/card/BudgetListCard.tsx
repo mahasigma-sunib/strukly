@@ -35,23 +35,29 @@ export default function BudgetListCard({
           </div>
 
           <div className="flex flex-col">
-            <span className="font-semibold text-text-primary capitalize">
+            <span className="font-bold text-text-primary text-base capitalize">
               {category}
             </span>
             <span className="text-sm text-text-secondary">
-              {currency} {formatIDR(spent)}
+              -{currency} {formatIDR(spent)}
             </span>
           </div>
         </div>
 
         {/* Percentage */}
-        <div className="text-sm font-semibold text-text-secondary">
+        <div className="text-base font-bold text-text-secondary">
           {percent}%
         </div>
       </div>
 
       {/* Progress bar */}
-      <ProgressBar value={spent} max={usedBudget} height="h-3" color={color} />
+      <ProgressBar
+        value={spent}
+        max={usedBudget}
+        height="h-3"
+        color={color}
+        className="!mt-4"
+      />
     </div>
   );
 }

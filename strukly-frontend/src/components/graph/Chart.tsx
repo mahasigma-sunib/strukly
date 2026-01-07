@@ -12,8 +12,8 @@ export default function OverviewChart({
   if (totalBudget <= 0) {
     return (
       <div className="flex flex-col items-center gap-2 p-2">
-        <div className="text-sm text-[var(--fun-color-text-primary)]">
-          Set budgets to see an overview
+        <div className="text-base text-text-disabled mb-4">
+          Set budget to see your overview!
         </div>
       </div>
     );
@@ -44,7 +44,22 @@ export default function OverviewChart({
   const fillDash = `${filledLength} ${circumference - filledLength}`;
 
   const rotateDeg = -90 - arcAngle / 2;
-  const fgColor = isOver ? "#ef4444" : "#34d399";
+
+  // Chart Color based on used nominals
+  let fgColor;
+  let fgTextColorClass;
+
+  if (isOver || rawPercent > 80) {
+    fgColor = "#ef4444"; // red-500
+    fgTextColorClass = "text-red-500";
+  } else if (rawPercent >= 50) {
+    fgColor = "#facc15"; // yellow-400
+    fgTextColorClass = "text-yellow-400";
+  } else {
+    fgColor = "#34d399"; // emerald-400
+    fgTextColorClass = "text-emerald-400";
+  }
+
   const bgColor = "#e8e9eb";
 
   return (
@@ -79,16 +94,10 @@ export default function OverviewChart({
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div
-            className={`text-3xl font-bold ${
-              isOver ? "text-red-500" : "text-emerald-400"
-            }`}
-          >
+          <div className={`text-3xl font-bold ${fgTextColorClass}`}>
             {percent}%
           </div>
-          <div className="text-sm text-text-secondary -mt-1">
-            of budget used
-          </div>
+          <div className="text-sm text-text-secondary ">of budget used</div>
         </div>
       </div>
     </div>

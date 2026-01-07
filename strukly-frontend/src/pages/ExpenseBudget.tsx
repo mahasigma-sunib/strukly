@@ -164,14 +164,22 @@ export default function ExpenseBudget() {
             />
           </div>
           <div className="flex flex-row justify-between w-full max-w-xs text-sm">
-            <div className="flex flex-col justify-start items-start flex-1 pr-4">
-              <div className="text-text-secondary">Used</div>
+            <div className="flex flex-col justify-start items-start flex-1 pr-4 gap-1">
+              <div>
+                <p className="text-text-secondary text-sm font-semibold">
+                  Used
+                </p>
+              </div>
               <div className="font-bold text-lg text-text-secondary">
                 {formatIDR(totalSpent)}
               </div>
             </div>
-            <div className="flex flex-col justify-start items-start flex-1 border-l-2 border-gray-300 pl-4">
-              <div className="text-text-secondary">Remaining</div>
+            <div className="flex flex-col justify-start items-start flex-1 border-l-2 gap-1 border-gray-300 pl-4">
+              <div>
+                <p className="text-text-secondary text-sm font-semibold">
+                  Remaining
+                </p>
+              </div>
               <div
                 className={`font-bold text-lg  ${
                   remainingNegative ? "text-red-500" : "text-text-secondary"
@@ -187,14 +195,16 @@ export default function ExpenseBudget() {
 
       {/* edit budget popup */}
       <Popup visible={editPopUp} onClose={() => setEditPopUp(false)}>
-        <div className="p-6 w-full max-w-sm mx-auto">
+        <div className="p-2 w-full max-w-sm mx-auto">
           {/* Title */}
-          <h3 className="text-xl font-bold text-text-primary mb-1">
-            Edit Budget
-          </h3>
-          <p className="text-sm text-text-secondary mb-6">
-            Set your total monthly budget
-          </p>
+          <div className="flex flex-col text-center">
+            <h3 className="text-2xl font-bold text-text-primary mb-1">
+              Edit Budget
+            </h3>
+            <p className="text-base text-text-secondary mb-6">
+              Set your total monthly budget
+            </p>
+          </div>
 
           {/* Input */}
           <div className="relative mb-6">
@@ -206,13 +216,13 @@ export default function ExpenseBudget() {
               inputMode="numeric"
               aria-label="Budget-Amount"
               className="
-                w-full pl-10 pr-4 py-3
+                w-full  py-3
                 rounded-xl
-                border border-border
-                text-lg font-bold
-                text-right
+                border-b-2 border-inactive
+                text-3xl font-bold
+                text-center
                 outline-none
-                focus:ring-2 focus:ring-primary
+                focus:border-primary
                 transition
               "
               placeholder="0"
@@ -226,7 +236,7 @@ export default function ExpenseBudget() {
 
           {/* Actions */}
           <div className="flex gap-3">
-            <Button
+            {/* <Button
               variant="outline"
               size="md"
               onClick={() => setEditPopUp(false)}
@@ -234,7 +244,7 @@ export default function ExpenseBudget() {
               className="flex-1"
             >
               Cancel
-            </Button>
+            </Button> */}
 
             <Button
               variant="primary"
