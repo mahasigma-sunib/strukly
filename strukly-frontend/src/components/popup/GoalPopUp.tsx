@@ -22,17 +22,21 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-2 w-full">
-      {goalName && (
-        <div className="px-4 py-2 border-b border-border/50">
-          <p className="text-sm font-semibold text-text-disabled text-center">
-            {goalName}
-          </p>
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex-1 flex-col">
+          <div className="px-4 py-1">
+            <p className="text-lg font-semibold text-inactive">Manage Goal</p>
+          </div>
+          {goalName && (
+            <div className="px-4 py-1">
+              <p className="text-2xl font-bold text-text-primary">{goalName}</p>
+            </div>
+          )}
         </div>
-      )}
-
-      <Button onClick={onClose} className="text-slate-500">
-        <CloseIcon width={20} height={20} />
-      </Button>
+        <Button onClick={onClose} className="text-slate-500">
+          <CloseIcon width={20} height={20} />
+        </Button>
+      </div>
 
       <button
         onClick={onAddSaving}
