@@ -2,12 +2,15 @@ import React from "react";
 import AddIcon from "../icons/AddIcon";
 import EditIcon from "../utilityIcons/EditIcon";
 import DeleteIcon from "../utilityIcons/DeleteIcon";
+import Button from "../button/Button";
+import CloseIcon from "../utilityIcons/CloseIcon";
 
 type GoalPopUpProps = {
   goalName?: string;
   onAddSaving: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onClose: () => void;
 };
 
 const GoalPopUp: React.FC<GoalPopUpProps> = ({
@@ -15,6 +18,7 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
   onAddSaving,
   onEdit,
   onDelete,
+  onClose,
 }) => {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -25,6 +29,11 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
           </p>
         </div>
       )}
+
+      <Button onClick={onClose} className="text-slate-500">
+        <CloseIcon width={20} height={20} />
+      </Button>
+
       <button
         onClick={onAddSaving}
         className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl hover:bg-slate-50 transition-colors"
