@@ -134,7 +134,7 @@ function Home() {
                   variant="blue"
                   size="sm"
                   className="!p-1 rounded-2xl"
-                  onClick={() => navigate('/settings')}
+                  onClick={() => navigate("/settings")}
                 >
                   <SettingsIcon width={28} />
                 </Button>
@@ -157,18 +157,19 @@ function Home() {
         </div>
       </div>
 
-      <div className="relative -mt-42 m-6">
+      <div className="relative -mt-42 m-5">
         <div className="flex flex-col gap-4">
           <div className="absolute z-40 right-4 -top-5">
             <HappyMascot width={64} height={64} />
           </div>
-          <div className="bg-surface p-5 rounded-3xl border-border shadow-[0_6px_0_0_var(--color-border)]">
+          <div className="bg-surface p-5 rounded-2xl border-border shadow-[0_6px_0_0_var(--color-border)]">
             <div className="flex flex-col gap-4">
               <p className="text-2xl font-bold text-text-primary/80">
                 My Budget
               </p>
 
               {/* Progress bar here! No logic here yet, just dummy */}
+              {/* Buat nya berdasarkan "berapa left/remaining" jangan "used (kayak di page Budget)" */}
               <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
                 <ProgressBar
                   value={200000}
