@@ -62,8 +62,10 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
               />
             )}
           </div>
-          <div className="flex flex-col gap-1 flex-1">
-            <p className="text-xl font-bold text-text-primary">{goal.name}</p>
+          <div className="flex flex-col gap-1 flex-1 min-w-0">
+            <p className="text-xl font-bold text-text-primary overflow-hidden whitespace-nowrap text-ellipsis">
+              {goal.name}
+            </p>
 
             <div className="flex flex-row w-full justify-between items-center">
               <p className="text-lg font-semibold text-inactive">
