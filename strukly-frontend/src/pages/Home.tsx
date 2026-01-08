@@ -1,20 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import type { ExpenseType } from "../type/ExpenseType";
 import useUserAuth from "../store/UserAuthStore";
+import useExpense from "../store/ExpenseStore";
+import { useLoadExpense } from "../hooks/useLoadExpense";
+import { getCategoryData } from "../utils/CategoryConfig";
 
 import Button from "../components/button/Button";
 import Card from "../components/card/Card";
+import ExpenseList from "../components/card/ExpenseListCard";
 import ProgressBar from "../components/graph/ProgressBar";
 
 import HappyMascot from "../components/mascots/HappyMascot";
 import HeadbandMascot from "../components/mascots/HeadbandMascot";
 import WinkMascot from "../components/mascots/WinkMascot";
 
-import FoodIcon from "../components/categoryIcons/FoodIcon";
 import SettingsIcon from "../components/utilityIcons/SettingsIcon";
 import WhistleMascot from "../components/mascots/WhistleMascot";
+import { useLoadBudget } from "../hooks/useLoadBudget";
+import { useExpenseCalc } from "../hooks/useExpenseCalc";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -30,7 +34,7 @@ const getGreeting = () => {
   }
 };
 
-// Made by Edo
+//THIS INTERFACE SHOULD BE PLACEHOLDER AND BE DELETED AND USE IMPORT TYPE AFTER GOALS IS DONE
 interface GoalItem {
   id: string;
   name: string;
@@ -44,73 +48,25 @@ interface GoalItem {
 }
 
 function Home() {
+  const navigate = useNavigate();
+  const greeting = getGreeting();
   const username = useUserAuth((s) => s.user?.name || "User");
 
-  const navigate = useNavigate();
+  const { data, isLoading, error } = useLoadBudget();
 
-  const greeting = getGreeting();
+  const totalBudget = data?.budget ?? 0;
+  const { totalSpent, remaining, maxCategory } = useExpenseCalc(totalBudget);
 
-  // For Date Time (if not used, can delete)
-  // const today = new Date();
-  // const currentMonthIndex = today.getMonth();
-  // const currentYear = today.getFullYear();
-  // const monthNames = [
-  //   "Jan",
-  //   "Feb",
-  //   "Mar",
-  //   "Apr",
-  //   "May",
-  //   "June",
-  //   "July",
-  //   "Aug",
-  //   "Sep",
-  //   "Oct",
-  //   "Nov",
-  //   "Dec",
-  // ];
-  // const currentMonthName = monthNames[currentMonthIndex];
-  // const currentMonthYear = `${currentMonthName} ${currentYear}`;
+  const usedBudgetPercent =
+    totalSpent > 0 ? Number(((totalSpent / totalBudget) * 100).toFixed(2)) : 0;
+
+  const today = new Date();
+  useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
+  const { items } = useExpense();
+
+  const { icon } = getCategoryData(maxCategory.category);
 
   const [goals, setGoals] = useState<GoalItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [expenses, setExpenses] = useState<ExpenseType[]>([]);
-
-  // Made by Edo
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const headers = { Authorization: `Bearer ${token}` };
-
-        const [resGoals, resExpenses] = await Promise.all([
-          fetch("http://localhost:3000/goals", { headers }),
-          fetch("http://localhost:3000/expenses", { headers }),
-        ]);
-
-        if (resGoals.ok) {
-          const data = await resGoals.json();
-          setGoals(data.goalItems || []);
-        }
-
-        if (resExpenses.ok) {
-          const data = await resExpenses.json();
-          setExpenses(data.expenseItems || []);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="p-5 text-center text-inactive">Loading goals...</div>
-    );
-  }
 
   return (
     <div>
@@ -134,7 +90,7 @@ function Home() {
                   variant="blue"
                   size="sm"
                   className="!p-1 rounded-2xl"
-                  onClick={() => navigate('/settings')}
+                  onClick={() => navigate("/settings")}
                 >
                   <SettingsIcon width={28} />
                 </Button>
@@ -150,7 +106,7 @@ function Home() {
 
             {/* Total expense goes here! v*/}
             <div className="flex flex-row items-end">
-              <p className="text-4xl font-bold text-white">Rp120.000</p>
+              <p className="text-4xl font-bold text-white">Rp{totalSpent}</p>
               <p className="text-2xl font-bold text-white/70">,00</p>
             </div>
           </div>
@@ -171,16 +127,16 @@ function Home() {
               {/* Progress bar here! No logic here yet, just dummy */}
               <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
                 <ProgressBar
-                  value={200000}
-                  max={320000}
+                  value={remaining}
+                  max={totalBudget}
                   height={22}
                 ></ProgressBar>
                 <div className="flex flex-row justify-between items-center px-2">
                   <p className="text-sm font-bold text-text-primary/50">
-                    200.000 / 320.000
+                    {remaining} / {totalBudget}
                   </p>
                   <p className="text-sm font-bold text-text-primary/50">
-                    37% used
+                    {usedBudgetPercent}% used
                   </p>
                 </div>
               </div>
@@ -190,9 +146,9 @@ function Home() {
                   <p className="text-base font-bold text-text-primary/50 ">
                     Avg. spent / day
                   </p>
-                  <p className="text-[30px]">💸</p>
+                  <p className="text-[30px] py-1">💸</p>
                   <p className="text-lg font-bold text-text-primary">
-                    Rp15.000
+                    Rp{(totalSpent / today.getDate()).toFixed(2)}
                   </p>
                 </div>
 
@@ -200,8 +156,11 @@ function Home() {
                   <p className="text-base font-bold text-text-primary/50">
                     Top category
                   </p>
-                  <FoodIcon width={30} height={30} className="my-2" />
-                  <p className="text-lg font-bold text-text-primary">Food</p>
+                  {/* <FoodIcon width={30} height={30} className="my-2" /> */}
+                  <div className="py-1">{icon}</div>
+                  <p className="text-lg font-bold text-text-primary">
+                    {maxCategory.category.charAt(0).toUpperCase() + maxCategory.category.slice(1)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -209,12 +168,11 @@ function Home() {
         </div>
       </div>
 
-      {/* Dynamic Content: Goals & Expenses (Not yet integrated with the same style as Goals page (on progress by Jeta))*/}
-      <div className="pb-24">
-        <div className="p-5 mt-4 flex flex-col gap-8">
+      <div className="pb-10">
+        <div className=" mt-4 flex flex-col gap-8">
           {/* CURRENT GOALS */}
           <div>
-            <p className="text-2xl font-bold mb-2 text-text-primary">
+            <p className="text-2xl font-bold mb-2 text-text-primary px-4">
               Current Goals
             </p>
             {goals.length > 0 ? (
@@ -247,7 +205,7 @@ function Home() {
                 )}
               </div>
             ) : (
-              <Card className="!m-0">
+              <Card>
                 <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
                   <HeadbandMascot width={72} height={72} />
                   <p className="text-inactive font-semibold text-base text-center">
@@ -265,54 +223,44 @@ function Home() {
               </Card>
             )}
           </div>
-
           {/* RECENT EXPENSES */}
           <div>
-            <p className="text-2xl font-bold mb-2 text-text-primary">
+            <p className="text-2xl font-bold mb-2 text-text-primary px-4">
               Recent Expenses
             </p>
 
-            {expenses.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {expenses.slice(0, 3).map((exp) => (
+            {items.length > 0 ? (
+              <div>
+                {items.slice(0, 3).map((item) => (
                   <Card
-                    key={exp.id}
-                    className="p-4 bg-surface rounded-2xl flex justify-between items-center shadow-sm border-none"
+                    key={item.id}
+                    size="md"
+                    onClick={() => navigate(`/expense/${item.id}/view`)}
+                    className="active:bg-slate-100 !my-3"
                   >
-                    <div className="flex flex-col">
-                      <p className="font-bold text-text-primary text-lg leading-tight">
-                        {exp.vendorName}
-                      </p>
-                      <p className="text-xs text-inactive uppercase tracking-wider font-semibold">
-                        {exp.category}
-                      </p>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="font-bold text-red-500 text-lg">
-                        - Rp{exp.totalAmount.toLocaleString("id-ID")}
-                      </p>
-                      <p className="text-[10px] text-inactive">
-                        {new Date(exp.dateTime).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                        })}
-                      </p>
-                    </div>
+                    <ExpenseList
+                      vendorName={item.vendorName}
+                      date={new Date(item.dateTime)}
+                      currency={item.currency}
+                      amount={(item.totalAmount ?? 0).toString()}
+                      category={item.category}
+                    />
                   </Card>
                 ))}
 
-                {expenses.length > 3 && (
-                  <button
-                    onClick={() => navigate("/expenses")}
-                    className="text-sm font-bold text-primary mt-1 text-center"
-                  >
-                    See all expenses
-                  </button>
+                {items.length > 3 && (
+                  <div className="flex items-center justify-center">
+                    <button
+                      onClick={() => navigate("/expenses")}
+                      className="text-sm font-bold text-primary mt-1 text-center"
+                    >
+                      See all expenses
+                    </button>
+                  </div>
                 )}
               </div>
             ) : (
-              <Card className="!m-0">
+              <Card>
                 <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
                   <WhistleMascot width={72} height={72} />
                   <p className="text-inactive font-semibold text-base text-center">
@@ -330,8 +278,7 @@ function Home() {
               </Card>
             )}
           </div>
-
-          {/* End Of The Page */}
+          \{" "}
         </div>
       </div>
     </div>
