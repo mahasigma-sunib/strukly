@@ -1,16 +1,20 @@
-import useUserAuth from "../store/UserAuthStore";
-import SettingsIcon from "../components/utilityIcons/SettingsIcon";
-import Button from "../components/button/Button";
-import HappyMascot from "../components/mascots/HappyMascot";
-import HeadbandMascot from "../components/mascots/HeadbandMascot";
-import Card from "../components/card/Card";
-import WhistleMascot from "../components/mascots/WhistleMascot";
-import WinkMascot from "../components/mascots/WinkMascot";
-import FoodIcon from "../components/categoryIcons/FoodIcon";
-import ProgressBar from "../components/graph/ProgressBar";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import type { ExpenseType } from "../type/ExpenseType";
+import useUserAuth from "../store/UserAuthStore";
+
+import Button from "../components/button/Button";
+import Card from "../components/card/Card";
+import ProgressBar from "../components/graph/ProgressBar";
+
+import HappyMascot from "../components/mascots/HappyMascot";
+import HeadbandMascot from "../components/mascots/HeadbandMascot";
+import WinkMascot from "../components/mascots/WinkMascot";
+
+import FoodIcon from "../components/categoryIcons/FoodIcon";
+import SettingsIcon from "../components/utilityIcons/SettingsIcon";
+import WhistleMascot from "../components/mascots/WhistleMascot";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -42,6 +46,8 @@ interface GoalItem {
 function Home() {
   const username = useUserAuth((s) => s.user?.name || "User");
 
+  const navigate = useNavigate();
+
   const greeting = getGreeting();
 
   // For Date Time (if not used, can delete)
@@ -67,7 +73,6 @@ function Home() {
 
   const [goals, setGoals] = useState<GoalItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const [expenses, setExpenses] = useState<ExpenseType[]>([]);
 
@@ -125,7 +130,12 @@ function Home() {
             </div>
             <div className="border-3 border-white rounded-2xl">
               <div>
-                <Button variant="blue" size="sm" className="!p-1 rounded-2xl">
+                <Button
+                  variant="blue"
+                  size="sm"
+                  className="!p-1 rounded-2xl"
+                  onClick={() => navigate('/settings')}
+                >
                   <SettingsIcon width={28} />
                 </Button>
               </div>
