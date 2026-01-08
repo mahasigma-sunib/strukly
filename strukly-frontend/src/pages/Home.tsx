@@ -19,6 +19,7 @@ import SettingsIcon from "../components/utilityIcons/SettingsIcon";
 import WhistleMascot from "../components/mascots/WhistleMascot";
 import { useLoadBudget } from "../hooks/useLoadBudget";
 import { useExpenseCalc } from "../hooks/useExpenseCalc";
+// import { Divide } from "lucide-react";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -33,6 +34,21 @@ const getGreeting = () => {
     return "Night"; // (19:00 - 03:59)
   }
 };
+
+const getBarColor = (
+  percent: number
+): "bg-sky-400" | "bg-yellow-400" | "bg-red-400" => {
+  if (percent < 50) {
+    return "bg-sky-400";
+  } else if (percent >= 50 && percent <= 80) {
+    return "bg-yellow-400";
+  } else {
+    return "bg-red-400";
+  }
+};
+
+const formatIDR = (value: number) =>
+  value ? value.toLocaleString("id-ID") : "";
 
 //THIS INTERFACE SHOULD BE PLACEHOLDER AND BE DELETED AND USE IMPORT TYPE AFTER GOALS IS DONE
 interface GoalItem {
@@ -55,6 +71,7 @@ function Home() {
   const { data, isLoading, error } = useLoadBudget();
 
   const totalBudget = data?.budget ?? 0;
+  const hasBudget = totalBudget > 0;
   const { totalSpent, remaining, maxCategory } = useExpenseCalc(totalBudget);
 
   const usedBudgetPercent =
@@ -67,6 +84,8 @@ function Home() {
   const { icon } = getCategoryData(maxCategory.category);
 
   const [goals, setGoals] = useState<GoalItem[]>([]);
+
+  const barColor = getBarColor(usedBudgetPercent);
 
   return (
     <div>
@@ -106,7 +125,9 @@ function Home() {
 
             {/* Total expense goes here! v*/}
             <div className="flex flex-row items-end">
-              <p className="text-4xl font-bold text-white">Rp{totalSpent}</p>
+              <p className="text-4xl font-bold text-white">
+                Rp{formatIDR(totalSpent)}
+              </p>
               <p className="text-2xl font-bold text-white/70">,00</p>
             </div>
           </div>
@@ -124,22 +145,38 @@ function Home() {
                 My Budget
               </p>
 
-              {/* Progress bar here! No logic here yet, just dummy */}
-              <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
-                <ProgressBar
-                  value={remaining}
-                  max={totalBudget}
-                  height={22}
-                ></ProgressBar>
-                <div className="flex flex-row justify-between items-center px-2">
-                  <p className="text-sm font-bold text-text-primary/50">
-                    {remaining} / {totalBudget}
-                  </p>
-                  <p className="text-sm font-bold text-text-primary/50">
-                    {usedBudgetPercent}% used
-                  </p>
+              {hasBudget ? (
+                <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
+                  <ProgressBar
+                    value={remaining}
+                    max={totalBudget}
+                    height={22}
+                    barColor={barColor}
+                  ></ProgressBar>
+                  <div className="flex flex-row justify-between items-center px-2">
+                    <p className="text-sm font-bold text-text-primary/50">
+                      Rp {formatIDR(remaining)} / {formatIDR(totalBudget)}
+                    </p>
+                    <p className="text-sm font-bold text-text-primary/50">
+                      {usedBudgetPercent}% used
+                    </p>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="py-4 flex flex-col gap-4 justify-center items-center">
+                  <p className="text-center text-base text-inactive font-bold">
+                    You haven't set a monthly budget
+                  </p>
+                  <Button
+                    size="lg"
+                    variant="primary"
+                    className="!py-2"
+                    onClick={() => navigate("/budget")}
+                  >
+                    Set Budget
+                  </Button>
+                </div>
+              )}
 
               <div className="flex flex-row">
                 <div className="flex flex-col flex-1 gap-1 items-center pr-2">
@@ -148,7 +185,7 @@ function Home() {
                   </p>
                   <p className="text-[30px] py-1">💸</p>
                   <p className="text-lg font-bold text-text-primary">
-                    Rp{(totalSpent / today.getDate()).toFixed(2)}
+                    Rp {formatIDR(totalSpent / today.getDate())}
                   </p>
                 </div>
 
@@ -157,9 +194,10 @@ function Home() {
                     Top category
                   </p>
                   {/* <FoodIcon width={30} height={30} className="my-2" /> */}
-                  <div className="py-1">{icon}</div>
-                  <p className="text-lg font-bold text-text-primary">
-                    {maxCategory.category.charAt(0).toUpperCase() + maxCategory.category.slice(1)}
+                  <div className="py-1 ml-2">{icon}</div>
+                  <p className="text-lg ml-2 font-bold text-text-primary">
+                    {maxCategory.category.charAt(0).toUpperCase() +
+                      maxCategory.category.slice(1)}
                   </p>
                 </div>
               </div>
@@ -270,7 +308,7 @@ function Home() {
                     size="lg"
                     variant="primary"
                     className="!py-2"
-                    onClick={() => navigate("/add-expense")}
+                    onClick={() => navigate("/expense")}
                   >
                     Add expense
                   </Button>
