@@ -8,7 +8,10 @@ export type ExpenseProps = {
 };
 
 export default class Expense {
-  constructor(public header: ExpenseHeader, public items: ExpenseItem[]) {}
+  constructor(
+    public header: ExpenseHeader,
+    public items: ExpenseItem[],
+  ) {}
 
   getExpenseID(): ExpenseID {
     return this.header.id;
@@ -20,5 +23,13 @@ export default class Expense {
 
   removeItem(itemID: ExpenseID) {
     this.items = this.items.filter((item) => item.id.value !== itemID.value);
+  }
+
+  updateHeader(header: Partial<ExpenseHeader>) {
+    this.header.update(header);
+  }
+
+  updateItems(items: ExpenseItem[]) {
+    this.items = items;
   }
 }

@@ -1,13 +1,7 @@
-import axios from "axios";
-import useSWR from "swr";
-import { useEffect } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { ExpenseType } from "../type/ExpenseType";
-import type {
-  ExpenseStatisticType,
-  WeeklyStat,
-} from "../type/expenseStatisticType";
+import type { ExpenseStatisticType } from "../type/expenseStatisticType";
 
 type State = {
   statistic: ExpenseStatisticType;
@@ -96,122 +90,5 @@ const useExpense = create<State & Actions>()(
     },
   }))
 );
-
-function mapExpense(raw: any): ExpenseType {
-  return {
-    userID: raw.user_id,
-
-    id: raw.id,
-    dateTime: new Date(raw.datetime),
-    vendorName: raw.vendor,
-    category: raw.category,
-
-    currency: "Rp ",
-    subtotalAmount: raw.subtotal,
-    taxAmount: raw.tax,
-    discountAmount: raw.discount,
-    serviceAmount: raw.service,
-    totalAmount: raw.total_my_expense,
-
-    items: [],
-  };
-}
-
-function mapWeeklyStats(raw: any[]): WeeklyStat[] {
-  return raw.map((item) => ({
-    // name: `Week ${item.week}`,
-    name: `${item.startDate}-${item.endDate}`,
-    week: item.week,
-    spending: item.spending,
-    startDate: item.startDate,
-    endDate: item.endDate,
-  }));
-}
-
-//to fetch & load the expense datas
-export function useLoadExpense(month: number, year: number, getStat: boolean) {
-  // console.log("running");
-  const { setStats, setItems, setError, setLoading } = useExpense();
-
-  const { data, error, isLoading } = useSWR(
-    `${import.meta.env.VITE_API_BASE_URL}/expenses?month=${month}&year=${year}`,
-    (url) =>
-      fetch(url, {
-        credentials: "include",
-      }).then((res) => res.json())
-  );
-
-  useEffect(() => {
-    setLoading(isLoading);
-
-    if (error) {
-      setError("Failed to fetch expenses");
-    }
-
-    if (data?.history) {
-      const mapped = data.history.map(mapExpense);
-      setItems(mapped);
-      // console.log("mapped:", mapped);
-    }
-
-    if (getStat && data?.weekly) {
-      const stat = {
-        month,
-        year,
-        weekly: mapWeeklyStats(data.weekly),
-        total: data.total,
-      };
-      console.log(stat);
-      setStats(stat);
-    }
-  }, [isLoading, error, data]);
-
-  return { data, error, isLoading };
-}
-
-// post a new expense
-export async function postExpense(expense: ExpenseType) {
-  const { addExpense } = useExpense();
-  try {
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/expenses`, expense, {
-      withCredentials: true,
-    });
-    addExpense(expense);
-  } catch (error) {
-    console.error("Failed to post expense:", error);
-    throw error; // rethrow so caller can handle it
-  }
-}
-
-export async function putExpense(
-  id: string, //expense id
-  expense: Partial<Omit<ExpenseType, "id">>
-) {
-  const { updateExpense } = useExpense();
-  try {
-    await axios.put(
-      `${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`,
-      expense,
-      {
-        withCredentials: true,
-      }
-    );
-    updateExpense(id, expense);
-  } catch (error) {
-    console.error("Failed to put expense:", error);
-    throw error; // rethrow so caller can handle it
-  }
-}
-
-export async function deleteExpense(id: string) {
-  try {
-    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`, {
-      withCredentials: true,
-    });
-  } catch (error) {
-    console.error("Failed to delete expense:", error);
-    throw error; // rethrow so caller can handle it
-  }
-}
-
 export default useExpense;
+

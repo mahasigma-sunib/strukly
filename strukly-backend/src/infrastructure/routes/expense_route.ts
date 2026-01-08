@@ -39,7 +39,7 @@ const expenseController = new ExpenseController(
   getExpenseDetailUseCase,
   updateExpenseUseCase,
   deleteExpenseUseCase,
-  imageToExpenseUseCase
+  imageToExpenseUseCase,
 );
 
 /**
@@ -71,7 +71,7 @@ router.post(
   "/expenses",
   authMiddleware,
   validateBody(CreateExpenseRequestSchema),
-  expenseController.createExpense
+  expenseController.createExpense,
 );
 
 const expenseImageUpload = multer(); // store in memory
@@ -108,7 +108,7 @@ router.post(
   "/expenses/scan-image",
   authMiddleware,
   expenseImageUpload.single("image"),
-  expenseController.scanExpenseImage
+  expenseController.scanExpenseImage,
 );
 
 /**
@@ -142,7 +142,7 @@ router.get(
   "/expenses",
   authMiddleware,
   validateQuery(ExpenseReportQuerySchema),
-  expenseController.getExpenseList
+  expenseController.getExpenseList,
 );
 
 /**
@@ -190,7 +190,7 @@ router.get(
 router.get(
   "/expenses/weekly",
   authMiddleware,
-  expenseController.getWeeklyReport
+  expenseController.getWeeklyReport,
 );
 
 /**
@@ -221,7 +221,7 @@ router.get(
   "/expenses/:expenseID",
   authMiddleware,
   validateParams(ExpenseIdParamSchema),
-  expenseController.getExpenseDetail
+  expenseController.getExpenseDetail,
 );
 
 /**
@@ -243,7 +243,7 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ExpenseResponse'
+ *             $ref: '#/components/schemas/UpdateExpenseRequest'
  *     responses:
  *       200:
  *         description: Expense updated successfully
@@ -264,7 +264,7 @@ router.put(
   authMiddleware,
   validateParams(ExpenseIdParamSchema),
   validateBody(UpdateExpenseRequestSchema),
-  expenseController.updateExpense
+  expenseController.updateExpense,
 );
 
 /**
@@ -289,7 +289,7 @@ router.delete(
   "/expenses/:expenseID",
   authMiddleware,
   validateParams(ExpenseIdParamSchema),
-  expenseController.deleteExpense
+  expenseController.deleteExpense,
 );
 
 export { router as expenseRouter };

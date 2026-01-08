@@ -130,7 +130,7 @@ export default function ExpenseEmptyMascot(props: ExpenseEmptyMascotProps) {
         rx="22"
         ry="3"
         fill="#D9D9D9"
-        fill-opacity="0.7"
+        fillOpacity="0.7"
       />
     </svg>
   );

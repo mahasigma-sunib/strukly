@@ -13,17 +13,25 @@ import RegisterCookie from "./pages/auth/RegisterCookie";
 import Home from "./pages/Home";
 import ExpenseTracker from "./pages/ExpenseTracker";
 import ExpenseDetail from "./pages/ExpenseDetail";
-import NewExpense from "./pages/NewExpense";
+import AddExpense from "./pages/AddExpense";
+import EditExpense from "./pages/EditExpense";
 import ExpenseBudget from "./pages/ExpenseBudget";
 import Goals from "./pages/Goals";
 import Settings from "./pages/Settings";
 
 import MobileNavBar from "./components/MobileNavBar";
+import AddExpenseCamera from "./pages/AddExpenseCamera";
 
 const App = () => {
   const location = useLocation();
-  const isProtectedPath =
-    location.pathname !== "/login" && location.pathname !== "/register";
+  const hideNavbarRoutes = [
+    "/login",
+    "/register",
+    "/expense/add",
+    "/expense/camera",
+    "/expense/:id",
+  ];
+  const isProtectedPath = !hideNavbarRoutes.includes(location.pathname);
 
   const fetchProfile = useUserAuth((s) => s.fetchProfile);
   useEffect(() => {
@@ -48,8 +56,10 @@ const App = () => {
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<Home />} />
             <Route path="/expense" element={<ExpenseTracker />} />
-            <Route path="/expense/:id" element={<ExpenseDetail />} />
-            <Route path="/newExpense" element={<NewExpense />} />
+            <Route path="/expense/add" element={<AddExpense />} />
+            <Route path="/expense/camera" element={<AddExpenseCamera />} />
+            <Route path="/expense/:id" element={<EditExpense />} />
+            <Route path="/expense/:id/view" element={<ExpenseDetail />} />
             <Route path="/budget" element={<ExpenseBudget />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/settings" element={<Settings />} />

@@ -44,7 +44,7 @@ export default class ExpenseService {
    */
   async getExpenseByID(
     userID: UserID,
-    expenseID: ExpenseID
+    expenseID: ExpenseID,
   ): Promise<Expense | null> {
     const expense = await this.expenseRepository.findByID(expenseID);
     if (expense && expense.header.userID.equals(userID)) {

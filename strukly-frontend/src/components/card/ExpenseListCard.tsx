@@ -45,7 +45,7 @@ export default function ExpenseList({
         {/* right */}
         <div className="text-right text-md font-bold text-text-secondary">
           <p>
-            {currency}
+            -{currency}
             {amount}
           </p>
         </div>

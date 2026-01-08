@@ -4,44 +4,58 @@ import ProgressBar from "../graph/ProgressBar";
 interface BudgetListProps {
   currency: string;
   spent: number;
-  budget: number;
+  usedBudget: number;
   category: string;
 }
 
-export default function BudgetList({
+export default function BudgetListCard({
   currency,
   spent,
-  budget,
+  usedBudget,
   category,
 }: BudgetListProps) {
-  const { icon } = getCategoryData(category);
+  const { icon, color } = getCategoryData(category.toLowerCase());
 
-  const idFormatter = new Intl.NumberFormat("id-ID", {
-    maximumFractionDigits: 0,
-  });
-  const spentString = `${idFormatter.format(spent)}`;
-  const budgetString = `${idFormatter.format(budget)}`;
+  const percent =
+    usedBudget > 0 ? Number(((spent / usedBudget) * 100).toFixed(2)) : 0;
+
+  const formatIDR = (value: number) =>
+    value ? value.toLocaleString("id-ID") : "0";
 
   return (
     <div>
-      <div className="flex items-center">
-        {/* left */}
-        <div className="flex gap-4 items-center w-1/4">
-          {/* icon */}
-          <div className="">{icon}</div>
+      {/* Top row */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-full ${color}`}
+          >
+            {icon}
+          </div>
+
+          <div className="flex flex-col">
+            <span className="font-bold text-text-primary text-base capitalize">
+              {category}
+            </span>
+            <span className="text-sm text-text-secondary">
+              -{currency} {formatIDR(spent)}
+            </span>
+          </div>
         </div>
 
-        {/* right */}
-        <div className="gap-4 items-center w-3/4">
-          {/* category, expense budget bar , expense budget text */}
-          <p className="font-bold text-[var(--fun-color-text-primary)]">{category}</p>
-
-          <ProgressBar value={spent} max={budget} height={8} />
-          <p className="text-[var(--fun-color-text-secondary)] text-xs">
-            {currency} {spentString} / {budgetString}
-          </p>
+        {/* Percentage */}
+        <div className="text-base font-bold text-text-secondary">
+          {percent}%
         </div>
       </div>
+
+      <ProgressBar
+        value={spent}
+        max={usedBudget}
+        height={10}
+        barColor={color}
+        className="!mt-4"
+      />
     </div>
   );
 }
