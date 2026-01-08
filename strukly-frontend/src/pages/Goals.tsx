@@ -50,10 +50,8 @@ const GoalsPage: React.FC = () => {
   const handleDeposit = () => {
     if (!selectedGoal) return;
 
-    if(tempAmount <= 0){
-      setErrorMessage(
-        `The input amount must be greater than zero!`
-      );
+    if (tempAmount <= 0) {
+      setErrorMessage(`The input amount must be greater than zero!`);
       return;
     }
 
@@ -65,8 +63,6 @@ const GoalsPage: React.FC = () => {
       );
       return;
     }
-
-    
 
     setGoals((g) =>
       g.map((item) =>
@@ -92,9 +88,9 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
-    if(formData.price < selectedGoal.currentAmount){
+    if (formData.price < selectedGoal.currentAmount) {
       setErrorMessage("New goal price must be less than current amount!");
-      return
+      return;
     }
 
     if (formData.price <= 0) {
@@ -208,6 +204,11 @@ const GoalsPage: React.FC = () => {
                 setActiveModal("edit");
               }}
               onDelete={() => setActiveModal("delete")}
+              onClose={() => {
+                setActiveModal(null);
+                setErrorMessage("");
+                setSelectedGoal(null);
+              }}
             />
           </Popup>
         </div>
