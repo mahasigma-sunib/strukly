@@ -113,7 +113,7 @@ function Home() {
         </div>
       </div>
 
-      <div className="relative -mt-42 m-6">
+      <div className="relative -mt-42 my-6 mx-4">
         <div className="flex flex-col gap-4">
           <div className="absolute z-40 right-4 -top-5">
             <HappyMascot width={64} height={64} />
