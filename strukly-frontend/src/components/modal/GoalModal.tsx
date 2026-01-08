@@ -2,7 +2,7 @@ import React from "react";
 import CloseIcon from "../utilityIcons/CloseIcon";
 import Button from "../button/Button";
 
-type ModalMode = "create" | "deposit" | "edit" | null;
+type ModalMode = "create" | "deposit" | "edit" | "delete" | null;
 
 interface Props {
   activeModal: ModalMode;
@@ -38,14 +38,50 @@ const GoalModal: React.FC<Props> = ({
             {activeModal === "create" && "Add New Goal"}
             {activeModal === "edit" && "Update Goal"}
             {activeModal === "deposit" && "Add Savings"}
+            {activeModal === "delete" && "Delete Goal"}
           </h2>
-          <button onClick={onClose} className="text-slate-500">
+          <Button onClick={onClose} className="text-slate-500">
             <CloseIcon width={20} height={20} />
-          </button>
+          </Button>
         </div>
 
         <div className="space-y-4">
-          {activeModal !== "deposit" ? (
+          {activeModal === "deposit" ? (
+            <div className="text-center">
+              <p className="text-sm text-slate-500 mb-2">Input nominal</p>
+              <input
+                type="number"
+                autoFocus
+                placeholder="0"
+                className={`w-full text-center text-2xl font-extrabold bg-transparent border-b-2  outline-none p-4  ${
+                  errorMessage
+                    ? "border-status-error focus:border-status-error"
+                    : "border-text-disabled focus:border-primary text-text-primary"
+                }`}
+                onChange={(e) => {
+                  setErrorMessage("");
+                  setTempAmount(Number(e.target.value));
+                }}
+                value={tempAmount || ""}
+              />
+              {errorMessage && (
+                <div className="mt-5 w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex justify-center items-center gap-3 animate-in zoom-in-95 duration-300">
+                  <div className="bg-status-error text-white rounded-full p-2 h-5 w-5 flex items-center justify-center text-sm font-bold">
+                    !
+                  </div>
+                  <p className="text-status-error text-base font-semibold">
+                    {errorMessage}
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : activeModal === "delete" ? (
+            <div className="text-center">
+              <p className="text-base text-text-primary mb-6">
+                Are you sure you want to delete this goal?
+              </p>
+            </div>
+          ) : (
             <>
               <input
                 type="text"
@@ -86,43 +122,20 @@ const GoalModal: React.FC<Props> = ({
                 </div>
               )}
             </>
-          ) : (
-            <div className="text-center">
-              <p className="text-sm text-slate-500 mb-2">Input nominal</p>
-              <input
-                type="number"
-                autoFocus
-                placeholder="0"
-                className={`w-full text-center text-2xl font-extrabold bg-transparent border-b-2  outline-none p-4  ${
-                  errorMessage
-                    ? "border-status-error focus:border-status-error"
-                    : "border-text-disabled focus:border-primary text-text-primary"
-                }`}
-                onChange={(e) => {
-                  setErrorMessage("");
-                  setTempAmount(Number(e.target.value));
-                }}
-                value={tempAmount || ""}
-              />
-              {errorMessage && (
-                <div className="mt-5 w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex justify-center items-center gap-3 animate-in zoom-in-95 duration-300">
-                  <div className="bg-status-error text-white rounded-full p-2 h-5 w-5 flex items-center justify-center text-sm font-bold">
-                    !
-                  </div>
-                  <p className="text-status-error text-base font-semibold">
-                    {errorMessage}
-                  </p>
-                </div>
-              )}
-            </div>
           )}
 
           <Button
             onClick={onConfirm}
-            className="w-full text-surface text-base font-black active:scale-95 transition-all "
+            className={`w-full text-surface text-base font-black active:scale-95 transition-all
+                ${
+                  activeModal === "delete"
+                    ? "bg-status-error hover:bg-red-600"
+                    : ""
+                }
+            `}
             variant="primary"
           >
-            Confirm
+            {activeModal === "delete" ? "Delete" : "Confirm"}
           </Button>
         </div>
       </div>

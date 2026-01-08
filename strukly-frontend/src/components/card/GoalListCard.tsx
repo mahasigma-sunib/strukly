@@ -1,41 +1,79 @@
-import { FlagIcon } from "lucide-react";
+import { useRef } from "react";
+
+import ProgressBar from "../../components/graph/ProgressBar";
+
+import CheckIcon from "../../components/utilityIcons/CheckIcon";
+import FlagIcon from "../../components/utilityIcons/FlagIcon";
+
+import type { GoalItem } from "../../type/GoalItem";
 
 interface GoalListProps {
-  name: string;
-  price: number;
-  currentAmount: number;
-  isCompleted: boolean;
+  goal: GoalItem;
+  idx: number | null;
+  onHold: (goal: GoalItem) => void;
 }
 
-export default function GoalList({
-  name,
-  price,
-  currentAmount,
-  isCompleted,
-}: GoalListProps) {
-  const colors = ["red", "blue", "green", "yellow", "purple"];
-  const randNumber = Math.random(); // randNumber to determine the color of the flag
+export default function GoalList({ goal, idx, onHold }: GoalListProps) {
+  const colorClasses = [
+    "text-red-500",
+    "text-blue-500",
+    "text-green-500",
+    "text-yellow-500",
+    "text-purple-500",
+  ];
   const progress = (goal.currentAmount / goal.price) * 100;
+
+  const timerRef = useRef<number | null>(null);
+
+  const handleStart = () => {
+    timerRef.current = setTimeout(() => {
+      onHold(goal);
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 600);
+  };
+
+  const handleEnd = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
   return (
-    <div>
+    <div
+      onMouseDown={handleStart}
+      onMouseUp={handleEnd}
+      onMouseLeave={handleEnd}
+      onTouchStart={handleStart}
+      onTouchEnd={handleEnd}
+    >
       <div className="flex justify-between w-full items-start mb-4">
         <div className="flex flex-row gap-2 items-center w-full">
           <div className="mx-2 rounded-2xl flex items-center justify-center">
-            <FlagIcon
-              width={44}
-              height={44}
-              className={`text-${
-                colors[randNumber % colors.length]
-              }-500 -rotate-20`}
-            />
+            {goal.isCompleted ? (
+              <CheckIcon width={40} height={40} className="mx-1" />
+            ) : (
+              <FlagIcon
+                width={44}
+                height={44}
+                className={`${
+                  colorClasses[(idx ?? 0) % colorClasses.length]
+                } -rotate-20`}
+              />
+            )}
           </div>
-          <div className="flex flex-col gap-1 flex-1">
-            <p className="text-xl font-bold text-text-primary">{goal.name}</p>
+          <div className="flex flex-col gap-1 flex-1 min-w-0">
+            <p className="text-xl font-bold text-text-primary overflow-hidden whitespace-nowrap text-ellipsis">
+              {goal.name}
+            </p>
 
             <div className="flex flex-row w-full justify-between items-center">
               <p className="text-lg font-semibold text-inactive">
                 {(() => {
-                  if (progress >= 75) return <span>You're almost there!</span>;
+                  if (progress === 100) {
+                    return "Goals reached!";
+                  } else if (progress >= 75 && progress < 100)
+                    return <span>You're almost there!</span>;
                   else if (progress >= 50 && progress < 75)
                     return <span>Halfway done, nice!</span>;
                   else if (progress >= 25 && progress < 50)
@@ -51,44 +89,15 @@ export default function GoalList({
             </div>
           </div>
         </div>
-
-        <div className="flex gap-1 ">
-          <button
-            onClick={() => {
-              setSelectedGoal(goal);
-              setActiveModal("deposit");
-            }}
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-          >
-            <ArrowUpCircle size={20} />
-          </button>
-          <button
-            onClick={() => {
-              setSelectedGoal(goal);
-              setFormData({
-                name: goal.name,
-                price: goal.price,
-              });
-              setActiveModal("edit");
-            }}
-            className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg"
-          >
-            <EditIcon width={20} height={20} />
-          </button>
-          <button
-            onClick={() => handleDelete(goal.id)}
-            className="p-2 text-red-400 hover:bg-red-50 rounded-lg"
-          >
-            <DeleteIcon width={20} height={30} />
-          </button>
-        </div>
       </div>
 
       <ProgressBar
         value={goal.currentAmount}
         max={goal.price}
         height={12}
-        barColor="bg-category-transportation"
+        barColor={
+          goal.isCompleted ? "bg-category-transportation" : "bg-status-success"
+        }
       />
 
       <div className="mt-4 flex flex-row justify-between items-center">
