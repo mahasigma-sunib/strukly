@@ -63,7 +63,7 @@ export default function ExpenseTracker() {
   return (
     <div className="pb-20">
       {/* page Title & date btn */}
-      <div className="p-5 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
+      <div className="px-5 py-4 flex items-center justify-between bg-surface border-b-2 border-border sticky top-0 z-20 w-full">
         <div className="font-bold text-3xl">
           <p>Expense</p>
         </div>
@@ -73,16 +73,17 @@ export default function ExpenseTracker() {
             variant="primary"
             size="md"
             className="
-              !rounded-full 
+              !rounded-2xl 
               !font-bold 
               active:translate-y-[4px]
               !transition-all
               flex flex-row gap-1
-              text-lg
+              text-base
               justify-center
               items-center
               !py-2
               !px-3
+              !mb-1
             "
           >
             {<CalendarIcon className="text-white" />}
@@ -128,7 +129,7 @@ export default function ExpenseTracker() {
       {/* Bar Chart */}
       <div>
         {items.length > 0 && (
-          <div className="mx-4 mt-5 mb-2 bg-surface rounded-3xl py-6 border-border border-2 shadow-[0_4px_0_0_var(--color-border)]">
+          <div className="mx-4 mt-5 mb-2 bg-surface rounded-3xl py-6 border-border border-2 shadow-[0_3px_0_0_var(--color-border)]">
             <p className="ml-6 mb-4 text-2xl text-text-primary font-bold">
               Tracker
             </p>
@@ -184,7 +185,7 @@ export default function ExpenseTracker() {
                 vendorName={item.vendorName}
                 date={new Date(item.dateTime)}
                 currency={item.currency}
-                amount={(item.totalAmount ?? 0).toString()}
+                amount={item.totalAmount ?? 0}
                 category={item.category}
               />
             </Card>

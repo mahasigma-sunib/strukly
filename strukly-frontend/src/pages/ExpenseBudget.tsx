@@ -8,6 +8,8 @@ import Card from "../components/card/Card";
 import Button from "../components/button/Button";
 import Popup from "../components/popup/PopUp";
 import HappyMascot from "../components/mascots/HappyMascot";
+import SadMascot from "../components/mascots/SadMascot";
+import NeutralMascot from "../components/mascots/NeutralMascot";
 
 import useExpense from "../store/ExpenseStore";
 import { useLoadExpense } from "../hooks/useLoadExpense";
@@ -110,9 +112,21 @@ export default function ExpenseBudget() {
       </div>
     );
 
+  const usedPercentage = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+
+  const MascotComponent = (() => {
+    if (usedPercentage > 80) {
+      return SadMascot;
+    } else if (usedPercentage >= 50) {
+      return NeutralMascot;
+    } else {
+      return HappyMascot;
+    }
+  })();
+
   return (
     <div className="min-h-screen pb-20 ">
-      <div className="p-5 flex items-center mb-4 justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
+      <div className="px-5 py-4 flex items-center mb-6 justify-between bg-surface border-b-2 border-border  sticky top-0 z-20 w-full">
         <div className="font-bold text-3xl">
           <p>Budget</p>
         </div>
@@ -122,16 +136,17 @@ export default function ExpenseBudget() {
             variant="primary"
             size="md"
             className="
-              !rounded-full 
+              !rounded-2xl 
               !font-bold 
               active:translate-y-[4px]
               !transition-all
               flex flex-row gap-1
-              text-lg
+              text-base
               justify-center
               items-center
               !py-2
               !px-3
+              !mb-1
             "
           >
             Edit Budget
@@ -143,7 +158,8 @@ export default function ExpenseBudget() {
       <div className="absolute top-18 right-10">
         <div className="overflow-hidden">
           <div className="transform translate-y-1/3">
-            <HappyMascot width={80} height={80} />
+            {/* Buat mascot bisa dinamis! */}
+            <MascotComponent width={80} height={80} />
           </div>
         </div>
       </div>
@@ -217,12 +233,12 @@ export default function ExpenseBudget() {
               aria-label="Budget-Amount"
               className="
                 w-full  py-3
-                rounded-xl
                 border-b-2 border-inactive
                 text-3xl font-bold
                 text-center
+                text-text-secondary
                 outline-none
-                focus:border-primary
+                focus:border-primary focus:text-text-primary
                 transition
               "
               placeholder="0"
@@ -236,16 +252,6 @@ export default function ExpenseBudget() {
 
           {/* Actions */}
           <div className="flex gap-3">
-            {/* <Button
-              variant="outline"
-              size="md"
-              onClick={() => setEditPopUp(false)}
-              disabled={isSubmitting}
-              className="flex-1"
-            >
-              Cancel
-            </Button> */}
-
             <Button
               variant="primary"
               size="md"

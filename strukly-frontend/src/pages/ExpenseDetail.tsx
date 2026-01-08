@@ -140,12 +140,10 @@ function ExpenseDetail() {
       </div>
 
       <Popup visible={deletePopUp} onClose={() => setDeletePopUp(false)}>
-        <div className="p-4 text-center">
-          <div className="mb-6 flex items-center justify-center text-red-500">
-            {/* <DeleteIcon width={40} height={40} /> */}
-            <TrashMascot width={120} height={100} />
-          </div>
-
+        <div className="mb-6 absolute -top-8 left-32">
+          <TrashMascot width={120} height={100} />
+        </div>
+        <div className="p-4 text-center pt-16">
           <h3 className="text-xl font-bold text-gray-900">
             Delete Transaction?
           </h3>
@@ -172,7 +170,7 @@ function ExpenseDetail() {
                 handleDelete();
                 setDeletePopUp(false);
               }}
-              className="w-full !bg-[#fa1e1e] !shadow-[0_4px_0_0_#de0d0d]"
+              className="w-full"
             >
               Delete
             </Button>

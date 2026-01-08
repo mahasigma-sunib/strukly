@@ -51,13 +51,6 @@ export default function BudgetListCard({
       </div>
 
       {/* Progress bar */}
-      {/* <ProgressBar
-        value={spent}
-        max={usedBudget}
-        height="h-3"
-        color={color}
-        className="!mt-4"
-      /> */}
 
       <ProgressBar
         value={spent}

@@ -4,7 +4,7 @@ interface ExpenseListProps {
   vendorName: string;
   date: Date;
   currency: string;
-  amount: string;
+  amount: number;
   category: string;
 }
 
@@ -16,6 +16,9 @@ export default function ExpenseList({
   category,
 }: ExpenseListProps) {
   const { icon } = getCategoryData(category);
+  const formatIDR = (value: number) =>
+    value ? value.toLocaleString("id-ID") : "0";
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -43,10 +46,10 @@ export default function ExpenseList({
         </div>
 
         {/* right */}
-        <div className="text-right text-md font-bold text-text-secondary">
+        <div className="text-right text-sm font-semibold text-text-secondary">
           <p>
             -{currency}
-            {amount}
+            {formatIDR(amount)}
           </p>
         </div>
       </div>
