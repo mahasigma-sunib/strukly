@@ -124,7 +124,7 @@ export default function AddExpense() {
           withCredentials: true,
         }
       );
-      addExpense(mapExpense(res.data.expense))
+      addExpense(mapExpense(res.data.expense));
       navigate("/expense");
     } catch (err) {
       console.error(err);

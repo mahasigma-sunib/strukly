@@ -64,30 +64,30 @@ export default function TrashMascot(props: TrashMascotProps) {
       <path
         d="M73.0731 55.5195L71.7106 56.8821L73.0731 58.2446"
         stroke="white"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M71.7105 56.882H77.8419C78.059 56.8708 78.2702 56.8079 78.458 56.6984C78.6457 56.5889 78.8046 56.4361 78.9213 56.2528C79.0379 56.0694 79.1091 55.8608 79.1287 55.6443C79.1483 55.4279 79.1159 55.2099 79.0341 55.0085L78.6594 54.3273M70.7132 51.4319L70.2145 49.5707L68.3533 50.0694"
         stroke="white"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M70.2146 49.5707L67.1489 54.8804C67.0501 55.074 66.9991 55.2883 67 55.5056C67.0009 55.7228 67.0538 55.9367 67.1542 56.1294C67.2546 56.3221 67.3996 56.488 67.5772 56.6132C67.7547 56.7384 67.9597 56.8194 68.1749 56.8493L68.9522 56.8656M75.433 51.4319L77.2943 51.9306L77.7929 50.0694"
         stroke="white"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M77.2942 51.9307L74.2285 46.6209C74.1102 46.4387 73.9501 46.2873 73.7614 46.1795C73.5728 46.0717 73.3611 46.0106 73.144 46.0013C72.9269 45.9919 72.7107 46.0346 72.5135 46.1258C72.3163 46.2171 72.1438 46.3541 72.0103 46.5256L71.6077 47.1905"
         stroke="white"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M71.1946 28.9362L69.5542 27.5692L72.2882 22.3745H77.4829L77.2095 26.4756L74.7489 28.3894L72.5616 27.5692L71.1946 28.9362Z"
