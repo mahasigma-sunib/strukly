@@ -30,6 +30,13 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
+    if (formData.name.length > 250) {
+      setErrorMessage(
+        "A goal name must be less than or equal to 250 characters"
+      );
+      return;
+    }
+
     if (formData.price <= 0) {
       setErrorMessage("Target price must be greater than 0!");
       return;
