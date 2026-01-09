@@ -38,7 +38,7 @@ const Button: React.FC<ButtonProps> = ({
     green:
       "bg-[#58CC02] text-white shadow-[0_4px_0_0_#4CB200] active:shadow-none ",
 
-    blue: "bg-[#21B1FF] text-white shadow-[0_4px_0_0_#039be5] active:shadow-none ",
+    blue: "bg-[#4fc4ff] text-white shadow-[0_4px_0_0_#319bf7] active:shadow-none ",
 
     danger:
       "bg-red text-white hover:bg-red-hover shadow-[0_4px_0_0_#991B1B] active:shadow-none",
