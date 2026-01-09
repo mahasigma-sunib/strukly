@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import axios from "axios";
+
+import useGoals from "../store/GoalsStore";
+import { useLoadGoals } from "../hooks/useLoadGoals";
+import type { GoalItem } from "../type/GoalItem";
 
 import Card from "../components/card/Card";
 import FlagMascot from "../components/mascots/FlagMascot";
@@ -9,10 +14,6 @@ import GoalList from "../components/card/GoalListCard";
 import GoalModal from "../components/modal/GoalModal";
 import GoalPopup from "../components/popup/GoalPopUp";
 
-import type { GoalItem } from "../type/GoalItem";
-import axios from "axios";
-import useGoals from "../store/GoalsStore";
-import { useLoadGoals } from "../hooks/useLoadGoals";
 
 const GoalsPage: React.FC = () => {
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
@@ -96,13 +97,15 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
+    const isComplete = tempAmount === remaining ? true : false; 
+
     try {
       await axios.patch(
         `${import.meta.env.VITE_API_BASE_URL}/goals/deposit/${selectedGoal.id}`,
         { amount: tempAmount },
         { withCredentials: true }
       );
-      depositGoal(selectedGoal.id, tempAmount);
+      depositGoal(selectedGoal.id, tempAmount, isComplete);
     } catch (error) {
       console.log(error);
     }
@@ -173,10 +176,10 @@ const GoalsPage: React.FC = () => {
         }}
       />
 
-      <main className="ml-5 mr-4 mt-6 space-y-4">
+      <main className=" mt-6 space-y-4">
         {goals.length === 0 && (
           <div>
-            <div className="mt-6 mb-2 font-bold text-2xl">
+            <div className="ml-5 mr-4 mt-6 mb-2 font-bold text-2xl">
               <p>My Goals</p>
             </div>
             <div className="flex flex-col items-center justify-center mt-20 ">
@@ -193,16 +196,17 @@ const GoalsPage: React.FC = () => {
           {activeGoals.length > 0 && (
             <div>
               <div className="flex flex-row justify-between items-center">
-                <p className="font-bold text-2xl">My Goals</p>
-                <p className="text-base px-3 py-1 font-bold text-[#f14c1a] bg-secondary-hover/30 rounded-full ">
+                <p className="font-bold text-2xl ml-5 mr-4">My Goals</p>
+                <p className="ml-5 mr-4 text-base px-3 py-1 font-bold text-[#f14c1a] bg-secondary-hover/30 rounded-full ">
                   {activeGoals.length} Active Goals
                 </p>
               </div>
+              
               <div className="space-y-4">
                 {activeGoals.map((goal, idx) => (
                   <Card
                     key={goal.id}
-                    className="mx-0 w-full rounded-2xl p-5 active:bg-slate-100"
+                    // className="mx-0 w-full rounded-2xl p-5 active:bg-slate-100"
                   >
                     <GoalList goal={goal} idx={idx} onHold={setSelectedGoal} />
                   </Card>
@@ -215,14 +219,14 @@ const GoalsPage: React.FC = () => {
           {completedGoals.length > 0 && (
             <div>
               <div className="flex flex-row justify-between items-center">
-                <p className="font-bold text-2xl">Completed</p>
-                <p className="text-base font-bold text-[#198010] bg-status-success/10 px-2 py-1 rounded-full">
+                <p className="ml-5 mr-4 font-bold text-2xl">Completed</p>
+                <p className="ml-5 mr-4 text-base font-bold text-[#198010] bg-status-success/10 px-2 py-1 rounded-full">
                   {completedGoals.length} Completed Goals
                 </p>
               </div>
               <div className="space-y-4">
                 {completedGoals.map((goal) => (
-                  <Card key={goal.id} className="mx-0 w-full rounded-2xl p-5">
+                  <Card key={goal.id} >
                     <GoalList goal={goal} idx={null} onHold={setSelectedGoal} />
                   </Card>
                 ))}

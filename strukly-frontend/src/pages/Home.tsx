@@ -1,20 +1,27 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import type { ExpenseType } from "../type/ExpenseType";
 import useUserAuth from "../store/UserAuthStore";
+import useExpense from "../store/ExpenseStore";
+import { useLoadExpense } from "../hooks/useLoadExpense";
+import { getCategoryData } from "../utils/CategoryConfig";
 
 import Button from "../components/button/Button";
 import Card from "../components/card/Card";
+import ExpenseList from "../components/card/ExpenseListCard";
 import ProgressBar from "../components/graph/ProgressBar";
 
 import HappyMascot from "../components/mascots/HappyMascot";
 import HeadbandMascot from "../components/mascots/HeadbandMascot";
 import WinkMascot from "../components/mascots/WinkMascot";
 
-import FoodIcon from "../components/categoryIcons/FoodIcon";
+import OthersIcon from "../components/categoryIcons/OthersIcon";
 import SettingsIcon from "../components/utilityIcons/SettingsIcon";
 import WhistleMascot from "../components/mascots/WhistleMascot";
+import { useLoadBudget } from "../hooks/useLoadBudget";
+import { useExpenseCalc } from "../hooks/useExpenseCalc";
+import { useLoadGoals } from "../hooks/useLoadGoals";
+import useGoals from "../store/GoalsStore";
+import GoalList from "../components/card/GoalListCard";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -30,87 +37,45 @@ const getGreeting = () => {
   }
 };
 
-// Made by Edo
-interface GoalItem {
-  id: string;
-  name: string;
-  price: number;
-  deposited: number;
-  completed: boolean;
-  completedAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  userID: string;
-}
+const getBarColor = (
+  percent: number
+): "bg-sky-400" | "bg-yellow-400" | "bg-red-400" => {
+  if (percent < 50) {
+    return "bg-sky-400";
+  } else if (percent >= 50 && percent <= 80) {
+    return "bg-yellow-400";
+  } else {
+    return "bg-red-400";
+  }
+};
+
+const formatIDR = (value: number) =>
+  value ? value.toLocaleString("id-ID") : "";
 
 function Home() {
+  const navigate = useNavigate();
+  const greeting = getGreeting();
   const username = useUserAuth((s) => s.user?.name || "User");
 
-  const navigate = useNavigate();
+  const { data } = useLoadBudget();
 
-  const greeting = getGreeting();
+  const totalBudget = data?.budget ?? 0;
+  const hasBudget = totalBudget > 0;
+  const { totalSpent, remaining, maxCategory } = useExpenseCalc(totalBudget);
 
-  // For Date Time (if not used, can delete)
-  // const today = new Date();
-  // const currentMonthIndex = today.getMonth();
-  // const currentYear = today.getFullYear();
-  // const monthNames = [
-  //   "Jan",
-  //   "Feb",
-  //   "Mar",
-  //   "Apr",
-  //   "May",
-  //   "June",
-  //   "July",
-  //   "Aug",
-  //   "Sep",
-  //   "Oct",
-  //   "Nov",
-  //   "Dec",
-  // ];
-  // const currentMonthName = monthNames[currentMonthIndex];
-  // const currentMonthYear = `${currentMonthName} ${currentYear}`;
+  const { icon } = getCategoryData(maxCategory.category);
+  const usedBudgetPercent =
+    remaining > 0 ? Number(((remaining / totalBudget) * 100).toFixed(2)) : 0;
 
-  const [goals, setGoals] = useState<GoalItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const today = new Date();
+  useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
+  const { items } = useExpense();
 
-  const [expenses, setExpenses] = useState<ExpenseType[]>([]);
+  useLoadGoals();
+  const { items: goals } = useGoals();
+  const activeGoals = goals.filter((g) => !g.isCompleted);
 
-  // Made by Edo
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const headers = { Authorization: `Bearer ${token}` };
-
-        const [resGoals, resExpenses] = await Promise.all([
-          fetch("http://localhost:3000/goals", { headers }),
-          fetch("http://localhost:3000/expenses", { headers }),
-        ]);
-
-        if (resGoals.ok) {
-          const data = await resGoals.json();
-          setGoals(data.goalItems || []);
-        }
-
-        if (resExpenses.ok) {
-          const data = await resExpenses.json();
-          setExpenses(data.expenseItems || []);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="p-5 text-center text-inactive">Loading goals...</div>
-    );
-  }
+  const barColor = getBarColor(usedBudgetPercent);
 
   return (
     <div>
@@ -134,7 +99,7 @@ function Home() {
                   variant="blue"
                   size="sm"
                   className="!p-1 rounded-2xl"
-                  onClick={() => navigate('/settings')}
+                  onClick={() => navigate("/settings")}
                 >
                   <SettingsIcon width={28} />
                 </Button>
@@ -150,14 +115,16 @@ function Home() {
 
             {/* Total expense goes here! v*/}
             <div className="flex flex-row items-end">
-              <p className="text-4xl font-bold text-white">Rp120.000</p>
+              <p className="text-4xl font-bold text-white">
+                Rp{formatIDR(totalSpent)}
+              </p>
               <p className="text-2xl font-bold text-white/70">,00</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="relative -mt-42 m-6">
+      <div className="relative -mt-42 my-6 mx-4">
         <div className="flex flex-col gap-4">
           <div className="absolute z-40 right-4 -top-5">
             <HappyMascot width={64} height={64} />
@@ -168,31 +135,47 @@ function Home() {
                 My Budget
               </p>
 
-              {/* Progress bar here! No logic here yet, just dummy */}
-              <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
-                <ProgressBar
-                  value={200000}
-                  max={320000}
-                  height={22}
-                ></ProgressBar>
-                <div className="flex flex-row justify-between items-center px-2">
-                  <p className="text-sm font-bold text-text-primary/50">
-                    200.000 / 320.000
-                  </p>
-                  <p className="text-sm font-bold text-text-primary/50">
-                    37% used
-                  </p>
+              {hasBudget ? (
+                <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
+                  <ProgressBar
+                    value={remaining}
+                    max={totalBudget}
+                    height={22}
+                    barColor={barColor}
+                  ></ProgressBar>
+                  <div className="flex flex-row justify-between items-center px-2">
+                    <p className="text-sm font-bold text-text-primary/50">
+                      Rp {formatIDR(remaining)} / {formatIDR(totalBudget)}
+                    </p>
+                    <p className="text-sm font-bold text-text-primary/50">
+                      {usedBudgetPercent}% left
+                    </p>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="py-4 flex flex-col gap-4 justify-center items-center">
+                  <p className="text-center text-base text-inactive font-bold">
+                    You haven't set a monthly budget
+                  </p>
+                  <Button
+                    size="lg"
+                    variant="primary"
+                    className="!py-2"
+                    onClick={() => navigate("/budget")}
+                  >
+                    Set Budget
+                  </Button>
+                </div>
+              )}
 
               <div className="flex flex-row">
                 <div className="flex flex-col flex-1 gap-1 items-center pr-2">
                   <p className="text-base font-bold text-text-primary/50 ">
                     Avg. spent / day
                   </p>
-                  <p className="text-[30px]">💸</p>
+                  <p className="text-[30px] py-1">💸</p>
                   <p className="text-lg font-bold text-text-primary">
-                    Rp15.000
+                    Rp {formatIDR(totalSpent / today.getDate())}
                   </p>
                 </div>
 
@@ -200,8 +183,24 @@ function Home() {
                   <p className="text-base font-bold text-text-primary/50">
                     Top category
                   </p>
-                  <FoodIcon width={30} height={30} className="my-2" />
-                  <p className="text-lg font-bold text-text-primary">Food</p>
+                  {maxCategory.category ? (
+                    <>
+                      <div className="py-1 ml-2">{icon}</div>
+                      <p className="text-lg ml-2 font-bold text-text-primary">
+                        {maxCategory.category.charAt(0).toUpperCase() +
+                          maxCategory.category.slice(1)}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="py-1 ml-2">
+                        <OthersIcon />
+                      </div>
+                      <p className="text-lg ml-2 font-bold text-text-primary">
+                        -
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -209,45 +208,34 @@ function Home() {
         </div>
       </div>
 
-      {/* Dynamic Content: Goals & Expenses (Not yet integrated with the same style as Goals page (on progress by Jeta))*/}
-      <div className="pb-24">
-        <div className="p-5 mt-4 flex flex-col gap-8">
+      <div className="pb-22">
+        <div className=" mt-4 flex flex-col gap-8">
           {/* CURRENT GOALS */}
           <div>
-            <p className="text-2xl font-bold mb-2 text-text-primary">
+            <p className="text-2xl font-bold mb-2 text-text-primary px-4">
               Current Goals
             </p>
-            {goals.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {goals.slice(0, 3).map((item) => (
-                  <Card
-                    key={item.id}
-                    className="p-4 bg-surface rounded-2xl border-none shadow-sm"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-bold text-text-primary">
-                          {item.name}
-                        </p>
-                        <p className="text-sm text-inactive">
-                          Rp {item.deposited.toLocaleString()} / Rp{" "}
-                          {item.price.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
+
+            {activeGoals.length > 0 ? (
+              <div>
+                {activeGoals.slice(0, 3).map((goal, idx) => (
+                  <Card key={goal.id}>
+                    <GoalList goal={goal} idx={idx} onHold={() => {}} />
                   </Card>
                 ))}
                 {goals.length > 3 && (
-                  <button
-                    onClick={() => navigate("/goals")}
-                    className="text-primary font-bold text-sm mt-2 text-center"
-                  >
-                    View all {goals.length} goals
-                  </button>
+                  <div className="flex items-center justify-center">
+                    <button
+                      onClick={() => navigate("/goals")}
+                      className="text-sm font-bold text-primary mt-1 text-center"
+                    >
+                      View all {goals.length} goals
+                    </button>
+                  </div>
                 )}
               </div>
             ) : (
-              <Card className="!m-0">
+              <Card>
                 <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
                   <HeadbandMascot width={72} height={72} />
                   <p className="text-inactive font-semibold text-base text-center">
@@ -268,51 +256,42 @@ function Home() {
 
           {/* RECENT EXPENSES */}
           <div>
-            <p className="text-2xl font-bold mb-2 text-text-primary">
+            <p className="text-2xl font-bold mb-2 text-text-primary px-4">
               Recent Expenses
             </p>
 
-            {expenses.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {expenses.slice(0, 3).map((exp) => (
+            {items.length > 0 ? (
+              <div>
+                {items.slice(0, 3).map((item) => (
                   <Card
-                    key={exp.id}
-                    className="p-4 bg-surface rounded-2xl flex justify-between items-center shadow-sm border-none"
+                    key={item.id}
+                    size="md"
+                    onClick={() => navigate(`/expense/${item.id}/view`)}
+                    className="active:bg-slate-100 !my-3"
                   >
-                    <div className="flex flex-col">
-                      <p className="font-bold text-text-primary text-lg leading-tight">
-                        {exp.vendorName}
-                      </p>
-                      <p className="text-xs text-inactive uppercase tracking-wider font-semibold">
-                        {exp.category}
-                      </p>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="font-bold text-red-500 text-lg">
-                        - Rp{exp.totalAmount.toLocaleString("id-ID")}
-                      </p>
-                      <p className="text-[10px] text-inactive">
-                        {new Date(exp.dateTime).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                        })}
-                      </p>
-                    </div>
+                    <ExpenseList
+                      vendorName={item.vendorName}
+                      date={new Date(item.dateTime)}
+                      currency={item.currency}
+                      amount={formatIDR(item.totalAmount ?? 0)}
+                      category={item.category}
+                    />
                   </Card>
                 ))}
 
-                {expenses.length > 3 && (
-                  <button
-                    onClick={() => navigate("/expenses")}
-                    className="text-sm font-bold text-primary mt-1 text-center"
-                  >
-                    See all expenses
-                  </button>
+                {items.length > 3 && (
+                  <div className="flex items-center justify-center">
+                    <button
+                      onClick={() => navigate("/expenses")}
+                      className="text-sm font-bold text-primary mt-1 text-center"
+                    >
+                      See all expenses
+                    </button>
+                  </div>
                 )}
               </div>
             ) : (
-              <Card className="!m-0">
+              <Card>
                 <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
                   <WhistleMascot width={72} height={72} />
                   <p className="text-inactive font-semibold text-base text-center">
@@ -322,7 +301,7 @@ function Home() {
                     size="lg"
                     variant="primary"
                     className="!py-2"
-                    onClick={() => navigate("/add-expense")}
+                    onClick={() => navigate("/expense")}
                   >
                     Add expense
                   </Button>
@@ -330,8 +309,6 @@ function Home() {
               </Card>
             )}
           </div>
-
-          {/* End Of The Page */}
         </div>
       </div>
     </div>

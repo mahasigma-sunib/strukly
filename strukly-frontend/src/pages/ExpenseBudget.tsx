@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import useSWR from "swr";
 import axios from "axios";
 
 import BudgetListCard from "../components/card/BudgetListCard";
@@ -9,28 +8,25 @@ import Button from "../components/button/Button";
 import Popup from "../components/popup/PopUp";
 import HappyMascot from "../components/mascots/HappyMascot";
 
-import useExpense from "../store/ExpenseStore";
 import { useLoadExpense } from "../hooks/useLoadExpense";
-import type BudgetType from "../type/BudgetType";
 import { CategoryKeys } from "../utils/CategoryConfig";
+import { useLoadBudget } from "../hooks/useLoadBudget";
+import { useExpenseCalc } from "../hooks/useExpenseCalc";
 
 export default function ExpenseBudget() {
-  const { data, error, isLoading, mutate } = useSWR<BudgetType>(
-    `${import.meta.env.VITE_API_BASE_URL}/budget`,
-    (url: string) =>
-      fetch(url, {
-        credentials: "include",
-      }).then((res) => res.json())
-  );
-
-  const { items: Expenses } = useExpense();
-
   const [editedBudget, setEditedBudget] = useState<number>(0);
   const [editPopUp, setEditPopUp] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { data, isLoading, error, mutate } = useLoadBudget();
+
   const today = new Date();
-  useLoadExpense(today.getMonth() + 1, today.getFullYear(), true);
+  useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
+
+  const totalBudget = data?.budget ?? 0;
+  const { totalSpent, remaining, getSpentForCategory } =
+    useExpenseCalc(totalBudget);
+
   useEffect(() => {
     if (data) {
       setEditedBudget(data.budget);
@@ -67,35 +63,6 @@ export default function ExpenseBudget() {
 
   const formatIDR = (value: number) =>
     value ? value.toLocaleString("id-ID") : "";
-
-  const getSpentForCategory = (category: string) => {
-    return Expenses.filter(
-      (t) =>
-        String(t.category || "").toLowerCase() ===
-        String(category || "").toLowerCase()
-    ).reduce(
-      (acc, t) =>
-        acc +
-        (typeof t.totalAmount === "number"
-          ? t.totalAmount
-          : Number(t.totalAmount) || 0),
-      0
-    );
-  };
-
-  const totalBudget = data?.budget ? data.budget : 0;
-
-  const totalSpent = Expenses.reduce(
-    (s, t) =>
-      s +
-      (typeof t.totalAmount === "number"
-        ? t.totalAmount
-        : Number(t.totalAmount) || 0),
-    0
-  );
-
-  const remaining = totalBudget - totalSpent;
-  const remainingNegative = remaining < 0;
 
   if (isLoading)
     return (
@@ -182,10 +149,10 @@ export default function ExpenseBudget() {
               </div>
               <div
                 className={`font-bold text-lg  ${
-                  remainingNegative ? "text-red-500" : "text-text-secondary"
+                  remaining < 0 ? "text-red-500" : "text-text-secondary"
                 }`}
               >
-                {remainingNegative ? "-" : ""}
+                {remaining < 0 ? "-" : ""}
                 {formatIDR(Math.abs(remaining))}
               </div>
             </div>
@@ -271,7 +238,7 @@ export default function ExpenseBudget() {
           .filter(({ spent }) => spent > 1)
           .sort((a, b) => b.spent - a.spent)
           .map(({ b, spent }) => (
-            <Card key={b} >
+            <Card key={b}>
               <div className="py-2">
                 <BudgetListCard
                   currency="Rp"
