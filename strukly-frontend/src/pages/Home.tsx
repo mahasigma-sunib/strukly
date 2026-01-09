@@ -15,6 +15,7 @@ import HappyMascot from "../components/mascots/HappyMascot";
 import HeadbandMascot from "../components/mascots/HeadbandMascot";
 import WinkMascot from "../components/mascots/WinkMascot";
 
+import OthersIcon from "../components/categoryIcons/OthersIcon";
 import SettingsIcon from "../components/utilityIcons/SettingsIcon";
 import WhistleMascot from "../components/mascots/WhistleMascot";
 import { useLoadBudget } from "../hooks/useLoadBudget";
@@ -68,7 +69,7 @@ function Home() {
   const greeting = getGreeting();
   const username = useUserAuth((s) => s.user?.name || "User");
 
-  const { data, isLoading, error } = useLoadBudget();
+  const { data } = useLoadBudget();
 
   const totalBudget = data?.budget ?? 0;
   const hasBudget = totalBudget > 0;
@@ -193,12 +194,22 @@ function Home() {
                   <p className="text-base font-bold text-text-primary/50">
                     Top category
                   </p>
-                  {/* <FoodIcon width={30} height={30} className="my-2" /> */}
-                  <div className="py-1 ml-2">{icon}</div>
-                  <p className="text-lg ml-2 font-bold text-text-primary">
-                    {maxCategory.category.charAt(0).toUpperCase() +
-                      maxCategory.category.slice(1)}
-                  </p>
+                  {maxCategory.category ? (
+                    <>
+                      <div className="py-1 ml-2">{icon}</div>
+                      <p className="text-lg ml-2 font-bold text-text-primary">
+                        {maxCategory.category.charAt(0).toUpperCase() +
+                          maxCategory.category.slice(1)}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="py-1 ml-2"><OthersIcon/></div>
+                      <p className="text-lg ml-2 font-bold text-text-primary">
+                        -
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
