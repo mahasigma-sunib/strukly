@@ -2,8 +2,9 @@ import React from "react";
 import AddIcon from "../icons/AddIcon";
 import EditIcon from "../utilityIcons/EditIcon";
 import DeleteIcon from "../utilityIcons/DeleteIcon";
-import Button from "../button/Button";
+// import Button from "../button/Button";
 import CloseIcon from "../utilityIcons/CloseIcon";
+import { PlusIcon } from "lucide-react";
 
 type GoalPopUpProps = {
   goalName?: string;
@@ -21,8 +22,8 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
   onClose,
 }) => {
   return (
-    <div className="flex flex-col gap-2 w-full">
-      <div className="flex justify-between items-center mb-3">
+    <div className="flex flex-col w-full">
+      <div className="flex justify-between items-start mb-3">
         <div className="flex-1 flex-col min-w-0">
           <div className="px-4 py-1">
             <p className="text-lg font-semibold text-inactive">Manage Goal</p>
@@ -35,41 +36,41 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
             </div>
           )}
         </div>
-        <Button onClick={onClose} className="text-slate-500">
-          <CloseIcon width={20} height={20} />
-        </Button>
+        <div onClick={onClose} className="text-slate-500 mt-2 mr-2">
+          <CloseIcon width={28} height={28} />
+        </div>
       </div>
 
       <button
         onClick={onAddSaving}
-        className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl hover:bg-slate-50 transition-colors"
+        className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl border-b-2 border-gray-200 active:bg-gray-200"
       >
-        <div className="bg-primary/10 p-2 rounded-xl text-primary">
-          <AddIcon className="w-6 h-6 fill-primary" />
+        <div className="h-8 w-8 flex items-center justify-center">
+          <PlusIcon className="w-6 h-6 text-text-primary" />
         </div>
-        <span className="font-bold text-lg text-text-primary">Add Savings</span>
+        <span className="font-bold text-lg text-text-primary/80">
+          Add Savings
+        </span>
       </button>
-
-      <div className="h-[1px] w-full bg-border/50 my-1" />
 
       <button
         onClick={onEdit}
-        className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl hover:bg-slate-50 transition-colors"
+        className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl border-b-2 border-gray-200 active:bg-gray-200"
       >
-        <div className="bg-text-primary/5 p-2 rounded-xl text-text-primary">
-          <EditIcon className="w-6 h-6" />
+        <div className="h-8 w-8">
+          <EditIcon className="w-8 h-8" />
         </div>
-        <span className="font-bold text-lg text-text-primary">Edit Goal</span>
+        <span className="font-bold text-lg text-text-primary/80">
+          Edit Goal
+        </span>
       </button>
-
-      <div className="h-[1px] w-full bg-border/50 my-1" />
 
       <button
         onClick={onDelete}
-        className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl hover:bg-red-50 transition-colors text-status-error"
+        className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl active:bg-gray-200 text-status-error"
       >
-        <div className="bg-status-error/10 p-2 rounded-xl">
-          <DeleteIcon className="w-6 h-6" />
+        <div className="h-8 w-8">
+          <DeleteIcon className="w-7 h-7" />
         </div>
         <span className="font-bold text-lg">Delete Goal</span>
       </button>

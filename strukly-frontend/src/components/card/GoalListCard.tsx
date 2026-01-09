@@ -96,7 +96,7 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
         max={goal.price}
         height={12}
         barColor={
-          goal.isCompleted ? "bg-category-transportation" : "bg-status-success"
+          goal.isCompleted ? "bg-status-success" : "bg-category-transportation"
         }
       />
 
