@@ -13,7 +13,6 @@ import GoalsHeader from "../components/GoalsHeader";
 import GoalList from "../components/card/GoalListCard";
 import GoalModal from "../components/modal/GoalModal";
 import GoalPopup from "../components/popup/GoalPopUp";
-import { is } from "zod/locales";
 
 const GoalsPage: React.FC = () => {
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
