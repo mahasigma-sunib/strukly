@@ -10,9 +10,11 @@ import GoalModal from "../components/modal/GoalModal";
 import GoalPopup from "../components/popup/GoalPopUp";
 
 import type { GoalItem } from "../type/GoalItem";
+import axios from "axios";
+import useGoals from "../store/GoalsStore";
+import { useLoadGoals } from "../hooks/useLoadGoals";
 
 const GoalsPage: React.FC = () => {
-  const [goals, setGoals] = useState<GoalItem[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
   const [activeModal, setActiveModal] = useState<
     "create" | "deposit" | "edit" | "delete" | null
@@ -21,10 +23,19 @@ const GoalsPage: React.FC = () => {
   const [formData, setFormData] = useState({ name: "", price: 0 });
   const [errorMessage, setErrorMessage] = useState("");
 
+  useLoadGoals();
+  const {
+    items: goals,
+    addGoal,
+    depositGoal,
+    updateGoal,
+    deleteGoal,
+  } = useGoals();
+
   const activeGoals = goals.filter((g) => !g.isCompleted);
   const completedGoals = goals.filter((g) => g.isCompleted);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!formData.name.trim()) {
       setErrorMessage("A goal name must be filled");
       return;
@@ -43,18 +54,32 @@ const GoalsPage: React.FC = () => {
     }
 
     const newGoal: GoalItem = {
-      id: Math.random().toString(36).substring(7),
+      id: "",
       name: formData.name,
       price: formData.price,
-      currentAmount: 0,
+      deposit: 0, //deposited
       isCompleted: false,
+      createdAt: new Date(),
     };
 
-    setGoals((g) => [...g, newGoal]);
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/goals`,
+        newGoal,
+        { withCredentials: true }
+      );
+
+      newGoal.id = res.data.goal.id;
+      newGoal.createdAt = res.data.goal.createdAt;
+      addGoal(newGoal);
+    } catch (err) {
+      console.log(err);
+    }
+
     setActiveModal(null);
   };
 
-  const handleDeposit = () => {
+  const handleDeposit = async () => {
     if (!selectedGoal) return;
 
     if (tempAmount <= 0) {
@@ -62,7 +87,7 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
-    const remaining = selectedGoal.price - selectedGoal.currentAmount;
+    const remaining = selectedGoal.price - selectedGoal.deposit;
 
     if (tempAmount > remaining) {
       setErrorMessage(
@@ -71,24 +96,24 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
-    setGoals((g) =>
-      g.map((item) =>
-        item.id === selectedGoal.id
-          ? {
-              ...item,
-              currentAmount: item.currentAmount + tempAmount,
-              isCompleted: item.currentAmount + tempAmount >= item.price,
-            }
-          : item
-      )
-    );
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/goals/deposit/${selectedGoal.id}`,
+        { amount: tempAmount },
+        { withCredentials: true }
+      );
+      depositGoal(selectedGoal.id, tempAmount);
+    } catch (error) {
+      console.log(error);
+    }
+
     setErrorMessage("");
     setActiveModal(null);
     setSelectedGoal(null);
     setTempAmount(0);
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!selectedGoal) return;
 
     if (!formData.name.trim()) {
@@ -96,7 +121,7 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
-    if (formData.price < selectedGoal.currentAmount) {
+    if (formData.price < selectedGoal.deposit) {
       setErrorMessage("New goal price must be less than current amount!");
       return;
     }
@@ -106,27 +131,34 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
-    setGoals((g) =>
-      g.map((it) =>
-        it.id === selectedGoal.id
-          ? {
-              ...it,
-              name: formData.name,
-              price: formData.price,
-              isCompleted: it.currentAmount >= formData.price,
-            }
-          : it
-      )
-    );
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/goals/${selectedGoal.id}`,
+        { name: formData.name, price: formData.price },
+        { withCredentials: true }
+      );
+      updateGoal(selectedGoal.id, formData.name, formData.price);
+    } catch (error) {
+      console.log(error);
+    }
 
     setErrorMessage("");
     setActiveModal(null);
     setSelectedGoal(null);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!selectedGoal) return;
-    setGoals((g) => g.filter((it) => it.id !== selectedGoal.id));
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/goals/${selectedGoal.id}`,
+        { withCredentials: true }
+      );
+      deleteGoal(selectedGoal.id);
+    } catch (error) {
+      console.log(error);
+    }
     setActiveModal(null);
     setSelectedGoal(null);
   };
