@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useUserAuth from "../store/UserAuthStore";
@@ -20,6 +19,9 @@ import SettingsIcon from "../components/utilityIcons/SettingsIcon";
 import WhistleMascot from "../components/mascots/WhistleMascot";
 import { useLoadBudget } from "../hooks/useLoadBudget";
 import { useExpenseCalc } from "../hooks/useExpenseCalc";
+import { useLoadGoals } from "../hooks/useLoadGoals";
+import useGoals from "../store/GoalsStore";
+import GoalList from "../components/card/GoalListCard";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -50,19 +52,6 @@ const getBarColor = (
 const formatIDR = (value: number) =>
   value ? value.toLocaleString("id-ID") : "";
 
-//THIS INTERFACE SHOULD BE PLACEHOLDER AND BE DELETED AND USE IMPORT TYPE AFTER GOALS IS DONE
-interface GoalItem {
-  id: string;
-  name: string;
-  price: number;
-  deposited: number;
-  completed: boolean;
-  completedAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  userID: string;
-}
-
 function Home() {
   const navigate = useNavigate();
   const greeting = getGreeting();
@@ -74,6 +63,7 @@ function Home() {
   const hasBudget = totalBudget > 0;
   const { totalSpent, remaining, maxCategory } = useExpenseCalc(totalBudget);
 
+  const { icon } = getCategoryData(maxCategory.category);
   const usedBudgetPercent =
     remaining > 0 ? Number(((remaining / totalBudget) * 100).toFixed(2)) : 0;
 
@@ -81,9 +71,9 @@ function Home() {
   useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
   const { items } = useExpense();
 
-  const { icon } = getCategoryData(maxCategory.category);
-
-  const [goals, setGoals] = useState<GoalItem[]>([]);
+  useLoadGoals();
+  const { items: goals } = useGoals();
+  const activeGoals = goals.filter((g) => !g.isCompleted);
 
   const barColor = getBarColor(usedBudgetPercent);
 
@@ -225,33 +215,23 @@ function Home() {
             <p className="text-2xl font-bold mb-2 text-text-primary px-4">
               Current Goals
             </p>
-            {goals.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {goals.slice(0, 3).map((item) => (
-                  <Card
-                    key={item.id}
-                    className="p-4 bg-surface rounded-2xl border-none shadow-sm"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-bold text-text-primary">
-                          {item.name}
-                        </p>
-                        <p className="text-sm text-inactive">
-                          Rp {item.deposited.toLocaleString()} / Rp{" "}
-                          {item.price.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
+
+            {activeGoals.length > 0 ? (
+              <div>
+                {activeGoals.slice(0, 3).map((goal, idx) => (
+                  <Card key={goal.id}>
+                    <GoalList goal={goal} idx={idx} onHold={() => {}} />
                   </Card>
                 ))}
                 {goals.length > 3 && (
-                  <button
-                    onClick={() => navigate("/goals")}
-                    className="text-primary font-bold text-sm mt-2 text-center"
-                  >
-                    View all {goals.length} goals
-                  </button>
+                  <div className="flex items-center justify-center">
+                    <button
+                      onClick={() => navigate("/goals")}
+                      className="text-sm font-bold text-primary mt-1 text-center"
+                    >
+                      View all {goals.length} goals
+                    </button>
+                  </div>
                 )}
               </div>
             ) : (
@@ -273,6 +253,7 @@ function Home() {
               </Card>
             )}
           </div>
+
           {/* RECENT EXPENSES */}
           <div>
             <p className="text-2xl font-bold mb-2 text-text-primary px-4">
