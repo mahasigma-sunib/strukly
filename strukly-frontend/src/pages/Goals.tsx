@@ -13,7 +13,7 @@ import GoalsHeader from "../components/GoalsHeader";
 import GoalList from "../components/card/GoalListCard";
 import GoalModal from "../components/modal/GoalModal";
 import GoalPopup from "../components/popup/GoalPopUp";
-
+import { is } from "zod/locales";
 
 const GoalsPage: React.FC = () => {
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
@@ -97,7 +97,7 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
-    const isComplete = tempAmount === remaining ? true : false; 
+    const isComplete = tempAmount === remaining ? true : false;
 
     try {
       await axios.patch(
@@ -105,6 +105,15 @@ const GoalsPage: React.FC = () => {
         { amount: tempAmount },
         { withCredentials: true }
       );
+      if (isComplete) {
+        await axios.patch(
+          `${import.meta.env.VITE_API_BASE_URL}/goals/complete/${
+            selectedGoal.id
+          }`,
+          {},
+          { withCredentials: true }
+        );
+      }
       depositGoal(selectedGoal.id, tempAmount, isComplete);
     } catch (error) {
       console.log(error);
@@ -201,7 +210,7 @@ const GoalsPage: React.FC = () => {
                   {activeGoals.length} Active Goals
                 </p>
               </div>
-              
+
               <div className="space-y-4">
                 {activeGoals.map((goal, idx) => (
                   <Card
@@ -226,7 +235,7 @@ const GoalsPage: React.FC = () => {
               </div>
               <div className="space-y-4">
                 {completedGoals.map((goal) => (
-                  <Card key={goal.id} >
+                  <Card key={goal.id}>
                     <GoalList goal={goal} idx={null} onHold={setSelectedGoal} />
                   </Card>
                 ))}
