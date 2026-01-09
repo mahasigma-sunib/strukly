@@ -1,7 +1,5 @@
-// import { ExpenseType } from "../type/ExpenseType";
 import useExpense from "../store/ExpenseStore";
 import { CategoryKeys } from "../utils/CategoryConfig";
-
 
 export function useExpenseCalc(totalBudget: number) {
   const { items: Expenses } = useExpense();

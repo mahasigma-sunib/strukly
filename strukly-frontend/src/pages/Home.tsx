@@ -20,7 +20,6 @@ import SettingsIcon from "../components/utilityIcons/SettingsIcon";
 import WhistleMascot from "../components/mascots/WhistleMascot";
 import { useLoadBudget } from "../hooks/useLoadBudget";
 import { useExpenseCalc } from "../hooks/useExpenseCalc";
-// import { Divide } from "lucide-react";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -76,7 +75,7 @@ function Home() {
   const { totalSpent, remaining, maxCategory } = useExpenseCalc(totalBudget);
 
   const usedBudgetPercent =
-    totalSpent > 0 ? Number(((totalSpent / totalBudget) * 100).toFixed(2)) : 0;
+    remaining > 0 ? Number(((remaining / totalBudget) * 100).toFixed(2)) : 0;
 
   const today = new Date();
   useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
@@ -159,7 +158,7 @@ function Home() {
                       Rp {formatIDR(remaining)} / {formatIDR(totalBudget)}
                     </p>
                     <p className="text-sm font-bold text-text-primary/50">
-                      {usedBudgetPercent}% used
+                      {usedBudgetPercent}% left
                     </p>
                   </div>
                 </div>
@@ -204,7 +203,9 @@ function Home() {
                     </>
                   ) : (
                     <>
-                      <div className="py-1 ml-2"><OthersIcon/></div>
+                      <div className="py-1 ml-2">
+                        <OthersIcon />
+                      </div>
                       <p className="text-lg ml-2 font-bold text-text-primary">
                         -
                       </p>
@@ -217,7 +218,7 @@ function Home() {
         </div>
       </div>
 
-      <div className="pb-10">
+      <div className="pb-22">
         <div className=" mt-4 flex flex-col gap-8">
           {/* CURRENT GOALS */}
           <div>
@@ -291,7 +292,7 @@ function Home() {
                       vendorName={item.vendorName}
                       date={new Date(item.dateTime)}
                       currency={item.currency}
-                      amount={(item.totalAmount ?? 0).toString()}
+                      amount={formatIDR(item.totalAmount ?? 0)}
                       category={item.category}
                     />
                   </Card>
@@ -327,7 +328,6 @@ function Home() {
               </Card>
             )}
           </div>
-          \{" "}
         </div>
       </div>
     </div>
