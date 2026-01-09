@@ -42,7 +42,6 @@ export function useExpenseCalc(totalBudget: number) {
   return {
     totalSpent,
     remaining,
-    remainingNegative: remaining < 0,
     getSpentForCategory,
     maxCategory,
   };
