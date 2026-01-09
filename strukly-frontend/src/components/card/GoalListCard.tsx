@@ -83,8 +83,8 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
                 })()}
               </p>
 
-              <p className="text-lg font-bold text-text-disabled/90 mr-1">
-                {Math.ceil(progress)}%
+              <p className="text-md font-bold text-text-disabled/90 mr-1">
+                {(progress).toFixed(2)}%
               </p>
             </div>
           </div>
