@@ -21,7 +21,7 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
     "text-yellow-500",
     "text-purple-500",
   ];
-  const progress = (goal.currentAmount / goal.price) * 100;
+  const progress = (goal.deposit / goal.price) * 100;
 
   const timerRef = useRef<number | null>(null);
 
@@ -92,7 +92,7 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
       </div>
 
       <ProgressBar
-        value={goal.currentAmount}
+        value={goal.deposit}
         max={goal.price}
         height={12}
         barColor={
@@ -102,7 +102,7 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
 
       <div className="mt-4 flex flex-row justify-between items-center">
         <p className="font-bold text-base text-text-disabled/70">
-          Rp {goal.currentAmount.toLocaleString()}
+          Rp {goal.deposit.toLocaleString()}
         </p>
         <p className="font-bold text-base text-text-disabled/70">
           Rp {goal.price.toLocaleString()}

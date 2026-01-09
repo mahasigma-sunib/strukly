@@ -1,8 +1,6 @@
 import React from "react";
-import AddIcon from "../icons/AddIcon";
 import EditIcon from "../utilityIcons/EditIcon";
 import DeleteIcon from "../utilityIcons/DeleteIcon";
-// import Button from "../button/Button";
 import CloseIcon from "../utilityIcons/CloseIcon";
 import { PlusIcon } from "lucide-react";
 
