@@ -84,6 +84,7 @@ const GoalsPage: React.FC = () => {
     );
     setErrorMessage("");
     setActiveModal(null);
+    setSelectedGoal(null);
     setTempAmount(0);
   };
 
@@ -120,6 +121,7 @@ const GoalsPage: React.FC = () => {
 
     setErrorMessage("");
     setActiveModal(null);
+    setSelectedGoal(null);
   };
 
   const handleDelete = () => {
