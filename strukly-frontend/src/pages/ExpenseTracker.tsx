@@ -166,7 +166,7 @@ export default function ExpenseTracker() {
         <div className="mt-0">
           {items.length === 0 && !isLoading && (
             <div className="flex flex-col items-center justify-center mt-20 ">
-              <ExpenseEmptyMascot width={148} height={148} />
+              <ExpenseEmptyMascot className="ml-6" width={150} height={150} />
               <p className="text-inactive mt-4 font-bold text-lg text-center">
                 You have no transactions yet.
               </p>
