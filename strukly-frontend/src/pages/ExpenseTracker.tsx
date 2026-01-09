@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { useLoadExpense } from "../hooks/useLoadExpense";
+
 import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
-import useExpense, { useLoadExpense } from "../store/ExpenseStore";
+import useExpense from "../store/ExpenseStore";
 import Button from "../components/button/Button";
 import CustomBarChart from "../components/chart/barchart";
 import Drawer from "../components/drawer/Drawer";
@@ -54,12 +57,13 @@ export default function ExpenseTracker() {
 
   const navigate = useNavigate();
   const { statistic, items, isLoading, error } = useExpense();
+
   // console.log(statistic.weekly);
 
   return (
-    <div>
+    <div className="pb-20">
       {/* page Title & date btn */}
-      <div className="sticky top-0 z-20 flex items-center justify-between p-5 rounded-b-3xl border-b-2 border-border bg-surface">
+      <div className="p-5 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
         <div className="font-bold text-3xl">
           <p>Expense</p>
         </div>
@@ -85,9 +89,9 @@ export default function ExpenseTracker() {
             {monthName} {activeDate.year}
           </Button>
         </div>
-
-        {/* drawer */}
       </div>
+
+      {/* drawer */}
       <Drawer
         visible={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
@@ -124,8 +128,8 @@ export default function ExpenseTracker() {
       {/* Bar Chart */}
       <div>
         {items.length > 0 && (
-          <div className="mx-4 my-5 bg-surface rounded-3xl py-6 border-border border-1">
-            <p className="ml-6 mb-2 text-2xl text-text-primary font-bold">
+          <div className="mx-4 mt-5 mb-2 bg-surface rounded-3xl py-6 border-border border-2 shadow-[0_4px_0_0_var(--color-border)]">
+            <p className="ml-6 mb-4 text-2xl text-text-primary font-bold">
               Tracker
             </p>
             <CustomBarChart
@@ -145,12 +149,17 @@ export default function ExpenseTracker() {
       </div>
 
       {/* expense history */}
-      <div className="w-full min-h-dvh pt-6 ">
+      <div className="w-full pt-6 pb-16">
         <div className="ml-5 mb-4 font-bold text-2xl">
           <p>History</p>
         </div>
 
-        {isLoading && <p>Loading...</p>}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center min-h-screen -mt-40 gap-4">
+            <div className="w-20 h-20 border-12 border-t-primary border-inactive/10 rounded-full animate-spin" />
+            <p className="text-base text-inactive">Please wait a moment...</p>
+          </div>
+        )}
 
         {error && <p>{error}</p>}
 
@@ -168,14 +177,14 @@ export default function ExpenseTracker() {
             <Card
               key={item.id}
               size="md"
-              className="bg-[#EFF4FA] shadow-[0_4px_0_0_#D9E8F5]"
-              onClick={() => navigate(`/expense/${item.id}`)}
+              onClick={() => navigate(`/expense/${item.id}/view`)}
+              className="active:bg-slate-100 !my-3"
             >
               <ExpenseList
                 vendorName={item.vendorName}
                 date={new Date(item.dateTime)}
                 currency={item.currency}
-                amount={item.totalAmount.toString()}
+                amount={(item.totalAmount ?? 0).toString()}
                 category={item.category}
               />
             </Card>
