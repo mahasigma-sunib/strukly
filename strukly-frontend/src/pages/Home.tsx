@@ -69,7 +69,7 @@ function Home() {
 
   const today = new Date();
   useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
-  const { items } = useExpense();
+  const { items } = useExpense(); 
 
   useLoadGoals();
   const { items: goals } = useGoals();
@@ -116,7 +116,7 @@ function Home() {
             {/* Total expense goes here! v*/}
             <div className="flex flex-row items-end">
               <p className="text-4xl font-bold text-white">
-                Rp{formatIDR(totalSpent)}
+                Rp{totalSpent ? formatIDR(totalSpent) : 0}
               </p>
               <p className="text-2xl font-bold text-white/70">,00</p>
             </div>
@@ -175,7 +175,7 @@ function Home() {
                   </p>
                   <p className="text-[30px] py-1">💸</p>
                   <p className="text-lg font-bold text-text-primary">
-                    Rp {formatIDR(totalSpent / today.getDate())}
+                    Rp {totalSpent ? formatIDR(totalSpent / today.getDate()) : 0}
                   </p>
                 </div>
 
