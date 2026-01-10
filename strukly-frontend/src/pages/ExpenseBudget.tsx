@@ -79,7 +79,7 @@ export default function ExpenseBudget() {
 
   return (
     <div className="min-h-screen pb-20 ">
-      <div className="p-5 flex items-center mb-4 justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
+      <div className="sticky top-0 z-20 flex items-center justify-between mb-6 px-5 py-4 border-b-2 border-border bg-surface">
         <div className="font-bold text-3xl">
           <p>Budget</p>
         </div>
@@ -89,16 +89,17 @@ export default function ExpenseBudget() {
             variant="primary"
             size="md"
             className="
-              !rounded-full 
+              !rounded-2xl 
               !font-bold 
               active:translate-y-[4px]
               !transition-all
               flex flex-row gap-1
-              text-lg
+              text-base
               justify-center
               items-center
               !py-2
               !px-3
+              !mb-1
             "
           >
             Edit Budget

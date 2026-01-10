@@ -214,7 +214,7 @@ const GoalsPage: React.FC = () => {
                 {activeGoals.map((goal, idx) => (
                   <Card
                     key={goal.id}
-                    // className="mx-0 w-full rounded-2xl p-5 active:bg-slate-100"
+                    className=" active:bg-slate-100"
                   >
                     <GoalList goal={goal} idx={idx} onHold={setSelectedGoal} />
                   </Card>

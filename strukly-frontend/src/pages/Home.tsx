@@ -41,11 +41,11 @@ const getBarColor = (
   percent: number
 ): "bg-sky-400" | "bg-yellow-400" | "bg-red-400" => {
   if (percent < 50) {
-    return "bg-sky-400";
+    return "bg-red-400";
   } else if (percent >= 50 && percent <= 80) {
     return "bg-yellow-400";
   } else {
-    return "bg-red-400";
+    return "bg-sky-400";
   }
 };
 
@@ -93,7 +93,7 @@ function Home() {
                 <p className="text-2xl font-bold">{username}</p>
               </div>
             </div>
-            <div className="border-3 border-white rounded-2xl">
+            <div className="border-3 border-white rounded-[18px]">
               <div>
                 <Button
                   variant="blue"

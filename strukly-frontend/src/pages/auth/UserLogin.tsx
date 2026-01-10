@@ -19,7 +19,7 @@ function UserLogin() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState<string[]>([]);
   const [loginError, setLoginError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const login = useUserAuth((s) => s.login);
@@ -91,7 +91,7 @@ function UserLogin() {
           <div className="flex flex-col">
             <input
               type="email"
-              placeholder="Email or username"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => {

@@ -44,9 +44,9 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
         className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl border-b-2 border-gray-200 active:bg-gray-200"
       >
         <div className="h-8 w-8 flex items-center justify-center">
-          <PlusIcon className="w-6 h-6 text-text-primary" />
+          <PlusIcon className="w-6 h-6 text-text-primary/60" />
         </div>
-        <span className="font-bold text-lg text-text-primary/80">
+        <span className="font-bold text-lg text-text-primary/60">
           Add Savings
         </span>
       </button>
@@ -56,9 +56,9 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
         className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl border-b-2 border-gray-200 active:bg-gray-200"
       >
         <div className="h-8 w-8">
-          <EditIcon className="w-8 h-8" />
+          <EditIcon className="w-8 h-8 text-text-primary/60" />
         </div>
-        <span className="font-bold text-lg text-text-primary/80">
+        <span className="font-bold text-lg text-text-primary/60">
           Edit Goal
         </span>
       </button>

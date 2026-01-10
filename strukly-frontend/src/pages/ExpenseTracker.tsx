@@ -63,7 +63,7 @@ export default function ExpenseTracker() {
   return (
     <div className="pb-20">
       {/* page Title & date btn */}
-      <div className="p-5 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
+      <div className="sticky top-0 z-20 flex items-center justify-between px-5 py-4 border-b-2 border-border bg-surface">
         <div className="font-bold text-3xl">
           <p>Expense</p>
         </div>
@@ -73,16 +73,17 @@ export default function ExpenseTracker() {
             variant="primary"
             size="md"
             className="
-              !rounded-full 
+              !rounded-2xl 
               !font-bold 
               active:translate-y-[4px]
               !transition-all
               flex flex-row gap-1
-              text-lg
+              text-base
               justify-center
               items-center
               !py-2
               !px-3
+              !mb-1
             "
           >
             {<CalendarIcon className="text-white" />}
