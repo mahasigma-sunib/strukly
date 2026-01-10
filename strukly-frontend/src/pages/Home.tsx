@@ -158,9 +158,9 @@ function Home() {
                     You haven't set a monthly budget
                   </p>
                   <Button
-                    size="lg"
+                    size="md"
                     variant="primary"
-                    className="!py-2"
+                    className="!py-1 !px-4 !rounded-full"
                     onClick={() => navigate("/budget")}
                   >
                     Set Budget
@@ -242,9 +242,9 @@ function Home() {
                     You haven't made a goal yet
                   </p>
                   <Button
-                    size="lg"
+                    size="md"
                     variant="primary"
-                    className="!py-2"
+                    className="!py-1 !px-4 !rounded-full"
                     onClick={() => navigate("/goals")}
                   >
                     Make a goal
@@ -298,9 +298,9 @@ function Home() {
                     You haven't added a new expense yet
                   </p>
                   <Button
-                    size="lg"
+                    size="md"
                     variant="primary"
-                    className="!py-2"
+                    className="!py-1 !px-4 !rounded-full"
                     onClick={() => navigate("/expense")}
                   >
                     Add expense
