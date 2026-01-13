@@ -15,6 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
+      working-directory: ./strukly-backend
       run: docker build ./strukly-backend --file Dockerfile --tag ghcr.io/mahasigma-sunib/koinku:latest
     - name: Push Image to ghcr.io
       run: |
