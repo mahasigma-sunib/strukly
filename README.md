@@ -2,11 +2,6 @@
 
 The frontend is currently deployed to [koinku.my.id](https://koinku.my.id/)!
 
-
-> [!IMPORTANT]  
-> At the moment api.koinku.my.id is down due to issues with our hosting provider.
-> If you wish to try out the project it is recommended that you follow the development [Docker Setup Guide](https://github.com/mahasigma-sunib/strukly/tree/master?tab=readme-ov-file#docker)
-
 ## Development
 
 Clone the repository!
