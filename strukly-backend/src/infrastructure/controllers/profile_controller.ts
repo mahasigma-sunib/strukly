@@ -6,7 +6,7 @@ export default class ProfileController {
   constructor(
     private readonly updateUserProfileUseCase: UpdateUserProfileUseCase,
     private readonly userRepository: UserRepository
-  ) { }
+  ){}
 
   public getProfile = async (req: Request, res: Response) => {
     const userId = req.user!.id;
