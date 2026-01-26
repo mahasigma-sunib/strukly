@@ -18,6 +18,7 @@ jobs:
       working-directory: ./strukly-backend
       run: docker build . --file Dockerfile --tag ghcr.io/mahasigma-sunib/koinku:latest
     - name: Push Image to ghcr.io
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       run: |
         docker login -u KrisNathan -p ${{ secrets.GHCR_TOKEN }} ghcr.io
         docker push ghcr.io/mahasigma-sunib/koinku:latest
