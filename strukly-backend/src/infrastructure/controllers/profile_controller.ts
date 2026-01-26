@@ -6,9 +6,9 @@ export default class ProfileController {
   constructor(
     private readonly updateUserProfileUseCase: UpdateUserProfileUseCase,
     private readonly userRepository: UserRepository
-  ){}
+  ) { }
 
-public getProfile = async (req: Request, res: Response) => {
+  public getProfile = async (req: Request, res: Response) => {
     const userId = req.user!.id;
 
     const user = await this.userRepository.findById(userId);
@@ -16,7 +16,7 @@ public getProfile = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ error: 'user not found' });
     }
-    
+
     const { hashedPassword, ...userProfile } = user;
     return res.status(200).json({
       message: 'Profile fetched successfully',
@@ -27,9 +27,17 @@ public getProfile = async (req: Request, res: Response) => {
   public updateProfile = async (req: Request, res: Response): Promise<Response> => {
     try {
       const userId = req.user!.id;
-      const newData = req.body;
+      const { previousPassword, newPassword, ...otherData } = req.body;
 
-      await this.updateUserProfileUseCase.execute(userId, newData);
+      const updateData: any = { ...otherData };
+      if (previousPassword && newPassword) {
+        updateData.password = {
+          previous: previousPassword,
+          new: newPassword,
+        };
+      }
+
+      await this.updateUserProfileUseCase.execute(userId, updateData);
 
       return res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error: unknown) {
