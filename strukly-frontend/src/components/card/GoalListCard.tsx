@@ -89,6 +89,9 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
           Rp {goal.price.toLocaleString()}
         </p>
       </div>
+           <div className="flex items-center gap-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100 transition-opacity transform translate-y-1">
+           <span>Click to edit</span>
+        </div>
     </div>
   );
 }
