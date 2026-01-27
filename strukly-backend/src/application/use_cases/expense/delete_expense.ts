@@ -10,8 +10,8 @@ export default class DeleteExpenseUseCase {
     private readonly budgetService: BudgetService,
   ) {}
 
-  async execute(userId: string, expenseId: string): Promise<void> {
-    const user = new UserID(userId);
+  async execute(userID: string, expenseId: string): Promise<void> {
+    const user = new UserID(userID);
     const expense = await this.expenseService.getExpenseByID(
         user, 
         new ExpenseID(expenseId)
