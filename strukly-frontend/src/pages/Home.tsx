@@ -38,7 +38,7 @@ const getGreeting = () => {
 };
 
 const getBarColor = (
-  percent: number
+  percent: number,
 ): "bg-sky-400" | "bg-yellow-400" | "bg-red-400" => {
   if (percent < 50) {
     return "bg-sky-400";
@@ -50,7 +50,7 @@ const getBarColor = (
 };
 
 const formatIDR = (value: number) =>
-  value ? value.toLocaleString("id-ID") : "";
+  value ? value.toLocaleString("id-ID") : "0";
 
 function Home() {
   const navigate = useNavigate();
@@ -174,9 +174,14 @@ function Home() {
                     Avg. spent / day
                   </p>
                   <p className="text-[30px] py-1">💸</p>
-                  <p className="text-lg font-bold text-text-primary">
-                    Rp {formatIDR(totalSpent / today.getDate())}
-                  </p>
+                  <div className="flex flex-row items-baseline">
+                    <p className="text-lg font-bold text-text-primary">
+                      Rp{formatIDR(totalSpent / today.getDate())}
+                    </p>
+                    <p className="text-xs font-bold text-text-primary/70">
+                      ,00
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex flex-col flex-1 gap-1 items-center border-l-2 border-gray-200">
