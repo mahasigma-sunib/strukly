@@ -84,7 +84,8 @@ export const deleteGoalItemUseCase = new DeleteGoalItemUseCase(goalItemRepositor
 
 // expense
 export const createExpenseUseCase = new CreateExpenseUseCase(
-  expenseService
+  expenseService,
+  budgetService
 );
 export const getExpenseListUseCase = new GetMonthlyExpenseListUseCase(
   expenseService
@@ -96,10 +97,12 @@ export const getExpenseDetailUseCase = new GetExpenseDetailUseCase(
   expenseService
 );
 export const updateExpenseUseCase = new UpdateExpenseUseCase(
-  expenseService
+  expenseService,
+  budgetService
 );
 export const deleteExpenseUseCase = new DeleteExpenseUseCase(
-  expenseService
+  expenseService,
+  budgetService
 );
 export const imageToExpenseUseCase = new ScanExpenseImageUseCase(
   languageModelService
