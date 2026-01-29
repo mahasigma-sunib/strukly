@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { emailSchema } from "../../schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
+
 import Button from "../../components/button/Button";
+import ErrorMessage from "../../components/ErrorMessage";
 import TextLogo from "../../components/logos/TextLogo";
 import LoginMascot from "../../components/mascots/LoginMascot";
 
 // Helper error message component
-const ErrorMessage = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-status-error text-sm font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1 duration-200">
-    {children}
-  </p>
-);
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -26,7 +24,7 @@ function UserLogin() {
 
   const validate = () => {
     const emailVal = emailSchema.safeParse(email);
-    const passwordVal = password.length < 1    
+    const passwordVal = password.trim().length < 1;
 
     if (!emailVal.success) setEmailError(emailVal.error.issues[0].message);
     else setEmailError("");
@@ -38,7 +36,6 @@ function UserLogin() {
   };
 
   const handleLogin = async () => {
-    
     setLoginError("");
     const isValid = validate();
 
@@ -124,9 +121,7 @@ function UserLogin() {
                     : "border-border focus:border-primary"
                 }`}
             />
-            {
-              <ErrorMessage>{passwordError}</ErrorMessage>
-            }
+            <ErrorMessage>{passwordError}</ErrorMessage>
           </div>
         </div>
 
