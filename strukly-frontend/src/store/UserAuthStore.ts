@@ -48,7 +48,6 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
         },
       );
       const { user } = userRes.data;
-      // console.log(user);
       set({ user });
     } catch (error) {
       set({ user: null }); // Not authenticated
