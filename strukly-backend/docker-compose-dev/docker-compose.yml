@@ -1,7 +1,6 @@
 # Use postgres/example user/password credentials
 
 services:
-
   db:
     image: postgres:alpine
     restart: always
@@ -13,10 +12,11 @@ services:
     #    target: /dev/shm
     #    tmpfs:
     #      size: 134217728 # 128*2^20 bytes = 128Mb
-    ports: 
+    ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: example
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
 
   adminer:
     image: adminer
