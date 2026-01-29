@@ -71,7 +71,7 @@ export const languageModelService = new GeminiLanguageModel();
 // auth
 export const registerUserUseCase = new RegisterUserUseCase(userRepository, hashingService);
 export const loginUserUseCase = new LoginUserUseCase(userRepository, hashingService);
-export const updateUserProfileUseCase = new UpdateUserProfileUseCase(userRepository);
+export const updateUserProfileUseCase = new UpdateUserProfileUseCase(userRepository, hashingService);
 
 // goal
 export const createGoalItemUseCase = new CreateGoalItemUseCase(goalItemRepository);

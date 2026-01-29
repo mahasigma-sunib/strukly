@@ -30,6 +30,9 @@ export default class User {
     if (data.email !== undefined) {
       this.email = data.email;
     }
+    if (data.password !== undefined) {
+      this.hashedPassword = data.password;
+    }
     this.updatedAt = new Date();
   }
 }
