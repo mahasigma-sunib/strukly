@@ -27,6 +27,7 @@ import DeleteExpenseUseCase from "./application/use_cases/expense/delete_expense
 import ScanExpenseImageUseCase from "./application/use_cases/expense/scan_expense_image";
 import GetCurrentBudgetUseCase from "./application/use_cases/budget/get_current_budget";
 import UpdateCurrentBudgetUseCase from "./application/use_cases/budget/update_current_budget";
+import Gemini3LanguageModel from "./infrastructure/language_model/gemini3_language_model";
 
 // DB Client
 const prismaClient = new PrismaClient();
