@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import UpdateUserProfileUseCase from '../../application/use_cases/update_user';
 import UserRepository from '../../domain/repositories/user_repository';
+import UnauthorizedError from 'src/domain/errors/UnauthorizedError';
 
 export default class ProfileController {
   constructor(
@@ -30,6 +31,11 @@ export default class ProfileController {
       const { previousPassword, newPassword, ...otherData } = req.body;
 
       const updateData: any = { ...otherData };
+
+      if(((!previousPassword && newPassword) || (previousPassword && !newPassword))) {
+          return res.status(404).json({ error: UnauthorizedError });
+      }
+
       if (previousPassword && newPassword) {
         updateData.password = {
           previous: previousPassword,
