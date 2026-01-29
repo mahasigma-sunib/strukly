@@ -30,6 +30,7 @@ const App = () => {
     "/expense/add",
     "/expense/camera",
     "/expense/:id",
+    "/settings",
   ];
   const isProtectedPath = !hideNavbarRoutes.includes(location.pathname);
 
