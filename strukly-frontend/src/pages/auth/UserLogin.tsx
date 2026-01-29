@@ -88,7 +88,7 @@ function UserLogin() {
           <div className="flex flex-col">
             <input
               type="email"
-              placeholder="Email or username"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => {
