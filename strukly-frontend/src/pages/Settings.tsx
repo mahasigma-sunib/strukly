@@ -1,12 +1,18 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useUserAuth from "../store/UserAuthStore";
 import Button from "../components/button/Button";
 import BackIcon from "../components/utilityIcons/BackIcon";
+import SettingsModal from "../components/modal/SettingsModal";
+import EditIcon from "../components/utilityIcons/EditIcon";
 
 export default function Settings() {
   const logout = useUserAuth((s) => s.logout);
   const navigate = useNavigate();
+  const [settingsMode, setSettingsMode] = useState<"name" | "password" | null>(
+    null
+  );
 
   return (
     <div className="pb-16 min-h-screen bg-background">
@@ -17,9 +23,38 @@ export default function Settings() {
         <h1 className="text-xl font-semibold">Settings</h1>
       </div>
 
-      <div className="p-6 flex items-center justify-center">
-        <Button onClick={logout}>Log out</Button>
+      <div className="p-4 flex flex-col gap-6">
+        <div className="bg-surface rounded-2xl p-2 shadow-sm border border-border">
+          <button
+            onClick={() => setSettingsMode("name")}
+            className="w-full flex items-center justify-between p-4 hover:bg-background transition-colors rounded-xl"
+          >
+            <span className="font-semibold text-text-primary">Change Name</span>
+            <EditIcon width={24} height={24} className="text-text-secondary" />
+          </button>
+          
+          <div className="h-[1px] bg-border mx-4"></div>
+          
+          <button
+            onClick={() => setSettingsMode("password")}
+            className="w-full flex items-center justify-between p-4 hover:bg-background transition-colors rounded-xl"
+          >
+            <span className="font-semibold text-text-primary">
+              Change Password
+            </span>
+            <EditIcon width={24} height={24} className="text-text-secondary" />
+          </button>
+        </div>
+
+        <div className="flex items-center justify-center">
+          <Button onClick={logout}>Log out</Button>
+        </div>
       </div>
+
+      <SettingsModal
+        mode={settingsMode}
+        onClose={() => setSettingsMode(null)}
+      />
     </div>
   );
 }
