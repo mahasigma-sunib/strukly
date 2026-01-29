@@ -3,6 +3,8 @@ import ExpenseID from "src/domain/values/expense_id";
 import UserID from "src/domain/values/user_id";
 
 import BudgetService from "src/domain/services/budget_service";
+import NotFoundError from "src/domain/errors/NotFoundError";
+import InvalidDataError from "src/domain/errors/InvalidDataError";
 
 export default class DeleteExpenseUseCase {
   constructor(
@@ -18,7 +20,7 @@ export default class DeleteExpenseUseCase {
     );
 
     if (!expense) {
-        throw new Error("Expense not found");
+        throw new NotFoundError("Expense not found");
     }
 
     // Check if expense is in the current budget period
@@ -31,7 +33,7 @@ export default class DeleteExpenseUseCase {
       expenseMonth !== currentBudget.month ||
       expenseYear !== currentBudget.year
     ) {
-        throw new Error("Cannot delete expense from a previous budget period");
+        throw new InvalidDataError("Cannot delete expense from a previous budget period");
     }
 
     const totalAmount = expense.header.totalAmount.value;
