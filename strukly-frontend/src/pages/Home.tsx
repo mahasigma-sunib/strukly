@@ -8,6 +8,7 @@ import { getCategoryData } from "../utils/CategoryConfig";
 import Button from "../components/button/Button";
 import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
+import Money from "../components/money/Money";
 import ProgressBar from "../components/graph/ProgressBar";
 
 import HappyMascot from "../components/mascots/HappyMascot";
@@ -134,7 +135,8 @@ function Home() {
             {/* Total expense goes here! v*/}
             <div className="flex flex-row items-end">
               <p className="text-4xl font-bold text-white">
-                Rp{formatIDR(totalSpent).main}
+                {/* Rp{formatIDR(totalSpent).main} */}
+                <Money amount={totalSpent} currency="IDR" />
               </p>
               <p className="text-2xl font-bold text-white/70">
                 ,{formatIDR(totalSpent).decimal}
