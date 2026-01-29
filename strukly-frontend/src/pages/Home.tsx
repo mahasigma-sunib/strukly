@@ -50,21 +50,6 @@ const getBarColor = (
   }
 };
 
-const formatIDR = (value: number) => {
-  const formatted = (value || 0).toLocaleString("id-ID", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
-  const parts = formatted.split(",");
-
-  return {
-    main: parts[0],
-    decimal: parts[1],
-    full: formatted,
-  };
-};
-
 function Home() {
   const navigate = useNavigate();
   const greeting = getGreeting();
@@ -163,10 +148,21 @@ function Home() {
                     barColor={barColor}
                   ></ProgressBar>
                   <div className="flex flex-row justify-between items-center px-2">
-                    <p className="text-sm font-bold text-text-primary/50">
-                      Rp {formatIDR(remaining).full} /{" "}
-                      {formatIDR(totalBudget).full}
-                    </p>
+                    <div className="flex flex-row items-center gap-1">
+                      <Money
+                        amount={remaining}
+                        currency="IDR"
+                        mainClassName="text-sm font-bold text-text-primary/50"
+                        decimalClassName="text-xs font-bold text-text-primary/50"
+                      />
+                      <span className="text-sm font-bold text-text-primary/50">/</span>
+                      <Money
+                        amount={totalBudget}
+                        currency="IDR"
+                        mainClassName="text-sm font-bold text-text-primary/50"
+                        decimalClassName="text-xs font-bold text-text-primary/50"
+                      />
+                    </div>
                     <p className="text-sm font-bold text-text-primary/50">
                       {usedBudgetPercent}% left
                     </p>
@@ -296,7 +292,7 @@ function Home() {
                       vendorName={item.vendorName}
                       date={new Date(item.dateTime)}
                       currency={item.currency}
-                      amount={formatIDR(item.totalAmount ?? 0).main}
+                      amount={String(item.totalAmount ?? 0)}
                       category={item.category}
                     />
                   </Card>
