@@ -133,15 +133,12 @@ function Home() {
             </div>
 
             {/* Total expense goes here! v*/}
-            <div className="flex flex-row items-end">
-              <p className="text-4xl font-bold text-white">
-                {/* Rp{formatIDR(totalSpent).main} */}
-                <Money amount={totalSpent} currency="IDR" />
-              </p>
-              <p className="text-2xl font-bold text-white/70">
-                ,{formatIDR(totalSpent).decimal}
-              </p>
-            </div>
+            <Money
+              amount={totalSpent}
+              currency="IDR"
+              mainClassName="text-4xl font-bold text-white"
+              decimalClassName="text-2xl font-bold text-white/70"
+            />
           </div>
         </div>
       </div>
@@ -197,14 +194,12 @@ function Home() {
                     Avg. spent / day
                   </p>
                   <p className="text-[30px] py-1">💸</p>
-                  <div className="flex flex-row items-baseline">
-                    <p className="text-lg font-bold text-text-primary">
-                      Rp{formatIDR(avgSpent()).main}
-                    </p>
-                    <p className="text-xs font-bold text-text-primary/70">
-                      ,{formatIDR(avgSpent()).decimal}
-                    </p>
-                  </div>
+                  <Money
+                    amount={avgSpent()}
+                    currency="IDR"
+                    mainClassName="text-lg font-bold text-text-primary"
+                    decimalClassName="text-xs font-bold text-text-primary/70"
+                  />
                 </div>
 
                 <div className="flex flex-col flex-1 gap-1 items-center border-l-2 border-gray-200">
