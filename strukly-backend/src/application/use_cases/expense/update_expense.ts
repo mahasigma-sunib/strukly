@@ -7,6 +7,8 @@ import Money from "src/domain/values/money";
 import ExpenseItem from "src/domain/entities/expense_item";
 
 import BudgetService from "src/domain/services/budget_service";
+import NotFoundError from "src/domain/errors/NotFoundError";
+import InvalidDataError from "src/domain/errors/InvalidDataError";
 
 export default class UpdateExpenseUseCase {
   constructor(
@@ -25,7 +27,7 @@ export default class UpdateExpenseUseCase {
     );
 
     if (!expense) {
-      throw new Error("Expense not found");
+      throw new NotFoundError("Expense not found");
     }
 
     // Check if expense is in the current budget period
@@ -45,7 +47,7 @@ export default class UpdateExpenseUseCase {
       expenseMonth !== currentBudget.month ||
       expenseYear !== currentBudget.year
     ) {
-        throw new Error("Cannot update expense from a previous budget period");
+        throw new InvalidDataError("Cannot update expense from a previous budget period");
     }
 
     const oldTotal = expense.header.totalAmount.value;
