@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
+import { emailSchema, passwordSchema } from "../../schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
 import Button from "../../components/button/Button";
 import TextLogo from "../../components/logos/TextLogo";

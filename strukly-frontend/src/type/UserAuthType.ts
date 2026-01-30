@@ -13,4 +13,6 @@ export interface UserAuthType {
   logout: () => void;
   fetchProfile: () => Promise<void>;
   isAuth: () => boolean;
+  changeUsername: (name: string) => Promise<void>;
+  changePassword: (previousPassword: string, newPassword: string) => Promise<void>;
 }

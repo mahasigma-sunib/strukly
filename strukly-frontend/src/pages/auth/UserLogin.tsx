@@ -1,41 +1,38 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
+
+import { emailSchema } from "../../schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
+
 import Button from "../../components/button/Button";
+import ErrorMessage from "../../components/ErrorMessage";
 import TextLogo from "../../components/logos/TextLogo";
 import LoginMascot from "../../components/mascots/LoginMascot";
 
 // Helper error message component
-const ErrorMessage = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-status-error text-sm font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1 duration-200">
-    {children}
-  </p>
-);
 
 function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState<string[]>([]);
+  const [passwordError, setPasswordError] = useState<string>("");
   const [loginError, setLoginError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const login = useUserAuth((s) => s.login);
 
   const validate = () => {
     const emailVal = emailSchema.safeParse(email);
-    const passVal = passwordSchema.safeParse(password);
+    const passwordVal = password.trim().length < 1;
 
     if (!emailVal.success) setEmailError(emailVal.error.issues[0].message);
     else setEmailError("");
 
-    if (!passVal.success)
-      setPasswordError(passVal.error.issues.map((i) => i.message));
-    else setPasswordError([]);
+    if (passwordVal) setPasswordError("Password can't be empty");
+    else setPasswordError("");
 
-    return emailVal.success && passVal.success;
+    return emailVal.success && !passwordVal;
   };
 
   const handleLogin = async () => {
@@ -50,7 +47,7 @@ function UserLogin() {
       window.location.href = "/cookie";
     } catch (err) {
       setLoginError(
-        "The email or password you entered is incorrect. Please try again."
+        "The email or password you entered is incorrect. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -91,7 +88,7 @@ function UserLogin() {
           <div className="flex flex-col">
             <input
               type="email"
-              placeholder="Email or username"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => {
@@ -116,12 +113,6 @@ function UserLogin() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onBlur={() => {
-                const res = passwordSchema.safeParse(password);
-                setPasswordError(
-                  res.success ? [] : res.error.issues.map((i) => i.message)
-                );
-              }}
               className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
                 bg-background focus:outline-none focus:ring-4 focus:ring-primary/10
                 ${
@@ -130,9 +121,7 @@ function UserLogin() {
                     : "border-border focus:border-primary"
                 }`}
             />
-            {passwordError.map((err, i) => (
-              <ErrorMessage key={i}>{err}</ErrorMessage>
-            ))}
+            <ErrorMessage>{passwordError}</ErrorMessage>
           </div>
         </div>
 

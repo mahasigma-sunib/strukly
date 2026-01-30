@@ -35,7 +35,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
         email: userEmail,
         password,
       },
-      { withCredentials: true }
+      { withCredentials: true },
     );
   },
 
@@ -45,10 +45,9 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
         `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
         {
           withCredentials: true,
-        }
+        },
       );
       const { user } = userRes.data;
-      // console.log(user);
       set({ user });
     } catch (error) {
       set({ user: null }); // Not authenticated
@@ -66,8 +65,35 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
     await axios.post(
       `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
       {},
-      { withCredentials: true }
+      { withCredentials: true },
     );
+  },
+
+  changeUsername: async (name) => {
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
+        { name },
+        { withCredentials: true },
+      );
+      set((state) => ({
+        user: state.user ? { ...state.user, name } : null,
+      }));
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  changePassword: async (previousPassword, newPassword) => {
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
+        { previousPassword, newPassword },
+        { withCredentials: true },
+      );
+    } catch (error) {
+      throw error;
+    }
   },
 }));
 
