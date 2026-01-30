@@ -8,6 +8,7 @@ import { getCategoryData } from "../utils/CategoryConfig";
 import Button from "../components/button/Button";
 import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
+import Money from "../components/money/Money";
 import ProgressBar from "../components/graph/ProgressBar";
 
 import HappyMascot from "../components/mascots/HappyMascot";
@@ -38,7 +39,7 @@ const getGreeting = () => {
 };
 
 const getBarColor = (
-  percent: number
+  percent: number,
 ): "bg-sky-400" | "bg-yellow-400" | "bg-red-400" => {
   if (percent < 50) {
     return "bg-sky-400";
@@ -48,9 +49,6 @@ const getBarColor = (
     return "bg-red-400";
   }
 };
-
-const formatIDR = (value: number) =>
-  value ? value.toLocaleString("id-ID") : "";
 
 function Home() {
   const navigate = useNavigate();
@@ -68,6 +66,7 @@ function Home() {
     remaining > 0 ? Number(((remaining / totalBudget) * 100).toFixed(2)) : 0;
 
   const today = new Date();
+  const daysPassed = today.getDate();
   useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
   const { items } = useExpense();
 
@@ -76,6 +75,11 @@ function Home() {
   const activeGoals = goals.filter((g) => !g.isCompleted);
 
   const barColor = getBarColor(usedBudgetPercent);
+
+  const avgSpent = () => {
+    const result = daysPassed === 0 ? 0 : totalSpent / daysPassed;
+    return Math.round(result * 100) / 100;
+  };
 
   return (
     <div>
@@ -114,12 +118,12 @@ function Home() {
             </div>
 
             {/* Total expense goes here! v*/}
-            <div className="flex flex-row items-end">
-              <p className="text-4xl font-bold text-white">
-                Rp{formatIDR(totalSpent)}
-              </p>
-              <p className="text-2xl font-bold text-white/70">,00</p>
-            </div>
+            <Money
+              amount={totalSpent}
+              currency="IDR"
+              mainClassName="text-4xl font-bold text-white"
+              decimalClassName="text-2xl font-bold text-white/70"
+            />
           </div>
         </div>
       </div>
@@ -144,9 +148,21 @@ function Home() {
                     barColor={barColor}
                   ></ProgressBar>
                   <div className="flex flex-row justify-between items-center px-2">
-                    <p className="text-sm font-bold text-text-primary/50">
-                      Rp {formatIDR(remaining)} / {formatIDR(totalBudget)}
-                    </p>
+                    <div className="flex flex-row items-center gap-1">
+                      <Money
+                        amount={remaining}
+                        currency="IDR"
+                        mainClassName="text-sm font-bold text-text-primary/50"
+                        decimalClassName="text-xs font-bold text-text-primary/50"
+                      />
+                      <span className="text-sm font-bold text-text-primary/50">/</span>
+                      <Money
+                        amount={totalBudget}
+                        currency="IDR"
+                        mainClassName="text-sm font-bold text-text-primary/50"
+                        decimalClassName="text-xs font-bold text-text-primary/50"
+                      />
+                    </div>
                     <p className="text-sm font-bold text-text-primary/50">
                       {usedBudgetPercent}% left
                     </p>
@@ -174,9 +190,12 @@ function Home() {
                     Avg. spent / day
                   </p>
                   <p className="text-[30px] py-1">💸</p>
-                  <p className="text-lg font-bold text-text-primary">
-                    Rp {formatIDR(totalSpent / today.getDate())}
-                  </p>
+                  <Money
+                    amount={avgSpent()}
+                    currency="IDR"
+                    mainClassName="text-lg font-bold text-text-primary"
+                    decimalClassName="text-xs font-bold text-text-primary/70"
+                  />
                 </div>
 
                 <div className="flex flex-col flex-1 gap-1 items-center border-l-2 border-gray-200">
@@ -273,7 +292,7 @@ function Home() {
                       vendorName={item.vendorName}
                       date={new Date(item.dateTime)}
                       currency={item.currency}
-                      amount={formatIDR(item.totalAmount ?? 0)}
+                      amount={String(item.totalAmount ?? 0)}
                       category={item.category}
                     />
                   </Card>
