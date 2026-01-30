@@ -65,7 +65,7 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
 
       <button
         onClick={onDelete}
-        className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl active:bg-gray-200 text-status-error"
+        className="flex flex-row items-center gap-4 w-full p-3 rounded-2xl border-b-2 border-gray-200 active:bg-gray-200 text-status-error"
       >
         <div className="h-8 w-8">
           <DeleteIcon className="w-7 h-7" />
