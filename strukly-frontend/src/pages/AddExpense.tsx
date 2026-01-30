@@ -75,9 +75,23 @@ export default function AddExpense() {
   useEffect(() => {
     if (scannedData) {
       // Transform backend response to frontend format
+      const utcDate = new Date(scannedData.dateTime);
+
+      // The backend treated our picture as UTC and responds with Date in UTC
+      // Treat the UTC date/time components as local (no wall-clock shift)
+      const localDateTime = new Date(
+        utcDate.getUTCFullYear(),
+        utcDate.getUTCMonth(),
+        utcDate.getUTCDate(),
+        utcDate.getUTCHours(),
+        utcDate.getUTCMinutes(),
+        utcDate.getUTCSeconds(),
+        utcDate.getUTCMilliseconds()
+      );
+
       const transformedExpense: Omit<ExpenseType, "userID"> = {
         id: "",
-        dateTime: new Date(scannedData.dateTime),
+        dateTime: localDateTime,
         vendorName: scannedData.vendorName || "",
         category: scannedData.category || "food",
         currency: scannedData.subtotalAmount?.currency || "IDR",
