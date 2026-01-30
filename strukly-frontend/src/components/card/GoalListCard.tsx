@@ -1,10 +1,6 @@
-import { useRef } from "react";
-
 import ProgressBar from "../../components/graph/ProgressBar";
-
 import CheckIcon from "../../components/utilityIcons/CheckIcon";
 import FlagIcon from "../../components/utilityIcons/FlagIcon";
-
 import type { GoalItem } from "../../type/GoalItem";
 
 interface GoalListProps {
@@ -21,31 +17,21 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
     "text-yellow-500",
     "text-purple-500",
   ];
+  
   const progress = (goal.deposit / goal.price) * 100;
 
-  const timerRef = useRef<number | null>(null);
-
-  const handleStart = () => {
-    timerRef.current = setTimeout(() => {
-      onHold(goal);
-      if (navigator.vibrate) navigator.vibrate(50);
-    }, 600);
-  };
-
-  const handleEnd = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
+  const handleClick = () => {
+    onHold(goal);
+    
+    if (navigator.vibrate) {
+      navigator.vibrate(50);
     }
   };
 
   return (
     <div
-      onMouseDown={handleStart}
-      onMouseUp={handleEnd}
-      onMouseLeave={handleEnd}
-      onTouchStart={handleStart}
-      onTouchEnd={handleEnd}
+      onClick={handleClick}
+      className="cursor-pointer active:opacity-80 transition-all select-none"
     >
       <div className="flex justify-between w-full items-start mb-4">
         <div className="flex flex-row gap-2 items-center w-full">
@@ -70,16 +56,11 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
             <div className="flex flex-row w-full justify-between items-center">
               <p className="text-lg font-semibold text-inactive">
                 {(() => {
-                  if (progress === 100) {
-                    return "Goals reached!";
-                  } else if (progress >= 75 && progress < 100)
-                    return <span>You're almost there!</span>;
-                  else if (progress >= 50 && progress < 75)
-                    return <span>Halfway done, nice!</span>;
-                  else if (progress >= 25 && progress < 50)
-                    return <span>Let's keep it up!</span>;
-                  else if (progress < 25 && progress >= 0)
-                    return <span>Let's get started!</span>;
+                  if (progress === 100) return "Goals reached!";
+                  if (progress >= 75) return <span>You're almost there!</span>;
+                  if (progress >= 50) return <span>Halfway done, nice!</span>;
+                  if (progress >= 25) return <span>Let's keep it up!</span>;
+                  return <span>Let's get started!</span>;
                 })()}
               </p>
 
@@ -108,6 +89,9 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
           Rp {goal.price.toLocaleString()}
         </p>
       </div>
+           <div className="flex items-center gap-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100 transition-opacity transform translate-y-1">
+           <span>Click to edit</span>
+        </div>
     </div>
   );
 }
