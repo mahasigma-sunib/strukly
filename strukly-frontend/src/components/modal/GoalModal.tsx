@@ -30,6 +30,14 @@ const GoalModal: React.FC<Props> = ({
   errorMessage,
   setErrorMessage,
 }) => {
+  const formatDisplay = (num: number) => {
+    return num === 0 ? "" : new Intl.NumberFormat("id-ID").format(num);
+  };
+
+  const parseRawValue = (value: string) => {
+    return Number(value.replace(/\D/g, ""));
+  };
+
   if (!activeModal) return null;
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
@@ -52,7 +60,8 @@ const GoalModal: React.FC<Props> = ({
               <div className="text-center">
                 <p className="text-sm text-slate-500 mb-2">Input nominal</p>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   autoFocus
                   placeholder="0"
                   className={`w-full text-center text-2xl font-extrabold bg-transparent border-b-2  outline-none p-4  ${
@@ -62,9 +71,9 @@ const GoalModal: React.FC<Props> = ({
                   }`}
                   onChange={(e) => {
                     setErrorMessage("");
-                    setTempAmount(Number(e.target.value));
+                    setTempAmount(parseRawValue(e.target.value));
                   }}
-                  value={tempAmount || ""}
+                  value={formatDisplay(tempAmount)}
                 />
                 {errorMessage && (
                   <div className="mt-5 w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex justify-center items-center gap-3 animate-in zoom-in-95 duration-300">
@@ -101,9 +110,10 @@ const GoalModal: React.FC<Props> = ({
                   }}
                 />
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="Target Price (Rp)"
-                  value={formData.price || ""}
+                  value={formatDisplay(formData.price) || ""}
                   className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                     errorMessage && formData.price <= 0
                       ? "border-status-error "
@@ -111,7 +121,7 @@ const GoalModal: React.FC<Props> = ({
                   }`}
                   onChange={(e) => {
                     if (errorMessage) setErrorMessage("");
-                    setFormData({ ...formData, price: Number(e.target.value) });
+                    setFormData({ ...formData, price: parseRawValue(e.target.value) });
                   }}
                 />
                 {errorMessage && (
