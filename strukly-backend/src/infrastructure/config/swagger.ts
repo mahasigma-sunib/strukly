@@ -201,6 +201,39 @@ const options: swaggerJsdoc.Options = {
             },
           },
         },
+        ErrorResponse: {
+          type: "object",
+          required: ["error"],
+          properties: {
+            error: {
+              type: "string",
+              description: "A human-readable error message",
+            },
+          },
+        },
+        ScanExpenseImageResponse: {
+          type: "object",
+          required: ["transaction"],
+          properties: {
+            transaction: {
+              $ref: "#/components/schemas/CreateExpenseRequest",
+              description: "Expense data extracted from the receipt image",
+            },
+          },
+        },
+        UnprocessableReceiptErrorResponse: {
+          allOf: [{ $ref: "#/components/schemas/ErrorResponse" }],
+          example: {
+            error: "Could not extract valid expense data from the image.",
+          },
+        },
+        ServiceUnavailableErrorResponse: {
+          allOf: [{ $ref: "#/components/schemas/ErrorResponse" }],
+          example: {
+            error:
+              "Receipt scanning is temporarily unavailable. Please try again later.",
+          },
+        },
       },
     },
     security: [

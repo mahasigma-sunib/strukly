@@ -32,7 +32,7 @@ describe("Expense Routes", () => {
             id: { value: validUUID },
             userID: { value: mockUser.id },
             vendorName: "Lunch",
-            category: { value: "Food" },
+            category: { value: "food" },
             dateTime: new Date("2023-10-27T10:00:00.000Z"),
             subtotalAmount: { value: 100, currency: "IDR" },
             taxAmount: { value: 0, currency: "IDR" },
@@ -57,7 +57,7 @@ describe("Expense Routes", () => {
     // Valid Request Body
     const validRequestBody = {
         vendorName: "Lunch",
-        category: "Food",
+        category: "food",
         dateTime: "2023-10-27T10:00:00.000Z",
         subtotalAmount: { amount: 100, currency: "IDR" },
         taxAmount: { amount: 0, currency: "IDR" },

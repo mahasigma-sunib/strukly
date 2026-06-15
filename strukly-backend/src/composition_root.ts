@@ -17,7 +17,6 @@ import UpdateGoalItemUseCase from "./application/use_cases/goal_item/update_goal
 import DeleteGoalItemUseCase from "./application/use_cases/goal_item/delete_goal_item";
 import PrismaExpenseRepository from "./infrastructure/repositories/prisma_expense_repository";
 import ExpenseService from "./domain/services/expense_service";
-import GeminiLanguageModel from "./infrastructure/language_model/gemini_language_model";
 import CreateExpenseUseCase from "./application/use_cases/expense/create_expense";
 import GetMonthlyExpenseListUseCase from "./application/use_cases/expense/get_monthly_expense_list";
 import GetWeeklyExpenseReportUseCase from "./application/use_cases/expense/get_weekly_expense_list";
@@ -27,7 +26,9 @@ import DeleteExpenseUseCase from "./application/use_cases/expense/delete_expense
 import ScanExpenseImageUseCase from "./application/use_cases/expense/scan_expense_image";
 import GetCurrentBudgetUseCase from "./application/use_cases/budget/get_current_budget";
 import UpdateCurrentBudgetUseCase from "./application/use_cases/budget/update_current_budget";
-import Gemini3LanguageModel from "./infrastructure/language_model/gemini3_language_model";
+import GeminiVisionAdapter from "./infrastructure/language_model/gemini_vision_adapter";
+import OpenRouterVisionAdapter from "./infrastructure/language_model/openrouter_vision_adapter";
+import FallbackVisionAdapter from "./infrastructure/language_model/fallback_vision_adapter";
 
 // DB Client
 const prismaClient = new PrismaClient();
@@ -66,7 +67,19 @@ export const hashingService = new BcryptService();
 export const tokenService = new JwtService();
 export const budgetService = new BudgetService(userRepository, budgetHistoryRepository);
 export const expenseService = new ExpenseService(expenseRepository);
-export const languageModelService = new GeminiLanguageModel();
+
+const geminiVisionAdapter = new GeminiVisionAdapter(
+  process.env.GEMINI_API_KEY!,
+  process.env.GEMINI_MODEL ?? "gemini-3.1-flash-lite",
+);
+const openRouterVisionAdapter = new OpenRouterVisionAdapter(
+  process.env.OPENROUTER_API_KEY!,
+  process.env.OPENROUTER_MODEL ?? "xiaomi/mimo-v2.5",
+);
+export const visionExtractionPort = new FallbackVisionAdapter(
+  geminiVisionAdapter,
+  openRouterVisionAdapter,
+);
 
 // UseCases
 // auth
@@ -106,7 +119,7 @@ export const deleteExpenseUseCase = new DeleteExpenseUseCase(
   budgetService
 );
 export const imageToExpenseUseCase = new ScanExpenseImageUseCase(
-  languageModelService
+  visionExtractionPort
 );
 
 // budget
