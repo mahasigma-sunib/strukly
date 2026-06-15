@@ -72,7 +72,7 @@ export default class Gemini3LanguageModel implements LanguageModelService {
         },
       },
     };
-    const model = 'gemini-3-flash-preview';
+    const model = 'gemini-3.1-flash-lite';
     const contents: ContentListUnion = [
       {
         inlineData: {
