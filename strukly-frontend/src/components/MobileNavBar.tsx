@@ -25,9 +25,13 @@ interface NavLinkProps {
   inactiveIcon: React.ReactNode;
 }
 
+function isNavSectionActive(pathname: string, to: string) {
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
+
 function NavLink({ to, label, activeIcon, inactiveIcon }: NavLinkProps) {
   const location = useLocation();
-  const isActive = location.pathname === to;
+  const isActive = isNavSectionActive(location.pathname, to);
 
   return (
     <Link
