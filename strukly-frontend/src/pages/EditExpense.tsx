@@ -12,6 +12,7 @@ import {
   getExpenseFormErrors,
   type ExpenseFormErrors,
 } from "../schema/ExpenseSchemas";
+import { clampExpenseMoneyFields } from "../schema/money";
 
 export default function EditExpense() {
   const { id } = useParams();
@@ -45,7 +46,9 @@ function EditExpenseEditor({
   id: string | undefined;
 }) {
   const navigate = useNavigate();
-  const [expense, setExpense] = useState<ExpenseType>(initialExpense);
+  const [expense, setExpense] = useState<ExpenseType>(() =>
+    clampExpenseMoneyFields(initialExpense)
+  );
   const [formErrors, setFormErrors] = useState<ExpenseFormErrors>({});
   const { updateExpense } = useExpense();
 
@@ -53,7 +56,7 @@ function EditExpenseEditor({
     if (!id) return;
 
     const errors = getExpenseFormErrors(expense);
-    if (errors.vendorName || errors.items) {
+    if (errors.vendorName || errors.items || errors.amount) {
       setFormErrors(errors);
       return;
     }

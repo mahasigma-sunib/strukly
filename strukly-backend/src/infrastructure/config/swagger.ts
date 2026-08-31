@@ -28,6 +28,8 @@ const options: swaggerJsdoc.Options = {
           properties: {
             amount: {
               type: "number",
+              minimum: 0,
+              maximum: 99999999999,
               description: "The monetary amount",
             },
             currency: {

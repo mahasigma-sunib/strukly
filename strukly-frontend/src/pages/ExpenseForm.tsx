@@ -9,6 +9,14 @@ import Toggle from "../components/button/ToggleButton";
 import DropDownIcon from "../components/utilityIcons/DropdownIcon";
 import ErrorMessage from "../components/ErrorMessage";
 import type { ExpenseFormErrors } from "../schema/ExpenseSchemas";
+import {
+  MAX_ITEM_QUANTITY,
+  MAX_MONEY_AMOUNT,
+  MONEY_AMOUNT_TOO_LARGE,
+  clampItemAmounts,
+  clampMoney,
+  parseDigitAmount,
+} from "../schema/money";
 
 // interface Props {
 //   expense: Omit<ExpenseType, "userID">;
@@ -60,9 +68,16 @@ export default function ExpenseForm<
     const targetItem = { ...newItems[index], [field]: value };
 
     if (field === "singleItemPrice" || field === "quantity") {
-      const numVal = Math.max(0, Number(value));
-      targetItem[field] = numVal as never;
-      targetItem.totalPrice = targetItem.singleItemPrice * targetItem.quantity;
+      const nextPrice =
+        field === "singleItemPrice"
+          ? Number(value)
+          : targetItem.singleItemPrice;
+      const nextQty =
+        field === "quantity" ? Number(value) : targetItem.quantity;
+      const clamped = clampItemAmounts(nextPrice, nextQty);
+      targetItem.singleItemPrice = clamped.singleItemPrice;
+      targetItem.quantity = clamped.quantity;
+      targetItem.totalPrice = clamped.totalPrice;
     }
 
     newItems[index] = targetItem;
@@ -131,13 +146,32 @@ export default function ExpenseForm<
   const formatIDR = (value: number) =>
     value ? value.toLocaleString("id-ID") : "";
 
+  const amountText = (value: number, className = "") => {
+    const formatted = value.toLocaleString("id-ID");
+    return (
+      <span
+        className={`min-w-0 truncate tabular-nums ${className}`}
+        title={formatted}
+      >
+        {formatted}
+      </span>
+    );
+  };
+
+  const amountTooLarge =
+    expense.subtotalAmount +
+      expense.taxAmount +
+      expense.serviceAmount -
+      expense.discountAmount >
+    MAX_MONEY_AMOUNT;
+
   const labelCase = "text-sm font-bold text-gray-400";
 
   const inputBase =
     "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-base outline-none focus:ring-2 focus:ring-blue-500";
 
   const numberInput =
-    "w-32 text-right border border-gray-300 rounded-lg px-4 py-2 font-bold outline-none";
+    "flex-1 min-w-0 max-w-[12rem] text-right border border-gray-300 rounded-lg px-3 py-2 font-bold outline-none overflow-hidden";
 
   return (
     <div>
@@ -236,7 +270,7 @@ export default function ExpenseForm<
         </div>
 
         {/* Receipt */}
-        <Card className="p-6">
+        <Card className="p-6 overflow-hidden">
           {isDetailed ? (
             <div className="flex flex-col gap-6">
               <h3 className={`${labelCase}`}>Items List</h3>
@@ -265,33 +299,39 @@ export default function ExpenseForm<
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <input
                       type="number"
-                      className="w-32 border border-gray-200 rounded-lg px-4 py-2.5 text-base font-medium"
+                      min={0}
+                      max={MAX_MONEY_AMOUNT}
+                      className="flex-1 min-w-0 border border-gray-200 rounded-lg px-3 py-2.5 text-base font-medium overflow-hidden"
                       placeholder="Price"
                       value={item.singleItemPrice || ""}
-                      onChange={(e) =>
-                        updateItem(index, "singleItemPrice", e.target.value)
-                      }
+                      onChange={(e) => {
+                        onClearFormError?.("amount");
+                        updateItem(index, "singleItemPrice", e.target.value);
+                      }}
                     />
 
-                    <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2">
+                    <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2 shrink-0">
                       <input
                         type="number"
-                        className="w-8 text-center text-base font-medium outline-none"
+                        min={1}
+                        max={MAX_ITEM_QUANTITY}
+                        className="w-12 text-center text-base font-medium outline-none"
                         value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(index, "quantity", e.target.value)
-                        }
+                        onChange={(e) => {
+                          onClearFormError?.("amount");
+                          updateItem(index, "quantity", e.target.value);
+                        }}
                       />
                       <span className="text-sm font-bold text-gray-400 ml-1">
                         &#215;
                       </span>
                     </div>
 
-                    <div className="flex-1 text-right font-bold text-gray-500 mr-2">
-                      {item.totalPrice.toLocaleString("id-ID")}
+                    <div className="flex-1 min-w-0 text-right font-bold text-gray-500 mr-2">
+                      {amountText(item.totalPrice)}
                     </div>
                   </div>
                 </div>
@@ -309,64 +349,81 @@ export default function ExpenseForm<
               </button>
 
               <div className="pt-6 border-t border-gray-100 flex flex-col gap-4">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-400">Subtotal</span>
-                  <span className="font-bold mr-2 text-gray-500">
-                    {expense.subtotalAmount.toLocaleString("id-ID")}
-                  </span>
+                <div className="flex justify-between items-center gap-3 min-w-0">
+                  <span className="text-sm text-gray-400 shrink-0">Subtotal</span>
+                  {amountText(
+                    expense.subtotalAmount,
+                    "font-bold mr-2 text-gray-500"
+                  )}
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Tax</span>
+                <div className="flex justify-between items-center gap-3 min-w-0">
+                  <span className="text-sm text-gray-400 shrink-0">Tax</span>
                   <input
                     type="number"
+                    min={0}
+                    max={MAX_MONEY_AMOUNT}
                     className={numberInput}
                     value={expense.taxAmount || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      onClearFormError?.("amount");
                       setExpense({
                         ...expense,
-                        taxAmount: Math.max(0, Number(e.target.value)),
-                      })
-                    }
+                        taxAmount: clampMoney(Number(e.target.value)),
+                      });
+                    }}
                   />
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Service</span>
+                <div className="flex justify-between items-center gap-3 min-w-0">
+                  <span className="text-sm text-gray-400 shrink-0">Service</span>
                   <input
                     type="number"
+                    min={0}
+                    max={MAX_MONEY_AMOUNT}
                     className={numberInput}
                     value={expense.serviceAmount || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      onClearFormError?.("amount");
                       setExpense({
                         ...expense,
-                        serviceAmount: Math.max(0, Number(e.target.value)),
-                      })
-                    }
+                        serviceAmount: clampMoney(Number(e.target.value)),
+                      });
+                    }}
                   />
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Discount</span>
+                <div className="flex justify-between items-center gap-3 min-w-0">
+                  <span className="text-sm text-gray-400 shrink-0">Discount</span>
                   <input
                     type="number"
+                    min={0}
+                    max={MAX_MONEY_AMOUNT}
                     className={`${numberInput} text-red-500`}
                     value={expense.discountAmount || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      onClearFormError?.("amount");
                       setExpense({
                         ...expense,
-                        discountAmount: Math.max(0, Number(e.target.value)),
-                      })
-                    }
+                        discountAmount: clampMoney(Number(e.target.value)),
+                      });
+                    }}
                   />
                 </div>
 
-                <div className="flex justify-between pt-2">
-                  <span className="font-bold text-gray-500">Total</span>
-                  <span className="text-xl font-extrabold text-gray-600 mr-2">
-                    {expense.totalAmount.toLocaleString("id-ID")}
-                  </span>
+                <div className="flex justify-between items-center gap-3 min-w-0 pt-2">
+                  <span className="font-bold text-gray-500 shrink-0">Total</span>
+                  {amountText(
+                    expense.totalAmount,
+                    "text-xl font-extrabold text-gray-600 mr-2"
+                  )}
                 </div>
+
+                {(formErrors?.amount || amountTooLarge) && (
+                  <ErrorMessage>
+                    {formErrors?.amount || MONEY_AMOUNT_TOO_LARGE}
+                  </ErrorMessage>
+                )}
               </div>
             </div>
           ) : (
@@ -376,26 +433,23 @@ export default function ExpenseForm<
                 type="text"
                 inputMode="numeric"
                 placeholder="999.999"
-                className={`${numberInput} !w-full text-2xl !text-right`}
+                className={`${numberInput} !w-full text-2xl !text-right min-w-0`}
                 value={formatIDR(expense.totalAmount)}
                 onChange={(e) => {
-                  const raw = e.target.value.replace(/[^\d]/g, "");
-
-                  if (raw === "") {
-                    setExpense({
-                      ...expense,
-                      totalAmount: 0,
-                      subtotalAmount: 0,
-                    });
-                  } else {
-                    setExpense({
-                      ...expense,
-                      totalAmount: Number(raw),
-                      subtotalAmount: Number(raw),
-                    });
-                  }
+                  onClearFormError?.("amount");
+                  const amount = parseDigitAmount(e.target.value);
+                  setExpense({
+                    ...expense,
+                    totalAmount: amount,
+                    subtotalAmount: amount,
+                  });
                 }}
               />
+              {(formErrors?.amount || amountTooLarge) && (
+                <ErrorMessage>
+                  {formErrors?.amount || MONEY_AMOUNT_TOO_LARGE}
+                </ErrorMessage>
+              )}
             </div>
           )}
         </Card>

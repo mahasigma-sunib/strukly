@@ -201,11 +201,14 @@ function ExpenseDetail() {
               {expense.items.map((item) => (
                 <div key={item.id} className="flex flex-col">
                   {/* Row 1: Name & Total */}
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="font-semibold text-gray-800 text-base leading-snug max-w-[70%]">
+                  <div className="flex justify-between items-start gap-3 mb-1 min-w-0">
+                    <span className="font-semibold text-gray-800 text-base leading-snug min-w-0 truncate max-w-[70%]">
                       {item.name}
                     </span>
-                    <span className="font-bold text-gray-900 text-base">
+                    <span
+                      className="font-bold text-gray-900 text-base min-w-0 truncate"
+                      title={formatCurrency(item.totalPrice)}
+                    >
                       {formatCurrency(item.totalPrice)}
                     </span>
                   </div>
@@ -225,9 +228,12 @@ function ExpenseDetail() {
 
             {/* 3. Calculations */}
             <div className="space-y-3 text-base">
-              <div className="flex justify-between text-gray-500">
-                <span>Subtotal</span>
-                <span className="font-medium text-gray-900">
+              <div className="flex justify-between gap-3 min-w-0 text-gray-500">
+                <span className="shrink-0">Subtotal</span>
+                <span
+                  className="font-medium text-gray-900 min-w-0 truncate"
+                  title={formatCurrency(expense.subtotalAmount)}
+                >
                   {formatCurrency(expense.subtotalAmount)}
                 </span>
               </div>
@@ -268,9 +274,14 @@ function ExpenseDetail() {
             <div className="w-full border-t border-gray-200 my-6"></div>
 
             {/* 4. Grand Total */}
-            <div className="flex justify-between items-center mb-6">
-              <span className="font-bold text-gray-500 text-xl">Total</span>
-              <span className="font-bold text-gray-700 text-xl">
+            <div className="flex justify-between items-center gap-3 min-w-0 mb-6">
+              <span className="font-bold text-gray-500 text-xl shrink-0">
+                Total
+              </span>
+              <span
+                className="font-bold text-gray-700 text-xl min-w-0 truncate"
+                title={formatCurrency(expense.totalAmount)}
+              >
                 {formatCurrency(expense.totalAmount)}
               </span>
             </div>
