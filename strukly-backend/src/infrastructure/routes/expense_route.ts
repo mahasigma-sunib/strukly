@@ -6,7 +6,7 @@ import {
   validateQuery,
 } from "../middleware/validation_middleware";
 import {
-  CreateExpenseRequestSchema,
+  CreateExpenseWriteSchema,
   UpdateExpenseRequestSchema,
   ExpenseReportQuerySchema,
   ExpenseIdParamSchema,
@@ -70,7 +70,7 @@ const expenseController = new ExpenseController(
 router.post(
   "/expenses",
   authMiddleware,
-  validateBody(CreateExpenseRequestSchema),
+  validateBody(CreateExpenseWriteSchema),
   expenseController.createExpense,
 );
 

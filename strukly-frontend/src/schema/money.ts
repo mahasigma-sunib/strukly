@@ -56,19 +56,21 @@ export function clampExpenseMoneyFields<
   const subtotalAmount = clampMoney(
     items.reduce((sum, item) => sum + item.totalPrice, 0)
   );
+  const taxAmount = clampMoney(expense.taxAmount);
+  const serviceAmount = clampMoney(expense.serviceAmount);
+  const preDiscountTotal = subtotalAmount + taxAmount + serviceAmount;
+  const discountAmount = Math.min(
+    clampMoney(expense.discountAmount),
+    preDiscountTotal
+  );
 
   return {
     ...expense,
     items,
     subtotalAmount,
-    taxAmount: clampMoney(expense.taxAmount),
-    discountAmount: clampMoney(expense.discountAmount),
-    serviceAmount: clampMoney(expense.serviceAmount),
-    totalAmount: clampMoney(
-      subtotalAmount +
-        clampMoney(expense.taxAmount) +
-        clampMoney(expense.serviceAmount) -
-        clampMoney(expense.discountAmount)
-    ),
+    taxAmount,
+    serviceAmount,
+    discountAmount,
+    totalAmount: clampMoney(preDiscountTotal - discountAmount),
   };
 }

@@ -102,17 +102,23 @@ export default function ExpenseForm<
       (sum, item) => sum + item.totalPrice,
       0
     );
+    const preDiscountTotal =
+      subtotal + expense.taxAmount + expense.serviceAmount;
+    const discountAmount = Math.min(
+      expense.discountAmount,
+      Math.max(0, preDiscountTotal)
+    );
+    const total = preDiscountTotal - discountAmount;
 
-    const total =
-      subtotal +
-      expense.taxAmount +
-      expense.serviceAmount -
-      expense.discountAmount;
-
-    if (subtotal !== expense.subtotalAmount || total !== expense.totalAmount) {
+    if (
+      subtotal !== expense.subtotalAmount ||
+      total !== expense.totalAmount ||
+      discountAmount !== expense.discountAmount
+    ) {
       setExpense((prev) => ({
         ...prev,
         subtotalAmount: subtotal,
+        discountAmount,
         totalAmount: total,
       }));
     }
@@ -403,9 +409,16 @@ export default function ExpenseForm<
                     value={expense.discountAmount || ""}
                     onChange={(e) => {
                       onClearFormError?.("amount");
+                      const preDiscountTotal =
+                        expense.subtotalAmount +
+                        expense.taxAmount +
+                        expense.serviceAmount;
                       setExpense({
                         ...expense,
-                        discountAmount: clampMoney(Number(e.target.value)),
+                        discountAmount: Math.min(
+                          clampMoney(Number(e.target.value)),
+                          Math.max(0, preDiscountTotal)
+                        ),
                       });
                     }}
                   />

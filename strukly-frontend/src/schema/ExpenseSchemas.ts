@@ -5,6 +5,9 @@ import {
   MONEY_AMOUNT_TOO_LARGE,
 } from "./money";
 
+export const DISCOUNT_EXCEEDS_EXPENSE =
+  "Discount cannot exceed the expense total";
+
 const moneyAmountSchema = z
   .number()
   .finite()
@@ -39,6 +42,12 @@ export const expenseSubmitSchema = z
         expense.discountAmount <=
       MAX_MONEY_AMOUNT,
     { message: MONEY_AMOUNT_TOO_LARGE, path: ["totalAmount"] }
+  )
+  .refine(
+    (expense) =>
+      expense.discountAmount <=
+      expense.subtotalAmount + expense.taxAmount + expense.serviceAmount,
+    { message: DISCOUNT_EXCEEDS_EXPENSE, path: ["discountAmount"] }
   );
 
 export type ExpenseFormErrors = {
@@ -79,12 +88,13 @@ export function getExpenseFormErrors(expense: {
       errors.vendorName = issue.message;
     } else if (root === "items" && issue.path[2] === "name" && !errors.items) {
       errors.items = issue.message;
+    } else if (root === "discountAmount" && !errors.amount) {
+      errors.amount = issue.message;
     } else if (
       !errors.amount &&
       (root === "totalAmount" ||
         root === "subtotalAmount" ||
         root === "taxAmount" ||
-        root === "discountAmount" ||
         root === "serviceAmount" ||
         (root === "items" && issue.path[2] !== "name"))
     ) {

@@ -61,7 +61,19 @@ export const CreateExpenseRequestSchema = z
     { message: MONEY_AMOUNT_TOO_LARGE, path: ["subtotalAmount"] },
   );
 
-export const UpdateExpenseRequestSchema = CreateExpenseRequestSchema;
+export const DISCOUNT_EXCEEDS_EXPENSE =
+  "Discount cannot exceed the expense total";
+
+export const CreateExpenseWriteSchema = CreateExpenseRequestSchema.refine(
+  (expense) =>
+    expense.discountAmount.amount <=
+    expense.subtotalAmount.amount +
+      expense.taxAmount.amount +
+      expense.serviceAmount.amount,
+  { message: DISCOUNT_EXCEEDS_EXPENSE, path: ["discountAmount"] },
+);
+
+export const UpdateExpenseRequestSchema = CreateExpenseWriteSchema;
 
 // ============ Types ============
 

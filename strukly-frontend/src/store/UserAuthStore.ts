@@ -19,7 +19,7 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
       //error handling
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
-          throw new Error("Email or username already exist");
+          throw new Error("Email already exists");
         }
         throw new Error(error.response?.data?.message || "registration failed");
       }

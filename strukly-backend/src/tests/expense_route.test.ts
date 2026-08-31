@@ -180,6 +180,21 @@ describe("Expense Routes", () => {
             expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
         });
 
+        it("should return 400 when discount exceeds the expense total", async () => {
+            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    discountAmount: { amount: 150, currency: "IDR" },
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
         it("should return 400 when item quantity exceeds the maximum", async () => {
             (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
 

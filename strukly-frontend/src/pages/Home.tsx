@@ -60,10 +60,13 @@ function Home() {
   const totalBudget = data?.budget ?? 0;
   const hasBudget = totalBudget > 0;
   const { totalSpent, remaining, maxCategory } = useExpenseCalc(totalBudget);
+  const displayRemaining = Math.max(0, remaining);
 
   const { icon } = getCategoryData(maxCategory.category);
   const usedBudgetPercent =
-    remaining > 0 ? Number(((remaining / totalBudget) * 100).toFixed(2)) : 0;
+    displayRemaining > 0
+      ? Number(((displayRemaining / totalBudget) * 100).toFixed(2))
+      : 0;
 
   const today = new Date();
   const daysPassed = today.getDate();
@@ -142,7 +145,7 @@ function Home() {
               {hasBudget ? (
                 <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
                   <ProgressBar
-                    value={remaining}
+                    value={displayRemaining}
                     max={totalBudget}
                     height={22}
                     barColor={barColor}
@@ -150,7 +153,7 @@ function Home() {
                   <div className="flex flex-row justify-between items-center px-2">
                     <div className="flex flex-row items-center gap-1">
                       <Money
-                        amount={remaining}
+                        amount={displayRemaining}
                         currency="IDR"
                         mainClassName="text-sm font-bold text-text-primary/50"
                         decimalClassName="text-xs font-bold text-text-primary/50"
