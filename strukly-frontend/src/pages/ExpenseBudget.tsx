@@ -7,6 +7,7 @@ import Card from "../components/card/Card";
 import Button from "../components/button/Button";
 import Popup from "../components/popup/PopUp";
 import HappyMascot from "../components/mascots/HappyMascot";
+import BudgetRemaining from "../components/money/BudgetRemaining";
 
 import { useLoadExpense } from "../hooks/useLoadExpense";
 import { CategoryKeys } from "../utils/CategoryConfig";
@@ -147,14 +148,11 @@ export default function ExpenseBudget() {
                   Remaining
                 </p>
               </div>
-              <div
-                className={`font-bold text-lg  ${
-                  remaining < 0 ? "text-red-500" : "text-text-secondary"
-                }`}
-              >
-                {remaining < 0 ? "-" : ""}
-                {formatIDR(Math.abs(remaining))}
-              </div>
+              <BudgetRemaining
+                remaining={remaining}
+                mainClassName="text-lg font-bold text-text-secondary"
+                decimalClassName="text-lg font-bold text-text-secondary"
+              />
             </div>
           </div>
         </div>

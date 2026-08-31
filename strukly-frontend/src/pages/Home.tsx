@@ -9,6 +9,7 @@ import Button from "../components/button/Button";
 import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
 import Money from "../components/money/Money";
+import BudgetRemaining from "../components/money/BudgetRemaining";
 import ProgressBar from "../components/graph/ProgressBar";
 
 import HappyMascot from "../components/mascots/HappyMascot";
@@ -59,13 +60,13 @@ function Home() {
 
   const totalBudget = data?.budget ?? 0;
   const hasBudget = totalBudget > 0;
-  const { totalSpent, remaining, maxCategory } = useExpenseCalc(totalBudget);
-  const displayRemaining = Math.max(0, remaining);
+  const { totalSpent, remaining, maxCategory, isOverBudget } =
+    useExpenseCalc(totalBudget);
 
   const { icon } = getCategoryData(maxCategory.category);
-  const usedBudgetPercent =
-    displayRemaining > 0
-      ? Number(((displayRemaining / totalBudget) * 100).toFixed(2))
+  const remainingPercent =
+    remaining > 0 && totalBudget > 0
+      ? Number(((remaining / totalBudget) * 100).toFixed(2))
       : 0;
 
   const today = new Date();
@@ -77,7 +78,7 @@ function Home() {
   const { items: goals } = useGoals();
   const activeGoals = goals.filter((g) => !g.isCompleted);
 
-  const barColor = getBarColor(usedBudgetPercent);
+  const barColor = isOverBudget ? "bg-red-500" : getBarColor(remainingPercent);
 
   const avgSpent = () => {
     const result = daysPassed === 0 ? 0 : totalSpent / daysPassed;
@@ -145,29 +146,42 @@ function Home() {
               {hasBudget ? (
                 <div className="flex flex-col gap-3 mb-1 border-b-2 pb-6 border-gray-200">
                   <ProgressBar
-                    value={displayRemaining}
+                    value={isOverBudget ? totalSpent : Math.max(0, remaining)}
                     max={totalBudget}
                     height={22}
                     barColor={barColor}
                   ></ProgressBar>
                   <div className="flex flex-row justify-between items-center px-2">
                     <div className="flex flex-row items-center gap-1">
-                      <Money
-                        amount={displayRemaining}
-                        currency="IDR"
+                      <BudgetRemaining
+                        remaining={remaining}
                         mainClassName="text-sm font-bold text-text-primary/50"
                         decimalClassName="text-xs font-bold text-text-primary/50"
                       />
-                      <span className="text-sm font-bold text-text-primary/50">/</span>
-                      <Money
-                        amount={totalBudget}
-                        currency="IDR"
-                        mainClassName="text-sm font-bold text-text-primary/50"
-                        decimalClassName="text-xs font-bold text-text-primary/50"
-                      />
+                      {!isOverBudget && (
+                        <>
+                          <span className="text-sm font-bold text-text-primary/50">
+                            /
+                          </span>
+                          <Money
+                            amount={totalBudget}
+                            currency="IDR"
+                            mainClassName="text-sm font-bold text-text-primary/50"
+                            decimalClassName="text-xs font-bold text-text-primary/50"
+                          />
+                        </>
+                      )}
                     </div>
-                    <p className="text-sm font-bold text-text-primary/50">
-                      {usedBudgetPercent}% left
+                    <p
+                      className={`text-sm font-bold ${
+                        isOverBudget
+                          ? "text-red-500"
+                          : "text-text-primary/50"
+                      }`}
+                    >
+                      {isOverBudget
+                        ? "over budget"
+                        : `${remainingPercent}% left`}
                     </p>
                   </div>
                 </div>
