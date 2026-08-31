@@ -22,18 +22,19 @@ export default class GoalItemController {
   ) { }
 
   public createGoalItem = async (
-    req: Request<{}, {}, { name: string; price: number }>,
+    req: Request<{}, {}, { name: string; price: number; category: string }>,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const userID = req.user!.id;
-      const { name, price } = req.body;
+      const { name, price, category } = req.body;
 
       const created = await this.createGoalItemUseCase.execute(
         userID,
         name,
         price,
+        category,
       );
 
       return res
@@ -120,7 +121,7 @@ export default class GoalItemController {
   }
 
   public updateGoalItem = async (
-    req: Request<{ goalItemID: string }, {}, { name?: string; price?: number }>,
+    req: Request<{ goalItemID: string }, {}, { name?: string; price?: number; category?: string }>,
     res: Response,
     next: NextFunction,
   ) => {

@@ -3,11 +3,13 @@ import useSWR from "swr";
 
 import useGoals from "../store/GoalsStore";
 import type { GoalItem } from "../type/GoalItem";
+import type { CategoryKey } from "../utils/CategoryConfig";
 
 export function mapGoal(raw: any): GoalItem {
   return {
     id: raw.id,
     name: raw.name,
+    category: (raw.category || "others") as CategoryKey,
     price: raw.price,
     deposit: raw.deposited,
     isCompleted: raw.completed,

@@ -5,6 +5,7 @@ export function mapGoalItemToResponse(goalItem: GoalItem): GoalItemResponse {
   return {
     id: goalItem.id.value,
     name: goalItem.name,
+    category: goalItem.category.value,
     price: goalItem.price,
     deposited: goalItem.deposited,
     completed: goalItem.completed,

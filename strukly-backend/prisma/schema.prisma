@@ -81,6 +81,7 @@ model ExpenseItem {
 model GoalItem {
   id          String    @id @default(uuid())
   name        String
+  category    String    @default("others")
   price       Int
   deposited   Int
   completed   Boolean   @default(false)

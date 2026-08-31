@@ -2,14 +2,15 @@ import React from "react";
 import CloseIcon from "../utilityIcons/CloseIcon";
 import Button from "../button/Button";
 import TrashMascot from "../mascots/TrashMascot";
+import { CategoryKeys, type CategoryKey } from "../../utils/CategoryConfig";
 
 type ModalMode = "create" | "deposit" | "edit" | "delete" | null;
 
 interface Props {
   activeModal: ModalMode;
-  formData: { name: string; price: number };
+  formData: { name: string; price: number; category: CategoryKey };
   setFormData: React.Dispatch<
-    React.SetStateAction<{ name: string; price: number }>
+    React.SetStateAction<{ name: string; price: number; category: CategoryKey }>
   >;
   tempAmount: number;
   setTempAmount: React.Dispatch<React.SetStateAction<number>>;
@@ -109,6 +110,24 @@ const GoalModal: React.FC<Props> = ({
                     setFormData({ ...formData, name: e.target.value });
                   }}
                 />
+                <select
+                  aria-label="Category"
+                  value={formData.category}
+                  className="w-full bg-background border-2 border-border rounded-2xl p-4 focus:border-primary outline-none transition-all"
+                  onChange={(e) => {
+                    if (errorMessage) setErrorMessage("");
+                    setFormData({
+                      ...formData,
+                      category: e.target.value as CategoryKey,
+                    });
+                  }}
+                >
+                  {CategoryKeys.map((key) => (
+                    <option key={key} value={key}>
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </option>
+                  ))}
+                </select>
                 <input
                   type="text"
                   inputMode="numeric"
