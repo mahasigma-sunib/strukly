@@ -32,6 +32,10 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - JWT_SECRET=${JWT_SECRET:-devsecret}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-xiaomi/mimo-v2.5}
+      - PRODUCTION=${PRODUCTION:-0}
     depends_on:
       postgres:
         condition: service_healthy

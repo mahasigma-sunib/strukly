@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EXPENSE_CATEGORIES } from "src/domain/values/expense_category";
 import { MoneySchema } from "../common";
 import { CreateExpenseItemRequestSchema } from "./expense-item.request";
 
@@ -28,7 +29,7 @@ export const ExpenseReportQuerySchema = z.object({
 
 export const CreateExpenseRequestSchema = z.object({
   vendorName: z.string().describe("The name of the vendor/store"),
-  category: z.string().describe("The expense category"),
+  category: z.enum(EXPENSE_CATEGORIES).describe("The expense category"),
   dateTime: z.iso
     .datetime()
     .describe("The date and time of the expense (ISO 8601)"),

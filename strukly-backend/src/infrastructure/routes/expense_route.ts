@@ -97,12 +97,33 @@ const expenseImageUpload = multer(); // store in memory
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 transaction:
- *                   $ref: '#/components/schemas/CreateExpenseRequest'
+ *               $ref: '#/components/schemas/ScanExpenseImageResponse'
  *       400:
  *         description: Image is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               error: Image is required
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       422:
+ *         description: Could not extract valid expense data from the image
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnprocessableReceiptErrorResponse'
+ *       503:
+ *         description: Receipt scanning is temporarily unavailable
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ServiceUnavailableErrorResponse'
  */
 router.post(
   "/expenses/scan-image",
