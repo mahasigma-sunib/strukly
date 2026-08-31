@@ -35,6 +35,8 @@ const Money: React.FC<MoneyProps> = ({
             case "currency":
             case "integer":
             case "group": // the thousands separator.
+            case "minusSign":
+            case "plusSign":
               partClass = mainClassName;
               break;
             case "decimal":
