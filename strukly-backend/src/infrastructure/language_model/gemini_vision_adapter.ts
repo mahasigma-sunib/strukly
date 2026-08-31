@@ -35,17 +35,17 @@ export default class GeminiVisionAdapter implements VisionExtractionPort {
       { text: task.instructions },
     ];
 
-    const response = await this.ai.models.generateContentStream({
+    const response = await this.ai.models.generateContent({
       model: this.model,
       config,
       contents,
     });
 
-    let buffer = "";
-    for await (const chunk of response) {
-      buffer += chunk.text;
+    const text = response.text;
+    if (!text) {
+      throw new SyntaxError("Gemini returned empty response");
     }
 
-    return CreateExpenseRequestSchema.parse(JSON.parse(buffer));
+    return CreateExpenseRequestSchema.parse(JSON.parse(text));
   }
 }

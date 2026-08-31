@@ -70,7 +70,7 @@ export const expenseService = new ExpenseService(expenseRepository);
 
 const geminiVisionAdapter = new GeminiVisionAdapter(
   process.env.GEMINI_API_KEY!,
-  process.env.GEMINI_MODEL ?? "gemini-3.1-flash-lite",
+  process.env.GEMINI_MODEL ?? "gemini-3.5-flash-lite",
 );
 const openRouterVisionAdapter = new OpenRouterVisionAdapter(
   process.env.OPENROUTER_API_KEY!,
