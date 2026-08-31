@@ -142,6 +142,108 @@ describe("Expense Routes", () => {
             expect(response.status).toBe(400);
             expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
         });
+
+        it("should return 400 when an amount exceeds the maximum", async () => {
+            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    subtotalAmount: { amount: 100_000_000_000, currency: "IDR" },
+                    items: [
+                        {
+                            name: "Nasi Goreng",
+                            quantity: 1,
+                            singlePrice: { amount: 100_000_000_000, currency: "IDR" },
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when a money amount is negative", async () => {
+            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    taxAmount: { amount: -10, currency: "IDR" },
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when item quantity exceeds the maximum", async () => {
+            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    items: [
+                        {
+                            name: "Nasi Goreng",
+                            quantity: 10_000,
+                            singlePrice: { amount: 100, currency: "IDR" },
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when item price times quantity exceeds the maximum", async () => {
+            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    items: [
+                        {
+                            name: "Nasi Goreng",
+                            quantity: 3,
+                            singlePrice: { amount: 50_000_000_000, currency: "IDR" },
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should accept an amount at the maximum limit", async () => {
+            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+            (createExpenseUseCase.execute as jest.Mock).mockResolvedValue(createMockExpense());
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    subtotalAmount: { amount: 99_999_999_999, currency: "IDR" },
+                    items: [
+                        {
+                            name: "Nasi Goreng",
+                            quantity: 1,
+                            singlePrice: { amount: 99_999_999_999, currency: "IDR" },
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(201);
+            expect(createExpenseUseCase.execute).toHaveBeenCalled();
+        });
     });
 
     describe("GET /api/expenses", () => {

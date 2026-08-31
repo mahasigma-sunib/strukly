@@ -25,8 +25,8 @@ const Money: React.FC<MoneyProps> = ({
   }, [amount, currency, locale]);
 
   return (
-    <div className="flex flex-row items-end">
-      <div className={className}>
+    <div className="flex flex-row items-end min-w-0 max-w-full">
+      <div className={`min-w-0 overflow-hidden text-ellipsis whitespace-nowrap ${className}`}>
         {moneyParts.map((part, index) => {
           if (part.type === "literal") return null;
 

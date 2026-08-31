@@ -15,6 +15,7 @@ import {
   getExpenseFormErrors,
   type ExpenseFormErrors,
 } from "../schema/ExpenseSchemas";
+import { clampExpenseMoneyFields } from "../schema/money";
 
 const emptyExpense: Omit<ExpenseType, "userID"> = {
   id: "",
@@ -127,14 +128,14 @@ export default function AddExpense() {
           })
         ),
       };
-      setExpense(transformedExpense);
+      setExpense(clampExpenseMoneyFields(transformedExpense));
     }
   }, [scannedData]);
 
   const { addExpense } = useExpense();
   const handleSubmit = async () => {
     const errors = getExpenseFormErrors(expense);
-    if (errors.vendorName || errors.items) {
+    if (errors.vendorName || errors.items || errors.amount) {
       setFormErrors(errors);
       return;
     }
