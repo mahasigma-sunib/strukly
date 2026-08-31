@@ -91,7 +91,6 @@ export const updateUserProfileUseCase = new UpdateUserProfileUseCase(userReposit
 export const createGoalItemUseCase = new CreateGoalItemUseCase(goalItemRepository);
 export const getGoalItemListUseCase = new GetGoalItemListUseCase(goalItemRepository);
 export const getGoalItemUseCase = new GetGoalItemUseCase(goalItemRepository);
-export const depositGoalItemUseCase = new DepositGoalItemUseCase(budgetService, goalItemRepository);
 export const markGoalItemCompletedUseCase = new MarkGoalItemCompletedUseCase(goalItemRepository);
 export const updateGoalItemUseCase = new UpdateGoalItemUseCase(goalItemRepository);
 export const deleteGoalItemUseCase = new DeleteGoalItemUseCase(goalItemRepository);
@@ -100,6 +99,11 @@ export const deleteGoalItemUseCase = new DeleteGoalItemUseCase(goalItemRepositor
 export const createExpenseUseCase = new CreateExpenseUseCase(
   expenseService,
   budgetService
+);
+export const depositGoalItemUseCase = new DepositGoalItemUseCase(
+  budgetService,
+  goalItemRepository,
+  createExpenseUseCase,
 );
 export const getExpenseListUseCase = new GetMonthlyExpenseListUseCase(
   expenseService

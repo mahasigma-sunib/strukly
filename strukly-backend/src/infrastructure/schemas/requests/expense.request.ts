@@ -28,7 +28,12 @@ export const ExpenseReportQuerySchema = z.object({
 // ============ Request Bodies ============
 
 export const CreateExpenseRequestSchema = z.object({
-  vendorName: z.string().describe("The name of the vendor/store"),
+  vendorName: z
+    .string()
+    .trim()
+    .min(1, "Vendor name is required")
+    .max(255, "Vendor name too long")
+    .describe("The name of the vendor/store"),
   category: z.enum(EXPENSE_CATEGORIES).describe("The expense category"),
   dateTime: z.iso
     .datetime()

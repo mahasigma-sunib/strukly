@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EXPENSE_CATEGORIES } from "src/domain/values/expense_category";
 
 // ============ Path Params ============
 
@@ -15,6 +16,9 @@ export const CreateGoalItemRequestSchema = z.object({
     .int()
     .positive("Price must be positive")
     .describe("The target price for the goal"),
+  category: z
+    .enum(EXPENSE_CATEGORIES)
+    .describe("The expense category used when saving toward this goal"),
 });
 
 export const UpdateGoalItemRequestSchema = z.object({
@@ -25,6 +29,10 @@ export const UpdateGoalItemRequestSchema = z.object({
     .positive("Price must be positive")
     .optional()
     .describe("The target price for the goal"),
+  category: z
+    .enum(EXPENSE_CATEGORIES)
+    .optional()
+    .describe("The expense category used when saving toward this goal"),
 });
 
 export const DepositGoalItemRequestSchema = z.object({

@@ -4,6 +4,7 @@ import { MoneySchema } from "../common";
 export const CreateExpenseItemRequestSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(1, "Item name is required")
     .max(255, "Item name too long")
     .describe("The name of the expense item"),

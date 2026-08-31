@@ -51,7 +51,7 @@ const options: swaggerJsdoc.Options = {
           type: "object",
           properties: {
             id: { type: "string", format: "uuid" },
-            vendorName: { type: "string" },
+            vendorName: { type: "string", minLength: 1, maxLength: 255 },
             category: { type: "string" },
             dateTime: { type: "string", format: "date-time" },
             subtotalAmount: { $ref: "#/components/schemas/Money" },
@@ -71,6 +71,7 @@ const options: swaggerJsdoc.Options = {
           properties: {
             id: { type: "string", format: "uuid" },
             name: { type: "string" },
+            category: { type: "string" },
             price: { type: "integer" },
             deposited: { type: "integer" },
             completed: { type: "boolean" },
@@ -145,7 +146,7 @@ const options: swaggerJsdoc.Options = {
             "items",
           ],
           properties: {
-            vendorName: { type: "string" },
+            vendorName: { type: "string", minLength: 1, maxLength: 255 },
             category: { type: "string" },
             dateTime: { type: "string", format: "date-time" },
             subtotalAmount: { $ref: "#/components/schemas/Money" },
@@ -180,7 +181,7 @@ const options: swaggerJsdoc.Options = {
             "items",
           ],
           properties: {
-            vendorName: { type: "string" },
+            vendorName: { type: "string", minLength: 1, maxLength: 255 },
             category: { type: "string" },
             dateTime: { type: "string", format: "date-time" },
             subtotalAmount: { $ref: "#/components/schemas/Money" },

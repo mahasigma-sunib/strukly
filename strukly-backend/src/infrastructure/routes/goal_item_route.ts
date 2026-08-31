@@ -56,6 +56,7 @@ const controller = new GoalItemController(
  *             required:
  *               - name
  *               - price
+ *               - category
  *             properties:
  *               name:
  *                 type: string
@@ -63,6 +64,9 @@ const controller = new GoalItemController(
  *               price:
  *                 type: integer
  *                 description: The target price for the goal
+ *               category:
+ *                 type: string
+ *                 description: Expense category used when saving toward this goal
  *     responses:
  *       201:
  *         description: Goal created successfully
@@ -239,6 +243,8 @@ router.patch(
  *                 type: string
  *               price:
  *                 type: integer
+ *               category:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Goal updated successfully

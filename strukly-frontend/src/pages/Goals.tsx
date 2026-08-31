@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { mutate } from "swr";
 
 import useGoals from "../store/GoalsStore";
-import { useLoadGoals } from "../hooks/useLoadGoals";
+import { mapGoal, useLoadGoals } from "../hooks/useLoadGoals";
 import type { GoalItem } from "../type/GoalItem";
+import type { CategoryKey } from "../utils/CategoryConfig";
 
 import Card from "../components/card/Card";
 import FlagMascot from "../components/mascots/FlagMascot";
@@ -20,7 +22,11 @@ const GoalsPage: React.FC = () => {
     "create" | "deposit" | "edit" | "delete" | null
   >(null);
   const [tempAmount, setTempAmount] = useState<number>(0);
-  const [formData, setFormData] = useState({ name: "", price: 0 });
+  const [formData, setFormData] = useState<{
+    name: string;
+    price: number;
+    category: CategoryKey;
+  }>({ name: "", price: 0, category: "others" });
   const [errorMessage, setErrorMessage] = useState("");
 
   useLoadGoals();
@@ -34,6 +40,30 @@ const GoalsPage: React.FC = () => {
 
   const activeGoals = goals.filter((g) => !g.isCompleted);
   const completedGoals = goals.filter((g) => g.isCompleted);
+
+  const emptyForm = {
+    name: "",
+    price: 0,
+    category: "others" as CategoryKey,
+  };
+
+  const refreshSpending = async () => {
+    const api = import.meta.env.VITE_API_BASE_URL;
+    const now = new Date();
+    await Promise.all([
+      mutate(`${api}/budget`),
+      mutate(
+        `${api}/expenses?month=${now.getMonth() + 1}&year=${now.getFullYear()}`
+      ),
+    ]);
+  };
+
+  const apiErrorMessage = (error: unknown, fallback: string) => {
+    if (axios.isAxiosError(error) && error.response?.data?.error) {
+      return String(error.response.data.error);
+    }
+    return fallback;
+  };
 
   const handleCreate = async () => {
     if (!formData.name.trim()) {
@@ -53,30 +83,24 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
-    const newGoal: GoalItem = {
-      id: "",
-      name: formData.name,
-      price: formData.price,
-      deposit: 0, //deposited
-      isCompleted: false,
-      createdAt: new Date(),
-    };
-
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/goals`,
-        newGoal,
+        {
+          name: formData.name,
+          price: formData.price,
+          category: formData.category,
+        },
         { withCredentials: true }
       );
 
-      newGoal.id = res.data.goal.id;
-      newGoal.createdAt = res.data.goal.createdAt;
-      addGoal(newGoal);
+      addGoal(mapGoal(res.data.goal));
+      setErrorMessage("");
+      setActiveModal(null);
+      setFormData(emptyForm);
     } catch (err) {
-      console.log(err);
+      setErrorMessage(apiErrorMessage(err, "Failed to create goal"));
     }
-
-    setActiveModal(null);
   };
 
   const handleDeposit = async () => {
@@ -114,14 +138,14 @@ const GoalsPage: React.FC = () => {
         );
       }
       depositGoal(selectedGoal.id, tempAmount, isComplete);
+      await refreshSpending();
+      setErrorMessage("");
+      setActiveModal(null);
+      setSelectedGoal(null);
+      setTempAmount(0);
     } catch (error) {
-      console.log(error);
+      setErrorMessage(apiErrorMessage(error, "Failed to add savings"));
     }
-
-    setErrorMessage("");
-    setActiveModal(null);
-    setSelectedGoal(null);
-    setTempAmount(0);
   };
 
   const handleUpdate = async () => {
@@ -145,17 +169,25 @@ const GoalsPage: React.FC = () => {
     try {
       await axios.patch(
         `${import.meta.env.VITE_API_BASE_URL}/goals/${selectedGoal.id}`,
-        { name: formData.name, price: formData.price },
+        {
+          name: formData.name,
+          price: formData.price,
+          category: formData.category,
+        },
         { withCredentials: true }
       );
-      updateGoal(selectedGoal.id, formData.name, formData.price);
+      updateGoal(
+        selectedGoal.id,
+        formData.name,
+        formData.price,
+        formData.category
+      );
+      setErrorMessage("");
+      setActiveModal(null);
+      setSelectedGoal(null);
     } catch (error) {
-      console.log(error);
+      setErrorMessage(apiErrorMessage(error, "Failed to update goal"));
     }
-
-    setErrorMessage("");
-    setActiveModal(null);
-    setSelectedGoal(null);
   };
 
   const handleDelete = async () => {
@@ -179,7 +211,7 @@ const GoalsPage: React.FC = () => {
       <GoalsHeader
         activeCount={goals.filter((g) => !g.isCompleted).length}
         onAdd={() => {
-          setFormData({ name: "", price: 0 });
+          setFormData(emptyForm);
           setActiveModal("create");
         }}
       />
@@ -253,6 +285,7 @@ const GoalsPage: React.FC = () => {
                 setFormData({
                   name: selectedGoal!.name,
                   price: selectedGoal!.price,
+                  category: selectedGoal!.category,
                 });
                 setActiveModal("edit");
               }}

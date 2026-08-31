@@ -8,6 +8,10 @@ import BackIcon from "../components/utilityIcons/BackIcon";
 import type { ExpenseType } from "../type/ExpenseType";
 
 import useExpense from "../store/ExpenseStore";
+import {
+  getExpenseFormErrors,
+  type ExpenseFormErrors,
+} from "../schema/ExpenseSchemas";
 
 export default function EditExpense() {
   const { id } = useParams();
@@ -30,17 +34,35 @@ export default function EditExpense() {
     );
   }
 
-  const [expense, setExpense] = useState<ExpenseType>(passedExpense);
+  return <EditExpenseEditor initialExpense={passedExpense} id={id} />;
+}
+
+function EditExpenseEditor({
+  initialExpense,
+  id,
+}: {
+  initialExpense: ExpenseType;
+  id: string | undefined;
+}) {
+  const navigate = useNavigate();
+  const [expense, setExpense] = useState<ExpenseType>(initialExpense);
+  const [formErrors, setFormErrors] = useState<ExpenseFormErrors>({});
   const { updateExpense } = useExpense();
 
   const handleSubmit = async () => {
-    if (!expense || !id) return;
+    if (!id) return;
+
+    const errors = getExpenseFormErrors(expense);
+    if (errors.vendorName || errors.items) {
+      setFormErrors(errors);
+      return;
+    }
 
     try {
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/expenses/${expense.id}`,
         {
-          vendorName: expense.vendorName,
+          vendorName: expense.vendorName.trim(),
           category: expense.category,
           dateTime: expense.dateTime.toISOString(),
 
@@ -62,7 +84,7 @@ export default function EditExpense() {
           },
 
           items: expense.items.map((item) => ({
-            name: item.name,
+            name: item.name.trim(),
             quantity: item.quantity,
             singlePrice: {
               amount: item.singleItemPrice,
@@ -100,7 +122,14 @@ export default function EditExpense() {
       </div>
 
       {/* Form */}
-      <ExpenseForm expense={expense} setExpense={setExpense} />
+      <ExpenseForm
+        expense={expense}
+        setExpense={setExpense}
+        formErrors={formErrors}
+        onClearFormError={(field) =>
+          setFormErrors((prev) => ({ ...prev, [field]: undefined }))
+        }
+      />
     </div>
   );
 }
