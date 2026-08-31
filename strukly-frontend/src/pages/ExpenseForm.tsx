@@ -7,6 +7,8 @@ import Card from "../components/card/Card";
 import Dropdown from "../components/dropdown/Dropdown";
 import Toggle from "../components/button/ToggleButton";
 import DropDownIcon from "../components/utilityIcons/DropdownIcon";
+import ErrorMessage from "../components/ErrorMessage";
+import type { ExpenseFormErrors } from "../schema/ExpenseSchemas";
 
 // interface Props {
 //   expense: Omit<ExpenseType, "userID">;
@@ -16,11 +18,13 @@ import DropDownIcon from "../components/utilityIcons/DropdownIcon";
 interface Props<T extends Omit<ExpenseType, "userID"> | ExpenseType> {
   expense: T;
   setExpense: React.Dispatch<React.SetStateAction<T>>;
+  formErrors?: ExpenseFormErrors;
+  onClearFormError?: (field: keyof ExpenseFormErrors) => void;
 }
 
 export default function ExpenseForm<
   T extends Omit<ExpenseType, "userID"> | ExpenseType
->({ expense, setExpense }: Props<T>) {
+>({ expense, setExpense, formErrors, onClearFormError }: Props<T>) {
   // const [isDetailed, setIsDetailed] = useState(expense.items.length > 0);
   const [isDetailed, setIsDetailed] = useState(true);
 
@@ -175,13 +179,19 @@ export default function ExpenseForm<
           <div>
             <p className={`${labelCase} mb-2`}>Vendor Name</p>
             <input
-              className={inputBase}
+              className={`${inputBase} ${
+                formErrors?.vendorName ? "border-status-error" : ""
+              }`}
               placeholder="Ex. McDonald's"
               value={expense.vendorName}
-              onChange={(e) =>
-                setExpense({ ...expense, vendorName: e.target.value })
-              }
+              onChange={(e) => {
+                onClearFormError?.("vendorName");
+                setExpense({ ...expense, vendorName: e.target.value });
+              }}
             />
+            {formErrors?.vendorName && (
+              <ErrorMessage>{formErrors.vendorName}</ErrorMessage>
+            )}
           </div>
 
           <div className="flex gap-4">
@@ -235,12 +245,17 @@ export default function ExpenseForm<
                 <div key={item.id} className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">
                     <input
-                      className="flex-1 border border-gray-200 rounded-lg px-4 py-2.5 text-base font-medium"
+                      className={`flex-1 border rounded-lg px-4 py-2.5 text-base font-medium ${
+                        formErrors?.items && !item.name.trim()
+                          ? "border-status-error"
+                          : "border-gray-200"
+                      }`}
                       placeholder="Item Name"
                       value={item.name}
-                      onChange={(e) =>
-                        updateItem(index, "name", e.target.value)
-                      }
+                      onChange={(e) => {
+                        onClearFormError?.("items");
+                        updateItem(index, "name", e.target.value);
+                      }}
                     />
                     <button
                       onClick={() => removeItem(index)}
@@ -281,6 +296,10 @@ export default function ExpenseForm<
                   </div>
                 </div>
               ))}
+
+              {formErrors?.items && (
+                <ErrorMessage>{formErrors.items}</ErrorMessage>
+              )}
 
               <button
                 onClick={addItem}

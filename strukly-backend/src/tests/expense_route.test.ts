@@ -118,6 +118,30 @@ describe("Expense Routes", () => {
             expect(response.status).toBe(400);
             expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
         });
+
+        it("should return 400 for empty vendor name", async () => {
+            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({ ...validRequestBody, vendorName: "" });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 for whitespace-only vendor name", async () => {
+            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({ ...validRequestBody, vendorName: "   " });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
     });
 
     describe("GET /api/expenses", () => {

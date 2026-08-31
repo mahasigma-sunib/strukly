@@ -11,6 +11,10 @@ import BackIcon from "../components/utilityIcons/BackIcon";
 import type { ExpenseType } from "../type/ExpenseType";
 import useExpense from "../store/ExpenseStore";
 import { mapExpense } from "../hooks/useLoadExpense";
+import {
+  getExpenseFormErrors,
+  type ExpenseFormErrors,
+} from "../schema/ExpenseSchemas";
 
 const emptyExpense: Omit<ExpenseType, "userID"> = {
   id: "",
@@ -32,7 +36,7 @@ function mapExpenseToPostPayload(expense: any) {
   const currency = expense.currency || "IDR";
 
   return {
-    vendorName: expense.vendorName,
+    vendorName: expense.vendorName.trim(),
     category: expense.category,
     dateTime: expense.dateTime.toISOString(),
 
@@ -54,7 +58,7 @@ function mapExpenseToPostPayload(expense: any) {
     },
 
     items: expense.items.map((item: any) => ({
-      name: item.name,
+      name: item.name.trim(),
       quantity: item.quantity,
       singlePrice: {
         amount: item.singleItemPrice,
@@ -67,6 +71,7 @@ function mapExpenseToPostPayload(expense: any) {
 export default function AddExpense() {
   const [expense, setExpense] =
     useState<Omit<ExpenseType, "userID">>(emptyExpense);
+  const [formErrors, setFormErrors] = useState<ExpenseFormErrors>({});
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -128,6 +133,12 @@ export default function AddExpense() {
 
   const { addExpense } = useExpense();
   const handleSubmit = async () => {
+    const errors = getExpenseFormErrors(expense);
+    if (errors.vendorName || errors.items) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       const payload = mapExpenseToPostPayload(expense);
       // console.log("POST payload:", payload);
@@ -155,7 +166,14 @@ export default function AddExpense() {
       </div>
 
       <div>
-        <ExpenseForm expense={expense} setExpense={setExpense} />
+        <ExpenseForm
+          expense={expense}
+          setExpense={setExpense}
+          formErrors={formErrors}
+          onClearFormError={(field) =>
+            setFormErrors((prev) => ({ ...prev, [field]: undefined }))
+          }
+        />
         <div className="flex justify-center px-6">
           <Button
             variant="primary"
