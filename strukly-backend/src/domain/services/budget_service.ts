@@ -27,7 +27,7 @@ export default class BudgetService {
     const user = await this.userRepository.findById(userID.value);
 
     if (!user) {
-      throw new NotFoundError(`User with id ${userID} not found`);
+      throw new NotFoundError(`User with id ${userID.value} not found`);
     }
 
     const now = new Date();
