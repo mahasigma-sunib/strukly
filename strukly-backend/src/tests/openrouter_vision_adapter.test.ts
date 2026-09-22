@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, type Mock } from "vitest";
 import OpenRouterVisionAdapter from "../infrastructure/language_model/openrouter_vision_adapter";
 import { ReceiptExtractionTask } from "../application/language_model/receipt_extraction_task";
 import OpenAI, { RateLimitError } from "openai";
@@ -25,7 +26,7 @@ const mockResult = {
   items: [],
 };
 
-function createMockClient(createImpl: jest.Mock) {
+function createMockClient(createImpl: Mock) {
   return {
     chat: {
       completions: {
@@ -37,7 +38,7 @@ function createMockClient(createImpl: jest.Mock) {
 
 describe("OpenRouterVisionAdapter", () => {
   it("calls OpenAI SDK with vision content and json_schema response format", async () => {
-    const create = jest.fn().mockResolvedValue({
+    const create = vi.fn().mockResolvedValue({
       choices: [{ message: { content: JSON.stringify(mockResult) } }],
     });
     const adapter = new OpenRouterVisionAdapter("test-key", "test-model", createMockClient(create));
@@ -74,7 +75,7 @@ describe("OpenRouterVisionAdapter", () => {
   });
 
   it("throws when OpenRouter returns empty response", async () => {
-    const create = jest.fn().mockResolvedValue({
+    const create = vi.fn().mockResolvedValue({
       choices: [{ message: { content: "" } }],
     });
     const adapter = new OpenRouterVisionAdapter("test-key", "test-model", createMockClient(create));
@@ -85,7 +86,7 @@ describe("OpenRouterVisionAdapter", () => {
   });
 
   it("rejects model output that does not match CreateExpenseRequest", async () => {
-    const create = jest.fn().mockResolvedValue({
+    const create = vi.fn().mockResolvedValue({
       choices: [
         {
           message: {
@@ -109,7 +110,7 @@ describe("OpenRouterVisionAdapter", () => {
       "rate limited",
       new Headers(),
     );
-    const create = jest.fn().mockRejectedValue(rateLimitError);
+    const create = vi.fn().mockRejectedValue(rateLimitError);
     const adapter = new OpenRouterVisionAdapter("test-key", "test-model", createMockClient(create));
 
     await expect(adapter.extractReceipt(task)).rejects.toThrow(RateLimitError);

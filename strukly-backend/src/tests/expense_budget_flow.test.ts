@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi, type Mocked } from "vitest";
 
 import CreateExpenseUseCase from "../application/use_cases/expense/create_expense";
 import UpdateExpenseUseCase from "../application/use_cases/expense/update_expense";
@@ -14,15 +15,15 @@ import Expense from "../domain/aggregates/expense";
 import BudgetHistory from "../domain/entities/budget_history";
 
 // Mock Services
-jest.mock("../domain/services/expense_service");
-jest.mock("../domain/services/budget_service");
+vi.mock("../domain/services/expense_service");
+vi.mock("../domain/services/budget_service");
 
 describe("Expense Budget Flow", () => {
   let createExpenseUseCase: CreateExpenseUseCase;
   let updateExpenseUseCase: UpdateExpenseUseCase;
   let deleteExpenseUseCase: DeleteExpenseUseCase;
-  let mockExpenseService: jest.Mocked<ExpenseService>;
-  let mockBudgetService: jest.Mocked<BudgetService>;
+  let mockExpenseService: Mocked<ExpenseService>;
+  let mockBudgetService: Mocked<BudgetService>;
 
   const userID = "user-123";
   const expenseID = "expense-123";
