@@ -245,6 +245,9 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
+  // TODO: spec is built by scanning src/ at runtime, so dist-only deploys
+  // silently lose /api-docs. Fix: emit dist/openapi.json at build time and
+  // fall back to it when this scan finds no paths.
   apis: ["./src/infrastructure/routes/*.ts"], // Path to the API docs
 };
 
