@@ -150,8 +150,9 @@ export default function ExpenseBudget() {
               </div>
               <BudgetRemaining
                 remaining={remaining}
-                mainClassName="text-lg font-bold text-text-secondary"
-                decimalClassName="text-lg font-bold text-text-secondary"
+                mainClassName="text-lg font-bold"
+                decimalClassName="text-lg font-bold"
+                amountColorClassName="text-text-secondary"
               />
             </div>
           </div>

@@ -40,14 +40,14 @@ const getGreeting = () => {
 };
 
 const getBarColor = (
-  percent: number,
+  percentLeft: number,
 ): "bg-sky-400" | "bg-yellow-400" | "bg-red-400" => {
-  if (percent < 50) {
-    return "bg-sky-400";
-  } else if (percent >= 50 && percent <= 80) {
+  if (percentLeft < 20) {
+    return "bg-red-400";
+  } else if (percentLeft < 50) {
     return "bg-yellow-400";
   } else {
-    return "bg-red-400";
+    return "bg-sky-400";
   }
 };
 
@@ -155,8 +155,9 @@ function Home() {
                     <div className="flex flex-row items-center gap-1">
                       <BudgetRemaining
                         remaining={remaining}
-                        mainClassName="text-sm font-bold text-text-primary/50"
-                        decimalClassName="text-xs font-bold text-text-primary/50"
+                        mainClassName="text-sm font-bold"
+                        decimalClassName="text-xs font-bold"
+                        amountColorClassName="text-text-primary/50"
                       />
                       {!isOverBudget && (
                         <>

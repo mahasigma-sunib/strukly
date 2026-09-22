@@ -5,35 +5,24 @@ type BudgetRemainingProps = {
   currency?: string;
   mainClassName?: string;
   decimalClassName?: string;
+  amountColorClassName?: string;
 };
-
-function withAmountColor(className: string, isOverBudget: boolean) {
-  if (!isOverBudget) {
-    return className;
-  }
-
-  const withoutThemeColor = className
-    .split(/\s+/)
-    .filter((token) => token && !token.startsWith("text-text-"))
-    .join(" ");
-
-  return `${withoutThemeColor} text-red-500`.trim();
-}
 
 export default function BudgetRemaining({
   remaining,
   currency = "IDR",
   mainClassName = "",
   decimalClassName = "",
+  amountColorClassName = "",
 }: BudgetRemainingProps) {
-  const isOverBudget = remaining < 0;
+  const colorClassName = remaining < 0 ? "text-red-500" : amountColorClassName;
 
   return (
     <Money
       amount={remaining}
       currency={currency}
-      mainClassName={withAmountColor(mainClassName, isOverBudget)}
-      decimalClassName={withAmountColor(decimalClassName, isOverBudget)}
+      mainClassName={`${mainClassName} ${colorClassName}`.trim()}
+      decimalClassName={`${decimalClassName} ${colorClassName}`.trim()}
     />
   );
 }
