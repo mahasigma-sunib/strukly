@@ -1,32 +1,28 @@
 import useExpense from "../store/ExpenseStore";
 import { CategoryKeys } from "../utils/CategoryConfig";
+import { calculateBudgetStatus } from "./budgetStatus";
+
+function toAmount(value: unknown): number {
+  return typeof value === "number" ? value : Number(value) || 0;
+}
+
+export { calculateBudgetStatus };
 
 export function useExpenseCalc(totalBudget: number) {
   const { items: Expenses } = useExpense();
-  const totalSpent = Expenses.reduce(
-    (s, t) =>
-      s +
-      (typeof t.totalAmount === "number"
-        ? t.totalAmount
-        : Number(t.totalAmount) || 0),
-    0
-  );
+  const totalSpent = Expenses.reduce((s, t) => s + toAmount(t.totalAmount), 0);
 
-  const remaining = totalBudget - totalSpent;
+  const { remaining, overBy, isOverBudget } = calculateBudgetStatus(
+    totalBudget,
+    totalSpent,
+  );
 
   const getSpentForCategory = (category: string) => {
     return Expenses.filter(
       (t) =>
         String(t.category || "").toLowerCase() ===
-        String(category || "").toLowerCase()
-    ).reduce(
-      (acc, t) =>
-        acc +
-        (typeof t.totalAmount === "number"
-          ? t.totalAmount
-          : Number(t.totalAmount) || 0),
-      0
-    );
+        String(category || "").toLowerCase(),
+    ).reduce((acc, t) => acc + toAmount(t.totalAmount), 0);
   };
 
   const maxCategory = CategoryKeys.map((category) => ({
@@ -40,6 +36,8 @@ export function useExpenseCalc(totalBudget: number) {
   return {
     totalSpent,
     remaining,
+    overBy,
+    isOverBudget,
     getSpentForCategory,
     maxCategory,
   };
