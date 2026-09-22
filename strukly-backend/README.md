@@ -24,10 +24,10 @@ Copy-Item .env.example .env
 npm install
 ```
 
-3) Generate Prisma client (run this whenever `prisma/schema.prisma` changes)
+3) Generate Prisma client (run this whenever `prisma/schema.prisma` changes; `npm run build` also does it automatically)
 
 ```powershell
-npx prisma generate
+npm run prisma:generate
 ```
 
 4) Start the server
@@ -48,9 +48,9 @@ The server defaults to http://localhost:3000 (see `src/index.ts`). A simple GET 
 
 ### Environment variables
 
-- `DATABASE_URL` — PostgreSQL connection string used by Prisma (see `.env.example`).
+- `DATABASE_URL` — PostgreSQL connection string (see `.env.example`). Read by `prisma.config.ts` for Prisma CLI commands and by the app to construct the `@prisma/adapter-pg` connection.
 
-If/when you add Prisma models, create and apply migrations:
+If/when you add Prisma models, create and apply migrations (Prisma loads its config from `prisma.config.ts`):
 
 ```powershell
 npx prisma migrate dev --name init
@@ -74,6 +74,8 @@ src/
 		repositories/              # Adapters implementing domain repository interfaces (e.g., Prisma)
 		schemas/                   # HTTP Schemas
 		language_model/            # Adapters to LLMs/AI providers implementing domain ports
+	generated/
+		prisma/                    # Generated Prisma client (gitignored, created by npm run prisma:generate)
 ```
 
 How the layers fit together:
@@ -94,16 +96,25 @@ Concrete examples in this codebase:
 
 - `npm run dev` — Run the server from source in watch mode (`tsx`).
 - `npm start` — Build, then run the bundle (`node --enable-source-maps dist/index.js`).
-- `npm run build` — Typecheck (`tsc --noEmit`), then bundle to `dist/index.js` with esbuild.
+- `npm run start:prod` — Apply pending migrations (`prisma migrate deploy`), then run the bundle (used in the Docker image).
+- `npm run build` — Typecheck (`tsc --noEmit`), generate the Prisma client, then bundle to `dist/index.js` with esbuild.
 - `npm run typecheck` — Typecheck only, no output.
+- `npm run clean` — Remove `dist/`.
 - `npm test` — Run the test suite (Vitest).
 - `npm run test:watch` — Run the test suite in watch mode.
+- `npm run prisma:generate` — Generate the Prisma client.
+- `npm run prisma:migrate:prod` — Apply pending migrations (`prisma migrate deploy`).
 
 ### Prisma
 
-- The Prisma client uses the default `prisma-client-js` output and is imported via `@prisma/client` (see `prisma/schema.prisma`).
-- If you change the schema, run `npx prisma generate` to refresh the client.
+This project uses Prisma 7 with the [`prisma-client`](https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-7) generator and a driver adapter:
+
+- The client is generated to `src/generated/prisma` (gitignored) and imported from `src/generated/prisma/client` — **not** from `@prisma/client`.
+- The datasource URL is not in `prisma/schema.prisma`; it is provided by `prisma.config.ts` via `env("DATABASE_URL")`, and the runtime client connects through `@prisma/adapter-pg` (see `src/composition_root.ts`).
+- `prisma.config.ts` resolves `DATABASE_URL` **lazily** (via a getter) so that `prisma generate`/`npm run build` work without a database URL — e.g. during `docker build`, where there is no `.env` file. Commands that actually need the database (`prisma migrate deploy`) still fail fast if `DATABASE_URL` is missing.
+- If you change the schema, run `npm run prisma:generate` to refresh the client (or just `npm run build`, which does it for you).
 - Add models to `prisma/schema.prisma`, then run `npx prisma migrate dev` to create/apply migrations.
+- Prisma error classes (e.g. `Prisma.PrismaClientKnownRequestError`) come from the generated client's public `Prisma` namespace — avoid importing from its `internal/` modules.
 
 ### Adding a new feature (typical steps)
 

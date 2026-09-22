@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "src/generated/prisma/client";
 import GoalItem from "../../domain/entities/goal_item";
 import { IGoalItemRepository } from "../../domain/repositories/goal_item_repository";
 import GoalItemID from "../../domain/values/goal_item_id";
 import UserID from "../../domain/values/user_id";
 import ExpenseCategory from "../../domain/values/expense_category";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import AlreadyExistError from "src/domain/errors/AlreadyExistError";
 
 type GoalItemRow = {
@@ -56,7 +55,7 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
       console.error(error);
 
       if (
-        error instanceof PrismaClientKnownRequestError &&
+        error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === "P2002"
       ) {
         throw new AlreadyExistError("Goal Item already exists");

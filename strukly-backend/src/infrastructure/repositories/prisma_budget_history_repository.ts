@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import BudgetHistory from "src/domain/entities/budget_history";
 import IBudgetHistoryRepository from "src/domain/repositories/budget_history_repository";
 import UserID from "src/domain/values/user_id";
+import { PrismaClient } from "src/generated/prisma/client";
 
 export default class PrismaBudgetHistoryRepository
   implements IBudgetHistoryRepository

@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import RegisterUserUseCase from "./application/use_cases/register_user";
 import UpdateUserProfileUseCase from "./application/use_cases/update_user";
 import LoginUserUseCase from "./application/use_cases/user_login";
@@ -31,7 +30,13 @@ import OpenRouterVisionAdapter from "./infrastructure/language_model/openrouter_
 import FallbackVisionAdapter from "./infrastructure/language_model/fallback_vision_adapter";
 
 // DB Client
-const prismaClient = new PrismaClient();
+import { PrismaClient } from "./generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prismaClient = new PrismaClient({ adapter });
 
 // Graceful shutdown for PrismaClient
 const disconnectPrisma = async () => {
