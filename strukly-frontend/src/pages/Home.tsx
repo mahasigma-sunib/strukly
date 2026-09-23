@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import useUserAuth from "../store/UserAuthStore";
 import useExpense from "../store/ExpenseStore";
+import useAddExpenseDrawer from "../store/AddExpenseDrawerStore";
 import { useLoadExpense } from "../hooks/useLoadExpense";
 import { getCategoryData } from "../utils/CategoryConfig";
 
@@ -55,6 +56,7 @@ function Home() {
   const navigate = useNavigate();
   const greeting = getGreeting();
   const username = useUserAuth((s) => s.user?.name || "User");
+  const openDrawer = useAddExpenseDrawer((s) => s.open);
 
   const { data } = useLoadBudget();
 
@@ -338,7 +340,7 @@ function Home() {
                     size="lg"
                     variant="primary"
                     className="!py-2"
-                    onClick={() => navigate("/expense")}
+                    onClick={openDrawer}
                   >
                     Add expense
                   </Button>
