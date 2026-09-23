@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { buildScanExpenseImagePrompt } from "../application/prompts/scan_expense_image_prompt";
 import { EXPENSE_CATEGORIES } from "../domain/values/expense_category";
 

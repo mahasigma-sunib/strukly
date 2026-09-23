@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from "vitest";
 import ScanExpenseImageUseCase from "../application/use_cases/expense/scan_expense_image";
 import VisionExtractionPort from "../application/services/vision_extraction_port";
 import { EXPENSE_CATEGORIES } from "../domain/values/expense_category";
@@ -22,7 +23,7 @@ const validExpenseData = {
 describe("ScanExpenseImageUseCase", () => {
   it("builds task with all categories and validates adapter output", async () => {
     const visionExtractionPort: VisionExtractionPort = {
-      extractReceipt: jest.fn().mockResolvedValue(validExpenseData),
+      extractReceipt: vi.fn().mockResolvedValue(validExpenseData),
     };
     const useCase = new ScanExpenseImageUseCase(visionExtractionPort);
 
@@ -42,7 +43,7 @@ describe("ScanExpenseImageUseCase", () => {
   it("maps ZodError from adapter to UnprocessableReceiptError", async () => {
     const { ZodError } = await import("zod");
     const visionExtractionPort: VisionExtractionPort = {
-      extractReceipt: jest.fn().mockRejectedValue(new ZodError([])),
+      extractReceipt: vi.fn().mockRejectedValue(new ZodError([])),
     };
     const useCase = new ScanExpenseImageUseCase(visionExtractionPort);
 
@@ -53,7 +54,7 @@ describe("ScanExpenseImageUseCase", () => {
 
   it("maps unknown adapter errors to ServiceUnavailableError", async () => {
     const visionExtractionPort: VisionExtractionPort = {
-      extractReceipt: jest.fn().mockRejectedValue(new Error("network down")),
+      extractReceipt: vi.fn().mockRejectedValue(new Error("network down")),
     };
     const useCase = new ScanExpenseImageUseCase(visionExtractionPort);
 

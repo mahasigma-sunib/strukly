@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi, type Mocked } from "vitest";
 import DepositGoalItemUseCase from "../application/use_cases/goal_item/deposit_goal_item";
 import CreateExpenseUseCase from "../application/use_cases/expense/create_expense";
 import BudgetService from "../domain/services/budget_service";
@@ -15,9 +16,9 @@ describe("DepositGoalItemUseCase", () => {
   const otherUserID = "user-456";
 
   let useCase: DepositGoalItemUseCase;
-  let mockBudgetService: jest.Mocked<Pick<BudgetService, "getCurrentUserBudget" | "useBudget">>;
-  let mockGoalItemRepository: jest.Mocked<Pick<IGoalItemRepository, "findByID" | "update">>;
-  let mockCreateExpenseUseCase: jest.Mocked<Pick<CreateExpenseUseCase, "execute">>;
+  let mockBudgetService: Mocked<Pick<BudgetService, "getCurrentUserBudget" | "useBudget">>;
+  let mockGoalItemRepository: Mocked<Pick<IGoalItemRepository, "findByID" | "update">>;
+  let mockCreateExpenseUseCase: Mocked<Pick<CreateExpenseUseCase, "execute">>;
 
   const createGoal = (overrides: Partial<{ deposited: number; userID: string }> = {}) =>
     new GoalItem(
@@ -35,15 +36,15 @@ describe("DepositGoalItemUseCase", () => {
 
   beforeEach(() => {
     mockBudgetService = {
-      getCurrentUserBudget: jest.fn(),
-      useBudget: jest.fn(),
+      getCurrentUserBudget: vi.fn(),
+      useBudget: vi.fn(),
     };
     mockGoalItemRepository = {
-      findByID: jest.fn(),
-      update: jest.fn(),
+      findByID: vi.fn(),
+      update: vi.fn(),
     };
     mockCreateExpenseUseCase = {
-      execute: jest.fn().mockResolvedValue({}),
+      execute: vi.fn().mockResolvedValue({}),
     };
 
     useCase = new DepositGoalItemUseCase(

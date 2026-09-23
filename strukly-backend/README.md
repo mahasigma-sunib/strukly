@@ -96,7 +96,8 @@ Concrete examples in this codebase:
 - `npm start` — Build, then run the bundle (`node --enable-source-maps dist/index.js`).
 - `npm run build` — Typecheck (`tsc --noEmit`), then bundle to `dist/index.js` with esbuild.
 - `npm run typecheck` — Typecheck only, no output.
-- `npm test` — Run the test suite (Jest + ts-jest).
+- `npm test` — Run the test suite (Vitest).
+- `npm run test:watch` — Run the test suite in watch mode.
 
 ### Prisma
 

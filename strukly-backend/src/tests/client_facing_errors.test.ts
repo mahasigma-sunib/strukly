@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from "vitest";
 import { ZodError } from "zod";
 import { errorMiddleware } from "../infrastructure/middleware/error_middleware";
 import ServiceUnavailableError from "../domain/errors/ServiceUnavailableError";
@@ -27,15 +28,15 @@ describe("toClientFacingError", () => {
 describe("errorMiddleware", () => {
   const createResponse = () => {
     const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
     };
     return res;
   };
 
   it("returns 422 for UnprocessableReceiptError", () => {
     const res = createResponse();
-    const next = jest.fn();
+    const next = vi.fn();
 
     errorMiddleware(new UnprocessableReceiptError(), {} as never, res as never, next);
 
@@ -47,7 +48,7 @@ describe("errorMiddleware", () => {
 
   it("returns 503 for ServiceUnavailableError", () => {
     const res = createResponse();
-    const next = jest.fn();
+    const next = vi.fn();
 
     errorMiddleware(new ServiceUnavailableError(), {} as never, res as never, next);
 
@@ -59,7 +60,7 @@ describe("errorMiddleware", () => {
 
   it("does not expose provider error details", () => {
     const res = createResponse();
-    const next = jest.fn();
+    const next = vi.fn();
 
     errorMiddleware(
       new Error("OpenRouter request failed: secret details"),
