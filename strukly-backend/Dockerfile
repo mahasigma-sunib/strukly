@@ -10,7 +10,10 @@ RUN npm ci
 FROM deps AS builder
 COPY . .
 RUN npm run build
-RUN npm prune --production
+
+FROM builder AS migrator
+CMD ["npm", "run", "prisma:migrate:prod"]
 
 FROM builder AS runner
+RUN npm prune --production
 CMD ["npm", "run", "start:prod"]
