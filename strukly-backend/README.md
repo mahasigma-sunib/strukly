@@ -6,7 +6,7 @@ TypeScript + Express backend following Domain-Driven Design (DDD) with Prisma.
 
 Prerequisites:
 
-- Node.js 18+ and npm
+- Node.js 22+ and npm
 - A PostgreSQL database (local or hosted)
 
 Setup:
@@ -32,17 +32,19 @@ npx prisma generate
 
 4) Start the server
 
+For development (watch mode):
+
+```powershell
+npm run dev
+```
+
+Or build and run the bundled output:
+
 ```powershell
 npm start
 ```
 
 The server defaults to http://localhost:3000 (see `src/index.ts`). A simple GET `/` returns "Hello World!".
-
-Optional build to JS (outputs to `dist/`):
-
-```powershell
-npm run build
-```
 
 ### Environment variables
 
@@ -90,12 +92,15 @@ Concrete examples in this codebase:
 
 ### Scripts
 
-- `npm start` — Run server with ts-node (`src/index.ts`).
-- `npm run build` — Compile TypeScript to `dist/`.
+- `npm run dev` — Run the server from source in watch mode (`tsx`).
+- `npm start` — Build, then run the bundle (`node --enable-source-maps dist/index.js`).
+- `npm run build` — Typecheck (`tsc --noEmit`), then bundle to `dist/index.js` with esbuild.
+- `npm run typecheck` — Typecheck only, no output.
+- `npm test` — Run the test suite (Jest + ts-jest).
 
 ### Prisma
 
-- Prisma client output is configured to `generated/prisma` (see `prisma/schema.prisma`).
+- The Prisma client uses the default `prisma-client-js` output and is imported via `@prisma/client` (see `prisma/schema.prisma`).
 - If you change the schema, run `npx prisma generate` to refresh the client.
 - Add models to `prisma/schema.prisma`, then run `npx prisma migrate dev` to create/apply migrations.
 
