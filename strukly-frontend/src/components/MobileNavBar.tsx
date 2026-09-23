@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import BudgetIconOutline from "./icons/BudgetIconOutline";
 import BudgetIconFilled from "./icons/BudgetIconFilled";
@@ -17,6 +17,7 @@ import CameraIcon from "./utilityIcons/CameraIcon";
 import GalleryIcon from "./utilityIcons/GalleryIcon";
 import ManualWriteIcon from "./utilityIcons/ManualWriteIcon";
 import CloseIcon from "./utilityIcons/CloseIcon";
+import useAddExpenseDrawer from "../store/AddExpenseDrawerStore";
 
 interface NavLinkProps {
   to: string;
@@ -59,16 +60,18 @@ function NavLink({ to, label, activeIcon, inactiveIcon }: NavLinkProps) {
 }
 
 export default function MobileNavBar() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { isOpen, open, close } = useAddExpenseDrawer();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => () => close(), [close]);
 
   const navigate = useNavigate();
   const handleAddBtn = (target: string) => {
     if (target === "gallery") {
       fileInputRef.current?.click();
     } else {
-      setIsDrawerOpen(false);
+      close();
       navigate(`/expense/${target}`);
     }
   };
@@ -80,7 +83,7 @@ export default function MobileNavBar() {
     if (!file) return;
 
     try {
-      setIsDrawerOpen(false);
+      close();
       setIsUploading(true);
 
       const formData = new FormData();
@@ -123,7 +126,7 @@ export default function MobileNavBar() {
         />
 
         <div className="flex justify-center">
-          <button onClick={() => setIsDrawerOpen(true)}>
+          <button onClick={open}>
             <div className="-mt-7 w-18 h-17 bg-white rounded-full flex justify-center items-center">
               <div className="flex items-center justify-center w-12 h-12 bg-[#FFC606] border-6 border-[#FFE432] rounded-full shadow-[0_5px_0_0_#FFAA28] active:shadow-none active:translate-y-1 transition-all duration-100">
                 <AddIcon width={22} height={22} />
@@ -133,8 +136,8 @@ export default function MobileNavBar() {
         </div>
 
         <Drawer
-          visible={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
+          visible={isOpen}
+          onClose={close}
           title="Add New Expense"
         >
           <div className="flex flex-col space-y-4 px-2 pb-2 pt-2">
@@ -172,7 +175,7 @@ export default function MobileNavBar() {
             />
             <div className="flex justify-center mt-2">
               <CloseIcon
-                onClick={() => setIsDrawerOpen(false)}
+                onClick={close}
                 className="w-13 h-13 text-disabled p-3 rounded-full bg-background"
               />
             </div>

@@ -1,0 +1,50 @@
+name: Test
+
+on:
+  push:
+    branches: [ "master", "development" ]
+  pull_request:
+    branches: [ "master", "development" ]
+
+jobs:
+
+  test-backend:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./strukly-backend
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: npm
+        cache-dependency-path: strukly-backend/package-lock.json
+    - run: npm ci
+    # Runs prisma generate, tsc --noEmit, and the esbuild bundle.
+    # Needs no DATABASE_URL (prisma.config.ts resolves it lazily).
+    - run: npm run build
+    - run: npm test
+
+  test-frontend:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./strukly-frontend
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: npm
+        cache-dependency-path: strukly-frontend/package-lock.json
+    - run: npm ci
+    # Runs tsc -b and the vite build.
+    - run: npm run build
+    - run: npm test
