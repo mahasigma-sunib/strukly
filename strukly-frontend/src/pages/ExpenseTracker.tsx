@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { mutate } from "swr";
 import { toast } from "sonner";
+import { Download } from "lucide-react";
 
 import { useLoadExpense } from "../hooks/useLoadExpense";
+import { buildExpensesCsv, buildExpensesCsvFilename } from "../utils/csv";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import Card from "../components/card/Card";
 import ExpenseList from "../components/card/ExpenseListCard";
@@ -60,6 +63,34 @@ export default function ExpenseTracker() {
 
   const navigate = useNavigate();
   const { statistic, items } = useExpense();
+
+  const handleExportCsv = () => {
+    if (items.length === 0) {
+      toast("No expenses to export this month.");
+      return;
+    }
+
+    try {
+      const blob = new Blob([buildExpensesCsv(items)], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = buildExpensesCsvFilename(
+        activeDate.month,
+        activeDate.year
+      );
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error(
+        getApiErrorMessage(err, "Failed to export expenses. Please try again.")
+      );
+    }
+  };
 
   const expenseKey = `${import.meta.env.VITE_API_BASE_URL}/expenses?month=${activeDate.month}&year=${activeDate.year}`;
 
@@ -163,8 +194,28 @@ export default function ExpenseTracker() {
 
       {/* expense history */}
       <div className="w-full pt-6 pb-16">
-        <div className="ml-5 mb-4 font-bold text-2xl">
-          <p>History</p>
+        <div className="mx-5 mb-4 flex items-center justify-between">
+          <p className="font-bold text-2xl">History</p>
+          <Button
+            onClick={handleExportCsv}
+            variant="outline"
+            size="sm"
+            className="
+              !rounded-full
+              !font-bold
+              active:translate-y-[4px]
+              !transition-all
+              flex flex-row gap-1
+              text-sm
+              justify-center
+              items-center
+              !py-2
+              !px-3
+            "
+          >
+            <Download size={16} />
+            Export CSV
+          </Button>
         </div>
 
         {isLoading && (
