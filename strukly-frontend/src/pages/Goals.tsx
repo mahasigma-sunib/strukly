@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { mutate } from "swr";
@@ -20,6 +21,8 @@ import GoalModal from "../components/modal/GoalModal";
 import GoalPopup from "../components/popup/GoalPopUp";
 
 const GoalsPage: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
   const [activeModal, setActiveModal] = useState<
     "create" | "deposit" | "edit" | "delete" | null
@@ -48,6 +51,14 @@ const GoalsPage: React.FC = () => {
     updateGoal,
     deleteGoal,
   } = useGoals();
+
+  const pendingGoalId = location.state?.selectedGoalId as string | undefined;
+
+  useEffect(() => {
+    if (!pendingGoalId || goalsIsLoading) return;
+    setSelectedGoal(goals.find((g) => g.id === pendingGoalId) ?? null);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [pendingGoalId, goals, goalsIsLoading, navigate, location.pathname]);
 
   const activeGoals = goals.filter((g) => !g.isCompleted);
   const completedGoals = goals.filter((g) => g.isCompleted);
