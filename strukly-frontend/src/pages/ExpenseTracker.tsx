@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { mutate } from "swr";
 import { toast } from "sonner";
 import { Download } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { useLoadExpense } from "../hooks/useLoadExpense";
 import { buildExpensesCsv, buildExpensesCsvFilename } from "../utils/csv";
@@ -20,6 +21,7 @@ import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
 import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 
 export default function ExpenseTracker() {
+  const { t, i18n } = useTranslation();
   const today = new Date();
 
   const [activeDate, setActiveDate] = useState({
@@ -27,21 +29,9 @@ export default function ExpenseTracker() {
     year: today.getFullYear(),
   });
 
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "June",
-    "July",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const monthName = monthNames[activeDate.month - 1];
+  const monthName = new Intl.DateTimeFormat(i18n.resolvedLanguage ?? "en", {
+    month: "short",
+  }).format(new Date(activeDate.year, activeDate.month - 1, 1));
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -66,7 +56,7 @@ export default function ExpenseTracker() {
 
   const handleExportCsv = () => {
     if (items.length === 0) {
-      toast("No expenses to export this month.");
+      toast(t("expense.exportEmpty"));
       return;
     }
 
@@ -87,7 +77,7 @@ export default function ExpenseTracker() {
       URL.revokeObjectURL(url);
     } catch (err) {
       toast.error(
-        getApiErrorMessage(err, "Failed to export expenses. Please try again.")
+        getApiErrorMessage(err, t("expense.exportFailed"))
       );
     }
   };
@@ -96,11 +86,11 @@ export default function ExpenseTracker() {
 
   useEffect(() => {
     if (error) {
-      toast.error("Failed to load expenses. Please try again.", {
+      toast.error(t("home.loadExpensesError"), {
         id: "expense-list-load-error",
       });
     }
-  }, [error]);
+  }, [error, t]);
 
   // console.log(statistic.weekly);
 
@@ -109,7 +99,7 @@ export default function ExpenseTracker() {
       {/* page Title & date btn */}
       <div className="p-5 flex items-center justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
         <div className="font-bold text-3xl">
-          <p>Expense</p>
+          <p>{t("expense.title")}</p>
         </div>
         <div>
           <Button
@@ -139,12 +129,12 @@ export default function ExpenseTracker() {
       <Drawer
         visible={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="Select Period"
+        title={t("expense.selectPeriod")}
       >
         <div className="flex flex-col h-full">
           <div className="mb-6">
             <p className="text-text-secondary text-center mb-4 text-md">
-              Scroll to select month and year
+              {t("expense.scrollHint")}
             </p>
 
             {/* wheel picker */}
@@ -163,7 +153,7 @@ export default function ExpenseTracker() {
               className="w-full !rounded-2xl pt-4 pb-4 text-lg"
               onClick={handleApplyFilter}
             >
-              Apply Filter
+              {t("expense.applyFilter")}
             </Button>
           </div>
         </div>
@@ -174,7 +164,7 @@ export default function ExpenseTracker() {
         {!isLoading && !error && items.length > 0 && (
           <div className="mx-4 mt-5 mb-2 bg-surface rounded-3xl py-6 border-border border-2 shadow-[0_4px_0_0_var(--color-border)]">
             <p className="ml-6 mb-4 text-2xl text-text-primary font-bold">
-              Tracker
+              {t("expense.tracker")}
             </p>
             <CustomBarChart
               data={statistic.weekly}
@@ -184,7 +174,7 @@ export default function ExpenseTracker() {
                 {
                   key: "spending",
                   color: "var(--fun-color-primary)",
-                  label: "Weekly Expense",
+                  label: t("expense.weeklyExpense"),
                 },
               ]}
             />
@@ -195,7 +185,7 @@ export default function ExpenseTracker() {
       {/* expense history */}
       <div className="w-full pt-6 pb-16">
         <div className="mx-5 mb-4 flex items-center justify-between">
-          <p className="font-bold text-2xl">History</p>
+          <p className="font-bold text-2xl">{t("expense.history")}</p>
           <Button
             onClick={handleExportCsv}
             variant="outline"
@@ -214,28 +204,28 @@ export default function ExpenseTracker() {
             "
           >
             <Download size={16} />
-            Export CSV
+            {t("expense.exportCsv")}
           </Button>
         </div>
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center min-h-screen -mt-40 gap-4">
             <div className="w-20 h-20 border-12 border-t-primary border-inactive/10 rounded-full animate-spin" />
-            <p className="text-base text-inactive">Please wait a moment...</p>
+            <p className="text-base text-inactive">{t("common.wait")}</p>
           </div>
         )}
 
         <div className="mt-0">
           {!isLoading && (error ? (
             <LoadErrorPlaceholder
-              title="Oops! We couldn't load your expenses."
+              title={t("expense.loadError")}
               onRetry={() => mutate(expenseKey)}
             />
           ) : items.length === 0 ? (
             <div className="flex flex-col items-center justify-center mt-20 ">
               <ExpenseEmptyMascot className="ml-6" width={150} height={150} />
               <p className="text-inactive mt-4 font-bold text-lg text-center">
-                You have no transactions yet.
+                {t("expense.empty")}
               </p>
             </div>
           ) : items.map((item) => (

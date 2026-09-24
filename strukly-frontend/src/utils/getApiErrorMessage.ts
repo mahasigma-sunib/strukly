@@ -1,4 +1,5 @@
 import axios from "axios";
+import i18n from "../i18n";
 
 /**
  * Extract a human-readable message from an API error.
@@ -16,7 +17,7 @@ export function getApiErrorMessage(error: unknown, fallback: string): string {
       return data.message;
     }
     if (!error.response) {
-      return "Network error. Please check your connection and try again.";
+      return i18n.t("common.networkError");
     }
   }
   return fallback;

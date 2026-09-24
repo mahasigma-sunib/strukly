@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import type { ExpenseType } from "../type/ExpenseType";
 import type { ExpenseItemType } from "../type/ExpenseItemType";
 import { getCategoryData, categoryColors } from "../utils/CategoryConfig";
@@ -19,6 +20,7 @@ import {
 import {
   MAX_ITEM_QUANTITY,
   MAX_MONEY_AMOUNT,
+  MONEY_AMOUNT_MAX_DISPLAY,
   MONEY_AMOUNT_TOO_LARGE,
   clampItemAmounts,
   clampMoney,
@@ -49,6 +51,7 @@ export default function ExpenseForm<
   formErrors,
   onClearFormError,
 }: Props<T>) {
+  const { t } = useTranslation();
   // const [isDetailed, setIsDetailed] = useState(expense.items.length > 0);
   const [isDetailed, setIsDetailed] = useState(true);
   const [timeError, setTimeError] = useState<string | undefined>();
@@ -150,14 +153,8 @@ export default function ExpenseForm<
     addItem,
   ]);
 
-  const capitalizeWords = (sentence: string) =>
-    sentence
-      .split(" ")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-
   const options = Object.keys(categoryColors).map((key) => ({
-    label: capitalizeWords(key),
+    label: t(`category.${key}`),
     value: key,
   }));
 
@@ -227,7 +224,7 @@ export default function ExpenseForm<
               setExpense({ ...expense, category: opt.value as string })
             }
             selected={{
-              label: capitalizeWords(expense.category),
+              label: t(`category.${expense.category}`),
               value: expense.category,
             }}
           >
@@ -236,9 +233,11 @@ export default function ExpenseForm<
                 <div className="flex items-center gap-3">
                   {icon}
                   <div>
-                    <div className="text-sm text-gray-400">Category</div>
+                    <div className="text-sm text-gray-400">
+                      {t("expenseForm.category")}
+                    </div>
                     <div className="text-lg font-semibold">
-                      {capitalizeWords(expense.category)}
+                      {t(`category.${expense.category}`)}
                     </div>
                   </div>
                 </div>
@@ -251,12 +250,12 @@ export default function ExpenseForm<
         {/* Vendor & Date */}
         <Card className="flex flex-col gap-4">
           <div>
-            <p className={`${labelCase} mb-2`}>Vendor Name</p>
+            <p className={`${labelCase} mb-2`}>{t("expenseForm.vendorName")}</p>
             <input
               className={`${inputBase} ${
                 formErrors?.vendorName ? "border-status-error" : ""
               }`}
-              placeholder="Ex. McDonald's"
+              placeholder={t("expenseForm.vendorPlaceholder")}
               value={expense.vendorName}
               onChange={(e) => {
                 onClearFormError?.("vendorName");
@@ -264,13 +263,13 @@ export default function ExpenseForm<
               }}
             />
             {formErrors?.vendorName && (
-              <ErrorMessage>{formErrors.vendorName}</ErrorMessage>
+              <ErrorMessage>{t(formErrors.vendorName)}</ErrorMessage>
             )}
           </div>
 
           <div className="flex gap-4">
             <div className="flex-1">
-              <p className={`${labelCase} mb-2`}>Date</p>
+              <p className={`${labelCase} mb-2`}>{t("expenseForm.date")}</p>
               <input
                 type="date"
                 className={inputBase}
@@ -286,7 +285,7 @@ export default function ExpenseForm<
             </div>
 
             <div className="flex-1">
-              <p className={`${labelCase} mb-2`}>Time</p>
+              <p className={`${labelCase} mb-2`}>{t("expenseForm.time")}</p>
               <input
                 type="text"
                 inputMode="numeric"
@@ -314,7 +313,9 @@ export default function ExpenseForm<
                 }}
               />
               {(timeError || formErrors?.time) && (
-                <ErrorMessage>{timeError || formErrors?.time}</ErrorMessage>
+                <ErrorMessage>
+                  {t(timeError || formErrors?.time || "")}
+                </ErrorMessage>
               )}
             </div>
           </div>
@@ -323,7 +324,7 @@ export default function ExpenseForm<
         {/* Toggle */}
         <div className="flex items-center justify-between px-5">
           <span className={`${labelCase}  text-gray-500`}>
-            Detailed Receipt
+            {t("expenseForm.detailedReceipt")}
           </span>
           <Toggle enabled={isDetailed} onChange={handleToggleDetailed} />
         </div>
@@ -332,7 +333,7 @@ export default function ExpenseForm<
         <Card className="p-6 overflow-hidden">
           {isDetailed ? (
             <div className="flex flex-col gap-6">
-              <h3 className={`${labelCase}`}>Items List</h3>
+              <h3 className={`${labelCase}`}>{t("expenseForm.itemsList")}</h3>
 
               {expense.items.map((item, index) => (
                 <div key={item.id} className="flex flex-col gap-3">
@@ -343,7 +344,7 @@ export default function ExpenseForm<
                           ? "border-status-error"
                           : "border-gray-200"
                       }`}
-                      placeholder="Item Name"
+                      placeholder={t("expenseForm.itemName")}
                       value={item.name}
                       onChange={(e) => {
                         onClearFormError?.("items");
@@ -364,7 +365,7 @@ export default function ExpenseForm<
                       min={0}
                       max={MAX_MONEY_AMOUNT}
                       className="flex-1 min-w-0 border border-gray-200 rounded-lg px-3 py-2.5 text-base font-medium overflow-hidden"
-                      placeholder="Price"
+                      placeholder={t("expenseForm.price")}
                       value={item.singleItemPrice || ""}
                       onChange={(e) => {
                         onClearFormError?.("amount");
@@ -397,19 +398,21 @@ export default function ExpenseForm<
               ))}
 
               {formErrors?.items && (
-                <ErrorMessage>{formErrors.items}</ErrorMessage>
+                <ErrorMessage>{t(formErrors.items)}</ErrorMessage>
               )}
 
               <button
                 onClick={addItem}
                 className="w-full text-base py-3 border border-blue-500 rounded-xl text-blue-500 font-bold"
               >
-                &#43; Add Item
+                &#43; {t("expenseForm.addItem")}
               </button>
 
               <div className="pt-6 border-t border-gray-100 flex flex-col gap-4">
                 <div className="flex justify-between items-center gap-3 min-w-0">
-                  <span className="text-sm text-gray-400 shrink-0">Subtotal</span>
+                  <span className="text-sm text-gray-400 shrink-0">
+                    {t("expense.subtotal")}
+                  </span>
                   {amountText(
                     expense.subtotalAmount,
                     "font-bold mr-2 text-gray-500"
@@ -417,7 +420,9 @@ export default function ExpenseForm<
                 </div>
 
                 <div className="flex justify-between items-center gap-3 min-w-0">
-                  <span className="text-sm text-gray-400 shrink-0">Tax</span>
+                  <span className="text-sm text-gray-400 shrink-0">
+                    {t("expense.tax")}
+                  </span>
                   <input
                     type="number"
                     min={0}
@@ -435,7 +440,9 @@ export default function ExpenseForm<
                 </div>
 
                 <div className="flex justify-between items-center gap-3 min-w-0">
-                  <span className="text-sm text-gray-400 shrink-0">Service</span>
+                  <span className="text-sm text-gray-400 shrink-0">
+                    {t("expense.service")}
+                  </span>
                   <input
                     type="number"
                     min={0}
@@ -453,7 +460,9 @@ export default function ExpenseForm<
                 </div>
 
                 <div className="flex justify-between items-center gap-3 min-w-0">
-                  <span className="text-sm text-gray-400 shrink-0">Discount</span>
+                  <span className="text-sm text-gray-400 shrink-0">
+                    {t("expense.discount")}
+                  </span>
                   <input
                     type="number"
                     min={0}
@@ -478,7 +487,9 @@ export default function ExpenseForm<
                 </div>
 
                 <div className="flex justify-between items-center gap-3 min-w-0 pt-2">
-                  <span className="font-bold text-gray-500 shrink-0">Total</span>
+                  <span className="font-bold text-gray-500 shrink-0">
+                    {t("expense.total")}
+                  </span>
                   {amountText(
                     expense.totalAmount,
                     "text-xl font-extrabold text-gray-600 mr-2",
@@ -488,14 +499,18 @@ export default function ExpenseForm<
 
                 {(formErrors?.amount || amountTooLarge) && (
                   <ErrorMessage>
-                    {formErrors?.amount || MONEY_AMOUNT_TOO_LARGE}
+                    {t(formErrors?.amount || MONEY_AMOUNT_TOO_LARGE, {
+                      max: MONEY_AMOUNT_MAX_DISPLAY,
+                    })}
                   </ErrorMessage>
                 )}
               </div>
             </div>
           ) : (
             <div className="">
-              <p className={`${labelCase} mb-3  text-gray-500`}>Total Amount</p>
+              <p className={`${labelCase} mb-3  text-gray-500`}>
+                {t("expenseForm.totalAmount")}
+              </p>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
                   Rp
@@ -519,7 +534,9 @@ export default function ExpenseForm<
               </div>
               {(formErrors?.amount || amountTooLarge) && (
                 <ErrorMessage>
-                  {formErrors?.amount || MONEY_AMOUNT_TOO_LARGE}
+                  {t(formErrors?.amount || MONEY_AMOUNT_TOO_LARGE, {
+                    max: MONEY_AMOUNT_MAX_DISPLAY,
+                  })}
                 </ErrorMessage>
               )}
             </div>

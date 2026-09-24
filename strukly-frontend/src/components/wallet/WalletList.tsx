@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { WalletType } from "../../type/WalletType";
 import useWallet from "../../store/WalletStore";
 import WalletPopup from "../popup/WalletPopUp";
 import WalletCard from "./WalletCard";
 
 const WalletList: React.FC = () => {
+  const { t } = useTranslation();
   const { items: Wallets, addWallet } = useWallet();
   const [showWalletInputs, setShowWalletInputs] = useState(false);
   const [newWalletName, setNewWalletName] = useState("");
@@ -13,15 +15,15 @@ const WalletList: React.FC = () => {
 
   const handleAddWallet = () => {
     if (newWalletName.trim() === "" || newWalletBalance.trim() === "") {
-      setWalletError("Please fill in all fields");
+      setWalletError(t("wallet.fillAll"));
       return;
     }
     if (isNaN(Number(newWalletBalance)) || Number(newWalletBalance) < 0) {
-      setWalletError("Balance must be a non-negative number");
+      setWalletError(t("wallet.balanceInvalid"));
       return;
     }
     if (Wallets.some((wallet) => wallet.name === newWalletName)) {
-      setWalletError("Wallet name must be unique");
+      setWalletError(t("wallet.nameUnique"));
       return;
     }
 
@@ -61,7 +63,7 @@ const WalletList: React.FC = () => {
             }}
           >
             <span style={{ fontSize: "2em" }}>+</span>
-            <span>Add Wallet</span>
+            <span>{t("wallet.addShort")}</span>
           </div>
         </div>
       </div>

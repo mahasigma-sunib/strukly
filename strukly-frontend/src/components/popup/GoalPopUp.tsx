@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import EditIcon from "../utilityIcons/EditIcon";
 import DeleteIcon from "../utilityIcons/DeleteIcon";
 import CloseIcon from "../utilityIcons/CloseIcon";
@@ -19,12 +20,16 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
   onDelete,
   onClose,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col w-full">
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1 flex-col min-w-0">
           <div className="px-4 py-1">
-            <p className="text-lg font-semibold text-inactive">Manage Goal</p>
+            <p className="text-lg font-semibold text-inactive">
+              {t("goalPopUp.manage")}
+            </p>
           </div>
           {goalName && (
             <div className="px-4 py-1">
@@ -47,7 +52,7 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
           <PlusIcon className="w-6 h-6 text-text-primary" />
         </div>
         <span className="font-bold text-lg text-text-primary/80">
-          Add Savings
+          {t("goalPopUp.addSavings")}
         </span>
       </button>
 
@@ -59,7 +64,7 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
           <EditIcon className="w-8 h-8" />
         </div>
         <span className="font-bold text-lg text-text-primary/80">
-          Edit Goal
+          {t("goalPopUp.editGoal")}
         </span>
       </button>
 
@@ -70,7 +75,7 @@ const GoalPopUp: React.FC<GoalPopUpProps> = ({
         <div className="h-8 w-8">
           <DeleteIcon className="w-7 h-7" />
         </div>
-        <span className="font-bold text-lg">Delete Goal</span>
+        <span className="font-bold text-lg">{t("goalPopUp.deleteGoal")}</span>
       </button>
     </div>
   );

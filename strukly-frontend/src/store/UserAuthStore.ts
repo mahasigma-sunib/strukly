@@ -1,5 +1,6 @@
 import axios from "axios";
 import { create } from "zustand";
+import i18n from "../i18n";
 import type { UserAuthType } from "../type/UserAuthType";
 
 const useUserAuth = create<UserAuthType>((set, get) => ({
@@ -19,9 +20,9 @@ const useUserAuth = create<UserAuthType>((set, get) => ({
       //error handling
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
-          throw new Error("Email already exists");
+          throw new Error(i18n.t("auth.register.emailExists"));
         }
-        throw new Error(error.response?.data?.message || "registration failed");
+        throw new Error(error.response?.data?.message || i18n.t("auth.register.failed"));
       }
       throw error;
     }

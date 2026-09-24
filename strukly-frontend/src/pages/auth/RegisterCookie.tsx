@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import useUserAuth from "../../store/UserAuthStore";
 
 export default function RegisterCookie() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const userAuthStore = useUserAuth();
   const [loadFailed, setLoadFailed] = useState(false);
@@ -33,18 +35,18 @@ export default function RegisterCookie() {
             !
           </div>
           <p className="text-status-error text-sm font-bold">
-            Failed to complete sign in. Please try again.
+            {t("auth.cookie.failed")}
           </p>
         </div>
         <button
           onClick={() => navigate("/login")}
           className="font-extrabold text-primary cursor-pointer hover:underline"
         >
-          Back to Log in
+          {t("auth.cookie.backToLogin")}
         </button>
       </div>
     );
   }
 
-  return <div>Loading...</div>;
+  return <div>{t("common.loading")}</div>;
 }

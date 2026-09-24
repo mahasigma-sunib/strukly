@@ -1,0 +1,267 @@
+{
+  "common": {
+    "retry": "Coba lagi",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "saving": "Menyimpan...",
+    "loading": "Memuat...",
+    "done": "Selesai",
+    "confirm": "Konfirmasi",
+    "wait": "Mohon tunggu sebentar...",
+    "networkError": "Terjadi kesalahan jaringan. Periksa koneksi Anda dan coba lagi."
+  },
+  "nav": {
+    "home": "Beranda",
+    "expense": "Pengeluaran",
+    "budget": "Anggaran",
+    "goals": "Target"
+  },
+  "category": {
+    "food": "Makanan",
+    "groceries": "Belanja Harian",
+    "transportation": "Transportasi",
+    "housebills": "Tagihan Rumah",
+    "shopping": "Belanja",
+    "entertainment": "Hiburan",
+    "others": "Lainnya"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Selamat pagi,",
+      "afternoon": "Selamat siang,",
+      "evening": "Selamat sore,",
+      "night": "Selamat malam,"
+    },
+    "defaultUser": "Pengguna",
+    "youVeSpent": "Kamu sudah menghabiskan",
+    "thisMonth": "bulan ini",
+    "myBudget": "Anggaranku",
+    "overBudget": "melebihi anggaran",
+    "percentLeft": "sisa {{percent}}%",
+    "noBudget": "Kamu belum mengatur anggaran bulanan",
+    "setBudget": "Atur Anggaran",
+    "avgSpentPerDay": "Rata-rata / hari",
+    "topCategory": "Kategori teratas",
+    "currentGoals": "Target Saat Ini",
+    "viewAllGoals": "Lihat semua {{count}} target",
+    "noGoalsYet": "Kamu belum membuat target",
+    "makeAGoal": "Buat target",
+    "recentExpenses": "Pengeluaran Terbaru",
+    "seeAllExpenses": "Lihat semua pengeluaran",
+    "noExpensesYet": "Kamu belum menambahkan pengeluaran",
+    "addExpense": "Tambah pengeluaran",
+    "loadBudgetError": "Gagal memuat anggaran. Silakan coba lagi.",
+    "loadExpensesError": "Gagal memuat pengeluaran. Silakan coba lagi.",
+    "loadGoalsError": "Gagal memuat target. Silakan coba lagi."
+  },
+  "expense": {
+    "title": "Pengeluaran",
+    "selectPeriod": "Pilih Periode",
+    "scrollHint": "Gulir untuk memilih bulan dan tahun",
+    "applyFilter": "Terapkan Filter",
+    "tracker": "Grafik",
+    "weeklyExpense": "Pengeluaran Mingguan",
+    "history": "Riwayat",
+    "exportCsv": "Ekspor CSV",
+    "exportEmpty": "Tidak ada pengeluaran untuk diekspor bulan ini.",
+    "exportFailed": "Gagal mengekspor pengeluaran. Silakan coba lagi.",
+    "loadError": "Ups! Kami tidak dapat memuat pengeluaranmu.",
+    "empty": "Belum ada transaksi.",
+    "add": "Tambah Pengeluaran",
+    "edit": "Ubah Pengeluaran",
+    "detail": "Detail Pengeluaran",
+    "deleteTitle": "Hapus Transaksi?",
+    "deleteBody": "Tindakan ini tidak dapat dibatalkan.",
+    "loadDetailError": "Ups! Kami tidak dapat memuat pengeluaran ini.",
+    "notFound": "Pengeluaran tidak ditemukan",
+    "noData": "Data pengeluaran tidak ditemukan.",
+    "goBack": "Kembali",
+    "addFailed": "Gagal menambahkan pengeluaran. Silakan coba lagi.",
+    "updateFailed": "Gagal memperbarui pengeluaran. Silakan coba lagi.",
+    "deleteFailed": "Gagal menghapus pengeluaran. Silakan coba lagi.",
+    "subtotal": "Subtotal",
+    "tax": "Pajak",
+    "service": "Layanan",
+    "discount": "Diskon",
+    "total": "Total"
+  },
+  "expenseForm": {
+    "category": "Kategori",
+    "vendorName": "Nama Toko",
+    "vendorPlaceholder": "Cth. McDonald's",
+    "date": "Tanggal",
+    "time": "Waktu",
+    "detailedReceipt": "Rincian Struk",
+    "itemsList": "Daftar Item",
+    "itemName": "Nama Item",
+    "price": "Harga",
+    "addItem": "Tambah Item",
+    "totalAmount": "Total Nominal"
+  },
+  "addDrawer": {
+    "title": "Tambah Pengeluaran Baru",
+    "camera": "Buka Kamera",
+    "cameraSub": "Pindai strukmu dengan cepat",
+    "gallery": "Buka Galeri",
+    "gallerySub": "Impor gambar dari galerimu",
+    "manual": "Tulis Manual",
+    "manualSub": "Isi detail transaksi secara manual"
+  },
+  "scan": {
+    "title": "Pindai Struk",
+    "scanning": "Memindai Struk",
+    "wait": "Mohon tunggu sebentar selagi kami membaca strukmu",
+    "failed": "Gagal memindai struk. Silakan coba lagi.",
+    "processFailed": "Gagal memproses struk. Silakan coba lagi."
+  },
+  "budget": {
+    "title": "Anggaran",
+    "edit": "Ubah Anggaran",
+    "setMonthly": "Atur total anggaran bulananmu",
+    "overview": "Ringkasan",
+    "used": "Terpakai",
+    "remaining": "Sisa",
+    "topCategories": "Kategori Teratas",
+    "loadError": "Ups! Kami tidak dapat memuat anggaranmu.",
+    "updateFailed": "Gagal memperbarui anggaran. Silakan coba lagi.",
+    "overviewHint": "Atur anggaran untuk melihat ringkasan!",
+    "ofBudgetUsed": "anggaran terpakai"
+  },
+  "goals": {
+    "title": "Target",
+    "add": "Tambah Target",
+    "myGoals": "Targetku",
+    "noGoals": "Belum ada target.",
+    "loadError": "Ups! Kami tidak dapat memuat targetmu.",
+    "loadFailed": "Gagal memuat target. Silakan coba lagi.",
+    "activeCount": "{{count}} Target Aktif",
+    "completed": "Selesai",
+    "completedCount": "{{count}} Target Selesai",
+    "nameRequired": "Nama target harus diisi",
+    "nameTooLong": "Nama target maksimal 250 karakter",
+    "priceRequired": "Harga target harus lebih dari 0!",
+    "createFailed": "Gagal membuat target",
+    "depositAmount": "Nominal harus lebih dari nol!",
+    "depositTooMuch": "Nominal melebihi target, Maksimal: Rp {{max}}",
+    "depositFailed": "Gagal menambah tabungan",
+    "priceTooLow": "Harga target baru tidak boleh kurang dari tabungan saat ini!",
+    "updateFailed": "Gagal memperbarui target",
+    "deleteFailed": "Gagal menghapus target. Silakan coba lagi."
+  },
+  "goalModal": {
+    "create": "Tambah Target Baru",
+    "edit": "Perbarui Target",
+    "deposit": "Tambah Tabungan",
+    "delete": "Hapus Target",
+    "inputNominal": "Masukkan nominal",
+    "goalName": "Nama Target",
+    "targetPrice": "Harga Target (Rp)",
+    "cannotUndo": "Tindakan ini tidak dapat dibatalkan.",
+    "category": "Kategori"
+  },
+  "goalPopUp": {
+    "manage": "Kelola Target",
+    "addSavings": "Tambah Tabungan",
+    "editGoal": "Ubah Target",
+    "deleteGoal": "Hapus Target"
+  },
+  "goalCard": {
+    "reached": "Target tercapai!",
+    "almostThere": "Hampir sampai!",
+    "halfway": "Sudah setengah jalan, bagus!",
+    "keepItUp": "Ayo terus semangat!",
+    "getStarted": "Ayo mulai!",
+    "clickToEdit": "Klik untuk mengubah"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "changeName": "Ubah Nama",
+    "changePassword": "Ubah Kata Sandi",
+    "logout": "Keluar",
+    "logoutFailed": "Gagal keluar. Silakan coba lagi.",
+    "language": "Bahasa",
+    "languageChanged": "Bahasa diperbarui"
+  },
+  "settingsModal": {
+    "name": "Nama",
+    "namePlaceholder": "Masukkan namamu",
+    "nameEmpty": "Nama tidak boleh kosong",
+    "nameSuccess": "Nama berhasil diperbarui",
+    "oldPassword": "Kata Sandi Lama",
+    "oldPasswordPlaceholder": "Kata sandi lama",
+    "oldPasswordRequired": "Masukkan kata sandi lama",
+    "newPassword": "Kata Sandi Baru",
+    "newPasswordPlaceholder": "Kata sandi baru",
+    "confirmPassword": "Konfirmasi Kata Sandi",
+    "confirmPasswordPlaceholder": "Konfirmasi kata sandi baru",
+    "passwordMismatch": "Kata sandi tidak cocok",
+    "passwordSuccess": "Kata sandi berhasil diubah",
+    "saveFailed": "Gagal menyimpan perubahan. Silakan coba lagi."
+  },
+  "auth": {
+    "login": {
+      "title": "Selamat Datang Kembali!",
+      "subtitle": "Ayo lanjutkan!",
+      "email": "Email",
+      "password": "Kata Sandi",
+      "submit": "MASUK",
+      "submitting": "SEDANG MASUK...",
+      "noAccount": "Belum punya akun?",
+      "signUp": "Daftar",
+      "emptyPassword": "Kata sandi tidak boleh kosong",
+      "failed": "Email atau kata sandi yang kamu masukkan salah. Silakan coba lagi."
+    },
+    "register": {
+      "title": "Buat Akun",
+      "subtitle": "Ayo siapkan akunmu!",
+      "username": "Nama Pengguna",
+      "email": "Email",
+      "password": "Kata Sandi",
+      "confirmPassword": "Konfirmasi Kata Sandi",
+      "submit": "DAFTAR",
+      "haveAccount": "Sudah punya akun?",
+      "logIn": "Masuk",
+      "usernameRequired": "Nama pengguna wajib diisi.",
+      "passwordMismatch": "Kata sandi tidak cocok",
+      "fillForm": "Harap isi formulir dengan benar.",
+      "failed": "Pendaftaran gagal. Silakan coba lagi.",
+      "emailExists": "Email sudah terdaftar"
+    },
+    "cookie": {
+      "failed": "Gagal menyelesaikan masuk. Silakan coba lagi.",
+      "backToLogin": "Kembali ke halaman Masuk"
+    }
+  },
+  "password": {
+    "show": "Tampilkan kata sandi",
+    "hide": "Sembunyikan kata sandi"
+  },
+  "loadError": {
+    "subtitle": "Periksa koneksi Anda dan coba lagi."
+  },
+  "progress": {
+    "invalidBudget": "Anggaran tidak valid"
+  },
+  "validation": {
+    "vendorNameRequired": "Nama toko wajib diisi",
+    "vendorNameTooLong": "Nama toko terlalu panjang",
+    "itemNameRequired": "Nama item wajib diisi",
+    "discountExceeds": "Diskon tidak boleh melebihi total pengeluaran",
+    "timeInvalid": "Masukkan waktu yang valid antara 00:00 dan 23:59",
+    "amountTooLarge": "Nominal tidak boleh melebihi Rp {{max}}",
+    "passwordMin": "Kata sandi minimal 8 karakter",
+    "passwordNumber": "Kata sandi harus mengandung setidaknya satu angka",
+    "passwordCase": "Kata sandi harus mengandung huruf besar dan huruf kecil",
+    "emailInvalid": "Alamat email tidak valid"
+  },
+  "wallet": {
+    "name": "Nama Dompet",
+    "initialBalance": "Saldo Awal",
+    "add": "Tambah Dompet Baru",
+    "addShort": "Tambah Dompet",
+    "fillAll": "Harap isi semua kolom",
+    "balanceInvalid": "Saldo harus berupa angka positif",
+    "nameUnique": "Nama dompet harus unik"
+  }
+}

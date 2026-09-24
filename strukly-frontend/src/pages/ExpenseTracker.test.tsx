@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
+import "../i18n";
 import { useLoadExpense } from "../hooks/useLoadExpense";
 import ExpenseTracker from "./ExpenseTracker";
 

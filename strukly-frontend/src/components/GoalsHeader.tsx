@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import AddIcon from "./icons/AddIcon";
 import Button from "./button/Button";
 
@@ -8,10 +9,12 @@ interface Props {
 }
 
 const GoalsHeader: React.FC<Props> = ({ onAdd }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="sticky top-0 z-20 flex items-center justify-between mb-4 px-5 py-4 border-b-2 border-border bg-surface">
       <div>
-        <h1 className="text-3xl font-bold ">Goals</h1>
+        <h1 className="text-3xl font-bold ">{t("goals.title")}</h1>
       </div>
       <Button
         onClick={onAdd}
@@ -33,7 +36,7 @@ const GoalsHeader: React.FC<Props> = ({ onAdd }) => {
       >
         <div className="flex flex-row items-center justify-center gap-2">
           <AddIcon width={16} height={16} />
-          <p className="text-white text-base font-bold">Add Goals</p>
+          <p className="text-white text-base font-bold">{t("goals.add")}</p>
         </div>
       </Button>
     </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { emailSchema } from "../../schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
@@ -13,6 +14,7 @@ import LoginMascot from "../../components/mascots/LoginMascot";
 // Helper error message component
 
 function UserLogin() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -30,7 +32,7 @@ function UserLogin() {
     if (!emailVal.success) setEmailError(emailVal.error.issues[0].message);
     else setEmailError("");
 
-    if (passwordVal) setPasswordError("Password can't be empty");
+    if (passwordVal) setPasswordError(t("auth.login.emptyPassword"));
     else setPasswordError("");
 
     return emailVal.success && !passwordVal;
@@ -47,9 +49,7 @@ function UserLogin() {
       await login(email, password);
       window.location.href = "/cookie";
     } catch (err) {
-      setLoginError(
-        "The email or password you entered is incorrect. Please try again.",
-      );
+      setLoginError(t("auth.login.failed"));
     } finally {
       setIsLoading(false);
     }
@@ -67,10 +67,10 @@ function UserLogin() {
             <LoginMascot width={144} height={144} />
           </div>
           <h1 className="font-extrabold text-2xl text-text-primary">
-            Welcome Back!
+            {t("auth.login.title")}
           </h1>
           <p className="font-bold text-base text-inactive">
-            Let's get you back in!
+            {t("auth.login.subtitle")}
           </p>
         </div>
 
@@ -89,7 +89,7 @@ function UserLogin() {
           <div className="flex flex-col">
             <input
               type="email"
-              placeholder="Email"
+              placeholder={t("auth.login.email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => {
@@ -104,13 +104,13 @@ function UserLogin() {
                     : "border-border focus:border-primary"
                 }`}
             />
-            {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+            {emailError && <ErrorMessage>{t(emailError)}</ErrorMessage>}
           </div>
 
           {/* Password Input Group */}
           <div className="flex flex-col">
             <PasswordInput
-              placeholder="Password"
+              placeholder={t("auth.login.password")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
@@ -134,18 +134,18 @@ function UserLogin() {
               isLoading ? "opacity-70" : "hover:shadow-lg active:scale-[0.98]"
             }`}
         >
-          {isLoading ? "LOGGING IN..." : "LOG IN"}
+          {isLoading ? t("auth.login.submitting") : t("auth.login.submit")}
         </Button>
 
         <div className="flex flex-row gap-2 mt-2">
           <span className="font-bold text-text-disabled">
-            Don't have an account?
+            {t("auth.login.noAccount")}
           </span>
           <span
             onClick={() => navigate("/register")}
             className="font-extrabold text-primary cursor-pointer hover:underline"
           >
-            Sign Up
+            {t("auth.login.signUp")}
           </span>
         </div>
       </div>

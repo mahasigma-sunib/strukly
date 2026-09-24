@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 
 import { passwordSchema } from "../../schema/UserAuthSchemas";
@@ -19,6 +20,7 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
+  const { t } = useTranslation();
   const { user, changeUsername, changePassword } = useUserAuth();
   const [formData, setFormData] = useState({
     name: "",
@@ -60,19 +62,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
       if (mode === "name") {
         if (!nameValidate) return;
         await changeUsername(formData.name);
-        setSuccessMessage("Name updated successfully");
+        setSuccessMessage(t("settingsModal.nameSuccess"));
       } else if (mode === "password") {
         if (!oldPasswordValidate || !passwordValidate.success || !confirmPasswordValidate)
           return;
         await changePassword(formData.oldPassword, formData.password);
-        setSuccessMessage("Password changed successfully");
+        setSuccessMessage(t("settingsModal.passwordSuccess"));
       }
 
       setTimeout(() => {
         onClose();
       }, 1000);
     } catch (e: unknown) {
-      toast.error(getApiErrorMessage(e, "Failed to save changes. Please try again."));
+      toast.error(getApiErrorMessage(e, t("settingsModal.saveFailed")));
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +86,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
     <Popup visible={!!mode} onClose={onClose}>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">
-          {mode === "name" ? "Change Name" : "Change Password"}
+          {mode === "name" ? t("settings.changeName") : t("settings.changePassword")}
         </h2>
         <div onClick={onClose} className="cursor-pointer text-slate-500">
           <CloseIcon width={24} height={24} />
@@ -95,7 +97,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
         {mode === "name" && (
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-text-secondary">
-              Name
+              {t("settingsModal.name")}
             </label>
             <input
               className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
@@ -105,10 +107,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              placeholder="Enter your name"
+              placeholder={t("settingsModal.namePlaceholder")}
             />
             {!nameValidate && (
-              <ErrorMessage>Name can't be empty</ErrorMessage>
+              <ErrorMessage>{t("settingsModal.nameEmpty")}</ErrorMessage>
             )}
           </div>
         )}
@@ -117,7 +119,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
           <>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-text-secondary">
-                Old Password
+                {t("settingsModal.oldPassword")}
               </label>
               <PasswordInput
                 className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
@@ -131,16 +133,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
                 onChange={(e) =>
                   setFormData({ ...formData, oldPassword: e.target.value })
                 }
-                placeholder="Old password"
+                placeholder={t("settingsModal.oldPasswordPlaceholder")}
               />
               {!oldPasswordValidate && (
-                <ErrorMessage>Please input the old password</ErrorMessage>
+                <ErrorMessage>{t("settingsModal.oldPasswordRequired")}</ErrorMessage>
               )}
             </div>
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-text-secondary">
-                New Password
+                {t("settingsModal.newPassword")}
               </label>
               <PasswordInput
                 className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
@@ -154,18 +156,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                placeholder="New password"
+                placeholder={t("settingsModal.newPasswordPlaceholder")}
               />
               {!passwordValidate.success && (
                 <ErrorMessage>
-                  {passwordValidate.error.issues[0].message}
+                  {t(passwordValidate.error.issues[0].message)}
                 </ErrorMessage>
               )}
             </div>
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-text-secondary">
-                Confirm Password
+                {t("settingsModal.confirmPassword")}
               </label>
               <PasswordInput
                 className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
@@ -180,10 +182,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
                 onChange={(e) =>
                   setFormData({ ...formData, confirmPassword: e.target.value })
                 }
-                placeholder="Confirm new password"
+                placeholder={t("settingsModal.confirmPasswordPlaceholder")}
               />
               {!confirmPasswordValidate && (
-                <ErrorMessage>Password do not match</ErrorMessage>
+                <ErrorMessage>{t("settingsModal.passwordMismatch")}</ErrorMessage>
               )}
             </div>
           </>
@@ -203,10 +205,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
 
         <div className="flex justify-end gap-3 mt-4">
           <Button variant="outline" onClick={onClose} disabled={isLoading}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save"}
+            {isLoading ? t("common.saving") : t("common.save")}
           </Button>
         </div>
       </div>

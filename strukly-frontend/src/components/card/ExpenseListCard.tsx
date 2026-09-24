@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { getCategoryData } from "../../utils/CategoryConfig";
 import Money from "../money/Money";
 import { formatIDRDisplay } from "../money/formatIDRDisplay";
@@ -15,6 +16,8 @@ export default function ExpenseList({
   amount,
   category,
 }: ExpenseListProps) {
+  const { i18n } = useTranslation();
+  const dateLocale = i18n.resolvedLanguage === "id" ? "id-ID" : "en-US";
   const { icon } = getCategoryData(category);
   const numericAmount = Number(amount);
   const hasNumericAmount = Number.isFinite(numericAmount);
@@ -33,13 +36,13 @@ export default function ExpenseList({
               {vendorName}
             </p>
             <p className="text-light-gray text-sm font-bold truncate">
-              {date.toLocaleDateString("en-US", {
+              {date.toLocaleDateString(dateLocale, {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
               })}
               {", "}
-              {date.toLocaleTimeString("en-US", {
+              {date.toLocaleTimeString(dateLocale, {
                 hour: "2-digit",
                 minute: "2-digit",
               })}

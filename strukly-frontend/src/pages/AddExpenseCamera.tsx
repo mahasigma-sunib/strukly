@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import axios from "axios";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 // import AddIcon from "../components/icons/AddIcon";
 import CameraIcon from "../components/utilityIcons/CameraIcon";
 
 export default function AddExpenseCamera() {
+  const { t } = useTranslation();
   const webcamRef = useRef<Webcam>(null);
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
@@ -43,11 +45,11 @@ export default function AddExpenseCamera() {
         state: { scannedData: result.data.transaction },
       });
     } catch (err) {
-      toast.error(getApiErrorMessage(err, "Failed to scan receipt. Please try again."));
+      toast.error(getApiErrorMessage(err, t("scan.failed")));
     } finally {
       setIsUploading(false);
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
   return (
     <div className="fixed inset-0 bg-black flex flex-col">
@@ -64,7 +66,7 @@ export default function AddExpenseCamera() {
 
         <div className="text-white text-xl absolute top-0 left-0 right-0 p-5 flex justify-between items-center bg-gradient-to-b from-black/70 to-transparent">
           <button onClick={() => navigate(-1)}>✕</button>
-          <p className="font-semibold">Scan Receipt</p>
+          <p className="font-semibold">{t("scan.title")}</p>
           <div className="w-6" />
         </div>
 
@@ -87,10 +89,10 @@ export default function AddExpenseCamera() {
           </div>
           <div className="flex flex-col items-center justify-center mx-20 gap-3">
             <p className="text-white text-xl font-semibold animate-pulse">
-              Scanning Receipt
+              {t("scan.scanning")}
             </p>
             <p className="text-gray-300 text-sm text-center">
-              Please wait a moment while we're reading your receipt
+              {t("scan.wait")}
             </p>
           </div>
         </div>

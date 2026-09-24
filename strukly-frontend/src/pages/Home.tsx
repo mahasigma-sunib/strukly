@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import useUserAuth from "../store/UserAuthStore";
 import useExpense from "../store/ExpenseStore";
@@ -32,13 +33,13 @@ const getGreeting = () => {
   const hour = new Date().getHours();
 
   if (hour >= 4 && hour < 11) {
-    return "Morning"; // (04:00 - 10:59)
+    return "morning"; // (04:00 - 10:59)
   } else if (hour >= 11 && hour < 15) {
-    return "Afternoon"; // (11:00 - 14:59)
+    return "afternoon"; // (11:00 - 14:59)
   } else if (hour >= 15 && hour < 19) {
-    return "Evening"; // (15:00 - 18:59)
+    return "evening"; // (15:00 - 18:59)
   } else {
-    return "Night"; // (19:00 - 03:59)
+    return "night"; // (19:00 - 03:59)
   }
 };
 
@@ -55,9 +56,10 @@ const getBarColor = (
 };
 
 function Home() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const greeting = getGreeting();
-  const username = useUserAuth((s) => s.user?.name || "User");
+  const username = useUserAuth((s) => s.user?.name || t("home.defaultUser"));
   const openDrawer = useAddExpenseDrawer((s) => s.open);
 
   const { data, error: budgetError } = useLoadBudget();
@@ -90,21 +92,21 @@ function Home() {
 
   useEffect(() => {
     if (budgetError) {
-      toast.error("Failed to load budget. Please try again.", {
+      toast.error(t("home.loadBudgetError"), {
         id: "budget-load-error",
       });
     }
     if (expenseError) {
-      toast.error("Failed to load expenses. Please try again.", {
+      toast.error(t("home.loadExpensesError"), {
         id: "expense-list-load-error",
       });
     }
     if (goalsError) {
-      toast.error("Failed to load goals. Please try again.", {
+      toast.error(t("home.loadGoalsError"), {
         id: "goals-load-error",
       });
     }
-  }, [budgetError, expenseError, goalsError]);
+  }, [budgetError, expenseError, goalsError, t]);
 
   const avgSpent = () => {
     const result = daysPassed === 0 ? 0 : totalSpent / daysPassed;
@@ -123,7 +125,9 @@ function Home() {
                 <WinkMascot width={48} height={48} />
               </div>
               <div className="flex flex-col text-white">
-                <p className="text-base font-medium">Good {greeting},</p>
+                <p className="text-base font-medium">
+                  {t(`home.greeting.${greeting}`)}
+                </p>
                 <p className="text-2xl font-bold">{username}</p>
               </div>
             </div>
@@ -143,8 +147,8 @@ function Home() {
 
           <div className="flex flex-col text-white gap-4 px-2">
             <div className="flex flex-row justify-between">
-              <p className="text-lg font-semibold">You've spent</p>
-              <p className="text-lg font-semibold">this month</p>
+              <p className="text-lg font-semibold">{t("home.youVeSpent")}</p>
+              <p className="text-lg font-semibold">{t("home.thisMonth")}</p>
             </div>
 
             {/* Total expense goes here! v*/}
@@ -166,7 +170,7 @@ function Home() {
           <div className="bg-surface p-5 rounded-3xl border-border shadow-[0_6px_0_0_var(--color-border)]">
             <div className="flex flex-col gap-4">
               <p className="text-2xl font-bold text-text-primary/80">
-                My Budget
+                {t("home.myBudget")}
               </p>
 
               {hasBudget ? (
@@ -207,15 +211,15 @@ function Home() {
                       }`}
                     >
                       {isOverBudget
-                        ? "over budget"
-                        : `${remainingPercent}% left`}
+                        ? t("home.overBudget")
+                        : t("home.percentLeft", { percent: remainingPercent })}
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="py-4 flex flex-col gap-4 justify-center items-center">
                   <p className="text-center text-base text-inactive font-bold">
-                    You haven't set a monthly budget
+                    {t("home.noBudget")}
                   </p>
                   <Button
                     size="lg"
@@ -223,7 +227,7 @@ function Home() {
                     className="!py-2"
                     onClick={() => navigate("/budget")}
                   >
-                    Set Budget
+                    {t("home.setBudget")}
                   </Button>
                 </div>
               )}
@@ -231,7 +235,7 @@ function Home() {
               <div className="flex flex-row">
                 <div className="flex flex-col flex-1 gap-1 items-center pr-2">
                   <p className="text-base font-bold text-text-primary/50 ">
-                    Avg. spent / day
+                    {t("home.avgSpentPerDay")}
                   </p>
                   <p className="text-[30px] py-1">💸</p>
                   <Money
@@ -244,14 +248,13 @@ function Home() {
 
                 <div className="flex flex-col flex-1 gap-1 items-center border-l-2 border-gray-200">
                   <p className="text-base font-bold text-text-primary/50">
-                    Top category
+                    {t("home.topCategory")}
                   </p>
                   {maxCategory.category ? (
                     <>
                       <div className="py-1 ml-2">{icon}</div>
                       <p className="text-lg ml-2 font-bold text-text-primary">
-                        {maxCategory.category.charAt(0).toUpperCase() +
-                          maxCategory.category.slice(1)}
+                        {t(`category.${maxCategory.category}`)}
                       </p>
                     </>
                   ) : (
@@ -276,7 +279,7 @@ function Home() {
           {/* CURRENT GOALS */}
           <div>
             <p className="text-2xl font-bold mb-2 text-text-primary px-4">
-              Current Goals
+              {t("home.currentGoals")}
             </p>
 
             {activeGoals.length > 0 ? (
@@ -298,7 +301,7 @@ function Home() {
                       onClick={() => navigate("/goals")}
                       className="text-sm font-bold text-primary mt-1 text-center"
                     >
-                      View all {goals.length} goals
+                      {t("home.viewAllGoals", { count: goals.length })}
                     </button>
                   </div>
                 )}
@@ -308,7 +311,7 @@ function Home() {
                 <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
                   <HeadbandMascot width={72} height={72} />
                   <p className="text-inactive font-semibold text-base text-center">
-                    You haven't made a goal yet
+                    {t("home.noGoalsYet")}
                   </p>
                   <Button
                     size="lg"
@@ -316,7 +319,7 @@ function Home() {
                     className="!py-2"
                     onClick={() => navigate("/goals")}
                   >
-                    Make a goal
+                    {t("home.makeAGoal")}
                   </Button>
                 </div>
               </Card>
@@ -326,7 +329,7 @@ function Home() {
           {/* RECENT EXPENSES */}
           <div>
             <p className="text-2xl font-bold mb-2 text-text-primary px-4">
-              Recent Expenses
+              {t("home.recentExpenses")}
             </p>
 
             {items.length > 0 ? (
@@ -353,7 +356,7 @@ function Home() {
                       onClick={() => navigate("/expenses")}
                       className="text-sm font-bold text-primary mt-1 text-center"
                     >
-                      See all expenses
+                      {t("home.seeAllExpenses")}
                     </button>
                   </div>
                 )}
@@ -363,7 +366,7 @@ function Home() {
                 <div className="p-5 items-center justify-center flex flex-col gap-4 bg-surface rounded-2xl">
                   <WhistleMascot width={72} height={72} />
                   <p className="text-inactive font-semibold text-base text-center">
-                    You haven't added a new expense yet
+                    {t("home.noExpensesYet")}
                   </p>
                   <Button
                     size="lg"
@@ -371,7 +374,7 @@ function Home() {
                     className="!py-2"
                     onClick={openDrawer}
                   >
-                    Add expense
+                    {t("home.addExpense")}
                   </Button>
                 </div>
               </Card>

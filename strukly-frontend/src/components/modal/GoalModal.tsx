@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import CloseIcon from "../utilityIcons/CloseIcon";
 import Button from "../button/Button";
 import TrashMascot from "../mascots/TrashMascot";
@@ -31,6 +32,8 @@ const GoalModal: React.FC<Props> = ({
   errorMessage,
   setErrorMessage,
 }) => {
+  const { t } = useTranslation();
+
   const formatDisplay = (num: number) => {
     return num === 0 ? "" : new Intl.NumberFormat("id-ID").format(num);
   };
@@ -45,10 +48,10 @@ const GoalModal: React.FC<Props> = ({
       <div className="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-text-primary ">
-            {activeModal === "create" && "Add New Goal"}
-            {activeModal === "edit" && "Update Goal"}
-            {activeModal === "deposit" && "Add Savings"}
-            {activeModal === "delete" && "Delete Goal"}
+            {activeModal === "create" && t("goalModal.create")}
+            {activeModal === "edit" && t("goalModal.edit")}
+            {activeModal === "deposit" && t("goalModal.deposit")}
+            {activeModal === "delete" && t("goalModal.delete")}
           </h2>
           <div onClick={onClose} className="text-slate-500">
             <CloseIcon width={24} height={24} />
@@ -59,7 +62,9 @@ const GoalModal: React.FC<Props> = ({
           <div className="flex flex-col gap-3">
             {activeModal === "deposit" ? (
               <div className="text-center">
-                <p className="text-sm text-slate-500 mb-2">Input nominal</p>
+                <p className="text-sm text-slate-500 mb-2">
+                  {t("goalModal.inputNominal")}
+                </p>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -91,14 +96,14 @@ const GoalModal: React.FC<Props> = ({
               <div className="flex flex-col gap-6 items-center justify-center text-center">
                 <TrashMascot />
                 <p className="text-base text-inactive font-bold">
-                  This action cannot be undone.
+                  {t("goalModal.cannotUndo")}
                 </p>
               </div>
             ) : (
               <>
                 <input
                   type="text"
-                  placeholder="Goal Name"
+                  placeholder={t("goalModal.goalName")}
                   value={formData.name}
                   className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                     errorMessage && !formData.name.trim()
@@ -111,7 +116,7 @@ const GoalModal: React.FC<Props> = ({
                   }}
                 />
                 <select
-                  aria-label="Category"
+                  aria-label={t("goalModal.category")}
                   value={formData.category}
                   className="w-full bg-background border-2 border-border rounded-2xl p-4 focus:border-primary outline-none transition-all"
                   onChange={(e) => {
@@ -124,14 +129,14 @@ const GoalModal: React.FC<Props> = ({
                 >
                   {CategoryKeys.map((key) => (
                     <option key={key} value={key}>
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                      {t(`category.${key}`)}
                     </option>
                   ))}
                 </select>
                 <input
                   type="text"
                   inputMode="numeric"
-                  placeholder="Target Price (Rp)"
+                  placeholder={t("goalModal.targetPrice")}
                   value={formatDisplay(formData.price) || ""}
                   className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                     errorMessage && formData.price <= 0
@@ -163,7 +168,7 @@ const GoalModal: React.FC<Props> = ({
             `}
             variant="primary"
           >
-            {activeModal === "delete" ? "Delete" : "Confirm"}
+            {activeModal === "delete" ? t("common.delete") : t("common.confirm")}
           </Button>
         </div>
       </div>
