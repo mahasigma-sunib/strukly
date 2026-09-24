@@ -28,7 +28,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   const clampedPercent = Math.max(0, Math.min(100, rawPercent));
   const isOver = rawPercent > 100;
 
-  const finalBarColor = isOver ? "bg-red-500" : barColor;
+  const finalBarColor = isOver ? "bg-red-600" : barColor;
 
   return (
     <div className={`w-full ${className}`}>
@@ -37,7 +37,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         aria-valuenow={Math.round(rawPercent)}
         aria-valuemin={0}
         aria-valuemax={100}
-        className="w-full bg-inactive/30 rounded-full overflow-hidden"
+        className="w-full bg-inactive/60 rounded-full overflow-hidden"
         style={{ height }}
       >
         <div
