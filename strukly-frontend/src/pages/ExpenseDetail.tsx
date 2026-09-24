@@ -4,6 +4,7 @@ import useSWR from "swr";
 import axios from "axios";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Users } from "lucide-react";
 import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import { fetcher } from "../utils/fetcher";
 
@@ -16,6 +17,7 @@ import EditIcon from "../components/utilityIcons/EditIcon";
 import DeleteIcon from "../components/utilityIcons/DeleteIcon";
 import Popup from "../components/popup/PopUp";
 import Button from "../components/button/Button";
+import SplitBillModal from "../components/modal/SplitBillModal";
 import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 import TrashMascot from "../components/mascots/TrashMascot";
 import Money from "../components/money/Money";
@@ -33,6 +35,7 @@ function ExpenseDetail() {
   );
 
   const [deletePopUp, setDeletePopUp] = useState(false);
+  const [splitPopUp, setSplitPopUp] = useState(false);
   const { deleteExpense } = useExpense();
   const handleDelete = async () => {
     try {
@@ -201,6 +204,13 @@ function ExpenseDetail() {
         </div>
       </Popup>
 
+      <SplitBillModal
+        visible={splitPopUp}
+        onClose={() => setSplitPopUp(false)}
+        totalAmount={expense.totalAmount}
+        vendorName={expense.vendorName}
+      />
+
       {/* main content*/}
       <div className="p-3 mt-1 flex justify-center">
         <Card className="w-full max-w-md !p-0 !rounded-2xl !overflow-hidden shadow-sm border-none">
@@ -310,6 +320,16 @@ function ExpenseDetail() {
                 "text-base font-bold opacity-70"
               )}
             </div>
+
+            <Button
+              variant="outline"
+              size="md"
+              onClick={() => setSplitPopUp(true)}
+              className="w-full flex items-center justify-center gap-2"
+            >
+              <Users size={18} />
+              {t("splitBill.title")}
+            </Button>
           </div>
         </Card>
       </div>

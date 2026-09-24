@@ -86,6 +86,23 @@
     "discount": "Diskon",
     "total": "Total"
   },
+  "splitBill": {
+    "title": "Bagi Tagihan",
+    "billTotal": "Total Tagihan",
+    "modeEqual": "Rata",
+    "modeCustom": "Manual",
+    "share": "Bagian",
+    "namePlaceholder": "Nama (opsional)",
+    "personDefaultName": "Orang {{n}}",
+    "addPerson": "Tambah orang",
+    "removePerson": "Hapus orang",
+    "remaining": "Sisa yang belum dibagi",
+    "remainderHint": "Total tidak terbagi rata. Orang-orang di urutan teratas masing-masing membayar 1 rupiah lebih.",
+    "summary": "Ringkasan",
+    "copySummary": "Salin ringkasan",
+    "copySuccess": "Ringkasan disalin ke papan klip",
+    "copyFailed": "Gagal menyalin ringkasan. Silakan coba lagi."
+  },
   "expenseForm": {
     "category": "Kategori",
     "vendorName": "Nama Toko",
