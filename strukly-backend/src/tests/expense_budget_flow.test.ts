@@ -13,6 +13,7 @@ import ExpenseCategory from "../domain/values/expense_category";
 import ExpenseHeader from "../domain/entities/expense_header";
 import Expense from "../domain/aggregates/expense";
 import BudgetHistory from "../domain/entities/budget_history";
+import InMemoryUnitOfWork from "./fakes/in_memory_unit_of_work";
 
 // Mock Services
 vi.mock("../domain/services/expense_service");
@@ -24,6 +25,7 @@ describe("Expense Budget Flow", () => {
   let deleteExpenseUseCase: DeleteExpenseUseCase;
   let mockExpenseService: Mocked<ExpenseService>;
   let mockBudgetService: Mocked<BudgetService>;
+  let unitOfWork: InMemoryUnitOfWork;
 
   const userID = "user-123";
   const expenseID = "expense-123";
@@ -41,10 +43,11 @@ describe("Expense Budget Flow", () => {
   beforeEach(() => {
     mockExpenseService = new ExpenseService({} as any) as any;
     mockBudgetService = new BudgetService({} as any, {} as any) as any;
+    unitOfWork = new InMemoryUnitOfWork();
 
-    createExpenseUseCase = new CreateExpenseUseCase(mockExpenseService, mockBudgetService);
-    updateExpenseUseCase = new UpdateExpenseUseCase(mockExpenseService, mockBudgetService);
-    deleteExpenseUseCase = new DeleteExpenseUseCase(mockExpenseService, mockBudgetService);
+    createExpenseUseCase = new CreateExpenseUseCase(mockExpenseService, mockBudgetService, unitOfWork);
+    updateExpenseUseCase = new UpdateExpenseUseCase(mockExpenseService, mockBudgetService, unitOfWork);
+    deleteExpenseUseCase = new DeleteExpenseUseCase(mockExpenseService, mockBudgetService, unitOfWork);
   });
 
   const validExpenseRequest: CreateExpenseRequest = {
@@ -89,7 +92,8 @@ describe("Expense Budget Flow", () => {
       expect(mockExpenseService.createExpense).toHaveBeenCalled();
       expect(mockBudgetService.useBudget).toHaveBeenCalledWith(
         expect.any(UserID),
-        100
+        100,
+        expect.anything()
       );
     });
   });
@@ -112,7 +116,8 @@ describe("Expense Budget Flow", () => {
           
           expect(mockBudgetService.useBudget).toHaveBeenCalledWith(
               expect.any(UserID),
-              50 // Delta 150 - 100
+              50, // Delta 150 - 100
+              expect.anything()
           );
       });
 
@@ -133,7 +138,8 @@ describe("Expense Budget Flow", () => {
 
           expect(mockBudgetService.useBudget).toHaveBeenCalledWith(
               expect.any(UserID),
-              -20 // Delta 80 - 100
+              -20, // Delta 80 - 100
+              expect.anything()
           );
       });
       
@@ -161,7 +167,8 @@ describe("Expense Budget Flow", () => {
           expect(mockExpenseService.deleteExpenseByID).toHaveBeenCalled();
           expect(mockBudgetService.useBudget).toHaveBeenCalledWith(
               expect.any(UserID),
-              -100 // Refund
+              -100, // Refund
+              expect.anything()
           );
       });
       

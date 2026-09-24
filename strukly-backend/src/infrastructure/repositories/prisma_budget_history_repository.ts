@@ -1,12 +1,12 @@
 import BudgetHistory from "src/domain/entities/budget_history";
 import IBudgetHistoryRepository from "src/domain/repositories/budget_history_repository";
 import UserID from "src/domain/values/user_id";
-import { PrismaClient } from "src/generated/prisma/client";
+import { PrismaClientLike } from "./prisma_types";
 
 export default class PrismaBudgetHistoryRepository
   implements IBudgetHistoryRepository
 {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClientLike) {}
 
   public async create(budgetHistory: BudgetHistory): Promise<BudgetHistory> {
     const newBudgetHistory = await this.prisma.budgetHistory.create({

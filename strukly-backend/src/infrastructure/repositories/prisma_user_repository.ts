@@ -1,9 +1,9 @@
-import { PrismaClient } from 'src/generated/prisma/client';
+import { PrismaClientLike } from './prisma_types';
 import User from '../../domain/aggregates/user';
 import UserRepository from '../../domain/repositories/user_repository';
 
 export default class PrismaUserRepository implements UserRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClientLike) {}
 
   async findByEmail(email: string): Promise<User | null> {
     const dbUser= await this.prisma.user.findUnique({

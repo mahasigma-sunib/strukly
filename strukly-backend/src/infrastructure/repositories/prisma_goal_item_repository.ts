@@ -1,4 +1,5 @@
-import { Prisma, PrismaClient } from "src/generated/prisma/client";
+import { Prisma } from "src/generated/prisma/client";
+import { PrismaClientLike } from "./prisma_types";
 import GoalItem from "../../domain/entities/goal_item";
 import { IGoalItemRepository } from "../../domain/repositories/goal_item_repository";
 import GoalItemID from "../../domain/values/goal_item_id";
@@ -20,7 +21,7 @@ type GoalItemRow = {
 };
 
 export default class PrismaGoalItemRepository implements IGoalItemRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClientLike) {}
 
   private toDomain(row: GoalItemRow): GoalItem {
     return new GoalItem(

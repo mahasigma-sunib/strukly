@@ -2,6 +2,7 @@ import CreateExpenseUseCase from "src/application/use_cases/expense/create_expen
 import InvalidDataError from "src/domain/errors/InvalidDataError";
 import NotFoundError from "src/domain/errors/NotFoundError";
 import { IGoalItemRepository } from "src/domain/repositories/goal_item_repository";
+import IUnitOfWork from "src/domain/repositories/unit_of_work";
 import BudgetService from "src/domain/services/budget_service";
 import GoalItemID from "src/domain/values/goal_item_id";
 import UserID from "src/domain/values/user_id";
@@ -11,6 +12,7 @@ export default class DepositGoalItemUseCase {
     private readonly budgetService: BudgetService,
     private readonly goalItemRepository: IGoalItemRepository,
     private readonly createExpenseUseCase: CreateExpenseUseCase,
+    private readonly unitOfWork: IUnitOfWork,
   ) {}
   async execute(userID: string, goalItemID: string, amount: number) {
     const goalItem = await this.goalItemRepository.findByID(
@@ -31,25 +33,30 @@ export default class DepositGoalItemUseCase {
     if (currentBudget.unusedBudget < amount)
       throw new InvalidDataError("Insufficient budget");
 
-    // TODO: db transaction/uow
-    await this.createExpenseUseCase.execute(userID, {
-      vendorName: goalItem.name,
-      category: goalItem.category.value,
-      dateTime: new Date().toISOString(),
-      subtotalAmount: { amount, currency: "IDR" },
-      taxAmount: { amount: 0, currency: "IDR" },
-      discountAmount: { amount: 0, currency: "IDR" },
-      serviceAmount: { amount: 0, currency: "IDR" },
-      items: [
+    await this.unitOfWork.execute(async (tx) => {
+      await this.createExpenseUseCase.execute(
+        userID,
         {
-          name: goalItem.name,
-          quantity: 1,
-          singlePrice: { amount, currency: "IDR" },
+          vendorName: goalItem.name,
+          category: goalItem.category.value,
+          dateTime: new Date().toISOString(),
+          subtotalAmount: { amount, currency: "IDR" },
+          taxAmount: { amount: 0, currency: "IDR" },
+          discountAmount: { amount: 0, currency: "IDR" },
+          serviceAmount: { amount: 0, currency: "IDR" },
+          items: [
+            {
+              name: goalItem.name,
+              quantity: 1,
+              singlePrice: { amount, currency: "IDR" },
+            },
+          ],
         },
-      ],
-    });
+        tx,
+      );
 
-    goalItem.deposit(amount);
-    await this.goalItemRepository.update(goalItem);
+      goalItem.deposit(amount);
+      await tx.goalItems.update(goalItem);
+    });
   }
 }
