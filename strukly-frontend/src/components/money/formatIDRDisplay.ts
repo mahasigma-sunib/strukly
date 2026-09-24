@@ -6,6 +6,8 @@ export function formatIDRDisplay(
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   })
     .formatToParts(amount)
     .filter((part) => part.type !== "literal")
