@@ -44,7 +44,7 @@ export default function ExpenseTracker() {
 
   const [tempDate, setTempDate] = useState(activeDate);
 
-  useLoadExpense(activeDate.month, activeDate.year, true); //month, year, getstat
+  const { error, isLoading } = useLoadExpense(activeDate.month, activeDate.year, true); //month, year, getstat
 
   // reset temp date when drawer opens to match current active date
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function ExpenseTracker() {
   };
 
   const navigate = useNavigate();
-  const { statistic, items, isLoading, error } = useExpense();
+  const { statistic, items } = useExpense();
 
   const expenseKey = `${import.meta.env.VITE_API_BASE_URL}/expenses?month=${activeDate.month}&year=${activeDate.year}`;
 
@@ -140,7 +140,7 @@ export default function ExpenseTracker() {
 
       {/* Bar Chart */}
       <div>
-        {items.length > 0 && (
+        {!isLoading && !error && items.length > 0 && (
           <div className="mx-4 mt-5 mb-2 bg-surface rounded-3xl py-6 border-border border-2 shadow-[0_4px_0_0_var(--color-border)]">
             <p className="ml-6 mb-4 text-2xl text-text-primary font-bold">
               Tracker
@@ -175,22 +175,19 @@ export default function ExpenseTracker() {
         )}
 
         <div className="mt-0">
-          {items.length === 0 && !isLoading &&
-            (error ? (
-              <LoadErrorPlaceholder
-                title="Oops! We couldn't load your expenses."
-                onRetry={() => mutate(expenseKey)}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center mt-20 ">
-                <ExpenseEmptyMascot className="ml-6" width={150} height={150} />
-                <p className="text-inactive mt-4 font-bold text-lg text-center">
-                  You have no transactions yet.
-                </p>
-              </div>
-            ))}
-
-          {items.map((item) => (
+          {!isLoading && (error ? (
+            <LoadErrorPlaceholder
+              title="Oops! We couldn't load your expenses."
+              onRetry={() => mutate(expenseKey)}
+            />
+          ) : items.length === 0 ? (
+            <div className="flex flex-col items-center justify-center mt-20 ">
+              <ExpenseEmptyMascot className="ml-6" width={150} height={150} />
+              <p className="text-inactive mt-4 font-bold text-lg text-center">
+                You have no transactions yet.
+              </p>
+            </div>
+          ) : items.map((item) => (
             <Card
               key={item.id}
               size="md"
@@ -205,7 +202,7 @@ export default function ExpenseTracker() {
                 category={item.category}
               />
             </Card>
-          ))}
+          )))}
         </div>
       </div>
     </div>

@@ -54,7 +54,7 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
       setError("Failed to fetch expenses");
     }
 
-    if (data?.history) {
+    if (!error && data?.history) {
       const mapped = data.history
         .map(mapExpense)
         .sort(
@@ -65,7 +65,7 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
       setError(null);
     }
 
-    if (getStat && data?.weekly) {
+    if (!error && getStat && data?.weekly) {
       const stat = {
         month,
         year,
