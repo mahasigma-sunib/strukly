@@ -86,6 +86,23 @@
     "discount": "Discount",
     "total": "Total"
   },
+  "splitBill": {
+    "title": "Split Bill",
+    "billTotal": "Bill Total",
+    "modeEqual": "Equal",
+    "modeCustom": "Custom",
+    "share": "Share",
+    "namePlaceholder": "Name (optional)",
+    "personDefaultName": "Person {{n}}",
+    "addPerson": "Add person",
+    "removePerson": "Remove person",
+    "remaining": "Remaining to assign",
+    "remainderHint": "The total does not divide evenly. People at the top of the list each pay 1 rupiah more.",
+    "summary": "Summary",
+    "copySummary": "Copy summary",
+    "copySuccess": "Summary copied to clipboard",
+    "copyFailed": "Failed to copy summary. Please try again."
+  },
   "expenseForm": {
     "category": "Category",
     "vendorName": "Vendor Name",
