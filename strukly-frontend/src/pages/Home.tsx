@@ -44,13 +44,13 @@ const getGreeting = () => {
 
 const getBarColor = (
   percentLeft: number,
-): "bg-sky-400" | "bg-yellow-400" | "bg-red-400" => {
+): "bg-sky-600" | "bg-amber-500" | "bg-red-500" => {
   if (percentLeft < 20) {
-    return "bg-red-400";
+    return "bg-red-500";
   } else if (percentLeft < 50) {
-    return "bg-yellow-400";
+    return "bg-amber-500";
   } else {
-    return "bg-sky-400";
+    return "bg-sky-600";
   }
 };
 
@@ -86,7 +86,7 @@ function Home() {
   const { items: goals } = useGoals();
   const activeGoals = goals.filter((g) => !g.isCompleted);
 
-  const barColor = isOverBudget ? "bg-red-500" : getBarColor(remainingPercent);
+  const barColor = isOverBudget ? "bg-red-600" : getBarColor(remainingPercent);
 
   useEffect(() => {
     if (budgetError) {
