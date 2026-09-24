@@ -17,6 +17,8 @@ import Popup from "../components/popup/PopUp";
 import Button from "../components/button/Button";
 import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 import TrashMascot from "../components/mascots/TrashMascot";
+import Money from "../components/money/Money";
+import { formatIDRDisplay } from "../components/money/formatIDRDisplay";
 import useExpense from "../store/ExpenseStore";
 
 function ExpenseDetail() {
@@ -46,16 +48,23 @@ function ExpenseDetail() {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })
-      .format(amount)
-      .replace("Rp", "Rp ");
-  };
+  const amountText = (
+    value: number,
+    className = "",
+    decimalClassName = "opacity-70"
+  ) => (
+    <div
+      className={`min-w-0 flex justify-end ${className}`}
+      title={formatIDRDisplay(value)}
+    >
+      <Money
+        amount={value}
+        currency="IDR"
+        mainClassName="min-w-0 truncate"
+        decimalClassName={`min-w-0 truncate ${decimalClassName}`}
+      />
+    </div>
+  );
 
   const formatCardDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-GB", {
@@ -215,20 +224,23 @@ function ExpenseDetail() {
                     <span className="font-semibold text-gray-800 text-base leading-snug min-w-0 truncate max-w-[70%]">
                       {item.name}
                     </span>
-                    <span
-                      className="font-bold text-gray-900 text-base min-w-0 truncate"
-                      title={formatCurrency(item.totalPrice)}
-                    >
-                      {formatCurrency(item.totalPrice)}
-                    </span>
+                    {amountText(
+                      item.totalPrice,
+                      "font-bold text-gray-900 text-base",
+                      "text-sm font-bold opacity-70"
+                    )}
                   </div>
                   {/* Row 2: Price per unit & Qty */}
                   <div className="flex items-center text-sm text-gray-400 gap-2">
                     <span className="">{item.quantity}</span>
                     <span className="">×</span>
-                    <span className="min-w-[80px]">
-                      {formatCurrency(item.singleItemPrice)}
-                    </span>
+                    <div className="min-w-[80px]">
+                      <Money
+                        amount={item.singleItemPrice}
+                        currency="IDR"
+                        decimalClassName="opacity-70"
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -240,29 +252,26 @@ function ExpenseDetail() {
             <div className="space-y-3 text-base">
               <div className="flex justify-between gap-3 min-w-0 text-gray-500">
                 <span className="shrink-0">Subtotal</span>
-                <span
-                  className="font-medium text-gray-900 min-w-0 truncate"
-                  title={formatCurrency(expense.subtotalAmount)}
-                >
-                  {formatCurrency(expense.subtotalAmount)}
-                </span>
+                {amountText(
+                  expense.subtotalAmount,
+                  "font-medium text-gray-900"
+                )}
               </div>
 
               {expense.taxAmount > 0 && (
                 <div className="flex justify-between text-gray-500">
                   <span>Tax</span>
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency(expense.taxAmount)}
-                  </span>
+                  {amountText(expense.taxAmount, "font-medium text-gray-900")}
                 </div>
               )}
 
               {expense.serviceAmount > 0 && (
                 <div className="flex justify-between text-gray-500">
                   <span>Service</span>
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency(expense.serviceAmount)}
-                  </span>
+                  {amountText(
+                    expense.serviceAmount,
+                    "font-medium text-gray-900"
+                  )}
                 </div>
               )}
 
@@ -274,10 +283,14 @@ function ExpenseDetail() {
                 }`}
               >
                 <span>Discount</span>
-                <span className="font-medium">
-                  {expense.discountAmount > 0 ? "- " : ""}
-                  {formatCurrency(expense.discountAmount)}
-                </span>
+                <div className="flex items-baseline font-medium">
+                  {expense.discountAmount > 0 && <span>-</span>}
+                  <Money
+                    amount={expense.discountAmount}
+                    currency="IDR"
+                    decimalClassName="opacity-70"
+                  />
+                </div>
               </div>
             </div>
 
@@ -288,12 +301,11 @@ function ExpenseDetail() {
               <span className="font-bold text-gray-500 text-xl shrink-0">
                 Total
               </span>
-              <span
-                className="font-bold text-gray-700 text-xl min-w-0 truncate"
-                title={formatCurrency(expense.totalAmount)}
-              >
-                {formatCurrency(expense.totalAmount)}
-              </span>
+              {amountText(
+                expense.totalAmount,
+                "font-bold text-gray-700 text-xl",
+                "text-base font-bold opacity-70"
+              )}
             </div>
           </div>
         </Card>

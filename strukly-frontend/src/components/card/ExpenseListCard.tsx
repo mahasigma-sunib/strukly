@@ -1,9 +1,10 @@
 import { getCategoryData } from "../../utils/CategoryConfig";
+import Money from "../money/Money";
+import { formatIDRDisplay } from "../money/formatIDRDisplay";
 
 interface ExpenseListProps {
   vendorName: string;
   date: Date;
-  currency: string;
   amount: string;
   category: string;
 }
@@ -11,15 +12,12 @@ interface ExpenseListProps {
 export default function ExpenseList({
   vendorName,
   date,
-  currency,
   amount,
   category,
 }: ExpenseListProps) {
   const { icon } = getCategoryData(category);
   const numericAmount = Number(amount);
-  const formattedAmount = Number.isFinite(numericAmount)
-    ? numericAmount.toLocaleString("id-ID")
-    : amount;
+  const hasNumericAmount = Number.isFinite(numericAmount);
 
   return (
     <div className="min-w-0">
@@ -51,10 +49,23 @@ export default function ExpenseList({
 
         {/* right */}
         <div className="min-w-0 max-w-[45%] text-right text-md font-bold text-text-secondary">
-          <p className="truncate" title={`-${currency}${formattedAmount}`}>
-            -{currency}
-            {formattedAmount}
-          </p>
+          {hasNumericAmount ? (
+            <div
+              className="min-w-0 flex justify-end items-baseline"
+              title={`-${formatIDRDisplay(numericAmount)}`}
+            >
+              <span>-</span>
+              <Money
+                amount={numericAmount}
+                currency="IDR"
+                decimalClassName="text-xs font-bold opacity-70"
+              />
+            </div>
+          ) : (
+            <p className="truncate" title={`-${amount}`}>
+              -{amount}
+            </p>
+          )}
         </div>
       </div>
     </div>

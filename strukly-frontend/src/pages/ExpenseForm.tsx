@@ -8,6 +8,8 @@ import Dropdown from "../components/dropdown/Dropdown";
 import Toggle from "../components/button/ToggleButton";
 import DropDownIcon from "../components/utilityIcons/DropdownIcon";
 import ErrorMessage from "../components/ErrorMessage";
+import Money from "../components/money/Money";
+import { formatIDRDisplay } from "../components/money/formatIDRDisplay";
 import {
   TIME_INVALID,
   formatTime,
@@ -178,17 +180,23 @@ export default function ExpenseForm<
     setExpense({ ...expense, dateTime: newDate });
   };
 
-  const amountText = (value: number, className = "") => {
-    const formatted = value.toLocaleString("id-ID");
-    return (
-      <span
-        className={`min-w-0 truncate tabular-nums ${className}`}
-        title={formatted}
-      >
-        {formatted}
-      </span>
-    );
-  };
+  const amountText = (
+    value: number,
+    className = "",
+    decimalClassName = "opacity-70"
+  ) => (
+    <div
+      className={`min-w-0 truncate tabular-nums flex justify-end ${className}`}
+      title={formatIDRDisplay(value)}
+    >
+      <Money
+        amount={value}
+        currency="IDR"
+        mainClassName="min-w-0 truncate"
+        decimalClassName={`min-w-0 truncate ${decimalClassName}`}
+      />
+    </div>
+  );
 
   const amountTooLarge =
     expense.subtotalAmount +
@@ -473,7 +481,8 @@ export default function ExpenseForm<
                   <span className="font-bold text-gray-500 shrink-0">Total</span>
                   {amountText(
                     expense.totalAmount,
-                    "text-xl font-extrabold text-gray-600 mr-2"
+                    "text-xl font-extrabold text-gray-600 mr-2",
+                    "text-base font-bold opacity-70"
                   )}
                 </div>
 
@@ -487,22 +496,27 @@ export default function ExpenseForm<
           ) : (
             <div className="">
               <p className={`${labelCase} mb-3  text-gray-500`}>Total Amount</p>
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="999.999"
-                className={`${numberInput} !w-full text-2xl !text-right min-w-0`}
-                value={formatIDR(expense.totalAmount)}
-                onChange={(e) => {
-                  onClearFormError?.("amount");
-                  const amount = parseDigitAmount(e.target.value);
-                  setExpense({
-                    ...expense,
-                    totalAmount: amount,
-                    subtotalAmount: amount,
-                  });
-                }}
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
+                  Rp
+                </span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="999.999"
+                  className={`${numberInput} !w-full text-2xl !text-right min-w-0`}
+                  value={formatIDR(expense.totalAmount)}
+                  onChange={(e) => {
+                    onClearFormError?.("amount");
+                    const amount = parseDigitAmount(e.target.value);
+                    setExpense({
+                      ...expense,
+                      totalAmount: amount,
+                      subtotalAmount: amount,
+                    });
+                  }}
+                />
+              </div>
               {(formErrors?.amount || amountTooLarge) && (
                 <ErrorMessage>
                   {formErrors?.amount || MONEY_AMOUNT_TOO_LARGE}

@@ -341,7 +341,6 @@ function Home() {
                     <ExpenseList
                       vendorName={item.vendorName}
                       date={new Date(item.dateTime)}
-                      currency={item.currency}
                       amount={String(item.totalAmount ?? 0)}
                       category={item.category}
                     />

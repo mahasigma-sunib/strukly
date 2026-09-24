@@ -11,6 +11,7 @@ import Popup from "../components/popup/PopUp";
 import HappyMascot from "../components/mascots/HappyMascot";
 import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 import BudgetRemaining from "../components/money/BudgetRemaining";
+import Money from "../components/money/Money";
 
 import { useLoadExpense } from "../hooks/useLoadExpense";
 import { CategoryKeys } from "../utils/CategoryConfig";
@@ -164,9 +165,12 @@ export default function ExpenseBudget() {
                   Used
                 </p>
               </div>
-              <div className="font-bold text-lg text-text-secondary">
-                {formatIDR(totalSpent)}
-              </div>
+              <Money
+                amount={totalSpent}
+                currency="IDR"
+                mainClassName="text-lg font-bold text-text-secondary"
+                decimalClassName="text-sm font-bold text-text-secondary/70"
+              />
             </div>
             <div className="flex flex-col justify-start items-start flex-1 border-l-2 gap-1 border-gray-300 pl-4">
               <div>
@@ -266,7 +270,6 @@ export default function ExpenseBudget() {
             <Card key={b}>
               <div className="py-2">
                 <BudgetListCard
-                  currency="Rp"
                   spent={spent}
                   usedBudget={totalSpent}
                   category={b}

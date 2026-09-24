@@ -248,7 +248,6 @@ export default function ExpenseTracker() {
               <ExpenseList
                 vendorName={item.vendorName}
                 date={new Date(item.dateTime)}
-                currency={item.currency}
                 amount={(item.totalAmount ?? 0).toString()}
                 category={item.category}
               />

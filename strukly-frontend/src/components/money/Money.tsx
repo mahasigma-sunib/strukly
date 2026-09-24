@@ -21,6 +21,8 @@ const Money: React.FC<MoneyProps> = ({
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).formatToParts(amount);
   }, [amount, currency, locale]);
 
