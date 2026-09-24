@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { mutate } from "swr";
+import { toast } from "sonner";
 
 import { useLoadExpense } from "../hooks/useLoadExpense";
 
@@ -12,6 +14,7 @@ import Drawer from "../components/drawer/Drawer";
 import Datepicker from "../components/scroll/DatePicker";
 import CalendarIcon from "../components/utilityIcons/CalendarIcon";
 import ExpenseEmptyMascot from "../components/mascots/ExpenseEmptyMascot";
+import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 
 export default function ExpenseTracker() {
   const today = new Date();
@@ -57,6 +60,16 @@ export default function ExpenseTracker() {
 
   const navigate = useNavigate();
   const { statistic, items, isLoading, error } = useExpense();
+
+  const expenseKey = `${import.meta.env.VITE_API_BASE_URL}/expenses?month=${activeDate.month}&year=${activeDate.year}`;
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Failed to load expenses. Please try again.", {
+        id: "expense-list-load-error",
+      });
+    }
+  }, [error]);
 
   // console.log(statistic.weekly);
 
@@ -161,17 +174,21 @@ export default function ExpenseTracker() {
           </div>
         )}
 
-        {error && <p>{error}</p>}
-
         <div className="mt-0">
-          {items.length === 0 && !isLoading && (
-            <div className="flex flex-col items-center justify-center mt-20 ">
-              <ExpenseEmptyMascot className="ml-6" width={150} height={150} />
-              <p className="text-inactive mt-4 font-bold text-lg text-center">
-                You have no transactions yet.
-              </p>
-            </div>
-          )}
+          {items.length === 0 && !isLoading &&
+            (error ? (
+              <LoadErrorPlaceholder
+                title="Oops! We couldn't load your expenses."
+                onRetry={() => mutate(expenseKey)}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center mt-20 ">
+                <ExpenseEmptyMascot className="ml-6" width={150} height={150} />
+                <p className="text-inactive mt-4 font-bold text-lg text-center">
+                  You have no transactions yet.
+                </p>
+              </div>
+            ))}
 
           {items.map((item) => (
             <Card

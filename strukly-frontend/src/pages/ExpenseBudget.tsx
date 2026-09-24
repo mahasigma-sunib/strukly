@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import BudgetListCard from "../components/card/BudgetListCard";
 import OverviewChart from "../components/graph/Chart";
@@ -7,12 +9,46 @@ import Card from "../components/card/Card";
 import Button from "../components/button/Button";
 import Popup from "../components/popup/PopUp";
 import HappyMascot from "../components/mascots/HappyMascot";
+import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 import BudgetRemaining from "../components/money/BudgetRemaining";
 
 import { useLoadExpense } from "../hooks/useLoadExpense";
 import { CategoryKeys } from "../utils/CategoryConfig";
 import { useLoadBudget } from "../hooks/useLoadBudget";
 import { useExpenseCalc } from "../hooks/useExpenseCalc";
+
+function BudgetTopBar({ onEdit }: { onEdit?: () => void }) {
+  return (
+    <div className="p-5 flex items-center mb-4 justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
+      <div className="font-bold text-3xl">
+        <p>Budget</p>
+      </div>
+      {onEdit && (
+        <div>
+          <Button
+            onClick={onEdit}
+            variant="primary"
+            size="md"
+            className="
+              !rounded-full
+              !font-bold
+              active:translate-y-[4px]
+              !transition-all
+              flex flex-row gap-1
+              text-lg
+              justify-center
+              items-center
+              !py-2
+              !px-3
+            "
+          >
+            Edit Budget
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ExpenseBudget() {
   const [editedBudget, setEditedBudget] = useState<number>(0);
@@ -49,8 +85,7 @@ export default function ExpenseBudget() {
       await mutate();
       setEditPopUp(false);
     } catch (error) {
-      console.error("Failed to edit Budget:", error);
-      alert("Failed to update budget. Please try again.");
+      toast.error(getApiErrorMessage(error, "Failed to update budget. Please try again."));
     } finally {
       setIsSubmitting(false);
     }
@@ -73,39 +108,18 @@ export default function ExpenseBudget() {
     );
   if (error)
     return (
-      <div className="flex h-screen items-center justify-center text-red-500">
-        Error loading budget data
+      <div className="min-h-screen pb-20">
+        <BudgetTopBar />
+        <LoadErrorPlaceholder
+          title="Oops! We couldn't load your budget."
+          onRetry={() => mutate()}
+        />
       </div>
     );
 
   return (
     <div className="min-h-screen pb-20 ">
-      <div className="p-5 flex items-center mb-4 justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
-        <div className="font-bold text-3xl">
-          <p>Budget</p>
-        </div>
-        <div>
-          <Button
-            onClick={openEditPopup}
-            variant="primary"
-            size="md"
-            className="
-              !rounded-full 
-              !font-bold 
-              active:translate-y-[4px]
-              !transition-all
-              flex flex-row gap-1
-              text-lg
-              justify-center
-              items-center
-              !py-2
-              !px-3
-            "
-          >
-            Edit Budget
-          </Button>
-        </div>
-      </div>
+      <BudgetTopBar onEdit={openEditPopup} />
 
       {/* Budget Overview */}
       <div className="absolute top-18 right-10">

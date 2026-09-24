@@ -5,7 +5,9 @@ import axios from "axios";
 import ExpenseForm from "./ExpenseForm";
 import BackIcon from "../components/utilityIcons/BackIcon";
 
+import { toast } from "sonner";
 import type { ExpenseType } from "../type/ExpenseType";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import useExpense from "../store/ExpenseStore";
 import {
@@ -101,7 +103,7 @@ function EditExpenseEditor({
       updateExpense(id, expense);
       navigate(-1);
     } catch (err) {
-      console.error("Failed to update expense", err);
+      toast.error(getApiErrorMessage(err, "Failed to update expense. Please try again."));
     }
   };
 

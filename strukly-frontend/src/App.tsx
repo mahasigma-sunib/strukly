@@ -21,6 +21,7 @@ import Settings from "./pages/Settings";
 
 import MobileNavBar from "./components/MobileNavBar";
 import AddExpenseCamera from "./pages/AddExpenseCamera";
+import { Toaster } from "sonner";
 
 const App = () => {
   const location = useLocation();
@@ -41,6 +42,7 @@ const App = () => {
 
   return (
     <div>
+      <Toaster position="top-center" richColors closeButton />
       {isProtectedPath && <MobileNavBar />}
 
       <div className="route-container">

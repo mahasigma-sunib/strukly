@@ -2,6 +2,8 @@ import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import axios from "axios";
+import { toast } from "sonner";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 // import AddIcon from "../components/icons/AddIcon";
 import CameraIcon from "../components/utilityIcons/CameraIcon";
 
@@ -41,7 +43,7 @@ export default function AddExpenseCamera() {
         state: { scannedData: result.data.transaction },
       });
     } catch (err) {
-      console.error("Upload failed:", err);
+      toast.error(getApiErrorMessage(err, "Failed to scan receipt. Please try again."));
     } finally {
       setIsUploading(false);
     }
