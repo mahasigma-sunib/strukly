@@ -11,6 +11,7 @@ import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import useExpense from "../store/ExpenseStore";
 import {
+  formatTime,
   getExpenseFormErrors,
   type ExpenseFormErrors,
 } from "../schema/ExpenseSchemas";
@@ -51,14 +52,17 @@ function EditExpenseEditor({
   const [expense, setExpense] = useState<ExpenseType>(() =>
     clampExpenseMoneyFields(initialExpense)
   );
+  const [timeText, setTimeText] = useState(() =>
+    formatTime(expense.dateTime.getHours(), expense.dateTime.getMinutes())
+  );
   const [formErrors, setFormErrors] = useState<ExpenseFormErrors>({});
   const { updateExpense } = useExpense();
 
   const handleSubmit = async () => {
     if (!id) return;
 
-    const errors = getExpenseFormErrors(expense);
-    if (errors.vendorName || errors.items || errors.amount) {
+    const errors = getExpenseFormErrors(expense, timeText);
+    if (errors.vendorName || errors.items || errors.amount || errors.time) {
       setFormErrors(errors);
       return;
     }
@@ -130,6 +134,8 @@ function EditExpenseEditor({
       <ExpenseForm
         expense={expense}
         setExpense={setExpense}
+        timeText={timeText}
+        onTimeTextChange={setTimeText}
         formErrors={formErrors}
         onClearFormError={(field) =>
           setFormErrors((prev) => ({ ...prev, [field]: undefined }))

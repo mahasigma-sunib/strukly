@@ -8,7 +8,12 @@ import Dropdown from "../components/dropdown/Dropdown";
 import Toggle from "../components/button/ToggleButton";
 import DropDownIcon from "../components/utilityIcons/DropdownIcon";
 import ErrorMessage from "../components/ErrorMessage";
-import type { ExpenseFormErrors } from "../schema/ExpenseSchemas";
+import {
+  TIME_INVALID,
+  formatTime,
+  parseTimeInput,
+  type ExpenseFormErrors,
+} from "../schema/ExpenseSchemas";
 import {
   MAX_ITEM_QUANTITY,
   MAX_MONEY_AMOUNT,
@@ -26,15 +31,25 @@ import {
 interface Props<T extends Omit<ExpenseType, "userID"> | ExpenseType> {
   expense: T;
   setExpense: React.Dispatch<React.SetStateAction<T>>;
+  timeText: string;
+  onTimeTextChange: (text: string) => void;
   formErrors?: ExpenseFormErrors;
   onClearFormError?: (field: keyof ExpenseFormErrors) => void;
 }
 
 export default function ExpenseForm<
   T extends Omit<ExpenseType, "userID"> | ExpenseType
->({ expense, setExpense, formErrors, onClearFormError }: Props<T>) {
+>({
+  expense,
+  setExpense,
+  timeText,
+  onTimeTextChange,
+  formErrors,
+  onClearFormError,
+}: Props<T>) {
   // const [isDetailed, setIsDetailed] = useState(expense.items.length > 0);
   const [isDetailed, setIsDetailed] = useState(true);
+  const [timeError, setTimeError] = useState<string | undefined>();
 
   const { icon } = getCategoryData(expense.category);
 
@@ -152,6 +167,17 @@ export default function ExpenseForm<
   const formatIDR = (value: number) =>
     value ? value.toLocaleString("id-ID") : "";
 
+  const formatDateInput = (date: Date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+      date.getDate()
+    ).padStart(2, "0")}`;
+
+  const applyTime = (hours: number, minutes: number) => {
+    const newDate = new Date(validDate);
+    newDate.setHours(hours, minutes);
+    setExpense({ ...expense, dateTime: newDate });
+  };
+
   const amountText = (value: number, className = "") => {
     const formatted = value.toLocaleString("id-ID");
     return (
@@ -240,9 +266,10 @@ export default function ExpenseForm<
               <input
                 type="date"
                 className={inputBase}
-                value={validDate.toISOString().slice(0, 10)}
+                value={formatDateInput(validDate)}
                 onChange={(e) => {
                   const [y, m, d] = e.target.value.split("-").map(Number);
+                  if (!y || !m || !d) return;
                   const newDate = new Date(validDate);
                   newDate.setFullYear(y, m - 1, d);
                   setExpense({ ...expense, dateTime: newDate });
@@ -253,16 +280,34 @@ export default function ExpenseForm<
             <div className="flex-1">
               <p className={`${labelCase} mb-2`}>Time</p>
               <input
-                type="time"
-                className={inputBase}
-                value={validDate.toTimeString().slice(0, 5)}
+                type="text"
+                inputMode="numeric"
+                placeholder="HH:mm"
+                className={`${inputBase} ${
+                  timeError || formErrors?.time ? "border-status-error" : ""
+                }`}
+                value={timeText}
                 onChange={(e) => {
-                  const [h, min] = e.target.value.split(":").map(Number);
-                  const newDate = new Date(validDate);
-                  newDate.setHours(h, min);
-                  setExpense({ ...expense, dateTime: newDate });
+                  onClearFormError?.("time");
+                  setTimeError(undefined);
+                  onTimeTextChange(e.target.value);
+                  const parsed = parseTimeInput(e.target.value);
+                  if (parsed) applyTime(parsed.hours, parsed.minutes);
+                }}
+                onBlur={() => {
+                  const parsed = parseTimeInput(timeText);
+                  if (!parsed) {
+                    setTimeError(TIME_INVALID);
+                    return;
+                  }
+                  setTimeError(undefined);
+                  onTimeTextChange(formatTime(parsed.hours, parsed.minutes));
+                  applyTime(parsed.hours, parsed.minutes);
                 }}
               />
+              {(timeError || formErrors?.time) && (
+                <ErrorMessage>{timeError || formErrors?.time}</ErrorMessage>
+              )}
             </div>
           </div>
         </Card>

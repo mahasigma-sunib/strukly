@@ -14,26 +14,29 @@ import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import useExpense from "../store/ExpenseStore";
 import { mapExpense } from "../hooks/useLoadExpense";
 import {
+  formatTime,
   getExpenseFormErrors,
   type ExpenseFormErrors,
 } from "../schema/ExpenseSchemas";
 import { clampExpenseMoneyFields } from "../schema/money";
 
-const emptyExpense: Omit<ExpenseType, "userID"> = {
-  id: "",
-  dateTime: new Date(),
-  vendorName: "",
-  category: "food",
+function createEmptyExpense(): Omit<ExpenseType, "userID"> {
+  return {
+    id: "",
+    dateTime: new Date(),
+    vendorName: "",
+    category: "food",
 
-  currency: "IDR",
-  subtotalAmount: 0,
-  taxAmount: 0,
-  discountAmount: 0,
-  serviceAmount: 0,
-  totalAmount: 0,
+    currency: "IDR",
+    subtotalAmount: 0,
+    taxAmount: 0,
+    discountAmount: 0,
+    serviceAmount: 0,
+    totalAmount: 0,
 
-  items: [],
-};
+    items: [],
+  };
+}
 
 function mapExpenseToPostPayload(expense: any) {
   const currency = expense.currency || "IDR";
@@ -72,8 +75,10 @@ function mapExpenseToPostPayload(expense: any) {
 }
 
 export default function AddExpense() {
-  const [expense, setExpense] =
-    useState<Omit<ExpenseType, "userID">>(emptyExpense);
+  const [expense, setExpense] = useState(() => createEmptyExpense());
+  const [timeText, setTimeText] = useState(() =>
+    formatTime(expense.dateTime.getHours(), expense.dateTime.getMinutes())
+  );
   const [formErrors, setFormErrors] = useState<ExpenseFormErrors>({});
 
   const navigate = useNavigate();
@@ -131,13 +136,16 @@ export default function AddExpense() {
         ),
       };
       setExpense(clampExpenseMoneyFields(transformedExpense));
+      setTimeText(
+        formatTime(localDateTime.getHours(), localDateTime.getMinutes())
+      );
     }
   }, [scannedData]);
 
   const { addExpense } = useExpense();
   const handleSubmit = async () => {
-    const errors = getExpenseFormErrors(expense);
-    if (errors.vendorName || errors.items || errors.amount) {
+    const errors = getExpenseFormErrors(expense, timeText);
+    if (errors.vendorName || errors.items || errors.amount || errors.time) {
       setFormErrors(errors);
       return;
     }
@@ -172,6 +180,8 @@ export default function AddExpense() {
         <ExpenseForm
           expense={expense}
           setExpense={setExpense}
+          timeText={timeText}
+          onTimeTextChange={setTimeText}
           formErrors={formErrors}
           onClearFormError={(field) =>
             setFormErrors((prev) => ({ ...prev, [field]: undefined }))

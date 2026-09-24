@@ -8,6 +8,43 @@ import {
 export const DISCOUNT_EXCEEDS_EXPENSE =
   "Discount cannot exceed the expense total";
 
+export const TIME_INVALID = "Enter a valid time between 00:00 and 23:59";
+
+export function parseTimeInput(
+  raw: string
+): { hours: number; minutes: number } | null {
+  const input = raw.trim();
+  if (!input) return null;
+
+  let hours: number;
+  let minutes: number;
+
+  const separated = input.match(/^(\d{1,2})[:.](\d{1,2})$/);
+  const compact = input.match(/^(\d{3,4})$/);
+  const hourOnly = input.match(/^(\d{1,2})$/);
+
+  if (separated) {
+    hours = Number(separated[1]);
+    minutes = Number(separated[2]);
+  } else if (compact) {
+    const padded = compact[1].padStart(4, "0");
+    hours = Number(padded.slice(0, 2));
+    minutes = Number(padded.slice(2));
+  } else if (hourOnly) {
+    hours = Number(hourOnly[1]);
+    minutes = 0;
+  } else {
+    return null;
+  }
+
+  if (hours > 23 || minutes > 59) return null;
+  return { hours, minutes };
+}
+
+export function formatTime(hours: number, minutes: number): string {
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
+
 const moneyAmountSchema = z
   .number()
   .finite()
@@ -52,19 +89,23 @@ export const expenseSubmitSchema = z
 
 export type ExpenseFormErrors = {
   vendorName?: string;
+  time?: string;
   items?: string;
   amount?: string;
 };
 
-export function getExpenseFormErrors(expense: {
-  vendorName: string;
-  items: { name: string; singleItemPrice?: number; quantity?: number }[];
-  subtotalAmount?: number;
-  taxAmount?: number;
-  discountAmount?: number;
-  serviceAmount?: number;
-  totalAmount?: number;
-}): ExpenseFormErrors {
+export function getExpenseFormErrors(
+  expense: {
+    vendorName: string;
+    items: { name: string; singleItemPrice?: number; quantity?: number }[];
+    subtotalAmount?: number;
+    taxAmount?: number;
+    discountAmount?: number;
+    serviceAmount?: number;
+    totalAmount?: number;
+  },
+  timeText?: string
+): ExpenseFormErrors {
   const result = expenseSubmitSchema.safeParse({
     vendorName: expense.vendorName,
     items: expense.items.map((item) => ({
@@ -79,9 +120,13 @@ export function getExpenseFormErrors(expense: {
     totalAmount: expense.totalAmount ?? 0,
   });
 
-  if (result.success) return {};
-
   const errors: ExpenseFormErrors = {};
+  if (timeText !== undefined && parseTimeInput(timeText) === null) {
+    errors.time = TIME_INVALID;
+  }
+
+  if (result.success) return errors;
+
   for (const issue of result.error.issues) {
     const root = issue.path[0];
     if (root === "vendorName" && !errors.vendorName) {
