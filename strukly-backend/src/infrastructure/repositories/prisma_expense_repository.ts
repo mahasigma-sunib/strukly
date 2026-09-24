@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "src/generated/prisma/client";
 import IExpenseRepository from "../../domain/repositories/expense_repository";
 import Expense from "../../domain/aggregates/expense";
 import ExpenseHeader from "../../domain/entities/expense_header";

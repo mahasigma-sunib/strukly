@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from 'src/generated/prisma/client';
 import User from '../../domain/aggregates/user';
 import UserRepository from '../../domain/repositories/user_repository';
 
@@ -13,7 +13,7 @@ export default class PrismaUserRepository implements UserRepository {
     if (!dbUser) {
       return null;
     }
-  
+
 
     return new User({
       id: dbUser.id,
@@ -33,8 +33,8 @@ export default class PrismaUserRepository implements UserRepository {
     if (!dbUser) {
       return null;
     }
-  
-    
+
+
     return new User({
       id: dbUser.id,
       email: dbUser.email,
@@ -48,7 +48,7 @@ export default class PrismaUserRepository implements UserRepository {
   async create(user: User): Promise<void> {
     await this.prisma.user.create({
       data: {
-        id: user.id, 
+        id: user.id,
         email: user.email,
         name: user.name,
         hashedPassword: user.hashedPassword,
@@ -65,7 +65,7 @@ export default class PrismaUserRepository implements UserRepository {
         email: user.email,
         name: user.name,
         hashedPassword: user.hashedPassword,
-        updatedAt: new Date(), 
+        updatedAt: new Date(),
       },
     });
   }
