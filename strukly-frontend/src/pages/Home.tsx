@@ -259,7 +259,13 @@ function Home() {
               <div>
                 {activeGoals.slice(0, 3).map((goal, idx) => (
                   <Card key={goal.id}>
-                    <GoalList goal={goal} idx={idx} onHold={() => {}} />
+                    <GoalList
+                      goal={goal}
+                      idx={idx}
+                      onHold={() =>
+                        navigate("/goals", { state: { selectedGoalId: goal.id } })
+                      }
+                    />
                   </Card>
                 ))}
                 {goals.length > 3 && (
