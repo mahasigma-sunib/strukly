@@ -28,6 +28,7 @@ import UpdateCurrentBudgetUseCase from "./application/use_cases/budget/update_cu
 import GeminiVisionAdapter from "./infrastructure/language_model/gemini_vision_adapter";
 import OpenRouterVisionAdapter from "./infrastructure/language_model/openrouter_vision_adapter";
 import FallbackVisionAdapter from "./infrastructure/language_model/fallback_vision_adapter";
+import PrismaUnitOfWork from "./infrastructure/repositories/prisma_unit_of_work";
 
 // DB Client
 import { PrismaClient } from "./generated/prisma/client";
@@ -66,6 +67,7 @@ export const userRepository = new PrismaUserRepository(prismaClient);
 export const goalItemRepository = new PrismaGoalItemRepository(prismaClient);
 export const budgetHistoryRepository = new PrismaBudgetHistoryRepository(prismaClient);
 export const expenseRepository = new PrismaExpenseRepository(prismaClient);
+export const unitOfWork = new PrismaUnitOfWork(prismaClient);
 
 // Services
 export const hashingService = new BcryptService();
@@ -103,12 +105,14 @@ export const deleteGoalItemUseCase = new DeleteGoalItemUseCase(goalItemRepositor
 // expense
 export const createExpenseUseCase = new CreateExpenseUseCase(
   expenseService,
-  budgetService
+  budgetService,
+  unitOfWork,
 );
 export const depositGoalItemUseCase = new DepositGoalItemUseCase(
   budgetService,
   goalItemRepository,
   createExpenseUseCase,
+  unitOfWork,
 );
 export const getExpenseListUseCase = new GetMonthlyExpenseListUseCase(
   expenseService
@@ -121,11 +125,13 @@ export const getExpenseDetailUseCase = new GetExpenseDetailUseCase(
 );
 export const updateExpenseUseCase = new UpdateExpenseUseCase(
   expenseService,
-  budgetService
+  budgetService,
+  unitOfWork,
 );
 export const deleteExpenseUseCase = new DeleteExpenseUseCase(
   expenseService,
-  budgetService
+  budgetService,
+  unitOfWork,
 );
 export const imageToExpenseUseCase = new ScanExpenseImageUseCase(
   visionExtractionPort
@@ -135,4 +141,5 @@ export const imageToExpenseUseCase = new ScanExpenseImageUseCase(
 export const getCurrentBudgetUseCase = new GetCurrentBudgetUseCase(budgetService);
 export const updateCurrentBudgetUseCase = new UpdateCurrentBudgetUseCase(
   budgetService,
+  unitOfWork,
 );

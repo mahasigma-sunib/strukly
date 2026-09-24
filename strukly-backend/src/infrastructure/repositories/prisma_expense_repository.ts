@@ -1,4 +1,4 @@
-import { PrismaClient } from "src/generated/prisma/client";
+import { PrismaClientLike } from "./prisma_types";
 import IExpenseRepository from "../../domain/repositories/expense_repository";
 import Expense from "../../domain/aggregates/expense";
 import ExpenseHeader from "../../domain/entities/expense_header";
@@ -12,7 +12,7 @@ import ExpenseID from "../../domain/values/expense_id";
 export default class PrismaExpenseRepository
   implements IExpenseRepository
 {
-  constructor(private readonly prisma: PrismaClient) { }
+  constructor(private readonly prisma: PrismaClientLike) { }
 
   async create(expense: Expense): Promise<Expense> {
     const createdExpense = await this.prisma.expenseHeader.create({
