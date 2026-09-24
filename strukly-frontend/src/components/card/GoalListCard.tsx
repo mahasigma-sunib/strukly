@@ -3,6 +3,7 @@ import CheckIcon from "../../components/utilityIcons/CheckIcon";
 import FlagIcon from "../../components/utilityIcons/FlagIcon";
 import Money from "../money/Money";
 import type { GoalItem } from "../../type/GoalItem";
+import { useTranslation } from "react-i18next";
 
 interface GoalListProps {
   goal: GoalItem;
@@ -11,6 +12,7 @@ interface GoalListProps {
 }
 
 export default function GoalList({ goal, idx, onHold }: GoalListProps) {
+  const { t } = useTranslation();
   const colorClasses = [
     "text-red-500",
     "text-blue-500",
@@ -18,12 +20,12 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
     "text-yellow-500",
     "text-purple-500",
   ];
-  
+
   const progress = (goal.deposit / goal.price) * 100;
 
   const handleClick = () => {
     onHold(goal);
-    
+
     if (navigator.vibrate) {
       navigator.vibrate(50);
     }
@@ -57,11 +59,11 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
             <div className="flex flex-row w-full justify-between items-center">
               <p className="text-lg font-semibold text-inactive">
                 {(() => {
-                  if (progress === 100) return "Goals reached!";
-                  if (progress >= 75) return <span>You're almost there!</span>;
-                  if (progress >= 50) return <span>Halfway done, nice!</span>;
-                  if (progress >= 25) return <span>Let's keep it up!</span>;
-                  return <span>Let's get started!</span>;
+                  if (progress === 100) return t("goalCard.reached");
+                  if (progress >= 75) return <span>{t("goalCard.almostThere")}</span>;
+                  if (progress >= 50) return <span>{t("goalCard.halfway")}</span>;
+                  if (progress >= 25) return <span>{t("goalCard.keepItUp")}</span>;
+                  return <span>{t("goalCard.getStarted")}</span>;
                 })()}
               </p>
 
@@ -97,7 +99,7 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
         />
       </div>
            <div className="flex items-center gap-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100 transition-opacity transform translate-y-1">
-           <span>Click to edit</span>
+           <span>{t("goalCard.clickToEdit")}</span>
         </div>
     </div>
   );

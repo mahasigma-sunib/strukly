@@ -5,10 +5,9 @@ import {
   MONEY_AMOUNT_TOO_LARGE,
 } from "./money";
 
-export const DISCOUNT_EXCEEDS_EXPENSE =
-  "Discount cannot exceed the expense total";
+export const DISCOUNT_EXCEEDS_EXPENSE = "validation.discountExceeds";
 
-export const TIME_INVALID = "Enter a valid time between 00:00 and 23:59";
+export const TIME_INVALID = "validation.timeInvalid";
 
 export function parseTimeInput(
   raw: string
@@ -56,11 +55,11 @@ export const expenseSubmitSchema = z
     vendorName: z
       .string()
       .trim()
-      .min(1, "Vendor name is required")
-      .max(255, "Vendor name is too long"),
+      .min(1, "validation.vendorNameRequired")
+      .max(255, "validation.vendorNameTooLong"),
     items: z.array(
       z.object({
-        name: z.string().trim().min(1, "Item name is required"),
+        name: z.string().trim().min(1, "validation.itemNameRequired"),
         singleItemPrice: moneyAmountSchema,
         quantity: z.number().int().min(1).max(MAX_ITEM_QUANTITY),
       })

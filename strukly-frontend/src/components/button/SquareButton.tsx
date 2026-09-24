@@ -1,3 +1,5 @@
+import React from "react";
+
 interface SquareButtonProps {
   icon: React.ReactNode;
   label: string;

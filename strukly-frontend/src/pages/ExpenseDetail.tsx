@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import axios from "axios";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import { fetcher } from "../utils/fetcher";
 
@@ -22,6 +23,7 @@ import { formatIDRDisplay } from "../components/money/formatIDRDisplay";
 import useExpense from "../store/ExpenseStore";
 
 function ExpenseDetail() {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -43,7 +45,7 @@ function ExpenseDetail() {
       deleteExpense(raw.id);
       navigate(-1);
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to delete expense. Please try again."));
+      toast.error(getApiErrorMessage(error, t("expense.deleteFailed")));
       throw error; // rethrow so caller keeps the popup open on failure
     }
   };
@@ -67,7 +69,8 @@ function ExpenseDetail() {
   );
 
   const formatCardDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-GB", {
+    const locale = i18n.resolvedLanguage === "id" ? "id-ID" : "en-GB";
+    return new Intl.DateTimeFormat(locale, {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -79,14 +82,14 @@ function ExpenseDetail() {
   if (isLoading)
     return (
       <div className="flex h-screen items-center justify-center text-[var(--fun-color-text-secondary)]">
-        Loading...
+        {t("common.loading")}
       </div>
     );
   if (error)
     return (
       <div className="bg-background min-h-screen pb-10">
         <LoadErrorPlaceholder
-          title="Oops! We couldn't load this expense."
+          title={t("expense.loadDetailError")}
           onRetry={() => mutate()}
         />
       </div>
@@ -94,7 +97,7 @@ function ExpenseDetail() {
   if (!data?.expense)
     return (
       <div className="flex h-screen items-center justify-center text-[var(--fun-color-text-secondary)]">
-        No expense found
+        {t("expense.notFound")}
       </div>
     );
 
@@ -135,7 +138,7 @@ function ExpenseDetail() {
           >
             <BackIcon width={28} height={28} />
           </div>
-          <p className="font-semibold text-xl">Expense Details</p>
+          <p className="font-semibold text-xl">{t("expense.detail")}</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -161,11 +164,11 @@ function ExpenseDetail() {
           </div>
 
           <h3 className="text-xl font-bold text-gray-900">
-            Delete Transaction?
+            {t("expense.deleteTitle")}
           </h3>
           <div className="mt-2 mb-6">
             <p className="text-base text-gray-500">
-              This action cannot be undone.
+              {t("expense.deleteBody")}
             </p>
           </div>
 
@@ -176,7 +179,7 @@ function ExpenseDetail() {
               onClick={() => setDeletePopUp(false)}
               className="w-full"
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
 
             <Button
@@ -192,7 +195,7 @@ function ExpenseDetail() {
               }}
               className="w-full !bg-[#fa1e1e] !shadow-[0_4px_0_0_#de0d0d]"
             >
-              Delete
+              {t("common.delete")}
             </Button>
           </div>
         </div>
@@ -251,7 +254,7 @@ function ExpenseDetail() {
             {/* 3. Calculations */}
             <div className="space-y-3 text-base">
               <div className="flex justify-between gap-3 min-w-0 text-gray-500">
-                <span className="shrink-0">Subtotal</span>
+                <span className="shrink-0">{t("expense.subtotal")}</span>
                 {amountText(
                   expense.subtotalAmount,
                   "font-medium text-gray-900"
@@ -260,14 +263,14 @@ function ExpenseDetail() {
 
               {expense.taxAmount > 0 && (
                 <div className="flex justify-between text-gray-500">
-                  <span>Tax</span>
+                  <span>{t("expense.tax")}</span>
                   {amountText(expense.taxAmount, "font-medium text-gray-900")}
                 </div>
               )}
 
               {expense.serviceAmount > 0 && (
                 <div className="flex justify-between text-gray-500">
-                  <span>Service</span>
+                  <span>{t("expense.service")}</span>
                   {amountText(
                     expense.serviceAmount,
                     "font-medium text-gray-900"
@@ -282,7 +285,7 @@ function ExpenseDetail() {
                     : "text-gray-500"
                 }`}
               >
-                <span>Discount</span>
+                <span>{t("expense.discount")}</span>
                 <div className="flex items-baseline font-medium">
                   {expense.discountAmount > 0 && <span>-</span>}
                   <Money
@@ -299,7 +302,7 @@ function ExpenseDetail() {
             {/* 4. Grand Total */}
             <div className="flex justify-between items-center gap-3 min-w-0 mb-6">
               <span className="font-bold text-gray-500 text-xl shrink-0">
-                Total
+                {t("expense.total")}
               </span>
               {amountText(
                 expense.totalAmount,

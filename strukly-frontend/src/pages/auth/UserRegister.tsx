@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { emailSchema, passwordSchema } from "../../schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
 import Button from "../../components/button/Button";
@@ -24,6 +25,7 @@ const ErrorIcon = () => (
 );
 
 function UserRegister() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -37,6 +39,8 @@ function UserRegister() {
   const navigate = useNavigate();
   const register = useUserAuth((s) => s.register);
 
+  const usernameRequiredMessage = t("auth.register.usernameRequired");
+
   const clearRegisterError = () => {
     if (registerError) {
       setRegisterError("");
@@ -45,11 +49,11 @@ function UserRegister() {
 
   useEffect(() => {
     if (confirmPassword && confirmPassword !== password) {
-      setConfirmPasswordError("Password do not match");
+      setConfirmPasswordError(t("auth.register.passwordMismatch"));
     } else {
       setConfirmPasswordError("");
     }
-  }, [password, confirmPassword]);
+  }, [password, confirmPassword, t]);
 
   const handleEmailValidation = () => {
     if (!email.trim()) {
@@ -85,12 +89,12 @@ function UserRegister() {
     let hasError = false;
 
     if (!username) {
-      setRegisterError("Username is required.");
+      setRegisterError(usernameRequiredMessage);
       hasError = true;
     }
 
     if (confirmPassword !== password) {
-      setConfirmPasswordError("Password do not match");
+      setConfirmPasswordError(t("auth.register.passwordMismatch"));
       hasError = true;
     } else {
       setConfirmPasswordError("");
@@ -106,7 +110,7 @@ function UserRegister() {
       hasError
     ) {
       if (!registerError) {
-        setRegisterError("Please fill the form correctly.");
+        setRegisterError(t("auth.register.fillForm"));
       }
       return;
     }
@@ -118,7 +122,7 @@ function UserRegister() {
       navigate("/login");
     } catch (error) {
       setRegisterError(
-        (error as Error).message || "Registration failed. Please try again."
+        (error as Error).message || t("auth.register.failed")
       );
     }
   };
@@ -135,10 +139,10 @@ function UserRegister() {
             <WinkMascot width={84} height={84} />
           </div>
           <p className="font-extrabold text-2xl text-text-primary">
-            Create Account
+            {t("auth.register.title")}
           </p>
           <p className="font-bold text-base text-inactive">
-            Let's set up your account!
+            {t("auth.register.subtitle")}
           </p>
         </div>
 
@@ -147,7 +151,7 @@ function UserRegister() {
           <input
             type="text"
             id="username"
-            placeholder="Username"
+            placeholder={t("auth.register.username")}
             value={username}
             onChange={(event) => {
               setUsername(event?.target.value);
@@ -158,7 +162,7 @@ function UserRegister() {
                         bg-background focus:outline-none focus:border-primary 
                         ${
                           !username &&
-                          registerError.includes("Username is required")
+                          registerError.includes(usernameRequiredMessage)
                             ? "border-status-error"
                             : "border-border"
                         }`}
@@ -168,7 +172,7 @@ function UserRegister() {
           <input
             type="email"
             id="email"
-            placeholder="Email"
+            placeholder={t("auth.register.email")}
             value={email}
             onChange={(event) => {
               setEmail(event?.target.value);
@@ -186,14 +190,14 @@ function UserRegister() {
           {emailError != "" && (
             <p className="text-status-error text-sm mt-[-4px] font-medium">
               <ErrorIcon />
-              {emailError}
+              {t(emailError)}
             </p>
           )}
 
           {/* PASSWORD FIELD */}
           <PasswordInput
             id="password"
-            placeholder="Password"
+            placeholder={t("auth.register.password")}
             value={password}
             onChange={(event) => {
               setPassword(event?.target.value);
@@ -215,7 +219,7 @@ function UserRegister() {
               {passwordError.map((error, index) => (
                 <p key={index}>
                   <ErrorIcon />
-                  {error}
+                  {t(error)}
                 </p>
               ))}
             </div>
@@ -224,7 +228,7 @@ function UserRegister() {
           {/* CONFIRM PASSWORD FIELD */}
           <PasswordInput
             id="confirmPassword"
-            placeholder="Confirm Password"
+            placeholder={t("auth.register.confirmPassword")}
             value={confirmPassword}
             onChange={(event) => {
               setConfirmPassword(event?.target.value);
@@ -252,19 +256,19 @@ function UserRegister() {
           onClick={handleRegister}
           className="rounded cursor-pointer my-4 w-full py-3"
         >
-          SIGN UP
+          {t("auth.register.submit")}
         </Button>
 
         {/* Login Link */}
         <div className="flex flex-row gap-2">
           <span className="font-bold text-text-disabled">
-            Already have an account?
+            {t("auth.register.haveAccount")}
           </span>
           <span
             onClick={() => navigate("/login")}
             className="font-extrabold text-primary cursor-pointer"
           >
-            Log in
+            {t("auth.register.logIn")}
           </span>
         </div>
 

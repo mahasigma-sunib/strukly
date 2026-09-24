@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { mutate } from "swr";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import useGoals from "../store/GoalsStore";
@@ -21,6 +22,7 @@ import GoalModal from "../components/modal/GoalModal";
 import GoalPopup from "../components/popup/GoalPopUp";
 
 const GoalsPage: React.FC = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
@@ -39,11 +41,11 @@ const GoalsPage: React.FC = () => {
 
   useEffect(() => {
     if (goalsLoadError) {
-      toast.error("Failed to load goals. Please try again.", {
+      toast.error(t("goals.loadFailed"), {
         id: "goals-load-error",
       });
     }
-  }, [goalsLoadError]);
+  }, [goalsLoadError, t]);
   const {
     items: goals,
     addGoal,
@@ -82,19 +84,17 @@ const GoalsPage: React.FC = () => {
 
   const handleCreate = async () => {
     if (!formData.name.trim()) {
-      setErrorMessage("A goal name must be filled");
+      setErrorMessage(t("goals.nameRequired"));
       return;
     }
 
     if (formData.name.length > 250) {
-      setErrorMessage(
-        "A goal name must be less than or equal to 250 characters"
-      );
+      setErrorMessage(t("goals.nameTooLong"));
       return;
     }
 
     if (formData.price <= 0) {
-      setErrorMessage("Target price must be greater than 0!");
+      setErrorMessage(t("goals.priceRequired"));
       return;
     }
 
@@ -114,7 +114,7 @@ const GoalsPage: React.FC = () => {
       setActiveModal(null);
       setFormData(emptyForm);
     } catch (err) {
-      setErrorMessage(getApiErrorMessage(err, "Failed to create goal"));
+      setErrorMessage(getApiErrorMessage(err, t("goals.createFailed")));
     }
   };
 
@@ -122,7 +122,7 @@ const GoalsPage: React.FC = () => {
     if (!selectedGoal) return;
 
     if (tempAmount <= 0) {
-      setErrorMessage(`The input amount must be greater than zero!`);
+      setErrorMessage(t("goals.depositAmount"));
       return;
     }
 
@@ -130,7 +130,7 @@ const GoalsPage: React.FC = () => {
 
     if (tempAmount > remaining) {
       setErrorMessage(
-        `The input amount greater than target, Maximal: Rp ${remaining.toLocaleString()}`
+        t("goals.depositTooMuch", { max: remaining.toLocaleString() })
       );
       return;
     }
@@ -159,7 +159,7 @@ const GoalsPage: React.FC = () => {
       setSelectedGoal(null);
       setTempAmount(0);
     } catch (error) {
-      setErrorMessage(getApiErrorMessage(error, "Failed to add savings"));
+      setErrorMessage(getApiErrorMessage(error, t("goals.depositFailed")));
     }
   };
 
@@ -167,17 +167,17 @@ const GoalsPage: React.FC = () => {
     if (!selectedGoal) return;
 
     if (!formData.name.trim()) {
-      setErrorMessage("A goal name must be filled");
+      setErrorMessage(t("goals.nameRequired"));
       return;
     }
 
     if (formData.price < selectedGoal.deposit) {
-      setErrorMessage("New goal price must be less than current amount!");
+      setErrorMessage(t("goals.priceTooLow"));
       return;
     }
 
     if (formData.price <= 0) {
-      setErrorMessage("Target price must be greater than 0!");
+      setErrorMessage(t("goals.priceRequired"));
       return;
     }
 
@@ -201,7 +201,7 @@ const GoalsPage: React.FC = () => {
       setActiveModal(null);
       setSelectedGoal(null);
     } catch (error) {
-      setErrorMessage(getApiErrorMessage(error, "Failed to update goal"));
+      setErrorMessage(getApiErrorMessage(error, t("goals.updateFailed")));
     }
   };
 
@@ -215,7 +215,7 @@ const GoalsPage: React.FC = () => {
       );
       deleteGoal(selectedGoal.id);
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to delete goal. Please try again."));
+      toast.error(getApiErrorMessage(error, t("goals.deleteFailed")));
       return;
     }
     setActiveModal(null);
@@ -236,11 +236,11 @@ const GoalsPage: React.FC = () => {
         {goals.length === 0 && !goalsIsLoading && (
           <div>
             <div className="ml-5 mr-4 mt-6 mb-2 font-bold text-2xl">
-              <p>My Goals</p>
+              <p>{t("goals.myGoals")}</p>
             </div>
             {goalsLoadError ? (
               <LoadErrorPlaceholder
-                title="Oops! We couldn't load your goals."
+                title={t("goals.loadError")}
                 onRetry={() =>
                   mutate(`${import.meta.env.VITE_API_BASE_URL}/goals`)
                 }
@@ -249,7 +249,7 @@ const GoalsPage: React.FC = () => {
               <div className="flex flex-col items-center justify-center mt-20 ">
                 <FlagMascot width={148} height={148} className="ml-8" />
                 <p className="text-inactive mt-4 font-bold text-lg text-center">
-                  You have no goals yet.
+                  {t("goals.noGoals")}
                 </p>
               </div>
             )}
@@ -261,9 +261,11 @@ const GoalsPage: React.FC = () => {
           {activeGoals.length > 0 && (
             <div>
               <div className="flex flex-row justify-between items-center">
-                <p className="font-bold text-2xl ml-5 mr-4">My Goals</p>
+                <p className="font-bold text-2xl ml-5 mr-4">
+                  {t("goals.myGoals")}
+                </p>
                 <p className="ml-5 mr-4 text-base px-3 py-1 font-bold text-[#f14c1a] bg-secondary-hover/30 rounded-full ">
-                  {activeGoals.length} Active Goals
+                  {t("goals.activeCount", { count: activeGoals.length })}
                 </p>
               </div>
 
@@ -284,9 +286,11 @@ const GoalsPage: React.FC = () => {
           {completedGoals.length > 0 && (
             <div>
               <div className="flex flex-row justify-between items-center">
-                <p className="ml-5 mr-4 font-bold text-2xl">Completed</p>
+                <p className="ml-5 mr-4 font-bold text-2xl">
+                  {t("goals.completed")}
+                </p>
                 <p className="ml-5 mr-4 text-base font-bold text-[#198010] bg-status-success/10 px-2 py-1 rounded-full">
-                  {completedGoals.length} Completed Goals
+                  {t("goals.completedCount", { count: completedGoals.length })}
                 </p>
               </div>
               <div className="space-y-4">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import ExpenseForm from "./ExpenseForm";
 
@@ -75,6 +76,7 @@ function mapExpenseToPostPayload(expense: any) {
 }
 
 export default function AddExpense() {
+  const { t } = useTranslation();
   const [expense, setExpense] = useState(() => createEmptyExpense());
   const [timeText, setTimeText] = useState(() =>
     formatTime(expense.dateTime.getHours(), expense.dateTime.getMinutes())
@@ -163,7 +165,7 @@ export default function AddExpense() {
       addExpense(mapExpense(res.data.expense));
       navigate("/expense");
     } catch (err) {
-      toast.error(getApiErrorMessage(err, "Failed to add expense. Please try again."));
+      toast.error(getApiErrorMessage(err, t("expense.addFailed")));
     }
   };
 
@@ -173,7 +175,7 @@ export default function AddExpense() {
         <button onClick={() => navigate(-1)}>
           <BackIcon width={28} height={28} />
         </button>
-        <h1 className="text-xl font-semibold">Add Expense</h1>
+        <h1 className="text-xl font-semibold">{t("expense.add")}</h1>
       </div>
 
       <div>
@@ -194,7 +196,7 @@ export default function AddExpense() {
             className="!w-screen"
             onClick={handleSubmit}
           >
-            Add Expense
+            {t("expense.add")}
           </Button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import ExpenseForm from "./ExpenseForm";
 import BackIcon from "../components/utilityIcons/BackIcon";
@@ -18,6 +19,7 @@ import {
 import { clampExpenseMoneyFields } from "../schema/money";
 
 export default function EditExpense() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,12 +29,12 @@ export default function EditExpense() {
   if (!passedExpense) {
     return (
       <div className="h-screen flex flex-col items-center justify-center gap-4">
-        <p className="text-gray-500">No expense data found.</p>
+        <p className="text-gray-500">{t("expense.noData")}</p>
         <button
           onClick={() => navigate(-1)}
           className="text-blue-600 underline"
         >
-          Go back
+          {t("expense.goBack")}
         </button>
       </div>
     );
@@ -48,6 +50,7 @@ function EditExpenseEditor({
   initialExpense: ExpenseType;
   id: string | undefined;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [expense, setExpense] = useState<ExpenseType>(() =>
     clampExpenseMoneyFields(initialExpense)
@@ -107,7 +110,7 @@ function EditExpenseEditor({
       updateExpense(id, expense);
       navigate(-1);
     } catch (err) {
-      toast.error(getApiErrorMessage(err, "Failed to update expense. Please try again."));
+      toast.error(getApiErrorMessage(err, t("expense.updateFailed")));
     }
   };
 
@@ -119,14 +122,14 @@ function EditExpenseEditor({
           <button onClick={() => navigate(-1)}>
             <BackIcon width={28} height={28} />
           </button>
-          <h1 className="text-xl font-semibold">Edit Expense</h1>
+          <h1 className="text-xl font-semibold">{t("expense.edit")}</h1>
         </div>
 
         <button
           onClick={handleSubmit}
           className="cursor-pointer active:opacity-70 transition-opacity text-blue-500 font-bold text-xl mr-2 "
         >
-          Done
+          {t("common.done")}
         </button>
       </div>
 

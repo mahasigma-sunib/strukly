@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 type ProgressBarProps = {
   value: number;
@@ -16,10 +17,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   className = "",
   barColor = "bg-secondary",
 }) => {
+  const { t } = useTranslation();
+
   if (max <= 0) {
     return (
       <div className={`w-full ${className}`}>
-        <div className="text-xs text-gray-400">Invalid budget</div>
+        <div className="text-xs text-gray-400">{t("progress.invalidBudget")}</div>
       </div>
     );
   }

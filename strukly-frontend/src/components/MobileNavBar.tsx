@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import BudgetIconOutline from "./icons/BudgetIconOutline";
 import BudgetIconFilled from "./icons/BudgetIconFilled";
@@ -62,6 +63,7 @@ function NavLink({ to, label, activeIcon, inactiveIcon }: NavLinkProps) {
 }
 
 export default function MobileNavBar() {
+  const { t } = useTranslation();
   const { isOpen, open, close } = useAddExpenseDrawer();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -101,7 +103,7 @@ export default function MobileNavBar() {
         state: { scannedData: result.data.transaction },
       });
     } catch (err) {
-      toast.error(getApiErrorMessage(err, "Failed to process receipt. Please try again."));
+      toast.error(getApiErrorMessage(err, t("scan.processFailed")));
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
@@ -115,13 +117,13 @@ export default function MobileNavBar() {
       <nav className="rounded-t-3xl fixed bottom-0 left-0 right-0 grid grid-cols-5 items-center h-16 bg-white z-50 shadow-[0_0_20px_5px_rgba(0,0,0,0.02)] pl-1 pr-1">
         <NavLink
           to="/home"
-          label="Home"
+          label={t("nav.home")}
           activeIcon={<HomeIconFilled width={24} height={24} />}
           inactiveIcon={<HomeIconOutline width={24} height={24} />}
         />
         <NavLink
           to="/expense"
-          label="Expense"
+          label={t("nav.expense")}
           activeIcon={<ExpenseIconFilled width={24} height={24} />}
           inactiveIcon={<ExpenseIconOutline width={24} height={24} />}
         />
@@ -139,20 +141,20 @@ export default function MobileNavBar() {
         <Drawer
           visible={isOpen}
           onClose={close}
-          title="Add New Expense"
+          title={t("addDrawer.title")}
         >
           <div className="flex flex-col space-y-4 px-2 pb-2 pt-2">
             <SquareButton
-              label="Open Camera"
-              sublabel="Scan your receipt quickly"
+              label={t("addDrawer.camera")}
+              sublabel={t("addDrawer.cameraSub")}
               icon={
                 <CameraIcon className="text-orange" width={36} height={36} />
               }
               onClick={() => handleAddBtn("camera")}
             />
             <SquareButton
-              label="Open Gallery"
-              sublabel="Import images from your gallery"
+              label={t("addDrawer.gallery")}
+              sublabel={t("addDrawer.gallerySub")}
               icon={
                 <GalleryIcon
                   className="text-primary-hover"
@@ -163,8 +165,8 @@ export default function MobileNavBar() {
               onClick={() => handleAddBtn("gallery")}
             />
             <SquareButton
-              label="Write Manually"
-              sublabel="Input transaction details manually"
+              label={t("addDrawer.manual")}
+              sublabel={t("addDrawer.manualSub")}
               icon={
                 <ManualWriteIcon
                   className="text-secondary"
@@ -185,13 +187,13 @@ export default function MobileNavBar() {
 
         <NavLink
           to="/budget"
-          label="Budget"
+          label={t("nav.budget")}
           activeIcon={<BudgetIconFilled width={24} height={24} />}
           inactiveIcon={<BudgetIconOutline width={24} height={24} />}
         />
         <NavLink
           to="/goals"
-          label="Goals"
+          label={t("nav.goals")}
           activeIcon={
             <GoalsIconFilled className="text-orange" width={24} height={24} />
           }
@@ -222,10 +224,10 @@ export default function MobileNavBar() {
           </div>
           <div className="flex flex-col items-center justify-center mx-20 gap-3">
             <p className="text-white text-xl font-semibold animate-pulse">
-              Scanning Receipt
+              {t("scan.scanning")}
             </p>
             <p className="text-gray-300 text-sm text-center">
-              Please wait a moment while we're reading your receipt
+              {t("scan.wait")}
             </p>
           </div>
         </div>

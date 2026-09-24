@@ -1,0 +1,267 @@
+{
+  "common": {
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "done": "Done",
+    "confirm": "Confirm",
+    "wait": "Please wait a moment...",
+    "networkError": "Network error. Please check your connection and try again."
+  },
+  "nav": {
+    "home": "Home",
+    "expense": "Expense",
+    "budget": "Budget",
+    "goals": "Goals"
+  },
+  "category": {
+    "food": "Food",
+    "groceries": "Groceries",
+    "transportation": "Transportation",
+    "housebills": "House Bills",
+    "shopping": "Shopping",
+    "entertainment": "Entertainment",
+    "others": "Others"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Good Morning,",
+      "afternoon": "Good Afternoon,",
+      "evening": "Good Evening,",
+      "night": "Good Night,"
+    },
+    "defaultUser": "User",
+    "youVeSpent": "You've spent",
+    "thisMonth": "this month",
+    "myBudget": "My Budget",
+    "overBudget": "over budget",
+    "percentLeft": "{{percent}}% left",
+    "noBudget": "You haven't set a monthly budget",
+    "setBudget": "Set Budget",
+    "avgSpentPerDay": "Avg. spent / day",
+    "topCategory": "Top category",
+    "currentGoals": "Current Goals",
+    "viewAllGoals": "View all {{count}} goals",
+    "noGoalsYet": "You haven't made a goal yet",
+    "makeAGoal": "Make a goal",
+    "recentExpenses": "Recent Expenses",
+    "seeAllExpenses": "See all expenses",
+    "noExpensesYet": "You haven't added a new expense yet",
+    "addExpense": "Add expense",
+    "loadBudgetError": "Failed to load budget. Please try again.",
+    "loadExpensesError": "Failed to load expenses. Please try again.",
+    "loadGoalsError": "Failed to load goals. Please try again."
+  },
+  "expense": {
+    "title": "Expense",
+    "selectPeriod": "Select Period",
+    "scrollHint": "Scroll to select month and year",
+    "applyFilter": "Apply Filter",
+    "tracker": "Tracker",
+    "weeklyExpense": "Weekly Expense",
+    "history": "History",
+    "exportCsv": "Export CSV",
+    "exportEmpty": "No expenses to export this month.",
+    "exportFailed": "Failed to export expenses. Please try again.",
+    "loadError": "Oops! We couldn't load your expenses.",
+    "empty": "You have no transactions yet.",
+    "add": "Add Expense",
+    "edit": "Edit Expense",
+    "detail": "Expense Details",
+    "deleteTitle": "Delete Transaction?",
+    "deleteBody": "This action cannot be undone.",
+    "loadDetailError": "Oops! We couldn't load this expense.",
+    "notFound": "No expense found",
+    "noData": "No expense data found.",
+    "goBack": "Go back",
+    "addFailed": "Failed to add expense. Please try again.",
+    "updateFailed": "Failed to update expense. Please try again.",
+    "deleteFailed": "Failed to delete expense. Please try again.",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "service": "Service",
+    "discount": "Discount",
+    "total": "Total"
+  },
+  "expenseForm": {
+    "category": "Category",
+    "vendorName": "Vendor Name",
+    "vendorPlaceholder": "Ex. McDonald's",
+    "date": "Date",
+    "time": "Time",
+    "detailedReceipt": "Detailed Receipt",
+    "itemsList": "Items List",
+    "itemName": "Item Name",
+    "price": "Price",
+    "addItem": "Add Item",
+    "totalAmount": "Total Amount"
+  },
+  "addDrawer": {
+    "title": "Add New Expense",
+    "camera": "Open Camera",
+    "cameraSub": "Scan your receipt quickly",
+    "gallery": "Open Gallery",
+    "gallerySub": "Import images from your gallery",
+    "manual": "Write Manually",
+    "manualSub": "Input transaction details manually"
+  },
+  "scan": {
+    "title": "Scan Receipt",
+    "scanning": "Scanning Receipt",
+    "wait": "Please wait a moment while we're reading your receipt",
+    "failed": "Failed to scan receipt. Please try again.",
+    "processFailed": "Failed to process receipt. Please try again."
+  },
+  "budget": {
+    "title": "Budget",
+    "edit": "Edit Budget",
+    "setMonthly": "Set your total monthly budget",
+    "overview": "Overview",
+    "used": "Used",
+    "remaining": "Remaining",
+    "topCategories": "Top Categories",
+    "loadError": "Oops! We couldn't load your budget.",
+    "updateFailed": "Failed to update budget. Please try again.",
+    "overviewHint": "Set budget to see your overview!",
+    "ofBudgetUsed": "of budget used"
+  },
+  "goals": {
+    "title": "Goals",
+    "add": "Add Goals",
+    "myGoals": "My Goals",
+    "noGoals": "You have no goals yet.",
+    "loadError": "Oops! We couldn't load your goals.",
+    "loadFailed": "Failed to load goals. Please try again.",
+    "activeCount": "{{count}} Active Goals",
+    "completed": "Completed",
+    "completedCount": "{{count}} Completed Goals",
+    "nameRequired": "A goal name must be filled",
+    "nameTooLong": "A goal name must be less than or equal to 250 characters",
+    "priceRequired": "Target price must be greater than 0!",
+    "createFailed": "Failed to create goal",
+    "depositAmount": "The input amount must be greater than zero!",
+    "depositTooMuch": "The input amount greater than target, Maximal: Rp {{max}}",
+    "depositFailed": "Failed to add savings",
+    "priceTooLow": "New goal price must be less than current amount!",
+    "updateFailed": "Failed to update goal",
+    "deleteFailed": "Failed to delete goal. Please try again."
+  },
+  "goalModal": {
+    "create": "Add New Goal",
+    "edit": "Update Goal",
+    "deposit": "Add Savings",
+    "delete": "Delete Goal",
+    "inputNominal": "Input nominal",
+    "goalName": "Goal Name",
+    "targetPrice": "Target Price (Rp)",
+    "cannotUndo": "This action cannot be undone.",
+    "category": "Category"
+  },
+  "goalPopUp": {
+    "manage": "Manage Goal",
+    "addSavings": "Add Savings",
+    "editGoal": "Edit Goal",
+    "deleteGoal": "Delete Goal"
+  },
+  "goalCard": {
+    "reached": "Goals reached!",
+    "almostThere": "You're almost there!",
+    "halfway": "Halfway done, nice!",
+    "keepItUp": "Let's keep it up!",
+    "getStarted": "Let's get started!",
+    "clickToEdit": "Click to edit"
+  },
+  "settings": {
+    "title": "Settings",
+    "changeName": "Change Name",
+    "changePassword": "Change Password",
+    "logout": "Log out",
+    "logoutFailed": "Failed to log out. Please try again.",
+    "language": "Language",
+    "languageChanged": "Language updated"
+  },
+  "settingsModal": {
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "nameEmpty": "Name can't be empty",
+    "nameSuccess": "Name updated successfully",
+    "oldPassword": "Old Password",
+    "oldPasswordPlaceholder": "Old password",
+    "oldPasswordRequired": "Please input the old password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "New password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "passwordMismatch": "Password do not match",
+    "passwordSuccess": "Password changed successfully",
+    "saveFailed": "Failed to save changes. Please try again."
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back!",
+      "subtitle": "Let's get you back in!",
+      "email": "Email",
+      "password": "Password",
+      "submit": "LOG IN",
+      "submitting": "LOGGING IN...",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign Up",
+      "emptyPassword": "Password can't be empty",
+      "failed": "The email or password you entered is incorrect. Please try again."
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Let's set up your account!",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "SIGN UP",
+      "haveAccount": "Already have an account?",
+      "logIn": "Log in",
+      "usernameRequired": "Username is required.",
+      "passwordMismatch": "Password do not match",
+      "fillForm": "Please fill the form correctly.",
+      "failed": "Registration failed. Please try again.",
+      "emailExists": "Email already exists"
+    },
+    "cookie": {
+      "failed": "Failed to complete sign in. Please try again.",
+      "backToLogin": "Back to Log in"
+    }
+  },
+  "password": {
+    "show": "Show password",
+    "hide": "Hide password"
+  },
+  "loadError": {
+    "subtitle": "Please check your connection and try again."
+  },
+  "progress": {
+    "invalidBudget": "Invalid budget"
+  },
+  "validation": {
+    "vendorNameRequired": "Vendor name is required",
+    "vendorNameTooLong": "Vendor name is too long",
+    "itemNameRequired": "Item name is required",
+    "discountExceeds": "Discount cannot exceed the expense total",
+    "timeInvalid": "Enter a valid time between 00:00 and 23:59",
+    "amountTooLarge": "Amount cannot exceed Rp {{max}}",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordNumber": "Password must contain at least one number",
+    "passwordCase": "Password must contain a mix of uppercase and lowercase letters",
+    "emailInvalid": "Invalid email address"
+  },
+  "wallet": {
+    "name": "Wallet Name",
+    "initialBalance": "Initial Balance",
+    "add": "Add New Wallet",
+    "addShort": "Add Wallet",
+    "fillAll": "Please fill in all fields",
+    "balanceInvalid": "Balance must be a non-negative number",
+    "nameUnique": "Wallet name must be unique"
+  }
+}

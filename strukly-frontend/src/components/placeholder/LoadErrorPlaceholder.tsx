@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Button from "../button/Button";
 import DizzyMascot from "../mascots/DizzyMascot";
 
@@ -10,19 +11,23 @@ interface LoadErrorPlaceholderProps {
 
 export default function LoadErrorPlaceholder({
   title,
-  subtitle = "Please check your connection and try again.",
+  subtitle,
   onRetry,
-  retryLabel = "Retry",
+  retryLabel,
 }: LoadErrorPlaceholderProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col items-center justify-center mt-20 px-6">
       <DizzyMascot className="ml-6" width={150} height={150} />
       <p className="text-inactive mt-4 font-bold text-lg text-center">
         {title}
       </p>
-      <p className="text-inactive text-sm text-center mt-1">{subtitle}</p>
+      <p className="text-inactive text-sm text-center mt-1">
+        {subtitle ?? t("loadError.subtitle")}
+      </p>
       <Button variant="primary" size="md" onClick={onRetry} className="mt-6">
-        {retryLabel}
+        {retryLabel ?? t("common.retry")}
       </Button>
     </div>
   );

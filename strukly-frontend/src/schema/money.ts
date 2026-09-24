@@ -1,7 +1,9 @@
 export const MAX_MONEY_AMOUNT = 99_999_999_999;
 export const MAX_ITEM_QUANTITY = 9_999;
 
-export const MONEY_AMOUNT_TOO_LARGE = `Amount cannot exceed Rp ${MAX_MONEY_AMOUNT.toLocaleString("id-ID")}`;
+export const MONEY_AMOUNT_TOO_LARGE = "validation.amountTooLarge";
+
+export const MONEY_AMOUNT_MAX_DISPLAY = MAX_MONEY_AMOUNT.toLocaleString("id-ID");
 
 export function clampMoney(value: number): number {
   if (!Number.isFinite(value) || value < 0) return 0;

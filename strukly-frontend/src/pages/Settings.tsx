@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import useUserAuth from "../store/UserAuthStore";
@@ -13,6 +14,7 @@ import EditIcon from "../components/utilityIcons/EditIcon";
 import NeutralMascot from "../components/mascots/NeutralMascot";
 
 export default function Settings() {
+  const { t, i18n } = useTranslation();
   const logout = useUserAuth((s) => s.logout);
   const navigate = useNavigate();
   const [settingsMode, setSettingsMode] = useState<"name" | "password" | null>(
@@ -20,12 +22,22 @@ export default function Settings() {
   );
   const { user } = useUserAuth();
 
+  const currentLang = (i18n.resolvedLanguage ?? "en").startsWith("id")
+    ? "id"
+    : "en";
+
   const handleLogout = async () => {
     try {
       await logout();
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to log out. Please try again."));
+      toast.error(getApiErrorMessage(error, t("settings.logoutFailed")));
     }
+  };
+
+  const handleLanguageChange = (lang: "en" | "id") => {
+    if (lang === currentLang) return;
+    i18n.changeLanguage(lang);
+    toast.success(t("settings.languageChanged"));
   };
 
   return (
@@ -34,7 +46,7 @@ export default function Settings() {
         <button onClick={() => navigate(-1)}>
           <BackIcon width={28} height={28} />
         </button>
-        <h1 className="text-xl font-semibold">Settings</h1>
+        <h1 className="text-xl font-semibold">{t("settings.title")}</h1>
       </div>
 
       <Card>
@@ -54,7 +66,9 @@ export default function Settings() {
           onClick={() => setSettingsMode("name")}
           className="w-full flex items-center justify-between p-4 hover:bg-background transition-colors rounded-xl"
         >
-          <span className="font-semibold text-text-primary">Change Name</span>
+          <span className="font-semibold text-text-primary">
+            {t("settings.changeName")}
+          </span>
           <EditIcon width={24} height={24} className="text-text-secondary" />
         </button>
 
@@ -65,14 +79,38 @@ export default function Settings() {
           className="w-full flex items-center justify-between p-4 hover:bg-background transition-colors rounded-xl"
         >
           <span className="font-semibold text-text-primary">
-            Change Password
+            {t("settings.changePassword")}
           </span>
           <EditIcon width={24} height={24} className="text-text-secondary" />
         </button>
+
+        <div className="h-[1px] bg-border mx-4"></div>
+
+        <div className="p-4">
+          <p className="font-semibold text-text-primary mb-3">
+            {t("settings.language")}
+          </p>
+          <div className="flex gap-3">
+            <Button
+              variant={currentLang === "en" ? "primary" : "outline"}
+              size="sm"
+              onClick={() => handleLanguageChange("en")}
+            >
+              EN
+            </Button>
+            <Button
+              variant={currentLang === "id" ? "primary" : "outline"}
+              size="sm"
+              onClick={() => handleLanguageChange("id")}
+            >
+              ID
+            </Button>
+          </div>
+        </div>
       </Card>
 
       <div className="mt-8 flex items-center justify-center">
-        <Button onClick={handleLogout}>Log out</Button>
+        <Button onClick={handleLogout}>{t("settings.logout")}</Button>
       </div>
 
       <SettingsModal

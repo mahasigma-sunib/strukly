@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import BudgetListCard from "../components/card/BudgetListCard";
@@ -19,10 +20,12 @@ import { useLoadBudget } from "../hooks/useLoadBudget";
 import { useExpenseCalc } from "../hooks/useExpenseCalc";
 
 function BudgetTopBar({ onEdit }: { onEdit?: () => void }) {
+  const { t } = useTranslation();
+
   return (
     <div className="p-5 flex items-center mb-4 justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
       <div className="font-bold text-3xl">
-        <p>Budget</p>
+        <p>{t("budget.title")}</p>
       </div>
       {onEdit && (
         <div>
@@ -43,7 +46,7 @@ function BudgetTopBar({ onEdit }: { onEdit?: () => void }) {
               !px-3
             "
           >
-            Edit Budget
+            {t("budget.edit")}
           </Button>
         </div>
       )}
@@ -52,6 +55,7 @@ function BudgetTopBar({ onEdit }: { onEdit?: () => void }) {
 }
 
 export default function ExpenseBudget() {
+  const { t } = useTranslation();
   const [editedBudget, setEditedBudget] = useState<number>(0);
   const [editPopUp, setEditPopUp] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,11 +81,11 @@ export default function ExpenseBudget() {
 
   useEffect(() => {
     if (expenseError) {
-      toast.error("Failed to load expenses. Please try again.", {
+      toast.error(t("home.loadExpensesError"), {
         id: "expense-list-load-error",
       });
     }
-  }, [expenseError]);
+  }, [expenseError, t]);
 
   const handleEditBudget = async () => {
     setIsSubmitting(true);
@@ -98,7 +102,7 @@ export default function ExpenseBudget() {
       await mutate();
       setEditPopUp(false);
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to update budget. Please try again."));
+      toast.error(getApiErrorMessage(error, t("budget.updateFailed")));
     } finally {
       setIsSubmitting(false);
     }
@@ -116,7 +120,7 @@ export default function ExpenseBudget() {
   if (isLoading)
     return (
       <div className="flex h-screen items-center justify-center text-[var(--fun-color-text-secondary)]">
-        Loading...
+        {t("common.loading")}
       </div>
     );
   if (error)
@@ -124,7 +128,7 @@ export default function ExpenseBudget() {
       <div className="min-h-screen pb-20">
         <BudgetTopBar />
         <LoadErrorPlaceholder
-          title="Oops! We couldn't load your budget."
+          title={t("budget.loadError")}
           onRetry={() => mutate()}
         />
       </div>
@@ -144,7 +148,7 @@ export default function ExpenseBudget() {
       </div>
       <div className="ml-5 mb-0 mr-4 flex justify-between items-center">
         <div className="font-bold text-2xl">
-          <p>Overview</p>
+          <p>{t("budget.overview")}</p>
         </div>
       </div>
 
@@ -162,7 +166,7 @@ export default function ExpenseBudget() {
             <div className="flex flex-col justify-start items-start flex-1 pr-4 gap-1">
               <div>
                 <p className="text-text-secondary text-sm font-semibold">
-                  Used
+                  {t("budget.used")}
                 </p>
               </div>
               <Money
@@ -175,7 +179,7 @@ export default function ExpenseBudget() {
             <div className="flex flex-col justify-start items-start flex-1 border-l-2 gap-1 border-gray-300 pl-4">
               <div>
                 <p className="text-text-secondary text-sm font-semibold">
-                  Remaining
+                  {t("budget.remaining")}
                 </p>
               </div>
               <BudgetRemaining
@@ -195,10 +199,10 @@ export default function ExpenseBudget() {
           {/* Title */}
           <div className="flex flex-col text-center">
             <h3 className="text-2xl font-bold text-text-primary mb-1">
-              Edit Budget
+              {t("budget.edit")}
             </h3>
             <p className="text-base text-text-secondary mb-6">
-              Set your total monthly budget
+              {t("budget.setMonthly")}
             </p>
           </div>
 
@@ -249,7 +253,7 @@ export default function ExpenseBudget() {
               disabled={isSubmitting}
               className="flex-1"
             >
-              {isSubmitting ? "Saving..." : "Save"}
+              {isSubmitting ? t("common.saving") : t("common.save")}
             </Button>
           </div>
         </div>
@@ -258,7 +262,7 @@ export default function ExpenseBudget() {
       {/* Expense budget List */}
       <div className="ml-5 mr-4 mt-6 mb-0 flex items-center justify-between">
         <div className="font-bold text-2xl">
-          <p>Top Categories</p>
+          <p>{t("budget.topCategories")}</p>
         </div>
       </div>
 

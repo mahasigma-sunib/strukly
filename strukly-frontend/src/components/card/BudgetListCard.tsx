@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { getCategoryData } from "../../utils/CategoryConfig";
 import ProgressBar from "../graph/ProgressBar";
 import Money from "../money/Money";
@@ -13,6 +14,7 @@ export default function BudgetListCard({
   usedBudget,
   category,
 }: BudgetListProps) {
+  const { t } = useTranslation();
   const { icon, color } = getCategoryData(category.toLowerCase());
 
   const percent =
@@ -30,8 +32,8 @@ export default function BudgetListCard({
           </div>
 
           <div className="flex flex-col">
-            <span className="font-bold text-text-primary text-base capitalize">
-              {category}
+            <span className="font-bold text-text-primary text-base">
+              {t(`category.${category.toLowerCase()}`)}
             </span>
             <div className="flex items-baseline text-sm text-text-secondary">
               <span>-</span>
