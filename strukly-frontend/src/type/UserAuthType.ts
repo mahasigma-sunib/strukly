@@ -10,7 +10,7 @@ export interface UserAuthType {
     password: string
   ) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   fetchProfile: () => Promise<void>;
   isAuth: () => boolean;
   changeUsername: (name: string) => Promise<void>;

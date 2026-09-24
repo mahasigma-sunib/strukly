@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import useUserAuth from "../store/UserAuthStore";
 import Card from "../components/card/Card";
@@ -17,6 +19,14 @@ export default function Settings() {
     null,
   );
   const { user } = useUserAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to log out. Please try again."));
+    }
+  };
 
   return (
     <div className="pb-16 min-h-screen bg-background">
@@ -62,7 +72,7 @@ export default function Settings() {
       </Card>
 
       <div className="mt-8 flex items-center justify-center">
-        <Button onClick={logout}>Log out</Button>
+        <Button onClick={handleLogout}>Log out</Button>
       </div>
 
       <SettingsModal
