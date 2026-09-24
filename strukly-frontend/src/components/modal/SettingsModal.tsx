@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { getApiErrorMessage } from "../../utils/getApiErrorMessage";
 
 import { passwordSchema } from "../../schema/UserAuthSchemas";
 
@@ -55,12 +57,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
 
     try {
       if (mode === "name") {
-        if (!nameValidate) throw new Error();
+        if (!nameValidate) return;
         await changeUsername(formData.name);
         setSuccessMessage("Name updated successfully");
       } else if (mode === "password") {
         if (!oldPasswordValidate || !passwordValidate.success || !confirmPasswordValidate)
-          throw new Error();
+          return;
         await changePassword(formData.oldPassword, formData.password);
         setSuccessMessage("Password changed successfully");
       }
@@ -68,8 +70,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
       setTimeout(() => {
         onClose();
       }, 1000);
-    } catch (e: any) {
-      // setError(e.message || "An error occurred");
+    } catch (e: unknown) {
+      toast.error(getApiErrorMessage(e, "Failed to save changes. Please try again."));
     } finally {
       setIsLoading(false);
     }

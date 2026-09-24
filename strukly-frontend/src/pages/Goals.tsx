@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import { mutate } from "swr";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import useGoals from "../store/GoalsStore";
 import { mapGoal, useLoadGoals } from "../hooks/useLoadGoals";
@@ -9,6 +11,7 @@ import type { CategoryKey } from "../utils/CategoryConfig";
 
 import Card from "../components/card/Card";
 import FlagMascot from "../components/mascots/FlagMascot";
+import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 import Popup from "../components/popup/PopUp";
 
 import GoalsHeader from "../components/GoalsHeader";
@@ -29,7 +32,15 @@ const GoalsPage: React.FC = () => {
   }>({ name: "", price: 0, category: "others" });
   const [errorMessage, setErrorMessage] = useState("");
 
-  useLoadGoals();
+  const { error: goalsLoadError, isLoading: goalsIsLoading } = useLoadGoals();
+
+  useEffect(() => {
+    if (goalsLoadError) {
+      toast.error("Failed to load goals. Please try again.", {
+        id: "goals-load-error",
+      });
+    }
+  }, [goalsLoadError]);
   const {
     items: goals,
     addGoal,
@@ -56,13 +67,6 @@ const GoalsPage: React.FC = () => {
         `${api}/expenses?month=${now.getMonth() + 1}&year=${now.getFullYear()}`
       ),
     ]);
-  };
-
-  const apiErrorMessage = (error: unknown, fallback: string) => {
-    if (axios.isAxiosError(error) && error.response?.data?.error) {
-      return String(error.response.data.error);
-    }
-    return fallback;
   };
 
   const handleCreate = async () => {
@@ -99,7 +103,7 @@ const GoalsPage: React.FC = () => {
       setActiveModal(null);
       setFormData(emptyForm);
     } catch (err) {
-      setErrorMessage(apiErrorMessage(err, "Failed to create goal"));
+      setErrorMessage(getApiErrorMessage(err, "Failed to create goal"));
     }
   };
 
@@ -144,7 +148,7 @@ const GoalsPage: React.FC = () => {
       setSelectedGoal(null);
       setTempAmount(0);
     } catch (error) {
-      setErrorMessage(apiErrorMessage(error, "Failed to add savings"));
+      setErrorMessage(getApiErrorMessage(error, "Failed to add savings"));
     }
   };
 
@@ -186,7 +190,7 @@ const GoalsPage: React.FC = () => {
       setActiveModal(null);
       setSelectedGoal(null);
     } catch (error) {
-      setErrorMessage(apiErrorMessage(error, "Failed to update goal"));
+      setErrorMessage(getApiErrorMessage(error, "Failed to update goal"));
     }
   };
 
@@ -200,7 +204,8 @@ const GoalsPage: React.FC = () => {
       );
       deleteGoal(selectedGoal.id);
     } catch (error) {
-      console.log(error);
+      toast.error(getApiErrorMessage(error, "Failed to delete goal. Please try again."));
+      return;
     }
     setActiveModal(null);
     setSelectedGoal(null);
@@ -217,17 +222,26 @@ const GoalsPage: React.FC = () => {
       />
 
       <main className=" mt-6 space-y-4">
-        {goals.length === 0 && (
+        {goals.length === 0 && !goalsIsLoading && (
           <div>
             <div className="ml-5 mr-4 mt-6 mb-2 font-bold text-2xl">
               <p>My Goals</p>
             </div>
-            <div className="flex flex-col items-center justify-center mt-20 ">
-              <FlagMascot width={148} height={148} className="ml-8" />
-              <p className="text-inactive mt-4 font-bold text-lg text-center">
-                You have no goals yet.
-              </p>
-            </div>
+            {goalsLoadError ? (
+              <LoadErrorPlaceholder
+                title="Oops! We couldn't load your goals."
+                onRetry={() =>
+                  mutate(`${import.meta.env.VITE_API_BASE_URL}/goals`)
+                }
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center mt-20 ">
+                <FlagMascot width={148} height={148} className="ml-8" />
+                <p className="text-inactive mt-4 font-bold text-lg text-center">
+                  You have no goals yet.
+                </p>
+              </div>
+            )}
           </div>
         )}
 

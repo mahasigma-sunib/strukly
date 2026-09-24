@@ -8,7 +8,9 @@ import ExpenseForm from "./ExpenseForm";
 import Button from "../components/button/Button";
 import BackIcon from "../components/utilityIcons/BackIcon";
 
+import { toast } from "sonner";
 import type { ExpenseType } from "../type/ExpenseType";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import useExpense from "../store/ExpenseStore";
 import { mapExpense } from "../hooks/useLoadExpense";
 import {
@@ -153,7 +155,7 @@ export default function AddExpense() {
       addExpense(mapExpense(res.data.expense));
       navigate("/expense");
     } catch (err) {
-      console.error(err);
+      toast.error(getApiErrorMessage(err, "Failed to add expense. Please try again."));
     }
   };
 

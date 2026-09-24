@@ -1,6 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import BudgetIconOutline from "./icons/BudgetIconOutline";
 import BudgetIconFilled from "./icons/BudgetIconFilled";
 import GoalsIconOutline from "./icons/GoalsIconOutline";
@@ -99,8 +101,7 @@ export default function MobileNavBar() {
         state: { scannedData: result.data.transaction },
       });
     } catch (err) {
-      console.error("Upload failed:", err);
-      alert("Failed to process receipt. Please try again.");
+      toast.error(getApiErrorMessage(err, "Failed to process receipt. Please try again."));
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {

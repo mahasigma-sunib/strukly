@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import axios from "axios";
+import { toast } from "sonner";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
+import { fetcher } from "../utils/fetcher";
 
 import type { ExpenseType } from "../type/ExpenseType";
 import { getCategoryData } from "../utils/CategoryConfig";
@@ -12,6 +15,7 @@ import EditIcon from "../components/utilityIcons/EditIcon";
 import DeleteIcon from "../components/utilityIcons/DeleteIcon";
 import Popup from "../components/popup/PopUp";
 import Button from "../components/button/Button";
+import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 import TrashMascot from "../components/mascots/TrashMascot";
 import useExpense from "../store/ExpenseStore";
 
@@ -19,10 +23,9 @@ function ExpenseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/expenses/${id}`,
-    (url: string) =>
-      fetch(url, { credentials: "include" }).then((res) => res.json())
+    fetcher
   );
 
   const [deletePopUp, setDeletePopUp] = useState(false);
@@ -38,8 +41,8 @@ function ExpenseDetail() {
       deleteExpense(raw.id);
       navigate(-1);
     } catch (error) {
-      console.error("Failed to delete expense:", error);
-      throw error; // rethrow so caller can handle it
+      toast.error(getApiErrorMessage(error, "Failed to delete expense. Please try again."));
+      throw error; // rethrow so caller keeps the popup open on failure
     }
   };
 
@@ -72,8 +75,11 @@ function ExpenseDetail() {
     );
   if (error)
     return (
-      <div className="flex h-screen items-center justify-center text-red-500">
-        Error loading expense
+      <div className="bg-background min-h-screen pb-10">
+        <LoadErrorPlaceholder
+          title="Oops! We couldn't load this expense."
+          onRetry={() => mutate()}
+        />
       </div>
     );
   if (!data?.expense)
@@ -167,9 +173,13 @@ function ExpenseDetail() {
             <Button
               variant="primary"
               size="md"
-              onClick={() => {
-                handleDelete();
-                setDeletePopUp(false);
+              onClick={async () => {
+                try {
+                  await handleDelete();
+                  setDeletePopUp(false);
+                } catch {
+                  // toast already shown in handleDelete; keep popup open
+                }
               }}
               className="w-full !bg-[#fa1e1e] !shadow-[0_4px_0_0_#de0d0d]"
             >
