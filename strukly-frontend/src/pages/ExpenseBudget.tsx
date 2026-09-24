@@ -58,7 +58,11 @@ export default function ExpenseBudget() {
   const { data, isLoading, error, mutate } = useLoadBudget();
 
   const today = new Date();
-  useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
+  const { error: expenseError } = useLoadExpense(
+    today.getMonth() + 1,
+    today.getFullYear(),
+    false
+  );
 
   const totalBudget = data?.budget ?? 0;
   const { totalSpent, remaining, getSpentForCategory } =
@@ -69,6 +73,14 @@ export default function ExpenseBudget() {
       setEditedBudget(data.budget);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (expenseError) {
+      toast.error("Failed to load expenses. Please try again.", {
+        id: "expense-list-load-error",
+      });
+    }
+  }, [expenseError]);
 
   const handleEditBudget = async () => {
     setIsSubmitting(true);

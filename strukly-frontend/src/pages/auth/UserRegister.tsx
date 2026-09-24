@@ -116,7 +116,9 @@ function UserRegister() {
       await register(username, email, password);
       navigate("/login");
     } catch (error) {
-      setRegisterError((error as Error).message);
+      setRegisterError(
+        (error as Error).message || "Registration failed. Please try again."
+      );
     }
   };
 

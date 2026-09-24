@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import useUserAuth from "../store/UserAuthStore";
 import useExpense from "../store/ExpenseStore";
@@ -58,7 +60,7 @@ function Home() {
   const username = useUserAuth((s) => s.user?.name || "User");
   const openDrawer = useAddExpenseDrawer((s) => s.open);
 
-  const { data } = useLoadBudget();
+  const { data, error: budgetError } = useLoadBudget();
 
   const totalBudget = data?.budget ?? 0;
   const hasBudget = totalBudget > 0;
@@ -73,14 +75,36 @@ function Home() {
 
   const today = new Date();
   const daysPassed = today.getDate();
-  useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
+  const { error: expenseError } = useLoadExpense(
+    today.getMonth() + 1,
+    today.getFullYear(),
+    false
+  );
   const { items } = useExpense();
 
-  useLoadGoals();
+  const { error: goalsError } = useLoadGoals();
   const { items: goals } = useGoals();
   const activeGoals = goals.filter((g) => !g.isCompleted);
 
   const barColor = isOverBudget ? "bg-red-500" : getBarColor(remainingPercent);
+
+  useEffect(() => {
+    if (budgetError) {
+      toast.error("Failed to load budget. Please try again.", {
+        id: "budget-load-error",
+      });
+    }
+    if (expenseError) {
+      toast.error("Failed to load expenses. Please try again.", {
+        id: "expense-list-load-error",
+      });
+    }
+    if (goalsError) {
+      toast.error("Failed to load goals. Please try again.", {
+        id: "goals-load-error",
+      });
+    }
+  }, [budgetError, expenseError, goalsError]);
 
   const avgSpent = () => {
     const result = daysPassed === 0 ? 0 : totalSpent / daysPassed;
