@@ -6,6 +6,7 @@ import { passwordSchema } from "../../schema/UserAuthSchemas";
 
 import Popup from "../popup/PopUp";
 import ErrorMessage from "../ErrorMessage";
+import PasswordInput from "../PasswordInput";
 import Button from "../button/Button";
 import useUserAuth from "../../store/UserAuthStore";
 import CloseIcon from "../utilityIcons/CloseIcon";
@@ -118,7 +119,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
               <label className="text-sm font-medium text-text-secondary">
                 Old Password
               </label>
-              <input
+              <PasswordInput
                 className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
                 bg-background focus:outline-none focus:ring-4 focus:ring-primary/10
                 ${
@@ -126,7 +127,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
                     ? "border-status-error bg-status-error/5"
                     : "border-border focus:border-primary"
                 }`}
-                type="password"
                 value={formData.oldPassword}
                 onChange={(e) =>
                   setFormData({ ...formData, oldPassword: e.target.value })
@@ -142,7 +142,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
               <label className="text-sm font-medium text-text-secondary">
                 New Password
               </label>
-              <input
+              <PasswordInput
                 className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
                 bg-background focus:outline-none focus:ring-4 focus:ring-primary/10
                 ${
@@ -150,7 +150,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
                     ? "border-status-error bg-status-error/5"
                     : "border-border focus:border-primary"
                 }`}
-                type="password"
                 value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
@@ -168,7 +167,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
               <label className="text-sm font-medium text-text-secondary">
                 Confirm Password
               </label>
-              <input
+              <PasswordInput
                 className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
                 bg-background focus:outline-none focus:ring-4 focus:ring-primary/10
                 ${
@@ -177,7 +176,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ mode, onClose }) => {
                     ? "border-status-error bg-status-error/5"
                     : "border-border focus:border-primary"
                 }`}
-                type="password"
                 value={formData.confirmPassword}
                 onChange={(e) =>
                   setFormData({ ...formData, confirmPassword: e.target.value })

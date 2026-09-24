@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { emailSchema, passwordSchema } from "../../schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
 import Button from "../../components/button/Button";
+import PasswordInput from "../../components/PasswordInput";
 import TextLogo from "../../components/logos/TextLogo";
 import WinkMascot from "../../components/mascots/WinkMascot";
 
@@ -190,8 +191,7 @@ function UserRegister() {
           )}
 
           {/* PASSWORD FIELD */}
-          <input
-            type="password"
+          <PasswordInput
             id="password"
             placeholder="Password"
             value={password}
@@ -222,8 +222,7 @@ function UserRegister() {
           )}
 
           {/* CONFIRM PASSWORD FIELD */}
-          <input
-            type="password"
+          <PasswordInput
             id="confirmPassword"
             placeholder="Confirm Password"
             value={confirmPassword}
