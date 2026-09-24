@@ -1,6 +1,7 @@
 import ProgressBar from "../../components/graph/ProgressBar";
 import CheckIcon from "../../components/utilityIcons/CheckIcon";
 import FlagIcon from "../../components/utilityIcons/FlagIcon";
+import Money from "../money/Money";
 import type { GoalItem } from "../../type/GoalItem";
 
 interface GoalListProps {
@@ -82,12 +83,18 @@ export default function GoalList({ goal, idx, onHold }: GoalListProps) {
       />
 
       <div className="mt-4 flex flex-row justify-between items-center">
-        <p className="font-bold text-base text-text-disabled/70">
-          Rp {goal.deposit.toLocaleString()}
-        </p>
-        <p className="font-bold text-base text-text-disabled/70">
-          Rp {goal.price.toLocaleString()}
-        </p>
+        <Money
+          amount={goal.deposit}
+          currency="IDR"
+          mainClassName="font-bold text-base text-text-disabled/70"
+          decimalClassName="text-sm font-bold text-text-disabled/70"
+        />
+        <Money
+          amount={goal.price}
+          currency="IDR"
+          mainClassName="font-bold text-base text-text-disabled/70"
+          decimalClassName="text-sm font-bold text-text-disabled/70"
+        />
       </div>
            <div className="flex items-center gap-1 text-xs text-blue-500 opacity-50 group-hover:opacity-100 transition-opacity transform translate-y-1">
            <span>Click to edit</span>
