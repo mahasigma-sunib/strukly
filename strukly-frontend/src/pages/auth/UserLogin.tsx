@@ -6,6 +6,7 @@ import useUserAuth from "../../store/UserAuthStore";
 
 import Button from "../../components/button/Button";
 import ErrorMessage from "../../components/ErrorMessage";
+import PasswordInput from "../../components/PasswordInput";
 import TextLogo from "../../components/logos/TextLogo";
 import LoginMascot from "../../components/mascots/LoginMascot";
 
@@ -108,8 +109,7 @@ function UserLogin() {
 
           {/* Password Input Group */}
           <div className="flex flex-col">
-            <input
-              type="password"
+            <PasswordInput
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
