@@ -28,6 +28,8 @@ const options: swaggerJsdoc.Options = {
           properties: {
             amount: {
               type: "number",
+              minimum: 0,
+              maximum: 99999999999,
               description: "The monetary amount",
             },
             currency: {
@@ -51,7 +53,7 @@ const options: swaggerJsdoc.Options = {
           type: "object",
           properties: {
             id: { type: "string", format: "uuid" },
-            vendorName: { type: "string" },
+            vendorName: { type: "string", minLength: 1, maxLength: 255 },
             category: { type: "string" },
             dateTime: { type: "string", format: "date-time" },
             subtotalAmount: { $ref: "#/components/schemas/Money" },
@@ -71,6 +73,7 @@ const options: swaggerJsdoc.Options = {
           properties: {
             id: { type: "string", format: "uuid" },
             name: { type: "string" },
+            category: { type: "string" },
             price: { type: "integer" },
             deposited: { type: "integer" },
             completed: { type: "boolean" },
@@ -145,7 +148,7 @@ const options: swaggerJsdoc.Options = {
             "items",
           ],
           properties: {
-            vendorName: { type: "string" },
+            vendorName: { type: "string", minLength: 1, maxLength: 255 },
             category: { type: "string" },
             dateTime: { type: "string", format: "date-time" },
             subtotalAmount: { $ref: "#/components/schemas/Money" },
@@ -180,7 +183,7 @@ const options: swaggerJsdoc.Options = {
             "items",
           ],
           properties: {
-            vendorName: { type: "string" },
+            vendorName: { type: "string", minLength: 1, maxLength: 255 },
             category: { type: "string" },
             dateTime: { type: "string", format: "date-time" },
             subtotalAmount: { $ref: "#/components/schemas/Money" },
@@ -201,6 +204,39 @@ const options: swaggerJsdoc.Options = {
             },
           },
         },
+        ErrorResponse: {
+          type: "object",
+          required: ["error"],
+          properties: {
+            error: {
+              type: "string",
+              description: "A human-readable error message",
+            },
+          },
+        },
+        ScanExpenseImageResponse: {
+          type: "object",
+          required: ["transaction"],
+          properties: {
+            transaction: {
+              $ref: "#/components/schemas/CreateExpenseRequest",
+              description: "Expense data extracted from the receipt image",
+            },
+          },
+        },
+        UnprocessableReceiptErrorResponse: {
+          allOf: [{ $ref: "#/components/schemas/ErrorResponse" }],
+          example: {
+            error: "Could not extract valid expense data from the image.",
+          },
+        },
+        ServiceUnavailableErrorResponse: {
+          allOf: [{ $ref: "#/components/schemas/ErrorResponse" }],
+          example: {
+            error:
+              "Receipt scanning is temporarily unavailable. Please try again later.",
+          },
+        },
       },
     },
     security: [
@@ -209,6 +245,9 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
+  // TODO: spec is built by scanning src/ at runtime, so dist-only deploys
+  // silently lose /api-docs. Fix: emit dist/openapi.json at build time and
+  // fall back to it when this scan finds no paths.
   apis: ["./src/infrastructure/routes/*.ts"], // Path to the API docs
 };
 

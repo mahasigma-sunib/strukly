@@ -8,4 +8,8 @@ export default class UserID {
     if (!other) return false;
     return this.value === other.value;
   }
+
+  public toString(): string {
+    return this.value;
+  }
 }

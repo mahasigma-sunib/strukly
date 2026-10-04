@@ -2,12 +2,15 @@ import { useEffect } from "react";
 import useSWR from "swr";
 
 import useGoals from "../store/GoalsStore";
+import { fetcher } from "../utils/fetcher";
 import type { GoalItem } from "../type/GoalItem";
+import type { CategoryKey } from "../utils/CategoryConfig";
 
 export function mapGoal(raw: any): GoalItem {
   return {
     id: raw.id,
     name: raw.name,
+    category: (raw.category || "others") as CategoryKey,
     price: raw.price,
     deposit: raw.deposited,
     isCompleted: raw.completed,
@@ -20,17 +23,14 @@ export function useLoadGoals() {
 
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/goals`,
-    (url) =>
-      fetch(url, {
-        credentials: "include",
-      }).then((res) => res.json())
+    fetcher
   );
 
   useEffect(() => {
     setLoading(isLoading);
 
     if (error) {
-      setError("Failed to fetch expenses");
+      setError("Failed to fetch goals");
     }
 
     if (data?.goalItems) {
@@ -41,6 +41,7 @@ export function useLoadGoals() {
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         );
       setItems(mapped);
+      setError(null);
     }
   }, [isLoading, error, data]);
 

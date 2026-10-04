@@ -1,15 +1,17 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import CloseIcon from "../utilityIcons/CloseIcon";
 import Button from "../button/Button";
 import TrashMascot from "../mascots/TrashMascot";
+import { CategoryKeys, type CategoryKey } from "../../utils/CategoryConfig";
 
 type ModalMode = "create" | "deposit" | "edit" | "delete" | null;
 
 interface Props {
   activeModal: ModalMode;
-  formData: { name: string; price: number };
+  formData: { name: string; price: number; category: CategoryKey };
   setFormData: React.Dispatch<
-    React.SetStateAction<{ name: string; price: number }>
+    React.SetStateAction<{ name: string; price: number; category: CategoryKey }>
   >;
   tempAmount: number;
   setTempAmount: React.Dispatch<React.SetStateAction<number>>;
@@ -30,16 +32,26 @@ const GoalModal: React.FC<Props> = ({
   errorMessage,
   setErrorMessage,
 }) => {
+  const { t } = useTranslation();
+
+  const formatDisplay = (num: number) => {
+    return num === 0 ? "" : new Intl.NumberFormat("id-ID").format(num);
+  };
+
+  const parseRawValue = (value: string) => {
+    return Number(value.replace(/\D/g, ""));
+  };
+
   if (!activeModal) return null;
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
       <div className="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-text-primary ">
-            {activeModal === "create" && "Add New Goal"}
-            {activeModal === "edit" && "Update Goal"}
-            {activeModal === "deposit" && "Add Savings"}
-            {activeModal === "delete" && "Delete Goal"}
+            {activeModal === "create" && t("goalModal.create")}
+            {activeModal === "edit" && t("goalModal.edit")}
+            {activeModal === "deposit" && t("goalModal.deposit")}
+            {activeModal === "delete" && t("goalModal.delete")}
           </h2>
           <div onClick={onClose} className="text-slate-500">
             <CloseIcon width={24} height={24} />
@@ -50,9 +62,12 @@ const GoalModal: React.FC<Props> = ({
           <div className="flex flex-col gap-3">
             {activeModal === "deposit" ? (
               <div className="text-center">
-                <p className="text-sm text-slate-500 mb-2">Input nominal</p>
+                <p className="text-sm text-slate-500 mb-2">
+                  {t("goalModal.inputNominal")}
+                </p>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   autoFocus
                   placeholder="0"
                   className={`w-full text-center text-2xl font-extrabold bg-transparent border-b-2  outline-none p-4  ${
@@ -62,9 +77,9 @@ const GoalModal: React.FC<Props> = ({
                   }`}
                   onChange={(e) => {
                     setErrorMessage("");
-                    setTempAmount(Number(e.target.value));
+                    setTempAmount(parseRawValue(e.target.value));
                   }}
-                  value={tempAmount || ""}
+                  value={formatDisplay(tempAmount)}
                 />
                 {errorMessage && (
                   <div className="mt-5 w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex justify-center items-center gap-3 animate-in zoom-in-95 duration-300">
@@ -81,14 +96,14 @@ const GoalModal: React.FC<Props> = ({
               <div className="flex flex-col gap-6 items-center justify-center text-center">
                 <TrashMascot />
                 <p className="text-base text-inactive font-bold">
-                  This action cannot be undone.
+                  {t("goalModal.cannotUndo")}
                 </p>
               </div>
             ) : (
               <>
                 <input
                   type="text"
-                  placeholder="Goal Name"
+                  placeholder={t("goalModal.goalName")}
                   value={formData.name}
                   className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                     errorMessage && !formData.name.trim()
@@ -100,10 +115,29 @@ const GoalModal: React.FC<Props> = ({
                     setFormData({ ...formData, name: e.target.value });
                   }}
                 />
+                <select
+                  aria-label={t("goalModal.category")}
+                  value={formData.category}
+                  className="w-full bg-background border-2 border-border rounded-2xl p-4 focus:border-primary outline-none transition-all"
+                  onChange={(e) => {
+                    if (errorMessage) setErrorMessage("");
+                    setFormData({
+                      ...formData,
+                      category: e.target.value as CategoryKey,
+                    });
+                  }}
+                >
+                  {CategoryKeys.map((key) => (
+                    <option key={key} value={key}>
+                      {t(`category.${key}`)}
+                    </option>
+                  ))}
+                </select>
                 <input
-                  type="number"
-                  placeholder="Target Price (Rp)"
-                  value={formData.price || ""}
+                  type="text"
+                  inputMode="numeric"
+                  placeholder={t("goalModal.targetPrice")}
+                  value={formatDisplay(formData.price) || ""}
                   className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
                     errorMessage && formData.price <= 0
                       ? "border-status-error "
@@ -111,7 +145,7 @@ const GoalModal: React.FC<Props> = ({
                   }`}
                   onChange={(e) => {
                     if (errorMessage) setErrorMessage("");
-                    setFormData({ ...formData, price: Number(e.target.value) });
+                    setFormData({ ...formData, price: parseRawValue(e.target.value) });
                   }}
                 />
                 {errorMessage && (
@@ -134,7 +168,7 @@ const GoalModal: React.FC<Props> = ({
             `}
             variant="primary"
           >
-            {activeModal === "delete" ? "Delete" : "Confirm"}
+            {activeModal === "delete" ? t("common.delete") : t("common.confirm")}
           </Button>
         </div>
       </div>

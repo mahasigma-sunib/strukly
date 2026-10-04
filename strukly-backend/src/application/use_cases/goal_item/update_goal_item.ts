@@ -14,7 +14,11 @@ export default class UpdateGoalItemUseCase {
     goalItemID: string,
     data: Partial<IGoalItemEditor>,
   ): Promise<GoalItem> {
-    if (!data.name && !data.price) {
+    if (
+      data.name === undefined &&
+      data.price === undefined &&
+      data.category === undefined
+    ) {
       throw new InvalidDataError("Nothing to update");
     }
 

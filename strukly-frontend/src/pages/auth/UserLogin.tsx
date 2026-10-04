@@ -1,41 +1,41 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { emailSchema, passwordSchema } from "./schema/UserAuthSchemas";
+import { useTranslation } from "react-i18next";
+
+import { emailSchema } from "../../schema/UserAuthSchemas";
 import useUserAuth from "../../store/UserAuthStore";
+
 import Button from "../../components/button/Button";
+import ErrorMessage from "../../components/ErrorMessage";
+import PasswordInput from "../../components/PasswordInput";
 import TextLogo from "../../components/logos/TextLogo";
 import LoginMascot from "../../components/mascots/LoginMascot";
 
 // Helper error message component
-const ErrorMessage = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-status-error text-sm font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1 duration-200">
-    {children}
-  </p>
-);
 
 function UserLogin() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState<string[]>([]);
+  const [passwordError, setPasswordError] = useState<string>("");
   const [loginError, setLoginError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const login = useUserAuth((s) => s.login);
 
   const validate = () => {
     const emailVal = emailSchema.safeParse(email);
-    const passVal = passwordSchema.safeParse(password);
+    const passwordVal = password.trim().length < 1;
 
     if (!emailVal.success) setEmailError(emailVal.error.issues[0].message);
     else setEmailError("");
 
-    if (!passVal.success)
-      setPasswordError(passVal.error.issues.map((i) => i.message));
-    else setPasswordError([]);
+    if (passwordVal) setPasswordError(t("auth.login.emptyPassword"));
+    else setPasswordError("");
 
-    return emailVal.success && passVal.success;
+    return emailVal.success && !passwordVal;
   };
 
   const handleLogin = async () => {
@@ -49,9 +49,7 @@ function UserLogin() {
       await login(email, password);
       window.location.href = "/cookie";
     } catch (err) {
-      setLoginError(
-        "The email or password you entered is incorrect. Please try again."
-      );
+      setLoginError(t("auth.login.failed"));
     } finally {
       setIsLoading(false);
     }
@@ -69,10 +67,10 @@ function UserLogin() {
             <LoginMascot width={144} height={144} />
           </div>
           <h1 className="font-extrabold text-2xl text-text-primary">
-            Welcome Back!
+            {t("auth.login.title")}
           </h1>
           <p className="font-bold text-base text-inactive">
-            Let's get you back in!
+            {t("auth.login.subtitle")}
           </p>
         </div>
 
@@ -91,7 +89,7 @@ function UserLogin() {
           <div className="flex flex-col">
             <input
               type="email"
-              placeholder="Email or username"
+              placeholder={t("auth.login.email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => {
@@ -106,22 +104,15 @@ function UserLogin() {
                     : "border-border focus:border-primary"
                 }`}
             />
-            {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
+            {emailError && <ErrorMessage>{t(emailError)}</ErrorMessage>}
           </div>
 
           {/* Password Input Group */}
           <div className="flex flex-col">
-            <input
-              type="password"
-              placeholder="Password"
+            <PasswordInput
+              placeholder={t("auth.login.password")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onBlur={() => {
-                const res = passwordSchema.safeParse(password);
-                setPasswordError(
-                  res.success ? [] : res.error.issues.map((i) => i.message)
-                );
-              }}
               className={`w-full p-4 border-2 rounded-2xl text-base font-extrabold transition-all duration-200
                 bg-background focus:outline-none focus:ring-4 focus:ring-primary/10
                 ${
@@ -130,9 +121,7 @@ function UserLogin() {
                     : "border-border focus:border-primary"
                 }`}
             />
-            {passwordError.map((err, i) => (
-              <ErrorMessage key={i}>{err}</ErrorMessage>
-            ))}
+            <ErrorMessage>{passwordError}</ErrorMessage>
           </div>
         </div>
 
@@ -145,18 +134,18 @@ function UserLogin() {
               isLoading ? "opacity-70" : "hover:shadow-lg active:scale-[0.98]"
             }`}
         >
-          {isLoading ? "LOGGING IN..." : "LOG IN"}
+          {isLoading ? t("auth.login.submitting") : t("auth.login.submit")}
         </Button>
 
         <div className="flex flex-row gap-2 mt-2">
           <span className="font-bold text-text-disabled">
-            Don't have an account?
+            {t("auth.login.noAccount")}
           </span>
           <span
             onClick={() => navigate("/register")}
             className="font-extrabold text-primary cursor-pointer hover:underline"
           >
-            Sign Up
+            {t("auth.login.signUp")}
           </span>
         </div>
       </div>

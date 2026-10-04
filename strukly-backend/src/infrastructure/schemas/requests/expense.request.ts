@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { MoneySchema } from "../common";
+import { EXPENSE_CATEGORIES } from "src/domain/values/expense_category";
+import { MAX_MONEY_AMOUNT, MONEY_AMOUNT_TOO_LARGE, MoneyRequestSchema } from "../common";
 import { CreateExpenseItemRequestSchema } from "./expense-item.request";
 
 // ============ Path Params ============
@@ -26,26 +27,53 @@ export const ExpenseReportQuerySchema = z.object({
 
 // ============ Request Bodies ============
 
-export const CreateExpenseRequestSchema = z.object({
-  vendorName: z.string().describe("The name of the vendor/store"),
-  category: z.string().describe("The expense category"),
-  dateTime: z.iso
-    .datetime()
-    .describe("The date and time of the expense (ISO 8601)"),
+export const CreateExpenseRequestSchema = z
+  .object({
+    vendorName: z
+      .string()
+      .trim()
+      .min(1, "Vendor name is required")
+      .max(255, "Vendor name too long")
+      .describe("The name of the vendor/store"),
+    category: z.enum(EXPENSE_CATEGORIES).describe("The expense category"),
+    dateTime: z.iso
+      .datetime()
+      .describe("The date and time of the expense (ISO 8601)"),
 
-  subtotalAmount: MoneySchema.describe(
-    "The subtotal before tax/service/discount",
-  ),
-  taxAmount: MoneySchema.describe("The tax amount"),
-  discountAmount: MoneySchema.describe("The discount amount"),
-  serviceAmount: MoneySchema.describe("The service charge amount"),
+    subtotalAmount: MoneyRequestSchema.describe(
+      "The subtotal before tax/service/discount",
+    ),
+    taxAmount: MoneyRequestSchema.describe("The tax amount"),
+    discountAmount: MoneyRequestSchema.describe("The discount amount"),
+    serviceAmount: MoneyRequestSchema.describe("The service charge amount"),
 
-  items: z
-    .array(CreateExpenseItemRequestSchema)
-    .describe("The list of expense items"),
-});
+    items: z
+      .array(CreateExpenseItemRequestSchema)
+      .describe("The list of expense items"),
+  })
+  .refine(
+    (expense) =>
+      expense.subtotalAmount.amount +
+        expense.taxAmount.amount +
+        expense.serviceAmount.amount -
+        expense.discountAmount.amount <=
+      MAX_MONEY_AMOUNT,
+    { message: MONEY_AMOUNT_TOO_LARGE, path: ["subtotalAmount"] },
+  );
 
-export const UpdateExpenseRequestSchema = CreateExpenseRequestSchema;
+export const DISCOUNT_EXCEEDS_EXPENSE =
+  "Discount cannot exceed the expense total";
+
+export const CreateExpenseWriteSchema = CreateExpenseRequestSchema.refine(
+  (expense) =>
+    expense.discountAmount.amount <=
+    expense.subtotalAmount.amount +
+      expense.taxAmount.amount +
+      expense.serviceAmount.amount,
+  { message: DISCOUNT_EXCEEDS_EXPENSE, path: ["discountAmount"] },
+);
+
+export const UpdateExpenseRequestSchema = CreateExpenseWriteSchema;
 
 // ============ Types ============
 

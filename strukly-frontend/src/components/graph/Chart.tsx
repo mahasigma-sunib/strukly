@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 type Props = {
   totalSpent: number;
   totalBudget: number;
@@ -9,11 +11,13 @@ export default function OverviewChart({
   totalBudget,
   size = 160,
 }: Props) {
+  const { t } = useTranslation();
+
   if (totalBudget <= 0) {
     return (
       <div className="flex flex-col items-center gap-2 p-2">
         <div className="text-base text-text-disabled mb-4">
-          Set budget to see your overview!
+          {t("budget.overviewHint")}
         </div>
       </div>
     );
@@ -97,7 +101,9 @@ export default function OverviewChart({
           <div className={`text-3xl font-bold ${fgTextColorClass}`}>
             {percent}%
           </div>
-          <div className="text-sm text-text-secondary ">of budget used</div>
+          <div className="text-sm text-text-secondary ">
+            {t("budget.ofBudgetUsed")}
+          </div>
         </div>
       </div>
     </div>

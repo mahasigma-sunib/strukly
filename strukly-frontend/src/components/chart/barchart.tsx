@@ -26,6 +26,14 @@ interface CustomBarChartProps {
   className?: string;
 }
 
+function formatCompactTick(value: number): string {
+  return new Intl.NumberFormat("en", {
+    notation: "compact",
+    compactDisplay: "short",
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
 const CustomBarChart: React.FC<CustomBarChartProps> = ({
   data,
   xAxisKey,
@@ -35,7 +43,7 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({
 }) => {
   return (
     <div
-      className={`w-full min-w-0 ${className}`}
+      className={`w-full min-w-0 overflow-hidden ${className}`}
       style={{ height: `${height}px`, width: "100%", position: "relative" }}
     >
       <ResponsiveContainer width="99%" height="100%">
@@ -72,11 +80,9 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({
           <YAxis
             axisLine={false}
             tickLine={false}
+            width={48}
             tick={{ fill: "var(--fun-color-text-secondary)", fontSize: 12 }}
-            tickFormatter={(value) =>
-              // Optional: Shorten large numbers (1000 -> 1k)
-              value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
-            }
+            tickFormatter={formatCompactTick}
           />
 
           {/* Tooltip: Modern, rounded shadow box */}
