@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: koinku-deployment
+  namespace: koinku-ns
+  labels:
+    app: koinku
+spec:
+  selector:
+    matchLabels:
+      app: koinku
+  template:
+    metadata:
+      labels:
+        app: koinku
+    spec:
+      containers:
+      - name: koinku
+        image: ghcr.io/mahasigma-sunib/koinku:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+        envFrom:
+        - secretRef:
+            name: koinku-env
+        env:
+        - name: PRODUCTION
+          value: "1"
