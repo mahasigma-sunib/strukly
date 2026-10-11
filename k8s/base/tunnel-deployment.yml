@@ -21,8 +21,8 @@ spec:
         args: ["tunnel", "--no-autoupdate", "run"]
         resources:
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 50m
+            memory: 64Mi
         env:
         - name: TUNNEL_TOKEN
           valueFrom:
