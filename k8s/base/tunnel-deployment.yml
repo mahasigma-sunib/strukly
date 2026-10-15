@@ -15,6 +15,12 @@ spec:
       labels:
         app: cloudflared
     spec:
+      nodeSelector:
+        cloud.google.com/gke-spot: "true"
+
+        # incurs node billing!
+        # cloud.google.com/compute-class: "small-disk"
+      terminationGracePeriodSeconds: 25
       containers:
       - name: cloudflared
         image: cloudflare/cloudflared

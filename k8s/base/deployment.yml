@@ -14,6 +14,12 @@ spec:
       labels:
         app: koinku
     spec:
+      nodeSelector:
+        cloud.google.com/gke-spot: "true"
+
+        # incurs node billing!
+        # cloud.google.com/compute-class: "small-disk"
+      terminationGracePeriodSeconds: 25
       containers:
       - name: koinku
         image: ghcr.io/mahasigma-sunib/koinku:latest
