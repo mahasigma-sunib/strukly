@@ -1,0 +1,20 @@
+name: Docker Build
+
+# Build check only; deploy.yml builds and pushes images on master.
+on:
+  push:
+    branches: [ "development" ]
+  pull_request:
+    branches: [ "master", "development" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      working-directory: ./strukly-backend
+      run: docker build . --file Dockerfile
