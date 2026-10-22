@@ -20,6 +20,18 @@ spec:
         # incurs node billing!
         # cloud.google.com/compute-class: "small-disk"
       terminationGracePeriodSeconds: 25
+      initContainers:
+      # prisma migrate deploy is a no-op when up to date and takes an advisory
+      # lock, so running it on every pod start is safe.
+      - name: migrate
+        image: ghcr.io/mahasigma-sunib/koinku:migrator-latest
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+        envFrom:
+        - secretRef:
+            name: koinku-env
       containers:
       - name: koinku
         image: ghcr.io/mahasigma-sunib/koinku:latest
@@ -35,3 +47,7 @@ spec:
         env:
         - name: PRODUCTION
           value: "1"
+        - name: GEMINI_MODEL
+          value: "gemini-3.5-flash-lite"
+        - name: OPENROUTER_MODEL
+          value: "xiaomi/mimo-v2.6-flash"
