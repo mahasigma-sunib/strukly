@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared-deployment
+  namespace: koinku-ns
+  labels:
+    app: cloudflared
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloudflared
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-spot: "true"
+
+        # incurs node billing!
+        # cloud.google.com/compute-class: "small-disk"
+      terminationGracePeriodSeconds: 25
+      containers:
+      - name: cloudflared
+        image: cloudflare/cloudflared
+        args: ["tunnel", "--no-autoupdate", "run"]
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        env:
+        - name: TUNNEL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: cloudflared-env
+              key: TUNNEL_TOKEN
