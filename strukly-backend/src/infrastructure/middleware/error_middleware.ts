@@ -3,6 +3,8 @@ import NotFoundError from "src/domain/errors/NotFoundError";
 import AlreadyExistError from "src/domain/errors/AlreadyExistError";
 import UnauthorizedError from "src/domain/errors/UnauthorizedError";
 import InvalidDataError from "src/domain/errors/InvalidDataError";
+import ServiceUnavailableError from "src/domain/errors/ServiceUnavailableError";
+import UnprocessableReceiptError from "src/domain/errors/UnprocessableReceiptError";
 
 /**
  * Global error handling middleware
@@ -30,6 +32,14 @@ export const errorMiddleware = (
 
   if (error instanceof InvalidDataError) {
     return res.status(400).json({ error: error.message });
+  }
+
+  if (error instanceof UnprocessableReceiptError) {
+    return res.status(422).json({ error: error.message });
+  }
+
+  if (error instanceof ServiceUnavailableError) {
+    return res.status(503).json({ error: error.message });
   }
 
   // Internal server error for unhandled errors

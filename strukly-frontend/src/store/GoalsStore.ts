@@ -15,7 +15,7 @@ type Actions = {
   addGoal: (item: GoalItem) => void;
   deleteGoal: (id: string) => void;
   depositGoal: (id: string, addDepositAmount: number, isCompleted: boolean) => void;
-  updateGoal: (id: string, newName: string, newPrice: number) => void;
+  updateGoal: (id: string, newName: string, newPrice: number, newCategory: string) => void;
 };
 
 const useGoals = create<State & Actions>()(
@@ -67,12 +67,13 @@ const useGoals = create<State & Actions>()(
         }
       });
     },
-    updateGoal: (id: string, newName: string, newPrice: number) => {
+    updateGoal: (id: string, newName: string, newPrice: number, newCategory: string) => {
       set((prev) => {
         const idx = prev.items.findIndex((item) => item.id === id);
         if (idx > -1) {
           prev.items[idx].name = newName;
           prev.items[idx].price = newPrice;
+          prev.items[idx].category = newCategory as GoalItem["category"];
         }
       });
     },

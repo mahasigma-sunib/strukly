@@ -3,6 +3,7 @@ import { z } from "zod";
 export const GoalItemResponseSchema = z.object({
   id: z.string().uuid().describe("The unique identifier of the goal"),
   name: z.string().describe("The name of the goal"),
+  category: z.string().describe("The expense category used when saving toward this goal"),
   price: z.number().int().describe("The target price for the goal"),
   deposited: z.number().int().describe("The amount deposited so far"),
   completed: z.boolean().describe("Whether the goal has been completed"),

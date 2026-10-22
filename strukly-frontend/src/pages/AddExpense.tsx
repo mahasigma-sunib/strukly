@@ -2,37 +2,48 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import ExpenseForm from "./ExpenseForm";
 
 import Button from "../components/button/Button";
 import BackIcon from "../components/utilityIcons/BackIcon";
 
+import { toast } from "sonner";
 import type { ExpenseType } from "../type/ExpenseType";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 import useExpense from "../store/ExpenseStore";
 import { mapExpense } from "../hooks/useLoadExpense";
+import {
+  formatTime,
+  getExpenseFormErrors,
+  type ExpenseFormErrors,
+} from "../schema/ExpenseSchemas";
+import { clampExpenseMoneyFields } from "../schema/money";
 
-const emptyExpense: Omit<ExpenseType, "userID"> = {
-  id: "",
-  dateTime: new Date(),
-  vendorName: "",
-  category: "food",
+function createEmptyExpense(): Omit<ExpenseType, "userID"> {
+  return {
+    id: "",
+    dateTime: new Date(),
+    vendorName: "",
+    category: "food",
 
-  currency: "IDR",
-  subtotalAmount: 0,
-  taxAmount: 0,
-  discountAmount: 0,
-  serviceAmount: 0,
-  totalAmount: 0,
+    currency: "IDR",
+    subtotalAmount: 0,
+    taxAmount: 0,
+    discountAmount: 0,
+    serviceAmount: 0,
+    totalAmount: 0,
 
-  items: [],
-};
+    items: [],
+  };
+}
 
 function mapExpenseToPostPayload(expense: any) {
   const currency = expense.currency || "IDR";
 
   return {
-    vendorName: expense.vendorName,
+    vendorName: expense.vendorName.trim(),
     category: expense.category,
     dateTime: expense.dateTime.toISOString(),
 
@@ -54,7 +65,7 @@ function mapExpenseToPostPayload(expense: any) {
     },
 
     items: expense.items.map((item: any) => ({
-      name: item.name,
+      name: item.name.trim(),
       quantity: item.quantity,
       singlePrice: {
         amount: item.singleItemPrice,
@@ -65,8 +76,12 @@ function mapExpenseToPostPayload(expense: any) {
 }
 
 export default function AddExpense() {
-  const [expense, setExpense] =
-    useState<Omit<ExpenseType, "userID">>(emptyExpense);
+  const { t } = useTranslation();
+  const [expense, setExpense] = useState(() => createEmptyExpense());
+  const [timeText, setTimeText] = useState(() =>
+    formatTime(expense.dateTime.getHours(), expense.dateTime.getMinutes())
+  );
+  const [formErrors, setFormErrors] = useState<ExpenseFormErrors>({});
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,9 +90,23 @@ export default function AddExpense() {
   useEffect(() => {
     if (scannedData) {
       // Transform backend response to frontend format
+      const utcDate = new Date(scannedData.dateTime);
+
+      // The backend treated our picture as UTC and responds with Date in UTC
+      // Treat the UTC date/time components as local (no wall-clock shift)
+      const localDateTime = new Date(
+        utcDate.getUTCFullYear(),
+        utcDate.getUTCMonth(),
+        utcDate.getUTCDate(),
+        utcDate.getUTCHours(),
+        utcDate.getUTCMinutes(),
+        utcDate.getUTCSeconds(),
+        utcDate.getUTCMilliseconds()
+      );
+
       const transformedExpense: Omit<ExpenseType, "userID"> = {
         id: "",
-        dateTime: new Date(scannedData.dateTime),
+        dateTime: localDateTime,
         vendorName: scannedData.vendorName || "",
         category: scannedData.category || "food",
         currency: scannedData.subtotalAmount?.currency || "IDR",
@@ -108,12 +137,21 @@ export default function AddExpense() {
           })
         ),
       };
-      setExpense(transformedExpense);
+      setExpense(clampExpenseMoneyFields(transformedExpense));
+      setTimeText(
+        formatTime(localDateTime.getHours(), localDateTime.getMinutes())
+      );
     }
   }, [scannedData]);
 
   const { addExpense } = useExpense();
   const handleSubmit = async () => {
+    const errors = getExpenseFormErrors(expense, timeText);
+    if (errors.vendorName || errors.items || errors.amount || errors.time) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       const payload = mapExpenseToPostPayload(expense);
       // console.log("POST payload:", payload);
@@ -127,7 +165,7 @@ export default function AddExpense() {
       addExpense(mapExpense(res.data.expense));
       navigate("/expense");
     } catch (err) {
-      console.error(err);
+      toast.error(getApiErrorMessage(err, t("expense.addFailed")));
     }
   };
 
@@ -137,11 +175,20 @@ export default function AddExpense() {
         <button onClick={() => navigate(-1)}>
           <BackIcon width={28} height={28} />
         </button>
-        <h1 className="text-xl font-semibold">Add Expense</h1>
+        <h1 className="text-xl font-semibold">{t("expense.add")}</h1>
       </div>
 
       <div>
-        <ExpenseForm expense={expense} setExpense={setExpense} />
+        <ExpenseForm
+          expense={expense}
+          setExpense={setExpense}
+          timeText={timeText}
+          onTimeTextChange={setTimeText}
+          formErrors={formErrors}
+          onClearFormError={(field) =>
+            setFormErrors((prev) => ({ ...prev, [field]: undefined }))
+          }
+        />
         <div className="flex justify-center px-6">
           <Button
             variant="primary"
@@ -149,7 +196,7 @@ export default function AddExpense() {
             className="!w-screen"
             onClick={handleSubmit}
           >
-            Add Expense
+            {t("expense.add")}
           </Button>
         </div>
       </div>

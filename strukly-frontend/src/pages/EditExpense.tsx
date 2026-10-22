@@ -1,15 +1,25 @@
 import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import ExpenseForm from "./ExpenseForm";
 import BackIcon from "../components/utilityIcons/BackIcon";
 
+import { toast } from "sonner";
 import type { ExpenseType } from "../type/ExpenseType";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import useExpense from "../store/ExpenseStore";
+import {
+  formatTime,
+  getExpenseFormErrors,
+  type ExpenseFormErrors,
+} from "../schema/ExpenseSchemas";
+import { clampExpenseMoneyFields } from "../schema/money";
 
 export default function EditExpense() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,28 +29,52 @@ export default function EditExpense() {
   if (!passedExpense) {
     return (
       <div className="h-screen flex flex-col items-center justify-center gap-4">
-        <p className="text-gray-500">No expense data found.</p>
+        <p className="text-gray-500">{t("expense.noData")}</p>
         <button
           onClick={() => navigate(-1)}
           className="text-blue-600 underline"
         >
-          Go back
+          {t("expense.goBack")}
         </button>
       </div>
     );
   }
 
-  const [expense, setExpense] = useState<ExpenseType>(passedExpense);
+  return <EditExpenseEditor initialExpense={passedExpense} id={id} />;
+}
+
+function EditExpenseEditor({
+  initialExpense,
+  id,
+}: {
+  initialExpense: ExpenseType;
+  id: string | undefined;
+}) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [expense, setExpense] = useState<ExpenseType>(() =>
+    clampExpenseMoneyFields(initialExpense)
+  );
+  const [timeText, setTimeText] = useState(() =>
+    formatTime(expense.dateTime.getHours(), expense.dateTime.getMinutes())
+  );
+  const [formErrors, setFormErrors] = useState<ExpenseFormErrors>({});
   const { updateExpense } = useExpense();
 
   const handleSubmit = async () => {
-    if (!expense || !id) return;
+    if (!id) return;
+
+    const errors = getExpenseFormErrors(expense, timeText);
+    if (errors.vendorName || errors.items || errors.amount || errors.time) {
+      setFormErrors(errors);
+      return;
+    }
 
     try {
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/expenses/${expense.id}`,
         {
-          vendorName: expense.vendorName,
+          vendorName: expense.vendorName.trim(),
           category: expense.category,
           dateTime: expense.dateTime.toISOString(),
 
@@ -62,7 +96,7 @@ export default function EditExpense() {
           },
 
           items: expense.items.map((item) => ({
-            name: item.name,
+            name: item.name.trim(),
             quantity: item.quantity,
             singlePrice: {
               amount: item.singleItemPrice,
@@ -76,7 +110,7 @@ export default function EditExpense() {
       updateExpense(id, expense);
       navigate(-1);
     } catch (err) {
-      console.error("Failed to update expense", err);
+      toast.error(getApiErrorMessage(err, t("expense.updateFailed")));
     }
   };
 
@@ -88,19 +122,28 @@ export default function EditExpense() {
           <button onClick={() => navigate(-1)}>
             <BackIcon width={28} height={28} />
           </button>
-          <h1 className="text-xl font-semibold">Edit Expense</h1>
+          <h1 className="text-xl font-semibold">{t("expense.edit")}</h1>
         </div>
 
         <button
           onClick={handleSubmit}
           className="cursor-pointer active:opacity-70 transition-opacity text-blue-500 font-bold text-xl mr-2 "
         >
-          Done
+          {t("common.done")}
         </button>
       </div>
 
       {/* Form */}
-      <ExpenseForm expense={expense} setExpense={setExpense} />
+      <ExpenseForm
+        expense={expense}
+        setExpense={setExpense}
+        timeText={timeText}
+        onTimeTextChange={setTimeText}
+        formErrors={formErrors}
+        onClearFormError={(field) =>
+          setFormErrors((prev) => ({ ...prev, [field]: undefined }))
+        }
+      />
     </div>
   );
 }

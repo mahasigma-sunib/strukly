@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "sonner";
+import { mutate } from "swr";
+import { useTranslation } from "react-i18next";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import useGoals from "../store/GoalsStore";
-import { useLoadGoals } from "../hooks/useLoadGoals";
+import { mapGoal, useLoadGoals } from "../hooks/useLoadGoals";
 import type { GoalItem } from "../type/GoalItem";
+import type { CategoryKey } from "../utils/CategoryConfig";
 
 import Card from "../components/card/Card";
 import FlagMascot from "../components/mascots/FlagMascot";
+import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 import Popup from "../components/popup/PopUp";
 
 import GoalsHeader from "../components/GoalsHeader";
@@ -15,15 +22,30 @@ import GoalModal from "../components/modal/GoalModal";
 import GoalPopup from "../components/popup/GoalPopUp";
 
 const GoalsPage: React.FC = () => {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [selectedGoal, setSelectedGoal] = useState<GoalItem | null>(null);
   const [activeModal, setActiveModal] = useState<
     "create" | "deposit" | "edit" | "delete" | null
   >(null);
   const [tempAmount, setTempAmount] = useState<number>(0);
-  const [formData, setFormData] = useState({ name: "", price: 0 });
+  const [formData, setFormData] = useState<{
+    name: string;
+    price: number;
+    category: CategoryKey;
+  }>({ name: "", price: 0, category: "others" });
   const [errorMessage, setErrorMessage] = useState("");
 
-  useLoadGoals();
+  const { error: goalsLoadError, isLoading: goalsIsLoading } = useLoadGoals();
+
+  useEffect(() => {
+    if (goalsLoadError) {
+      toast.error(t("goals.loadFailed"), {
+        id: "goals-load-error",
+      });
+    }
+  }, [goalsLoadError, t]);
   const {
     items: goals,
     addGoal,
@@ -32,58 +54,75 @@ const GoalsPage: React.FC = () => {
     deleteGoal,
   } = useGoals();
 
+  const pendingGoalId = location.state?.selectedGoalId as string | undefined;
+
+  useEffect(() => {
+    if (!pendingGoalId || goalsIsLoading) return;
+    setSelectedGoal(goals.find((g) => g.id === pendingGoalId) ?? null);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [pendingGoalId, goals, goalsIsLoading, navigate, location.pathname]);
+
   const activeGoals = goals.filter((g) => !g.isCompleted);
   const completedGoals = goals.filter((g) => g.isCompleted);
 
+  const emptyForm = {
+    name: "",
+    price: 0,
+    category: "others" as CategoryKey,
+  };
+
+  const refreshSpending = async () => {
+    const api = import.meta.env.VITE_API_BASE_URL;
+    const now = new Date();
+    await Promise.all([
+      mutate(`${api}/budget`),
+      mutate(
+        `${api}/expenses?month=${now.getMonth() + 1}&year=${now.getFullYear()}`
+      ),
+    ]);
+  };
+
   const handleCreate = async () => {
     if (!formData.name.trim()) {
-      setErrorMessage("A goal name must be filled");
+      setErrorMessage(t("goals.nameRequired"));
       return;
     }
 
     if (formData.name.length > 250) {
-      setErrorMessage(
-        "A goal name must be less than or equal to 250 characters"
-      );
+      setErrorMessage(t("goals.nameTooLong"));
       return;
     }
 
     if (formData.price <= 0) {
-      setErrorMessage("Target price must be greater than 0!");
+      setErrorMessage(t("goals.priceRequired"));
       return;
     }
-
-    const newGoal: GoalItem = {
-      id: "",
-      name: formData.name,
-      price: formData.price,
-      deposit: 0, //deposited
-      isCompleted: false,
-      createdAt: new Date(),
-    };
 
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/goals`,
-        newGoal,
+        {
+          name: formData.name,
+          price: formData.price,
+          category: formData.category,
+        },
         { withCredentials: true }
       );
 
-      newGoal.id = res.data.goal.id;
-      newGoal.createdAt = res.data.goal.createdAt;
-      addGoal(newGoal);
+      addGoal(mapGoal(res.data.goal));
+      setErrorMessage("");
+      setActiveModal(null);
+      setFormData(emptyForm);
     } catch (err) {
-      console.log(err);
+      setErrorMessage(getApiErrorMessage(err, t("goals.createFailed")));
     }
-
-    setActiveModal(null);
   };
 
   const handleDeposit = async () => {
     if (!selectedGoal) return;
 
     if (tempAmount <= 0) {
-      setErrorMessage(`The input amount must be greater than zero!`);
+      setErrorMessage(t("goals.depositAmount"));
       return;
     }
 
@@ -91,7 +130,7 @@ const GoalsPage: React.FC = () => {
 
     if (tempAmount > remaining) {
       setErrorMessage(
-        `The input amount greater than target, Maximal: Rp ${remaining.toLocaleString()}`
+        t("goals.depositTooMuch", { max: remaining.toLocaleString() })
       );
       return;
     }
@@ -114,48 +153,56 @@ const GoalsPage: React.FC = () => {
         );
       }
       depositGoal(selectedGoal.id, tempAmount, isComplete);
+      await refreshSpending();
+      setErrorMessage("");
+      setActiveModal(null);
+      setSelectedGoal(null);
+      setTempAmount(0);
     } catch (error) {
-      console.log(error);
+      setErrorMessage(getApiErrorMessage(error, t("goals.depositFailed")));
     }
-
-    setErrorMessage("");
-    setActiveModal(null);
-    setSelectedGoal(null);
-    setTempAmount(0);
   };
 
   const handleUpdate = async () => {
     if (!selectedGoal) return;
 
     if (!formData.name.trim()) {
-      setErrorMessage("A goal name must be filled");
+      setErrorMessage(t("goals.nameRequired"));
       return;
     }
 
     if (formData.price < selectedGoal.deposit) {
-      setErrorMessage("New goal price must be less than current amount!");
+      setErrorMessage(t("goals.priceTooLow"));
       return;
     }
 
     if (formData.price <= 0) {
-      setErrorMessage("Target price must be greater than 0!");
+      setErrorMessage(t("goals.priceRequired"));
       return;
     }
 
     try {
       await axios.patch(
         `${import.meta.env.VITE_API_BASE_URL}/goals/${selectedGoal.id}`,
-        { name: formData.name, price: formData.price },
+        {
+          name: formData.name,
+          price: formData.price,
+          category: formData.category,
+        },
         { withCredentials: true }
       );
-      updateGoal(selectedGoal.id, formData.name, formData.price);
+      updateGoal(
+        selectedGoal.id,
+        formData.name,
+        formData.price,
+        formData.category
+      );
+      setErrorMessage("");
+      setActiveModal(null);
+      setSelectedGoal(null);
     } catch (error) {
-      console.log(error);
+      setErrorMessage(getApiErrorMessage(error, t("goals.updateFailed")));
     }
-
-    setErrorMessage("");
-    setActiveModal(null);
-    setSelectedGoal(null);
   };
 
   const handleDelete = async () => {
@@ -168,7 +215,8 @@ const GoalsPage: React.FC = () => {
       );
       deleteGoal(selectedGoal.id);
     } catch (error) {
-      console.log(error);
+      toast.error(getApiErrorMessage(error, t("goals.deleteFailed")));
+      return;
     }
     setActiveModal(null);
     setSelectedGoal(null);
@@ -179,23 +227,32 @@ const GoalsPage: React.FC = () => {
       <GoalsHeader
         activeCount={goals.filter((g) => !g.isCompleted).length}
         onAdd={() => {
-          setFormData({ name: "", price: 0 });
+          setFormData(emptyForm);
           setActiveModal("create");
         }}
       />
 
       <main className=" mt-6 space-y-4">
-        {goals.length === 0 && (
+        {goals.length === 0 && !goalsIsLoading && (
           <div>
             <div className="ml-5 mr-4 mt-6 mb-2 font-bold text-2xl">
-              <p>My Goals</p>
+              <p>{t("goals.myGoals")}</p>
             </div>
-            <div className="flex flex-col items-center justify-center mt-20 ">
-              <FlagMascot width={148} height={148} className="ml-8" />
-              <p className="text-inactive mt-4 font-bold text-lg text-center">
-                You have no goals yet.
-              </p>
-            </div>
+            {goalsLoadError ? (
+              <LoadErrorPlaceholder
+                title={t("goals.loadError")}
+                onRetry={() =>
+                  mutate(`${import.meta.env.VITE_API_BASE_URL}/goals`)
+                }
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center mt-20 ">
+                <FlagMascot width={148} height={148} className="ml-8" />
+                <p className="text-inactive mt-4 font-bold text-lg text-center">
+                  {t("goals.noGoals")}
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -204,9 +261,11 @@ const GoalsPage: React.FC = () => {
           {activeGoals.length > 0 && (
             <div>
               <div className="flex flex-row justify-between items-center">
-                <p className="font-bold text-2xl ml-5 mr-4">My Goals</p>
+                <p className="font-bold text-2xl ml-5 mr-4">
+                  {t("goals.myGoals")}
+                </p>
                 <p className="ml-5 mr-4 text-base px-3 py-1 font-bold text-[#f14c1a] bg-secondary-hover/30 rounded-full ">
-                  {activeGoals.length} Active Goals
+                  {t("goals.activeCount", { count: activeGoals.length })}
                 </p>
               </div>
 
@@ -227,9 +286,11 @@ const GoalsPage: React.FC = () => {
           {completedGoals.length > 0 && (
             <div>
               <div className="flex flex-row justify-between items-center">
-                <p className="ml-5 mr-4 font-bold text-2xl">Completed</p>
+                <p className="ml-5 mr-4 font-bold text-2xl">
+                  {t("goals.completed")}
+                </p>
                 <p className="ml-5 mr-4 text-base font-bold text-[#198010] bg-status-success/10 px-2 py-1 rounded-full">
-                  {completedGoals.length} Completed Goals
+                  {t("goals.completedCount", { count: completedGoals.length })}
                 </p>
               </div>
               <div className="space-y-4">
@@ -253,6 +314,7 @@ const GoalsPage: React.FC = () => {
                 setFormData({
                   name: selectedGoal!.name,
                   price: selectedGoal!.price,
+                  category: selectedGoal!.category,
                 });
                 setActiveModal("edit");
               }}

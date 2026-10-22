@@ -1,26 +1,24 @@
+import { useTranslation } from "react-i18next";
 import { getCategoryData } from "../../utils/CategoryConfig";
 import ProgressBar from "../graph/ProgressBar";
+import Money from "../money/Money";
 
 interface BudgetListProps {
-  currency: string;
   spent: number;
   usedBudget: number;
   category: string;
 }
 
 export default function BudgetListCard({
-  currency,
   spent,
   usedBudget,
   category,
 }: BudgetListProps) {
+  const { t } = useTranslation();
   const { icon, color } = getCategoryData(category.toLowerCase());
 
   const percent =
     usedBudget > 0 ? Number(((spent / usedBudget) * 100).toFixed(2)) : 0;
-
-  const formatIDR = (value: number) =>
-    value ? value.toLocaleString("id-ID") : "0";
 
   return (
     <div>
@@ -34,12 +32,17 @@ export default function BudgetListCard({
           </div>
 
           <div className="flex flex-col">
-            <span className="font-bold text-text-primary text-base capitalize">
-              {category}
+            <span className="font-bold text-text-primary text-base">
+              {t(`category.${category.toLowerCase()}`)}
             </span>
-            <span className="text-sm text-text-secondary">
-              -{currency} {formatIDR(spent)}
-            </span>
+            <div className="flex items-baseline text-sm text-text-secondary">
+              <span>-</span>
+              <Money
+                amount={spent}
+                currency="IDR"
+                decimalClassName="text-xs opacity-70"
+              />
+            </div>
           </div>
         </div>
 

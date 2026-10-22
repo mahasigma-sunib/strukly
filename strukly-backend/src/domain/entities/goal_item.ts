@@ -1,6 +1,7 @@
 // src/domain/entities/goal_item.ts
 
 import InvalidDataError from "../errors/InvalidDataError";
+import ExpenseCategory from "../values/expense_category";
 import GoalItemID from "../values/goal_item_id";
 import UserID from "../values/user_id";
 
@@ -8,11 +9,13 @@ export interface IGoalItemBuilder {
   userID: string;
   name: string;
   price: number;
+  category: string;
 }
 
 export interface IGoalItemEditor {
   name: string;
   price: number;
+  category: string;
 }
 
 export default class GoalItem {
@@ -29,6 +32,7 @@ export default class GoalItem {
     public updatedAt: Date,
 
     public userID: UserID,
+    public category: ExpenseCategory,
   ) {}
 
   static new(builder: IGoalItemBuilder) {
@@ -42,6 +46,7 @@ export default class GoalItem {
       new Date(),
       new Date(),
       new UserID(builder.userID),
+      ExpenseCategory.fromString(builder.category),
     );
   }
 
@@ -59,6 +64,9 @@ export default class GoalItem {
         );
       }
       this.price = editor.price;
+    }
+    if (editor.category !== undefined) {
+      this.category = ExpenseCategory.fromString(editor.category);
     }
     this.updatedAt = new Date();
   }

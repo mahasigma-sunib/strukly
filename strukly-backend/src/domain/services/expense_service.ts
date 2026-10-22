@@ -3,10 +3,19 @@ import IExpenseRepository from "../repositories/expense_repository";
 import ExpenseID from "../values/expense_id";
 import UserID from "../values/user_id";
 
+export type ExpenseScope = {
+  readonly expenses: IExpenseRepository;
+};
+
 export default class ExpenseService {
   constructor(private readonly expenseRepository: IExpenseRepository) {}
-  async createExpense(expense: Expense): Promise<Expense> {
-    return await this.expenseRepository.create(expense);
+
+  private scopeOf(scope?: ExpenseScope): IExpenseRepository {
+    return scope?.expenses ?? this.expenseRepository;
+  }
+
+  async createExpense(expense: Expense, scope?: ExpenseScope): Promise<Expense> {
+    return await this.scopeOf(scope).create(expense);
   }
 
   /**
@@ -15,13 +24,17 @@ export default class ExpenseService {
    * @param expense
    * @returns
    */
-  async updateExpense(userID: UserID, expense: Expense): Promise<Expense> {
+  async updateExpense(
+    userID: UserID,
+    expense: Expense,
+    scope?: ExpenseScope,
+  ): Promise<Expense> {
     // Ensure the expense belongs to the user before updating
     if (!expense.header.userID.equals(userID)) {
       throw new Error("Unauthorized: Expense does not belong to the user.");
     }
 
-    return await this.expenseRepository.update(expense);
+    return await this.scopeOf(scope).update(expense);
   }
 
   //crossmonth function for weekly reports
@@ -45,22 +58,28 @@ export default class ExpenseService {
   async getExpenseByID(
     userID: UserID,
     expenseID: ExpenseID,
+    scope?: ExpenseScope,
   ): Promise<Expense | null> {
-    const expense = await this.expenseRepository.findByID(expenseID);
+    const expense = await this.scopeOf(scope).findByID(expenseID);
     if (expense && expense.header.userID.equals(userID)) {
       return expense;
     }
     return null;
   }
 
-  async deleteExpenseByID(userID: UserID, expenseID: ExpenseID): Promise<void> {
-    const expense = await this.expenseRepository.findByID(expenseID);
+  async deleteExpenseByID(
+    userID: UserID,
+    expenseID: ExpenseID,
+    scope?: ExpenseScope,
+  ): Promise<void> {
+    const expenses = this.scopeOf(scope);
+    const expense = await expenses.findByID(expenseID);
     if (!expense) {
       throw new Error("Expense not found.");
     }
     if (!expense.header.userID.equals(userID)) {
       throw new Error("Unauthorized: Expense does not belong to the user.");
     }
-    await this.expenseRepository.delete(expenseID);
+    await expenses.delete(expenseID);
   }
 }

@@ -1,0 +1,80 @@
+name: Deploy to GKE
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  PROJECT_ID: penpot-digiforge
+  PROJECT_NUMBER: "408121045952"
+  GKE_CLUSTER: koinku-cluster
+  GKE_LOCATION: asia-southeast1
+  NAMESPACE: koinku-ns
+  DEPLOYMENT: koinku-deployment
+  CONTAINER: koinku
+  IMAGE: ghcr.io/mahasigma-sunib/koinku
+
+jobs:
+
+  test:
+    uses: ./.github/workflows/test.yml
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: KrisNathan
+        password: ${{ secrets.GHCR_TOKEN }}
+    - name: Build and push runner image
+      working-directory: ./strukly-backend
+      run: |
+        docker build . --target runner \
+          --tag "$IMAGE:$GITHUB_SHA" --tag "$IMAGE:latest"
+        docker push "$IMAGE:$GITHUB_SHA"
+        docker push "$IMAGE:latest"
+    - name: Build and push migrator image
+      working-directory: ./strukly-backend
+      run: |
+        docker build . --target migrator \
+          --tag "$IMAGE:migrator-$GITHUB_SHA" --tag "$IMAGE:migrator-latest"
+        docker push "$IMAGE:migrator-$GITHUB_SHA"
+        docker push "$IMAGE:migrator-latest"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+    # Direct Workload Identity Federation: IAM roles are granted to the
+    # repository's principalSet, so no service account is impersonated.
+    - uses: google-github-actions/auth@v3
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+        workload_identity_provider: projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github/providers/github-oidc
+    - uses: google-github-actions/get-gke-credentials@v2
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_LOCATION }}
+
+    - name: Deploy
+      run: |
+        # The migrate initContainer runs before the new pods start, so a failed
+        # migration fails the rollout and leaves the old pods serving.
+        kubectl set image -n "$NAMESPACE" "deployment/$DEPLOYMENT" \
+          "$CONTAINER=$IMAGE:$GITHUB_SHA" "migrate=$IMAGE:migrator-$GITHUB_SHA"
+        kubectl rollout status -n "$NAMESPACE" "deployment/$DEPLOYMENT" --timeout=5m

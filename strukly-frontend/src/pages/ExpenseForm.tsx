@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import type { ExpenseType } from "../type/ExpenseType";
 import type { ExpenseItemType } from "../type/ExpenseItemType";
 import { getCategoryData, categoryColors } from "../utils/CategoryConfig";
@@ -7,6 +8,24 @@ import Card from "../components/card/Card";
 import Dropdown from "../components/dropdown/Dropdown";
 import Toggle from "../components/button/ToggleButton";
 import DropDownIcon from "../components/utilityIcons/DropdownIcon";
+import ErrorMessage from "../components/ErrorMessage";
+import Money from "../components/money/Money";
+import { formatIDRDisplay } from "../components/money/formatIDRDisplay";
+import {
+  TIME_INVALID,
+  formatTime,
+  parseTimeInput,
+  type ExpenseFormErrors,
+} from "../schema/ExpenseSchemas";
+import {
+  MAX_ITEM_QUANTITY,
+  MAX_MONEY_AMOUNT,
+  MONEY_AMOUNT_MAX_DISPLAY,
+  MONEY_AMOUNT_TOO_LARGE,
+  clampItemAmounts,
+  clampMoney,
+  parseDigitAmount,
+} from "../schema/money";
 
 // interface Props {
 //   expense: Omit<ExpenseType, "userID">;
@@ -16,13 +35,26 @@ import DropDownIcon from "../components/utilityIcons/DropdownIcon";
 interface Props<T extends Omit<ExpenseType, "userID"> | ExpenseType> {
   expense: T;
   setExpense: React.Dispatch<React.SetStateAction<T>>;
+  timeText: string;
+  onTimeTextChange: (text: string) => void;
+  formErrors?: ExpenseFormErrors;
+  onClearFormError?: (field: keyof ExpenseFormErrors) => void;
 }
 
 export default function ExpenseForm<
   T extends Omit<ExpenseType, "userID"> | ExpenseType
->({ expense, setExpense }: Props<T>) {
+>({
+  expense,
+  setExpense,
+  timeText,
+  onTimeTextChange,
+  formErrors,
+  onClearFormError,
+}: Props<T>) {
+  const { t } = useTranslation();
   // const [isDetailed, setIsDetailed] = useState(expense.items.length > 0);
   const [isDetailed, setIsDetailed] = useState(true);
+  const [timeError, setTimeError] = useState<string | undefined>();
 
   const { icon } = getCategoryData(expense.category);
 
@@ -56,9 +88,16 @@ export default function ExpenseForm<
     const targetItem = { ...newItems[index], [field]: value };
 
     if (field === "singleItemPrice" || field === "quantity") {
-      const numVal = Math.max(0, Number(value));
-      targetItem[field] = numVal as never;
-      targetItem.totalPrice = targetItem.singleItemPrice * targetItem.quantity;
+      const nextPrice =
+        field === "singleItemPrice"
+          ? Number(value)
+          : targetItem.singleItemPrice;
+      const nextQty =
+        field === "quantity" ? Number(value) : targetItem.quantity;
+      const clamped = clampItemAmounts(nextPrice, nextQty);
+      targetItem.singleItemPrice = clamped.singleItemPrice;
+      targetItem.quantity = clamped.quantity;
+      targetItem.totalPrice = clamped.totalPrice;
     }
 
     newItems[index] = targetItem;
@@ -83,17 +122,23 @@ export default function ExpenseForm<
       (sum, item) => sum + item.totalPrice,
       0
     );
+    const preDiscountTotal =
+      subtotal + expense.taxAmount + expense.serviceAmount;
+    const discountAmount = Math.min(
+      expense.discountAmount,
+      Math.max(0, preDiscountTotal)
+    );
+    const total = preDiscountTotal - discountAmount;
 
-    const total =
-      subtotal +
-      expense.taxAmount +
-      expense.serviceAmount -
-      expense.discountAmount;
-
-    if (subtotal !== expense.subtotalAmount || total !== expense.totalAmount) {
+    if (
+      subtotal !== expense.subtotalAmount ||
+      total !== expense.totalAmount ||
+      discountAmount !== expense.discountAmount
+    ) {
       setExpense((prev) => ({
         ...prev,
         subtotalAmount: subtotal,
+        discountAmount,
         totalAmount: total,
       }));
     }
@@ -108,14 +153,8 @@ export default function ExpenseForm<
     addItem,
   ]);
 
-  const capitalizeWords = (sentence: string) =>
-    sentence
-      .split(" ")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-
   const options = Object.keys(categoryColors).map((key) => ({
-    label: capitalizeWords(key),
+    label: t(`category.${key}`),
     value: key,
   }));
 
@@ -127,13 +166,49 @@ export default function ExpenseForm<
   const formatIDR = (value: number) =>
     value ? value.toLocaleString("id-ID") : "";
 
+  const formatDateInput = (date: Date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+      date.getDate()
+    ).padStart(2, "0")}`;
+
+  const applyTime = (hours: number, minutes: number) => {
+    const newDate = new Date(validDate);
+    newDate.setHours(hours, minutes);
+    setExpense({ ...expense, dateTime: newDate });
+  };
+
+  const amountText = (
+    value: number,
+    className = "",
+    decimalClassName = "opacity-70"
+  ) => (
+    <div
+      className={`min-w-0 truncate tabular-nums flex justify-end ${className}`}
+      title={formatIDRDisplay(value)}
+    >
+      <Money
+        amount={value}
+        currency="IDR"
+        mainClassName="min-w-0 truncate"
+        decimalClassName={`min-w-0 truncate ${decimalClassName}`}
+      />
+    </div>
+  );
+
+  const amountTooLarge =
+    expense.subtotalAmount +
+      expense.taxAmount +
+      expense.serviceAmount -
+      expense.discountAmount >
+    MAX_MONEY_AMOUNT;
+
   const labelCase = "text-sm font-bold text-gray-400";
 
   const inputBase =
     "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-base outline-none focus:ring-2 focus:ring-blue-500";
 
   const numberInput =
-    "w-32 text-right border border-gray-300 rounded-lg px-4 py-2 font-bold outline-none";
+    "flex-1 min-w-0 max-w-[12rem] text-right border border-gray-300 rounded-lg px-3 py-2 font-bold outline-none overflow-hidden";
 
   return (
     <div>
@@ -149,7 +224,7 @@ export default function ExpenseForm<
               setExpense({ ...expense, category: opt.value as string })
             }
             selected={{
-              label: capitalizeWords(expense.category),
+              label: t(`category.${expense.category}`),
               value: expense.category,
             }}
           >
@@ -158,9 +233,11 @@ export default function ExpenseForm<
                 <div className="flex items-center gap-3">
                   {icon}
                   <div>
-                    <div className="text-sm text-gray-400">Category</div>
+                    <div className="text-sm text-gray-400">
+                      {t("expenseForm.category")}
+                    </div>
                     <div className="text-lg font-semibold">
-                      {capitalizeWords(expense.category)}
+                      {t(`category.${expense.category}`)}
                     </div>
                   </div>
                 </div>
@@ -173,26 +250,33 @@ export default function ExpenseForm<
         {/* Vendor & Date */}
         <Card className="flex flex-col gap-4">
           <div>
-            <p className={`${labelCase} mb-2`}>Vendor Name</p>
+            <p className={`${labelCase} mb-2`}>{t("expenseForm.vendorName")}</p>
             <input
-              className={inputBase}
-              placeholder="Ex. McDonald's"
+              className={`${inputBase} ${
+                formErrors?.vendorName ? "border-status-error" : ""
+              }`}
+              placeholder={t("expenseForm.vendorPlaceholder")}
               value={expense.vendorName}
-              onChange={(e) =>
-                setExpense({ ...expense, vendorName: e.target.value })
-              }
+              onChange={(e) => {
+                onClearFormError?.("vendorName");
+                setExpense({ ...expense, vendorName: e.target.value });
+              }}
             />
+            {formErrors?.vendorName && (
+              <ErrorMessage>{t(formErrors.vendorName)}</ErrorMessage>
+            )}
           </div>
 
           <div className="flex gap-4">
             <div className="flex-1">
-              <p className={`${labelCase} mb-2`}>Date</p>
+              <p className={`${labelCase} mb-2`}>{t("expenseForm.date")}</p>
               <input
                 type="date"
                 className={inputBase}
-                value={validDate.toISOString().slice(0, 10)}
+                value={formatDateInput(validDate)}
                 onChange={(e) => {
                   const [y, m, d] = e.target.value.split("-").map(Number);
+                  if (!y || !m || !d) return;
                   const newDate = new Date(validDate);
                   newDate.setFullYear(y, m - 1, d);
                   setExpense({ ...expense, dateTime: newDate });
@@ -201,18 +285,38 @@ export default function ExpenseForm<
             </div>
 
             <div className="flex-1">
-              <p className={`${labelCase} mb-2`}>Time</p>
+              <p className={`${labelCase} mb-2`}>{t("expenseForm.time")}</p>
               <input
-                type="time"
-                className={inputBase}
-                value={validDate.toTimeString().slice(0, 5)}
+                type="text"
+                inputMode="numeric"
+                placeholder="HH:mm"
+                className={`${inputBase} ${
+                  timeError || formErrors?.time ? "border-status-error" : ""
+                }`}
+                value={timeText}
                 onChange={(e) => {
-                  const [h, min] = e.target.value.split(":").map(Number);
-                  const newDate = new Date(validDate);
-                  newDate.setHours(h, min);
-                  setExpense({ ...expense, dateTime: newDate });
+                  onClearFormError?.("time");
+                  setTimeError(undefined);
+                  onTimeTextChange(e.target.value);
+                  const parsed = parseTimeInput(e.target.value);
+                  if (parsed) applyTime(parsed.hours, parsed.minutes);
+                }}
+                onBlur={() => {
+                  const parsed = parseTimeInput(timeText);
+                  if (!parsed) {
+                    setTimeError(TIME_INVALID);
+                    return;
+                  }
+                  setTimeError(undefined);
+                  onTimeTextChange(formatTime(parsed.hours, parsed.minutes));
+                  applyTime(parsed.hours, parsed.minutes);
                 }}
               />
+              {(timeError || formErrors?.time) && (
+                <ErrorMessage>
+                  {t(timeError || formErrors?.time || "")}
+                </ErrorMessage>
+              )}
             </div>
           </div>
         </Card>
@@ -220,27 +324,32 @@ export default function ExpenseForm<
         {/* Toggle */}
         <div className="flex items-center justify-between px-5">
           <span className={`${labelCase}  text-gray-500`}>
-            Detailed Receipt
+            {t("expenseForm.detailedReceipt")}
           </span>
           <Toggle enabled={isDetailed} onChange={handleToggleDetailed} />
         </div>
 
         {/* Receipt */}
-        <Card className="p-6">
+        <Card className="p-6 overflow-hidden">
           {isDetailed ? (
             <div className="flex flex-col gap-6">
-              <h3 className={`${labelCase}`}>Items List</h3>
+              <h3 className={`${labelCase}`}>{t("expenseForm.itemsList")}</h3>
 
               {expense.items.map((item, index) => (
                 <div key={item.id} className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">
                     <input
-                      className="flex-1 border border-gray-200 rounded-lg px-4 py-2.5 text-base font-medium"
-                      placeholder="Item Name"
+                      className={`flex-1 border rounded-lg px-4 py-2.5 text-base font-medium ${
+                        formErrors?.items && !item.name.trim()
+                          ? "border-status-error"
+                          : "border-gray-200"
+                      }`}
+                      placeholder={t("expenseForm.itemName")}
                       value={item.name}
-                      onChange={(e) =>
-                        updateItem(index, "name", e.target.value)
-                      }
+                      onChange={(e) => {
+                        onClearFormError?.("items");
+                        updateItem(index, "name", e.target.value);
+                      }}
                     />
                     <button
                       onClick={() => removeItem(index)}
@@ -250,133 +359,186 @@ export default function ExpenseForm<
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <input
                       type="number"
-                      className="w-32 border border-gray-200 rounded-lg px-4 py-2.5 text-base font-medium"
-                      placeholder="Price"
+                      min={0}
+                      max={MAX_MONEY_AMOUNT}
+                      className="flex-1 min-w-0 border border-gray-200 rounded-lg px-3 py-2.5 text-base font-medium overflow-hidden"
+                      placeholder={t("expenseForm.price")}
                       value={item.singleItemPrice || ""}
-                      onChange={(e) =>
-                        updateItem(index, "singleItemPrice", e.target.value)
-                      }
+                      onChange={(e) => {
+                        onClearFormError?.("amount");
+                        updateItem(index, "singleItemPrice", e.target.value);
+                      }}
                     />
 
-                    <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2">
+                    <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2 shrink-0">
                       <input
                         type="number"
-                        className="w-8 text-center text-base font-medium outline-none"
+                        min={1}
+                        max={MAX_ITEM_QUANTITY}
+                        className="w-12 text-center text-base font-medium outline-none"
                         value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(index, "quantity", e.target.value)
-                        }
+                        onChange={(e) => {
+                          onClearFormError?.("amount");
+                          updateItem(index, "quantity", e.target.value);
+                        }}
                       />
                       <span className="text-sm font-bold text-gray-400 ml-1">
                         &#215;
                       </span>
                     </div>
 
-                    <div className="flex-1 text-right font-bold text-gray-500 mr-2">
-                      {item.totalPrice.toLocaleString("id-ID")}
+                    <div className="flex-1 min-w-0 text-right font-bold text-gray-500 mr-2">
+                      {amountText(item.totalPrice)}
                     </div>
                   </div>
                 </div>
               ))}
 
+              {formErrors?.items && (
+                <ErrorMessage>{t(formErrors.items)}</ErrorMessage>
+              )}
+
               <button
                 onClick={addItem}
                 className="w-full text-base py-3 border border-blue-500 rounded-xl text-blue-500 font-bold"
               >
-                &#43; Add Item
+                &#43; {t("expenseForm.addItem")}
               </button>
 
               <div className="pt-6 border-t border-gray-100 flex flex-col gap-4">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-400">Subtotal</span>
-                  <span className="font-bold mr-2 text-gray-500">
-                    {expense.subtotalAmount.toLocaleString("id-ID")}
+                <div className="flex justify-between items-center gap-3 min-w-0">
+                  <span className="text-sm text-gray-400 shrink-0">
+                    {t("expense.subtotal")}
                   </span>
+                  {amountText(
+                    expense.subtotalAmount,
+                    "font-bold mr-2 text-gray-500"
+                  )}
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Tax</span>
+                <div className="flex justify-between items-center gap-3 min-w-0">
+                  <span className="text-sm text-gray-400 shrink-0">
+                    {t("expense.tax")}
+                  </span>
                   <input
                     type="number"
+                    min={0}
+                    max={MAX_MONEY_AMOUNT}
                     className={numberInput}
                     value={expense.taxAmount || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      onClearFormError?.("amount");
                       setExpense({
                         ...expense,
-                        taxAmount: Math.max(0, Number(e.target.value)),
-                      })
-                    }
+                        taxAmount: clampMoney(Number(e.target.value)),
+                      });
+                    }}
                   />
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Service</span>
+                <div className="flex justify-between items-center gap-3 min-w-0">
+                  <span className="text-sm text-gray-400 shrink-0">
+                    {t("expense.service")}
+                  </span>
                   <input
                     type="number"
+                    min={0}
+                    max={MAX_MONEY_AMOUNT}
                     className={numberInput}
                     value={expense.serviceAmount || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      onClearFormError?.("amount");
                       setExpense({
                         ...expense,
-                        serviceAmount: Math.max(0, Number(e.target.value)),
-                      })
-                    }
+                        serviceAmount: clampMoney(Number(e.target.value)),
+                      });
+                    }}
                   />
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Discount</span>
+                <div className="flex justify-between items-center gap-3 min-w-0">
+                  <span className="text-sm text-gray-400 shrink-0">
+                    {t("expense.discount")}
+                  </span>
                   <input
                     type="number"
+                    min={0}
+                    max={MAX_MONEY_AMOUNT}
                     className={`${numberInput} text-red-500`}
                     value={expense.discountAmount || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      onClearFormError?.("amount");
+                      const preDiscountTotal =
+                        expense.subtotalAmount +
+                        expense.taxAmount +
+                        expense.serviceAmount;
                       setExpense({
                         ...expense,
-                        discountAmount: Math.max(0, Number(e.target.value)),
-                      })
-                    }
+                        discountAmount: Math.min(
+                          clampMoney(Number(e.target.value)),
+                          Math.max(0, preDiscountTotal)
+                        ),
+                      });
+                    }}
                   />
                 </div>
 
-                <div className="flex justify-between pt-2">
-                  <span className="font-bold text-gray-500">Total</span>
-                  <span className="text-xl font-extrabold text-gray-600 mr-2">
-                    {expense.totalAmount.toLocaleString("id-ID")}
+                <div className="flex justify-between items-center gap-3 min-w-0 pt-2">
+                  <span className="font-bold text-gray-500 shrink-0">
+                    {t("expense.total")}
                   </span>
+                  {amountText(
+                    expense.totalAmount,
+                    "text-xl font-extrabold text-gray-600 mr-2",
+                    "text-base font-bold opacity-70"
+                  )}
                 </div>
+
+                {(formErrors?.amount || amountTooLarge) && (
+                  <ErrorMessage>
+                    {t(formErrors?.amount || MONEY_AMOUNT_TOO_LARGE, {
+                      max: MONEY_AMOUNT_MAX_DISPLAY,
+                    })}
+                  </ErrorMessage>
+                )}
               </div>
             </div>
           ) : (
             <div className="">
-              <p className={`${labelCase} mb-3  text-gray-500`}>Total Amount</p>
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="999.999"
-                className={`${numberInput} !w-full text-2xl !text-right`}
-                value={formatIDR(expense.totalAmount)}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/[^\d]/g, "");
-
-                  if (raw === "") {
+              <p className={`${labelCase} mb-3  text-gray-500`}>
+                {t("expenseForm.totalAmount")}
+              </p>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
+                  Rp
+                </span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="999.999"
+                  className={`${numberInput} !w-full text-2xl !text-right min-w-0`}
+                  value={formatIDR(expense.totalAmount)}
+                  onChange={(e) => {
+                    onClearFormError?.("amount");
+                    const amount = parseDigitAmount(e.target.value);
                     setExpense({
                       ...expense,
-                      totalAmount: 0,
-                      subtotalAmount: 0,
+                      totalAmount: amount,
+                      subtotalAmount: amount,
                     });
-                  } else {
-                    setExpense({
-                      ...expense,
-                      totalAmount: Number(raw),
-                      subtotalAmount: Number(raw),
-                    });
-                  }
-                }}
-              />
+                  }}
+                />
+              </div>
+              {(formErrors?.amount || amountTooLarge) && (
+                <ErrorMessage>
+                  {t(formErrors?.amount || MONEY_AMOUNT_TOO_LARGE, {
+                    max: MONEY_AMOUNT_MAX_DISPLAY,
+                  })}
+                </ErrorMessage>
+              )}
             </div>
           )}
         </Card>

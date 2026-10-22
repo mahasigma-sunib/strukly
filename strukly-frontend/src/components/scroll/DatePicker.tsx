@@ -1,25 +1,11 @@
 import React, { useEffect, useRef, type RefObject } from "react";
+import { useTranslation } from "react-i18next";
 
 interface DatePickerProps {
   selectedMonth: number; // 1 - 12
   selectedYear: number;
   onChange: (month: number, year: number) => void;
 }
-
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
@@ -31,8 +17,15 @@ export default function DatePicker({
   selectedYear,
   onChange,
 }: DatePickerProps) {
+  const { i18n } = useTranslation();
   const monthRef = useRef<HTMLDivElement>(null);
   const yearRef = useRef<HTMLDivElement>(null);
+
+  const months = Array.from({ length: 12 }, (_, i) =>
+    new Intl.DateTimeFormat(i18n.resolvedLanguage ?? "en", {
+      month: "long",
+    }).format(new Date(2025, i, 1))
+  );
 
   // 1. refs to store the debounce timers
   const monthTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -130,8 +123,8 @@ export default function DatePicker({
       <div className="flex justify-center relative z-20 pt-2 pb-2">
         {/* pass specific timer refs here */}
         {renderColumn(
-          MONTHS,
-          MONTHS[selectedMonth - 1],
+          months,
+          months[selectedMonth - 1],
           (index) => onChange(index + 1, selectedYear),
           monthRef,
           monthTimerRef

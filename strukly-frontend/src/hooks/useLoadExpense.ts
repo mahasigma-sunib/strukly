@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import useSWR from "swr";
 
 import useExpense from "../store/ExpenseStore";
+import { fetcher } from "../utils/fetcher";
 
 import type { ExpenseType } from "../type/ExpenseType";
 import type { WeeklyStat } from "../type/expenseStatisticType";
@@ -43,10 +44,7 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
 
   const { data, error, isLoading } = useSWR(
     `${import.meta.env.VITE_API_BASE_URL}/expenses?month=${month}&year=${year}`,
-    (url) =>
-      fetch(url, {
-        credentials: "include",
-      }).then((res) => res.json())
+    fetcher
   );
 
   useEffect(() => {
@@ -56,7 +54,7 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
       setError("Failed to fetch expenses");
     }
 
-    if (data?.history) {
+    if (!error && data?.history) {
       const mapped = data.history
         .map(mapExpense)
         .sort(
@@ -64,9 +62,10 @@ export function useLoadExpense(month: number, year: number, getStat: boolean) {
             new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
         );
       setItems(mapped);
+      setError(null);
     }
 
-    if (getStat && data?.weekly) {
+    if (!error && getStat && data?.weekly) {
       const stat = {
         month,
         year,

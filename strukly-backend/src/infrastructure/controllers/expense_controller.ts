@@ -207,7 +207,10 @@ export default class ExpenseController {
 
       const image = req.file.buffer.toString("base64");
 
-      const expenseData = await this.imageToExpenseUseCase.execute(image);
+      const expenseData = await this.imageToExpenseUseCase.execute(
+        image,
+        req.file.mimetype,
+      );
 
       return res.status(200).json({ transaction: expenseData });
     } catch (error: unknown) {

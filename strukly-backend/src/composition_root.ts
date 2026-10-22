@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import RegisterUserUseCase from "./application/use_cases/register_user";
 import UpdateUserProfileUseCase from "./application/use_cases/update_user";
 import LoginUserUseCase from "./application/use_cases/user_login";
@@ -17,7 +16,6 @@ import UpdateGoalItemUseCase from "./application/use_cases/goal_item/update_goal
 import DeleteGoalItemUseCase from "./application/use_cases/goal_item/delete_goal_item";
 import PrismaExpenseRepository from "./infrastructure/repositories/prisma_expense_repository";
 import ExpenseService from "./domain/services/expense_service";
-import GeminiLanguageModel from "./infrastructure/language_model/gemini_language_model";
 import CreateExpenseUseCase from "./application/use_cases/expense/create_expense";
 import GetMonthlyExpenseListUseCase from "./application/use_cases/expense/get_monthly_expense_list";
 import GetWeeklyExpenseReportUseCase from "./application/use_cases/expense/get_weekly_expense_list";
@@ -27,9 +25,19 @@ import DeleteExpenseUseCase from "./application/use_cases/expense/delete_expense
 import ScanExpenseImageUseCase from "./application/use_cases/expense/scan_expense_image";
 import GetCurrentBudgetUseCase from "./application/use_cases/budget/get_current_budget";
 import UpdateCurrentBudgetUseCase from "./application/use_cases/budget/update_current_budget";
+import GeminiVisionAdapter from "./infrastructure/language_model/gemini_vision_adapter";
+import OpenRouterVisionAdapter from "./infrastructure/language_model/openrouter_vision_adapter";
+import FallbackVisionAdapter from "./infrastructure/language_model/fallback_vision_adapter";
+import PrismaUnitOfWork from "./infrastructure/repositories/prisma_unit_of_work";
 
 // DB Client
-const prismaClient = new PrismaClient();
+import { PrismaClient } from "./generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prismaClient = new PrismaClient({ adapter });
 
 // Graceful shutdown for PrismaClient
 const disconnectPrisma = async () => {
@@ -59,32 +67,52 @@ export const userRepository = new PrismaUserRepository(prismaClient);
 export const goalItemRepository = new PrismaGoalItemRepository(prismaClient);
 export const budgetHistoryRepository = new PrismaBudgetHistoryRepository(prismaClient);
 export const expenseRepository = new PrismaExpenseRepository(prismaClient);
+export const unitOfWork = new PrismaUnitOfWork(prismaClient);
 
 // Services
 export const hashingService = new BcryptService();
 export const tokenService = new JwtService();
 export const budgetService = new BudgetService(userRepository, budgetHistoryRepository);
 export const expenseService = new ExpenseService(expenseRepository);
-export const languageModelService = new GeminiLanguageModel();
+
+const geminiVisionAdapter = new GeminiVisionAdapter(
+  process.env.GEMINI_API_KEY!,
+  process.env.GEMINI_MODEL ?? "gemini-3.5-flash-lite",
+);
+const openRouterVisionAdapter = new OpenRouterVisionAdapter(
+  process.env.OPENROUTER_API_KEY!,
+  process.env.OPENROUTER_MODEL ?? "xiaomi/mimo-v2.5",
+);
+export const visionExtractionPort = new FallbackVisionAdapter(
+  geminiVisionAdapter,
+  openRouterVisionAdapter,
+);
 
 // UseCases
 // auth
 export const registerUserUseCase = new RegisterUserUseCase(userRepository, hashingService);
 export const loginUserUseCase = new LoginUserUseCase(userRepository, hashingService);
-export const updateUserProfileUseCase = new UpdateUserProfileUseCase(userRepository);
+export const updateUserProfileUseCase = new UpdateUserProfileUseCase(userRepository, hashingService);
 
 // goal
 export const createGoalItemUseCase = new CreateGoalItemUseCase(goalItemRepository);
 export const getGoalItemListUseCase = new GetGoalItemListUseCase(goalItemRepository);
 export const getGoalItemUseCase = new GetGoalItemUseCase(goalItemRepository);
-export const depositGoalItemUseCase = new DepositGoalItemUseCase(budgetService, goalItemRepository);
 export const markGoalItemCompletedUseCase = new MarkGoalItemCompletedUseCase(goalItemRepository);
 export const updateGoalItemUseCase = new UpdateGoalItemUseCase(goalItemRepository);
 export const deleteGoalItemUseCase = new DeleteGoalItemUseCase(goalItemRepository);
 
 // expense
 export const createExpenseUseCase = new CreateExpenseUseCase(
-  expenseService
+  expenseService,
+  budgetService,
+  unitOfWork,
+);
+export const depositGoalItemUseCase = new DepositGoalItemUseCase(
+  budgetService,
+  goalItemRepository,
+  createExpenseUseCase,
+  unitOfWork,
 );
 export const getExpenseListUseCase = new GetMonthlyExpenseListUseCase(
   expenseService
@@ -96,17 +124,22 @@ export const getExpenseDetailUseCase = new GetExpenseDetailUseCase(
   expenseService
 );
 export const updateExpenseUseCase = new UpdateExpenseUseCase(
-  expenseService
+  expenseService,
+  budgetService,
+  unitOfWork,
 );
 export const deleteExpenseUseCase = new DeleteExpenseUseCase(
-  expenseService
+  expenseService,
+  budgetService,
+  unitOfWork,
 );
 export const imageToExpenseUseCase = new ScanExpenseImageUseCase(
-  languageModelService
+  visionExtractionPort
 );
 
 // budget
 export const getCurrentBudgetUseCase = new GetCurrentBudgetUseCase(budgetService);
 export const updateCurrentBudgetUseCase = new UpdateCurrentBudgetUseCase(
   budgetService,
+  unitOfWork,
 );

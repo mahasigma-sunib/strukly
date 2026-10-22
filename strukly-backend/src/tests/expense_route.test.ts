@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi, type Mock } from "vitest";
 import request from "supertest";
 import app from "../app";
 import {
@@ -11,16 +12,36 @@ import {
 } from "../composition_root";
 
 // Mock the composition root
-jest.mock("../composition_root", () => ({
-    createExpenseUseCase: { execute: jest.fn() },
-    getExpenseListUseCase: { execute: jest.fn() },
-    getWeeklyExpenseReportUseCase: { execute: jest.fn() },
-    getExpenseDetailUseCase: { execute: jest.fn() },
-    updateExpenseUseCase: { execute: jest.fn() },
-    deleteExpenseUseCase: { execute: jest.fn() },
-    imageToExpenseUseCase: { execute: jest.fn() },
-    tokenService: { verify: jest.fn() },
-}));
+const compositionRootMocks = vi.hoisted(() => {
+    const useCase = () => ({ execute: vi.fn() });
+    return {
+        // expense routes (subject under test)
+        createExpenseUseCase: useCase(),
+        getExpenseListUseCase: useCase(),
+        getWeeklyExpenseReportUseCase: useCase(),
+        getExpenseDetailUseCase: useCase(),
+        updateExpenseUseCase: useCase(),
+        deleteExpenseUseCase: useCase(),
+        imageToExpenseUseCase: useCase(),
+        // other exports consumed by routes mounted on app
+        tokenService: { verify: vi.fn() },
+        userRepository: {},
+        registerUserUseCase: useCase(),
+        loginUserUseCase: useCase(),
+        updateUserProfileUseCase: useCase(),
+        getCurrentBudgetUseCase: useCase(),
+        updateCurrentBudgetUseCase: useCase(),
+        createGoalItemUseCase: useCase(),
+        getGoalItemListUseCase: useCase(),
+        getGoalItemUseCase: useCase(),
+        depositGoalItemUseCase: useCase(),
+        markGoalItemCompletedUseCase: useCase(),
+        updateGoalItemUseCase: useCase(),
+        deleteGoalItemUseCase: useCase(),
+    };
+});
+
+vi.mock("../composition_root", () => compositionRootMocks);
 
 describe("Expense Routes", () => {
     const mockUser = { id: "user-123", email: "test@example.com" };
@@ -32,7 +53,7 @@ describe("Expense Routes", () => {
             id: { value: validUUID },
             userID: { value: mockUser.id },
             vendorName: "Lunch",
-            category: { value: "Food" },
+            category: { value: "food" },
             dateTime: new Date("2023-10-27T10:00:00.000Z"),
             subtotalAmount: { value: 100, currency: "IDR" },
             taxAmount: { value: 0, currency: "IDR" },
@@ -57,7 +78,7 @@ describe("Expense Routes", () => {
     // Valid Request Body
     const validRequestBody = {
         vendorName: "Lunch",
-        category: "Food",
+        category: "food",
         dateTime: "2023-10-27T10:00:00.000Z",
         subtotalAmount: { amount: 100, currency: "IDR" },
         taxAmount: { amount: 0, currency: "IDR" },
@@ -73,7 +94,7 @@ describe("Expense Routes", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("Authentication", () => {
@@ -83,8 +104,8 @@ describe("Expense Routes", () => {
         });
 
         it("should return 401 if token is invalid", async () => {
-            const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => { });
-            (tokenService.verify as jest.Mock).mockRejectedValue(new Error("Invalid token"));
+            const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => { });
+            (tokenService.verify as Mock).mockRejectedValue(new Error("Invalid token"));
             const response = await request(app)
                 .get("/api/expenses")
                 .set("Cookie", ["access_token=invalid"]);
@@ -95,8 +116,8 @@ describe("Expense Routes", () => {
 
     describe("POST /api/expenses", () => {
         it("should create expense successfully", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
-            (createExpenseUseCase.execute as jest.Mock).mockResolvedValue(createMockExpense());
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+            (createExpenseUseCase.execute as Mock).mockResolvedValue(createMockExpense());
 
             const response = await request(app)
                 .post("/api/expenses")
@@ -108,7 +129,7 @@ describe("Expense Routes", () => {
         });
 
         it("should return 400 for invalid body", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
 
             const response = await request(app)
                 .post("/api/expenses")
@@ -118,12 +139,153 @@ describe("Expense Routes", () => {
             expect(response.status).toBe(400);
             expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
         });
+
+        it("should return 400 for empty vendor name", async () => {
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({ ...validRequestBody, vendorName: "" });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 for whitespace-only vendor name", async () => {
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({ ...validRequestBody, vendorName: "   " });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when an amount exceeds the maximum", async () => {
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    subtotalAmount: { amount: 100_000_000_000, currency: "IDR" },
+                    items: [
+                        {
+                            name: "Nasi Goreng",
+                            quantity: 1,
+                            singlePrice: { amount: 100_000_000_000, currency: "IDR" },
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when a money amount is negative", async () => {
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    taxAmount: { amount: -10, currency: "IDR" },
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when discount exceeds the expense total", async () => {
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    discountAmount: { amount: 150, currency: "IDR" },
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when item quantity exceeds the maximum", async () => {
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    items: [
+                        {
+                            name: "Nasi Goreng",
+                            quantity: 10_000,
+                            singlePrice: { amount: 100, currency: "IDR" },
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should return 400 when item price times quantity exceeds the maximum", async () => {
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    items: [
+                        {
+                            name: "Nasi Goreng",
+                            quantity: 3,
+                            singlePrice: { amount: 50_000_000_000, currency: "IDR" },
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(400);
+            expect(createExpenseUseCase.execute).not.toHaveBeenCalled();
+        });
+
+        it("should accept an amount at the maximum limit", async () => {
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+            (createExpenseUseCase.execute as Mock).mockResolvedValue(createMockExpense());
+
+            const response = await request(app)
+                .post("/api/expenses")
+                .set("Cookie", ["access_token=valid"])
+                .send({
+                    ...validRequestBody,
+                    subtotalAmount: { amount: 99_999_999_999, currency: "IDR" },
+                    items: [
+                        {
+                            name: "Nasi Goreng",
+                            quantity: 1,
+                            singlePrice: { amount: 99_999_999_999, currency: "IDR" },
+                        },
+                    ],
+                });
+
+            expect(response.status).toBe(201);
+            expect(createExpenseUseCase.execute).toHaveBeenCalled();
+        });
     });
 
     describe("GET /api/expenses", () => {
         it("should get expense list", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
-            (getExpenseListUseCase.execute as jest.Mock).mockResolvedValue({
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+            (getExpenseListUseCase.execute as Mock).mockResolvedValue({
                 total: 100,
                 weekly: [],
                 history: [],
@@ -139,7 +301,7 @@ describe("Expense Routes", () => {
         });
 
         it("should return 400 for missing query params", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
 
             const response = await request(app)
                 .get("/api/expenses")
@@ -151,8 +313,8 @@ describe("Expense Routes", () => {
 
     describe("GET /api/expenses/weekly", () => {
         it("should get weekly report", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
-            (getWeeklyExpenseReportUseCase.execute as jest.Mock).mockResolvedValue({
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+            (getWeeklyExpenseReportUseCase.execute as Mock).mockResolvedValue({
                 startDate: new Date(),
                 endDate: new Date(),
                 totalSpent: 0,
@@ -171,8 +333,8 @@ describe("Expense Routes", () => {
 
     describe("GET /api/expenses/:expenseID", () => {
         it("should get expense detail", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
-            (getExpenseDetailUseCase.execute as jest.Mock).mockResolvedValue(createMockExpense());
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+            (getExpenseDetailUseCase.execute as Mock).mockResolvedValue(createMockExpense());
 
             const response = await request(app)
                 .get(`/api/expenses/${validUUID}`)
@@ -183,7 +345,7 @@ describe("Expense Routes", () => {
         });
 
         it("should return 400 for invalid UUID", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
 
             const response = await request(app)
                 .get("/api/expenses/invalid-uuid")
@@ -195,8 +357,8 @@ describe("Expense Routes", () => {
 
     describe("PUT /api/expenses/:expenseID", () => {
         it("should update expense", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
-            (updateExpenseUseCase.execute as jest.Mock).mockResolvedValue(createMockExpense());
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+            (updateExpenseUseCase.execute as Mock).mockResolvedValue(createMockExpense());
 
             const response = await request(app)
                 .put(`/api/expenses/${validUUID}`)
@@ -210,8 +372,8 @@ describe("Expense Routes", () => {
 
     describe("DELETE /api/expenses/:expenseID", () => {
         it("should delete expense", async () => {
-            (tokenService.verify as jest.Mock).mockResolvedValue(mockUser);
-            (deleteExpenseUseCase.execute as jest.Mock).mockResolvedValue(true);
+            (tokenService.verify as Mock).mockResolvedValue(mockUser);
+            (deleteExpenseUseCase.execute as Mock).mockResolvedValue(true);
 
             const response = await request(app)
                 .delete(`/api/expenses/${validUUID}`)

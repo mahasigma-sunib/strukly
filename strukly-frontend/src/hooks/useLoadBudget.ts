@@ -1,13 +1,11 @@
 import useSWR from "swr";
 import type BudgetType from "../type/BudgetType";
+import { fetcher } from "../utils/fetcher";
 
 export function useLoadBudget() {
   const response = useSWR<BudgetType>(
     `${import.meta.env.VITE_API_BASE_URL}/budget`,
-    (url: string) =>
-      fetch(url, {
-        credentials: "include",
-      }).then((res) => res.json())
+    fetcher
   );
   return {
     data: response.data,

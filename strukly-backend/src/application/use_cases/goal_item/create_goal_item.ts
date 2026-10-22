@@ -10,8 +10,9 @@ export default class CreateGoalItemUseCase {
     userID: string,
     name: string,
     price: number,
+    category: string,
   ): Promise<GoalItem> {
-    const goal = GoalItem.new({ userID, name, price });
+    const goal = GoalItem.new({ userID, name, price, category });
 
     const created = await this.goalItemRepository.create(goal);
 

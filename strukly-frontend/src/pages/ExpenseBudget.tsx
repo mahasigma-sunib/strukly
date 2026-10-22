@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import { getApiErrorMessage } from "../utils/getApiErrorMessage";
 
 import BudgetListCard from "../components/card/BudgetListCard";
 import OverviewChart from "../components/graph/Chart";
@@ -7,13 +10,52 @@ import Card from "../components/card/Card";
 import Button from "../components/button/Button";
 import Popup from "../components/popup/PopUp";
 import HappyMascot from "../components/mascots/HappyMascot";
+import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
+import BudgetRemaining from "../components/money/BudgetRemaining";
+import Money from "../components/money/Money";
 
 import { useLoadExpense } from "../hooks/useLoadExpense";
 import { CategoryKeys } from "../utils/CategoryConfig";
 import { useLoadBudget } from "../hooks/useLoadBudget";
 import { useExpenseCalc } from "../hooks/useExpenseCalc";
 
+function BudgetTopBar({ onEdit }: { onEdit?: () => void }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="p-5 flex items-center mb-4 justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
+      <div className="font-bold text-3xl">
+        <p>{t("budget.title")}</p>
+      </div>
+      {onEdit && (
+        <div>
+          <Button
+            onClick={onEdit}
+            variant="primary"
+            size="md"
+            className="
+              !rounded-full
+              !font-bold
+              active:translate-y-[4px]
+              !transition-all
+              flex flex-row gap-1
+              text-lg
+              justify-center
+              items-center
+              !py-2
+              !px-3
+            "
+          >
+            {t("budget.edit")}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ExpenseBudget() {
+  const { t } = useTranslation();
   const [editedBudget, setEditedBudget] = useState<number>(0);
   const [editPopUp, setEditPopUp] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,7 +63,11 @@ export default function ExpenseBudget() {
   const { data, isLoading, error, mutate } = useLoadBudget();
 
   const today = new Date();
-  useLoadExpense(today.getMonth() + 1, today.getFullYear(), false);
+  const { error: expenseError } = useLoadExpense(
+    today.getMonth() + 1,
+    today.getFullYear(),
+    false
+  );
 
   const totalBudget = data?.budget ?? 0;
   const { totalSpent, remaining, getSpentForCategory } =
@@ -32,6 +78,14 @@ export default function ExpenseBudget() {
       setEditedBudget(data.budget);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (expenseError) {
+      toast.error(t("home.loadExpensesError"), {
+        id: "expense-list-load-error",
+      });
+    }
+  }, [expenseError, t]);
 
   const handleEditBudget = async () => {
     setIsSubmitting(true);
@@ -48,8 +102,7 @@ export default function ExpenseBudget() {
       await mutate();
       setEditPopUp(false);
     } catch (error) {
-      console.error("Failed to edit Budget:", error);
-      alert("Failed to update budget. Please try again.");
+      toast.error(getApiErrorMessage(error, t("budget.updateFailed")));
     } finally {
       setIsSubmitting(false);
     }
@@ -67,44 +120,23 @@ export default function ExpenseBudget() {
   if (isLoading)
     return (
       <div className="flex h-screen items-center justify-center text-[var(--fun-color-text-secondary)]">
-        Loading...
+        {t("common.loading")}
       </div>
     );
   if (error)
     return (
-      <div className="flex h-screen items-center justify-center text-red-500">
-        Error loading budget data
+      <div className="min-h-screen pb-20">
+        <BudgetTopBar />
+        <LoadErrorPlaceholder
+          title={t("budget.loadError")}
+          onRetry={() => mutate()}
+        />
       </div>
     );
 
   return (
     <div className="min-h-screen pb-20 ">
-      <div className="p-5 flex items-center mb-4 justify-between bg-surface border-b-3 border-border rounded-b-2xl sticky top-0 z-20 w-full">
-        <div className="font-bold text-3xl">
-          <p>Budget</p>
-        </div>
-        <div>
-          <Button
-            onClick={openEditPopup}
-            variant="primary"
-            size="md"
-            className="
-              !rounded-full 
-              !font-bold 
-              active:translate-y-[4px]
-              !transition-all
-              flex flex-row gap-1
-              text-lg
-              justify-center
-              items-center
-              !py-2
-              !px-3
-            "
-          >
-            Edit Budget
-          </Button>
-        </div>
-      </div>
+      <BudgetTopBar onEdit={openEditPopup} />
 
       {/* Budget Overview */}
       <div className="absolute top-18 right-10">
@@ -116,7 +148,7 @@ export default function ExpenseBudget() {
       </div>
       <div className="ml-5 mb-0 mr-4 flex justify-between items-center">
         <div className="font-bold text-2xl">
-          <p>Overview</p>
+          <p>{t("budget.overview")}</p>
         </div>
       </div>
 
@@ -134,27 +166,28 @@ export default function ExpenseBudget() {
             <div className="flex flex-col justify-start items-start flex-1 pr-4 gap-1">
               <div>
                 <p className="text-text-secondary text-sm font-semibold">
-                  Used
+                  {t("budget.used")}
                 </p>
               </div>
-              <div className="font-bold text-lg text-text-secondary">
-                {formatIDR(totalSpent)}
-              </div>
+              <Money
+                amount={totalSpent}
+                currency="IDR"
+                mainClassName="text-lg font-bold text-text-secondary"
+                decimalClassName="text-sm font-bold text-text-secondary/70"
+              />
             </div>
             <div className="flex flex-col justify-start items-start flex-1 border-l-2 gap-1 border-gray-300 pl-4">
               <div>
                 <p className="text-text-secondary text-sm font-semibold">
-                  Remaining
+                  {t("budget.remaining")}
                 </p>
               </div>
-              <div
-                className={`font-bold text-lg  ${
-                  remaining < 0 ? "text-red-500" : "text-text-secondary"
-                }`}
-              >
-                {remaining < 0 ? "-" : ""}
-                {formatIDR(Math.abs(remaining))}
-              </div>
+              <BudgetRemaining
+                remaining={remaining}
+                mainClassName="text-lg font-bold"
+                decimalClassName="text-lg font-bold"
+                amountColorClassName="text-text-secondary"
+              />
             </div>
           </div>
         </div>
@@ -166,10 +199,10 @@ export default function ExpenseBudget() {
           {/* Title */}
           <div className="flex flex-col text-center">
             <h3 className="text-2xl font-bold text-text-primary mb-1">
-              Edit Budget
+              {t("budget.edit")}
             </h3>
             <p className="text-base text-text-secondary mb-6">
-              Set your total monthly budget
+              {t("budget.setMonthly")}
             </p>
           </div>
 
@@ -220,7 +253,7 @@ export default function ExpenseBudget() {
               disabled={isSubmitting}
               className="flex-1"
             >
-              {isSubmitting ? "Saving..." : "Save"}
+              {isSubmitting ? t("common.saving") : t("common.save")}
             </Button>
           </div>
         </div>
@@ -229,7 +262,7 @@ export default function ExpenseBudget() {
       {/* Expense budget List */}
       <div className="ml-5 mr-4 mt-6 mb-0 flex items-center justify-between">
         <div className="font-bold text-2xl">
-          <p>Top Categories</p>
+          <p>{t("budget.topCategories")}</p>
         </div>
       </div>
 
@@ -241,7 +274,6 @@ export default function ExpenseBudget() {
             <Card key={b}>
               <div className="py-2">
                 <BudgetListCard
-                  currency="Rp"
                   spent={spent}
                   usedBudget={totalSpent}
                   category={b}
