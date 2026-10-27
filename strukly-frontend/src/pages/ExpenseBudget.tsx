@@ -95,9 +95,10 @@ export default function ExpenseBudget() {
   }, [expenseError, t]);
 
   const budgetTooLarge = isMoneyTooLarge(editedBudget);
+  const budgetInvalid = editedBudget <= 0 || budgetTooLarge;
 
   const handleEditBudget = async () => {
-    if (budgetTooLarge) return;
+    if (budgetInvalid) return;
     setIsSubmitting(true);
     try {
       await axios.patch(
@@ -239,7 +240,7 @@ export default function ExpenseBudget() {
                 placeholder="0"
                 value={formatIDR(editedBudget)}
                 onChange={(e) => {
-                  setEditedBudget(parseDigitInput(e.target.value));
+                  setEditedBudget(parseDigitInput(e.target.value, editedBudget));
                 }}
               />
             </div>
@@ -266,7 +267,7 @@ export default function ExpenseBudget() {
               variant="primary"
               size="md"
               onClick={handleEditBudget}
-              disabled={isSubmitting || budgetTooLarge}
+              disabled={isSubmitting || budgetInvalid}
               className="flex-1"
             >
               {isSubmitting ? t("common.saving") : t("common.save")}

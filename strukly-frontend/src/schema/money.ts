@@ -22,12 +22,13 @@ export function parseDigitAmount(rawInput: string): number {
   return digits === "" ? 0 : clampMoney(Number(digits));
 }
 
-// Unlike parseDigitAmount, this doesn't clamp: it keeps one digit past the max
+// Unlike parseDigitAmount, this doesn't clamp: it allows one digit past the max
 // so the caller can show a "too large" error while staying a safe integer.
-export function parseDigitInput(rawInput: string): number {
-  const digits = rawInput
-    .replace(/[^\d]/g, "")
-    .slice(0, String(MAX_MONEY_AMOUNT).length + 1);
+// Input with more digits than that is rejected (returns `previous`) rather than
+// truncated, so the field never shows digits other than the ones typed.
+export function parseDigitInput(rawInput: string, previous: number): number {
+  const digits = rawInput.replace(/[^\d]/g, "");
+  if (digits.length > String(MAX_MONEY_AMOUNT).length + 1) return previous;
   return digits === "" ? 0 : Number(digits);
 }
 
