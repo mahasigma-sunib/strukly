@@ -10,6 +10,7 @@ import useGoals from "../store/GoalsStore";
 import { mapGoal, useLoadGoals } from "../hooks/useLoadGoals";
 import type { GoalItem } from "../type/GoalItem";
 import type { CategoryKey } from "../utils/CategoryConfig";
+import { isMoneyTooLarge } from "../schema/money";
 
 import Card from "../components/card/Card";
 import FlagMascot from "../components/mascots/FlagMascot";
@@ -98,6 +99,8 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
+    if (isMoneyTooLarge(formData.price)) return;
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/goals`,
@@ -180,6 +183,8 @@ const GoalsPage: React.FC = () => {
       setErrorMessage(t("goals.priceRequired"));
       return;
     }
+
+    if (isMoneyTooLarge(formData.price)) return;
 
     try {
       await axios.patch(

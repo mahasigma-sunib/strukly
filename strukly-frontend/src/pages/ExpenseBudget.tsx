@@ -13,11 +13,18 @@ import HappyMascot from "../components/mascots/HappyMascot";
 import LoadErrorPlaceholder from "../components/placeholder/LoadErrorPlaceholder";
 import BudgetRemaining from "../components/money/BudgetRemaining";
 import Money from "../components/money/Money";
+import ErrorMessage from "../components/ErrorMessage";
 
 import { useLoadExpense } from "../hooks/useLoadExpense";
 import { CategoryKeys } from "../utils/CategoryConfig";
 import { useLoadBudget } from "../hooks/useLoadBudget";
 import { useExpenseCalc } from "../hooks/useExpenseCalc";
+import {
+  MONEY_AMOUNT_MAX_DISPLAY,
+  MONEY_AMOUNT_TOO_LARGE,
+  isMoneyTooLarge,
+  parseDigitInput,
+} from "../schema/money";
 
 function BudgetTopBar({ onEdit }: { onEdit?: () => void }) {
   const { t } = useTranslation();
@@ -87,7 +94,11 @@ export default function ExpenseBudget() {
     }
   }, [expenseError, t]);
 
+  const budgetTooLarge = isMoneyTooLarge(editedBudget);
+  const budgetInvalid = editedBudget <= 0 || budgetTooLarge;
+
   const handleEditBudget = async () => {
+    if (budgetInvalid) return;
     setIsSubmitting(true);
     try {
       await axios.patch(
@@ -207,15 +218,16 @@ export default function ExpenseBudget() {
           </div>
 
           {/* Input */}
-          <div className="relative mb-6">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
-              Rp
-            </span>
-            <input
-              type="text"
-              inputMode="numeric"
-              aria-label="Budget-Amount"
-              className="
+          <div className="mb-6">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
+                Rp
+              </span>
+              <input
+                type="text"
+                inputMode="numeric"
+                aria-label="Budget-Amount"
+                className="
                 w-full  py-3
                 rounded-xl
                 border-b-2 border-inactive
@@ -225,13 +237,18 @@ export default function ExpenseBudget() {
                 focus:border-primary
                 transition
               "
-              placeholder="0"
-              value={formatIDR(editedBudget)}
-              onChange={(e) => {
-                const digitsOnly = e.target.value.replace(/[^\d]/g, "");
-                setEditedBudget(digitsOnly === "" ? 0 : Number(digitsOnly));
-              }}
-            />
+                placeholder="0"
+                value={formatIDR(editedBudget)}
+                onChange={(e) => {
+                  setEditedBudget(parseDigitInput(e.target.value, editedBudget));
+                }}
+              />
+            </div>
+            {budgetTooLarge && (
+              <ErrorMessage>
+                {t(MONEY_AMOUNT_TOO_LARGE, { max: MONEY_AMOUNT_MAX_DISPLAY })}
+              </ErrorMessage>
+            )}
           </div>
 
           {/* Actions */}
@@ -250,7 +267,7 @@ export default function ExpenseBudget() {
               variant="primary"
               size="md"
               onClick={handleEditBudget}
-              disabled={isSubmitting}
+              disabled={isSubmitting || budgetInvalid}
               className="flex-1"
             >
               {isSubmitting ? t("common.saving") : t("common.save")}

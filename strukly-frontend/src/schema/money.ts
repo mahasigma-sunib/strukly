@@ -22,6 +22,20 @@ export function parseDigitAmount(rawInput: string): number {
   return digits === "" ? 0 : clampMoney(Number(digits));
 }
 
+// Unlike parseDigitAmount, this doesn't clamp: it allows one digit past the max
+// so the caller can show a "too large" error while staying a safe integer.
+// Input with more digits than that is rejected (returns `previous`) rather than
+// truncated, so the field never shows digits other than the ones typed.
+export function parseDigitInput(rawInput: string, previous: number): number {
+  const digits = rawInput.replace(/[^\d]/g, "");
+  if (digits.length > String(MAX_MONEY_AMOUNT).length + 1) return previous;
+  return digits === "" ? 0 : Number(digits);
+}
+
+export function isMoneyTooLarge(value: number): boolean {
+  return value > MAX_MONEY_AMOUNT;
+}
+
 export function clampItemAmounts(price: number, quantity: number) {
   const singleItemPrice = clampMoney(price);
   let qty = clampQuantity(quantity);

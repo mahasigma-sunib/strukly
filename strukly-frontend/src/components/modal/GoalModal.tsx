@@ -4,6 +4,12 @@ import CloseIcon from "../utilityIcons/CloseIcon";
 import Button from "../button/Button";
 import TrashMascot from "../mascots/TrashMascot";
 import { CategoryKeys, type CategoryKey } from "../../utils/CategoryConfig";
+import {
+  MONEY_AMOUNT_MAX_DISPLAY,
+  MONEY_AMOUNT_TOO_LARGE,
+  isMoneyTooLarge,
+  parseDigitInput,
+} from "../../schema/money";
 
 type ModalMode = "create" | "deposit" | "edit" | "delete" | null;
 
@@ -38,9 +44,12 @@ const GoalModal: React.FC<Props> = ({
     return num === 0 ? "" : new Intl.NumberFormat("id-ID").format(num);
   };
 
-  const parseRawValue = (value: string) => {
-    return Number(value.replace(/\D/g, ""));
-  };
+  const amountTooLarge = isMoneyTooLarge(
+    activeModal === "deposit" ? tempAmount : formData.price
+  );
+  const displayedError = amountTooLarge
+    ? t(MONEY_AMOUNT_TOO_LARGE, { max: MONEY_AMOUNT_MAX_DISPLAY })
+    : errorMessage;
 
   if (!activeModal) return null;
   return (
@@ -71,23 +80,23 @@ const GoalModal: React.FC<Props> = ({
                   autoFocus
                   placeholder="0"
                   className={`w-full text-center text-2xl font-extrabold bg-transparent border-b-2  outline-none p-4  ${
-                    errorMessage
+                    displayedError
                       ? "border-status-error focus:border-status-error"
                       : "border-text-disabled focus:border-primary text-text-primary"
                   }`}
                   onChange={(e) => {
-                    setErrorMessage("");
-                    setTempAmount(parseRawValue(e.target.value));
+                    if (errorMessage) setErrorMessage("");
+                    setTempAmount(parseDigitInput(e.target.value, tempAmount));
                   }}
                   value={formatDisplay(tempAmount)}
                 />
-                {errorMessage && (
+                {displayedError && (
                   <div className="mt-5 w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex justify-center items-center gap-3 animate-in zoom-in-95 duration-300">
                     <div className="bg-status-error text-white rounded-full p-2 h-5 w-5 flex items-center justify-center text-sm font-bold">
                       !
                     </div>
                     <p className="text-status-error text-base font-semibold">
-                      {errorMessage}
+                      {displayedError}
                     </p>
                   </div>
                 )}
@@ -139,22 +148,25 @@ const GoalModal: React.FC<Props> = ({
                   placeholder={t("goalModal.targetPrice")}
                   value={formatDisplay(formData.price) || ""}
                   className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
-                    errorMessage && formData.price <= 0
+                    amountTooLarge || (errorMessage && formData.price <= 0)
                       ? "border-status-error "
                       : "border-border focus:border-primary"
                   }`}
                   onChange={(e) => {
                     if (errorMessage) setErrorMessage("");
-                    setFormData({ ...formData, price: parseRawValue(e.target.value) });
+                    setFormData({
+                      ...formData,
+                      price: parseDigitInput(e.target.value, formData.price),
+                    });
                   }}
                 />
-                {errorMessage && (
+                {displayedError && (
                   <div className="w-full bg-status-error/10 border border-status-error/20 p-3 rounded-2xl flex justify-center items-center gap-3 animate-in zoom-in-95 duration-300">
                     <div className="bg-status-error text-white rounded-full p-2 h-5 w-5 flex items-center justify-center text-sm font-bold">
                       !
                     </div>
                     <p className="text-status-error text-base font-semibold">
-                      {errorMessage}
+                      {displayedError}
                     </p>
                   </div>
                 )}
@@ -163,8 +175,8 @@ const GoalModal: React.FC<Props> = ({
           </div>
           <Button
             onClick={onConfirm}
-            className={`w-full text-surface text-base font-black 
-               
+            className={`w-full text-surface text-base font-black
+
             `}
             variant="primary"
           >
