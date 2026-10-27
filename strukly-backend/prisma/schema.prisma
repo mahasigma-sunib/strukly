@@ -82,8 +82,8 @@ model GoalItem {
   id          String    @id @default(uuid())
   name        String
   category    String    @default("others")
-  price       Int
-  deposited   Int
+  price       Decimal
+  deposited   Decimal
   completed   Boolean   @default(false)
   completedAt DateTime?
 

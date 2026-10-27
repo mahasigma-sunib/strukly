@@ -11,8 +11,8 @@ type GoalItemRow = {
   id: string;
   name: string;
   category: string;
-  price: number;
-  deposited: number;
+  price: Prisma.Decimal;
+  deposited: Prisma.Decimal;
   completed: boolean;
   completedAt: Date | null;
   createdAt: Date;
@@ -27,8 +27,8 @@ export default class PrismaGoalItemRepository implements IGoalItemRepository {
     return new GoalItem(
       new GoalItemID(row.id),
       row.name,
-      row.price,
-      row.deposited ?? 0,
+      row.price.toNumber(),
+      row.deposited.toNumber(),
       row.completed,
       row.completedAt,
       row.createdAt,

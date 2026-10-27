@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { EXPENSE_CATEGORIES } from "src/domain/values/expense_category";
+import { MAX_MONEY_AMOUNT, MONEY_AMOUNT_TOO_LARGE } from "../common";
 
 // ============ Path Params ============
 
@@ -15,6 +16,7 @@ export const CreateGoalItemRequestSchema = z.object({
     .number()
     .int()
     .positive("Price must be positive")
+    .max(MAX_MONEY_AMOUNT, MONEY_AMOUNT_TOO_LARGE)
     .describe("The target price for the goal"),
   category: z
     .enum(EXPENSE_CATEGORIES)
@@ -27,6 +29,7 @@ export const UpdateGoalItemRequestSchema = z.object({
     .number()
     .int()
     .positive("Price must be positive")
+    .max(MAX_MONEY_AMOUNT, MONEY_AMOUNT_TOO_LARGE)
     .optional()
     .describe("The target price for the goal"),
   category: z
@@ -40,6 +43,7 @@ export const DepositGoalItemRequestSchema = z.object({
     .number()
     .int()
     .positive("Amount must be positive")
+    .max(MAX_MONEY_AMOUNT, MONEY_AMOUNT_TOO_LARGE)
     .describe("The amount to deposit towards the goal"),
 });
 
