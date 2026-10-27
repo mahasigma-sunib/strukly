@@ -10,6 +10,11 @@ import useGoals from "../store/GoalsStore";
 import { mapGoal, useLoadGoals } from "../hooks/useLoadGoals";
 import type { GoalItem } from "../type/GoalItem";
 import type { CategoryKey } from "../utils/CategoryConfig";
+import {
+  MONEY_AMOUNT_MAX_DISPLAY,
+  MONEY_AMOUNT_TOO_LARGE,
+  isMoneyTooLarge,
+} from "../schema/money";
 
 import Card from "../components/card/Card";
 import FlagMascot from "../components/mascots/FlagMascot";
@@ -98,6 +103,13 @@ const GoalsPage: React.FC = () => {
       return;
     }
 
+    if (isMoneyTooLarge(formData.price)) {
+      setErrorMessage(
+        t(MONEY_AMOUNT_TOO_LARGE, { max: MONEY_AMOUNT_MAX_DISPLAY })
+      );
+      return;
+    }
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/goals`,
@@ -123,6 +135,13 @@ const GoalsPage: React.FC = () => {
 
     if (tempAmount <= 0) {
       setErrorMessage(t("goals.depositAmount"));
+      return;
+    }
+
+    if (isMoneyTooLarge(tempAmount)) {
+      setErrorMessage(
+        t(MONEY_AMOUNT_TOO_LARGE, { max: MONEY_AMOUNT_MAX_DISPLAY })
+      );
       return;
     }
 
@@ -178,6 +197,13 @@ const GoalsPage: React.FC = () => {
 
     if (formData.price <= 0) {
       setErrorMessage(t("goals.priceRequired"));
+      return;
+    }
+
+    if (isMoneyTooLarge(formData.price)) {
+      setErrorMessage(
+        t(MONEY_AMOUNT_TOO_LARGE, { max: MONEY_AMOUNT_MAX_DISPLAY })
+      );
       return;
     }
 

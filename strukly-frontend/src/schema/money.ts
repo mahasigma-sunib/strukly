@@ -22,6 +22,19 @@ export function parseDigitAmount(rawInput: string): number {
   return digits === "" ? 0 : clampMoney(Number(digits));
 }
 
+// Unlike parseDigitAmount, this doesn't clamp: it keeps one digit past the max
+// so the caller can show a "too large" error while staying a safe integer.
+export function parseDigitInput(rawInput: string): number {
+  const digits = rawInput
+    .replace(/[^\d]/g, "")
+    .slice(0, String(MAX_MONEY_AMOUNT).length + 1);
+  return digits === "" ? 0 : Number(digits);
+}
+
+export function isMoneyTooLarge(value: number): boolean {
+  return value > MAX_MONEY_AMOUNT;
+}
+
 export function clampItemAmounts(price: number, quantity: number) {
   const singleItemPrice = clampMoney(price);
   let qty = clampQuantity(quantity);

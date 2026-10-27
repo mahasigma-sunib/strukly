@@ -4,6 +4,12 @@ import CloseIcon from "../utilityIcons/CloseIcon";
 import Button from "../button/Button";
 import TrashMascot from "../mascots/TrashMascot";
 import { CategoryKeys, type CategoryKey } from "../../utils/CategoryConfig";
+import {
+  MONEY_AMOUNT_MAX_DISPLAY,
+  MONEY_AMOUNT_TOO_LARGE,
+  isMoneyTooLarge,
+  parseDigitInput,
+} from "../../schema/money";
 
 type ModalMode = "create" | "deposit" | "edit" | "delete" | null;
 
@@ -39,7 +45,13 @@ const GoalModal: React.FC<Props> = ({
   };
 
   const parseRawValue = (value: string) => {
-    return Number(value.replace(/\D/g, ""));
+    const amount = parseDigitInput(value);
+    setErrorMessage(
+      isMoneyTooLarge(amount)
+        ? t(MONEY_AMOUNT_TOO_LARGE, { max: MONEY_AMOUNT_MAX_DISPLAY })
+        : ""
+    );
+    return amount;
   };
 
   if (!activeModal) return null;
@@ -76,7 +88,6 @@ const GoalModal: React.FC<Props> = ({
                       : "border-text-disabled focus:border-primary text-text-primary"
                   }`}
                   onChange={(e) => {
-                    setErrorMessage("");
                     setTempAmount(parseRawValue(e.target.value));
                   }}
                   value={formatDisplay(tempAmount)}
@@ -139,13 +150,16 @@ const GoalModal: React.FC<Props> = ({
                   placeholder={t("goalModal.targetPrice")}
                   value={formatDisplay(formData.price) || ""}
                   className={`w-full bg-background border-2 rounded-2xl p-4 focus:border-primary outline-none transition-all ${
-                    errorMessage && formData.price <= 0
+                    errorMessage &&
+                    (formData.price <= 0 || isMoneyTooLarge(formData.price))
                       ? "border-status-error "
                       : "border-border focus:border-primary"
                   }`}
                   onChange={(e) => {
-                    if (errorMessage) setErrorMessage("");
-                    setFormData({ ...formData, price: parseRawValue(e.target.value) });
+                    setFormData({
+                      ...formData,
+                      price: parseRawValue(e.target.value),
+                    });
                   }}
                 />
                 {errorMessage && (
